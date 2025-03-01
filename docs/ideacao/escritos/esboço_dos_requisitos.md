@@ -14,7 +14,7 @@ A seguir, um resumo separado em tópicos da estrutura da aplicação.
     - CPF
     - Endereço
     - Telefone
-    - Tipos de serviços contratados
+    - Serviços contratados (talvez pacotes de agendamento ativos)
     - Estado de atividade (ativo ou inativo)
 
 - Pets
@@ -23,12 +23,13 @@ A seguir, um resumo separado em tópicos da estrutura da aplicação.
     - Sexo
     - Porte
     - Cor
-    - É castrado
+    - É castrado?
     - Cartão de vacinação
     - Estado de saúde
     - Dono
     - Com quem deve ser buscado
     - Com quem deve ser devolvido
+    - Foto do pet (talvez para ajudar na identificação?)
 
 - Contas de usuário
     - Nome
@@ -45,14 +46,17 @@ A seguir, um resumo separado em tópicos da estrutura da aplicação.
     - Data marcada
     - Hora marcada
     - Endereço do pet
-    - Quantidade de passeios
+    - Quantidade de passeios (seria para agendamentos recorrentes?)
+        > Obs.: se for utilizado para criação de agendamentos recorrentes ( se repetem em tal dia de toda semana, ou tantas vezes por mês, etc...), acredito que seja melhor sinalizar isso de outra forma, talvez criando uma tabela de agendamentos recorrentes para identificá-los como um conjunto de agendamentos pertencentes a um "pacote de agendamentos" e identificá-los com uma mesma chave estrangeira que represente o "pacote" a qual ele pertence.
+
     - Observações
-    - Local do cuidado
+    - Local do cuidado (se for serviço de consulta médica, onde o pet deverá ser levado, por exemplo)
     - Serviço agendado
     - Pet participante
     - Funcionário atribuído
     - Alimentação do pet
         - Horário
+        - Instruções (quantidade, etc)
     - Remédios a administrar
         - Nome
         - Horário
@@ -60,13 +64,13 @@ A seguir, um resumo separado em tópicos da estrutura da aplicação.
 
 - Serviços
     - Nome
-    - Duração
+    - Duração aproximada
     - Preço
     - Descrição
+    - Categoria do serviço (passeio, cuidado, ...)
 
 - Serviços realizados (talvez serviços agendados)
-    -
-    - O pet foi entregue?
+    - O(s) pet(s) foi entregue?
     - Data iniciado
     - Hora iniciado
     - Data finalizado
