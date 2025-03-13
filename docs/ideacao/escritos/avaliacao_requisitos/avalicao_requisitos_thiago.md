@@ -13,8 +13,8 @@ incrementar cotas de agendamento e relatórios
 Descrever os campos que existirão e o que deve ser colocado, independente do
 serviço a ser agendado. Atualmente o requisito distingue entre dois tipos 'Dog
 Walker' e 'Pet Sitting':
-	>> 3.1.4 \[RF 04] Agendamento de horários para Dog Walkers
-	>> 3.1.5 \[RF 05] Agendamento de horários para Pet Sitters
+	> 3.1.4 \[RF 04] Agendamento de horários para Dog Walkers \n
+	3.1.5 \[RF 05] Agendamento de horários para Pet Sitters
 
 Depois fazer os requisitos separados para determinar as informações exclusivas
 de um tipo de serviço.
@@ -49,3 +49,10 @@ de um tipo de serviço.
 ### 3.1.9 [RF 09] Redefinição de Senha
 - Remover CPF
 - Redefinição apenas depois de logado (usar recuperação quando perder)
+
+### 3.1.10 [RF 10] Histórico do pet
+- Tirar duração do serviço
+
+### 3.1.11 [RF 11] Alteração de dados
+- Alterações devem ser possíveis de serem feitas por qualquer utilizador
+
