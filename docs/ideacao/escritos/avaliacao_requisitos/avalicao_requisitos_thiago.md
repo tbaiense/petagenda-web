@@ -205,8 +205,14 @@ Ponto de vista: Thiago.
 
 - Estados de agendamento: criado (sem funcionário atribuído), preparado (com funcionário atribuído), concluído ou cancelado.
 
+### 3.1.31 [RF 31] Exportação de Dados
+- Mencionar quem terá acesso: administrador e empreendedor.
+
 ### 3.1.32 [RF 32] Backup e Restauração de Dados 
 - Descartar o requisito
+
+### 3.1.33 [RF 33] Lista de Clientes 
+- Mencionar quem terá acesso: administrador e empreendedor.
 
 ### 3.1.34 [RF 34] Lista de Pets Cadastrados
 - Trocar por "A solução permitirá" na seguinte parte:
