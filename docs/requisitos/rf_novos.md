@@ -49,31 +49,13 @@ Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 
 
 ### [RF nn] Cadastro de funcionários
-A solução permitirá ao operador realizar o cadastro dos clientes, informando nome completo, endereço, rua, número, bairro, cidade, telefone de contato e tipo de serviço requerido.
+A solução permitirá ao operador realizar o cadastro dos funcionários, informando nome completo, telefone de contato e opcionalmente os tipos de serviços exercidos.
 
 Prioridade:  ( )Essencial  (X)Importante  ( )Desejável
  
 
 ### [RF nn] Categorias de serviço
 **Completar**: Descrição do uso na filtragem por serviços. Significado de PS, DW, Saúde, Transporte, Hospedagem, Creche, PetCare, etc.
-
-Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
-
-
-### [RF nn] Adição de restrições à serviços
-**Completar**: Descrição do uso na priorização da sugestão de serviços durante cadastro de um agendamento ou serviço realizado.
-
-Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
-
-
-### [RF nn] Restrição de espécies para serviço
-**Completar**: Só é exibido como disponível para agendamento se for compatível com a espécie do pet.
-
-Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
-
-
-### [RF nn] Restrição de participantes
-**Completar**: Uso na funcionalidade de verificação de disponibilidade do funcionário. Descrição da diferença entre serviço individual e coletivo (passeios). **Define se é permitido, ou não, adicionar vários pets participantes a um agendamento ou registro de serviço executado cadastrado manualmente. Coletivo = permite vários pets participantes. Individual = apenas um.**
 
 Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 
@@ -97,9 +79,22 @@ Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 
 
 ### [RF nn] Cadastro de agendamento de serviços
-**Completar**: Informações comuns a todos as categorias de agendamentos. Pode conter informações adicionais, a depender da categoria atribuída ao serviço selecionado.
+**Completar**: A solução deverá permitir o cadastro de agendamentos de serviços, requerindo as informações comuns a todos as categorias de agendamentos e dados específicos à categoria atribuída ao serviço selecionado, se aplicável.
 
-Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
+Os dados que deverão ser informados em quaisquer cadastramento de agendamento serão:
+- os pets participantes do agendamento;
+- o serviço agendado;
+- a data e hora marcadas para início do serviço;
+- o endereço onde o Pet deverá ser buscado, se aplicável;
+- o endereço de devolução do pet, se aplicável;
+- o funcionário atribuído, opcionalmente informado após o cadastramento;
+- observações do agendamento, opcionalmente;
+- os remédios que deverão ser administrados, se aplicável;
+- o horário de administração, nome do remédio e instrução de administração de cada remédio, se aplicável;
+- os horários de alimentação, se aplicável;
+- as instruções de alimentação, se aplicável;
+
+Prioridade:  (X)Essencial  ( )Importante  ( )Desejável
 
 
 ### [RF nn] Visualização de agendamentos recorrentes.
@@ -114,7 +109,7 @@ Descrição do requisito.
 Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 
 
-### [RF nn] Controle e atribuição do estado de disponibilidade de funcionário
-**Completar**: Definido manualmente ou automaticamente, se a restrição de participantes do serviço em que o funcionário estiver atribuído for individual. Interpretá-lo como disponível fora dos períodos especificados.
+### [RF nn] Atribuição de estado de disponibilidade de funcionário
+A solução deverá permitir a atribuição manual do estado de disponibilidade "reservado" a um funcionário para determinada faixa de horário, em um dia específico. O Utilizador deverá informar o funcionário, o dia respectivo e o horário de início e fim de validade do estado. A Solução deverá permitir ao Usuário remover o estado de "reservado" de determinado dia e faixa de horário. O estado de disponibilidade do funcionário deverá ser interpretado pela Solução como "disponível" nos dias e nas faixas de horário onde não estiver atribuído como "reservado".
 
-Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
+Prioridade:  ( )Essencial  (x)Importante  ( )Desejável
