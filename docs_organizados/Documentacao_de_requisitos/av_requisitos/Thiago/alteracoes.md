@@ -1,5 +1,30 @@
 # Registro de alterações nos requisitos
 
+## v0.4 (24 mar. 2025)
+**Autores**: Thiago M.  
+
+**Resumo**: 
+
+**Detalhamento**:
+	
+- Requisitos funcionais renomeados:
+	* [RF 28] Cancelamento de serviços > [RF 28] Cancelamento de agendamentos
+	
+- Alterações em requisitos já existentes:
+	+ [RF 06] Cadastro de login
+	
+- Novos requisitos funcionais:
+	+ [RF nn] Console de gestão do sistema
+	+ [RF nn] Gestão de contas cadastradas
+	
+ - Requisitos removidos:
+    * [RNF 05] Facilidade de instalação
+
+- Pendências:
+	+ Atribuír prioridade nos requisitos novos
+	+ Definir corretamente a descrição dos requisitos adicionados
+	+ Validar funcionamento proposto para a restrição de participantes com a equipe
+
 ## v0.3 (22 mar. 2025)
 **Autores**: Thiago M.  
 
