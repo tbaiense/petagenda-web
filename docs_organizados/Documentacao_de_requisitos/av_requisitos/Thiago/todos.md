@@ -1,6 +1,6 @@
 # Especificação de Requisitos do Sistema
-Versão: 0.4  
-Data: 24 de março de 2025
+Versão: 0.5  
+Data: 25 de março de 2025
 <hr>  
 
 ## Termos
@@ -19,7 +19,7 @@ Data: 24 de março de 2025
 ## Requisitos Funcionais
 
 ### [RF 06] Cadastro de login
-A solução permitirá o cadastro de login, no qual o Empreendedor ou Administrador criará uma conta informando email e senha. A senha deverá possuir entre 6 a 32 caracteres alfanumúricos. Esta nova conta terá as permissões comuns, disponíveis aos Utilizadores.
+A solução permitirá o cadastro de login, no qual o Empreendedor ou Administrador criará uma conta informando email e senha. A senha deverá possuir entre 6 a 32 caracteres alfanuméricos. Esta nova conta terá as permissões comuns, disponíveis aos Utilizadores.
 
 Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 
@@ -51,7 +51,7 @@ O sistema deverá permitir aos Administradores, através do console de gestão d
 Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 
 ### [RF nn] Gestão de licenças de acesso
-O sistema deverá permitir aos Administradores, através do console de gestão do sistema, gerenciar as licenças de acesso às instâncias do sistema, permitindo:
+O sistema deverá permitir aos Administradores, através do console de gestão do sistema, gerenciar as licenças de acesso às Instâncias do sistema, permitindo:
 - conceder licenças de acesso;
 - revogar licenças de acesso;
 - prolongar licenças de acesso;
@@ -69,20 +69,20 @@ Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 O sistema deverá possuir dois tipos de licenças para acesso à Solução: "básica" e "profissional". Somente os Utilizadores que adquiriem uma licença possuirão acesso à Instância da Solução. Cada licença possuirá benefícios específicos, com relação às cotas de utilização.
 
 ### [RF nn] Cotas de utilização
-O sistema irá registrar a quantidade de serviços executados e relatórios poderão ser gerados. Essa quantia será denominada "cota de utilização".  Contas com licença profissional não deverão sofrer contabilização das cotas de serviço.
+O sistema irá registrar a quantidade de serviços executados e relatórios  que poderão ser gerados. Essa quantia será denominada "cota de utilização". As cotas de utilização serão categorizadas em três tipos: "cota de serviço", "cota de relatório simples" e "cota de relatório detalhado". Contas com licença profissional não deverão sofrer contabilização das cotas de serviço.
 
 Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 
 ### [RF nn] Cotas de serviço
-A solução deverá manter um registro com a quantia de serviços executados poderão ser registrados pelas contas dos Utilizadores com licença básica, denominada "cota de serviço". No momento em que um agendamento tiver seu estado alterado para "concluído" ou um serviço executado for cadastrado manualmente, a cota de serviço deverá ser reduzida em 1.
+A solução deverá manter um registro com a quantia de serviços executados que poderão ser registrados pelas contas dos Utilizadores com licença básica, sendo essa quantia denominada "cota de serviço". No momento em que um agendamento for cadastrado ou um serviço executado for cadastrado manualmente, a cota de serviço deverá ser reduzida em 1.
 
 Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 
 ### [RF nn] Verificação de cotas de serviço
-Se a licença atual da conta do Utilizador for a licença básica, a solução deverá verificar antes do cadastro de um agendamento e de serviço executado se a conta possui cotas de serviço disponíveis. Se houver cotas disponíveis, deverá ser permitido a criação do agendamento ou registro de serviço executado. Se não houver cotas disponíveis, uma mensagem de erro deverá ser exibida.
+Se a licença atual da conta do Utilizador for a licença básica, a solução deverá verificar antes do cadastro de um agendamento e de serviço executado se a conta possui cotas de serviço disponíveis. Se houverem cotas disponíveis, deverá ser permitido a criação do agendamento ou registro de serviço executado. Se não houverem cotas disponíveis, uma mensagem de erro deverá ser exibida. Contas com licença profissional não precisarão de cotas para cadastro de serviço executados e agendamento.
 
 ### [RF nn] Cotas de relatórios
-A solução deverá manter um registro com a quantia de relatórios poderão ser registrados pelas contas dos Utilizadores, denominada "cota de relatório". No momento em que um relatório for gerado, a cota de relatório deverá ser reduzida em 1, de acordo com o tipo de relatório gerado.
+A solução deverá manter um registro com a quantia de relatórios que poderão ser registrados pelas contas dos Utilizadores, denominada "cota de relatório". No momento em que um relatório for gerado, a cota de relatório deverá ser reduzida em 1, de acordo com o tipo de relatório gerado.
 
 Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 
@@ -113,7 +113,7 @@ O sistema deverá permitir opcionalmente o cadastro das informações da empresa
 Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 
 ### [RF nn] Cadastro de funcionários
-A solução permitirá ao operador realizar o cadastro dos funcionários, informando nome completo, telefone de contato e opcionalmente os tipos de serviços exercidos.
+A solução permitirá ao Utilizador realizar o cadastro dos funcionários, informando nome completo, telefone de contato e opcionalmente os tipos de serviços exercidos.
 
 Prioridade:  ( )Essencial  (X)Importante  ( )Desejável
 
@@ -146,6 +146,9 @@ Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 A solução permitirá ao Empreendedor visualizar a lista de pets cadastrados, sem detalhar as informações para cada consulta.
 
 Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
+
+### [RNF 14] Sistema de busca por clientes e pets
+A solução permitirá a busca por clientes e pets.
 
 ### [RF 03] Criação de serviços
 A solução permitirá a criação de novos serviços com os seguintes campos: nome do serviço, preço cobrado por cada Pet participante, descrição (opcional), foto (opcional) e a categoria do serviço. Também permitirá adicionar restrições aos serviços, como restrição de espécies para o serviço e/ou restrição de participantes (individual ou coletivo), caso desejado.
@@ -328,12 +331,6 @@ A solução deverá realizar backups automáticos dos dados, garantindo a integr
 
 ### [RNF 08] Feedback visual
 A solução deve fornecer feedback visual claro e informativo, alterando a referência de "administrador" para "operador".
-
-### [RNF 12] Sistema de usuário
-Este requisito será renomeado para "Navegação do operador" e deverá utilizar "operador" no lugar de "usuário".
-
-### [RNF 14] Sistema de busca por clientes e pets
-A solução permitirá a busca por clientes e pets com filtragem, alterando a referência de "usuário
 
 ### [RNF nn] Validação de endereços
 A solução deverá verificar as informações de endereço, impedindo o Utilizador de cadastrar um endereço contendo caracteres especiais, como "!", "@", "#", "$", e outros.
