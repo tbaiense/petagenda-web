@@ -3,15 +3,28 @@ Versão: 0.4
 Data: 24 de março de 2025
 <hr>  
 
+## Termos
+- Administrador - Provedores e mantenedores da solução;
+- Utilizador ou Empreendedor – Beneficiado da solução, que acessa somente os dados pertencentes à Instância adquirida;
+- “PetAgenda” – Nome da aplicação sendo executada;
+- “Plataforma” - O sistema PetAgenda como um todo, contendo todas as Instâncias registradas, bem como o Console da Plataforma;
+“Console” - Funcionalidade exclusiva aos Administradores onde é feita a gestão das informações e do acesso às Instâncias 
+- “Instância” - Acesso individual do Empreendedor à Plataforma, onde é somente acessível as informações de sua empresa;
+- Funcionário – Prestador de serviços do Empreendedor;
+- Cliente – Beneficiado pelos serviços do Empreendedor;
+- Pets – Animais Domésticos;
+- “DW” – Dog Walkers (Passeadores de cães);
+- “PS” – Pet Sitters (Cuidadores de pets);
+
 ## Requisitos Funcionais
 
 ### [RF 06] Cadastro de login
-A solução permitirá o cadastro de login, no qual o operador ou administrador criará uma conta com identificação de usuário login, email e senha. A seleção de uma pergunta de segurança será exigida apenas para administradores. A primeira conta a ser cadastrada no sistema será uma conta do tipo Administrador.
+A solução permitirá o cadastro de login, no qual o Empreendedor ou Administrador criará uma conta informando email e senha. A senha deverá possuir entre 6 a 32 caracteres alfanumúricos. Esta nova conta terá as permissões comuns, disponíveis aos Utilizadores.
 
 Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 
 ### [RF 07] Funcionalidade de login
-A solução permitirá que o Utilizador ou Administrador realize login utilizando um nome de usuário e senha ou email e senha.
+A solução permitirá que o Empreendedor ou Administrador realize login utilizando email e senha cadastrados.
 
 Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 
@@ -21,7 +34,7 @@ A solução permitirá que o Administrador recupere a senha por meio da resposta
 Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 
 ### [RF 09] Redefinição de Senha
-A solução permitirá a redefinição de senha apenas após o login, usando o processo de recuperação caso o Utilizador perca a senha.
+A solução permitirá a redefinição de senha apenas após o login: o Administrador ou Utilizador informará a senha atual e a nova senha. A senha será redefinida somente se a senha atual for correta e a nova senha possuir os critérios necessários.
 
 Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 
@@ -33,9 +46,7 @@ Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 ### [RF nn] Gestão de contas cadastradas
 O sistema deverá permitir aos Administradores, através do console de gestão do sistema, gerenciar as contas cadastradas no sistema, permitindo:
 - a listagem das contas cadastradas;
-- a concessão de privilégio de Administrador a uma conta cadastrada;
 - a redefinição de senha de contas cadastradas;
-- a remoção de contas cadastradas;
 
 Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 
@@ -54,33 +65,50 @@ O sistema deverá permitir aos Administradores, através do console de gestão d
 
 Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 
+### [RF nn] Licenças de acesso
+O sistema deverá possuir dois tipos de licenças para acesso à Solução: "básica" e "profissional". Somente os Utilizadores que adquiriem uma licença possuirão acesso à Instância da Solução. Cada licença possuirá benefícios específicos, com relação às cotas de utilização.
+
 ### [RF nn] Cotas de utilização
-**Completar**: Contabilização de cotas de agendamento, serviço executado e relatórios. Acúmulo de cotas não utilizadas.
+O sistema irá registrar a quantidade de serviços executados e relatórios poderão ser gerados. Essa quantia será denominada "cota de utilização".  Contas com licença profissional não deverão sofrer contabilização das cotas de serviço.
 
 Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 
-### [RF nn] Cotas de cadastro de agendamento e cadastro de serviço executado
-**Completar**: funcionamento e contabilização (não contabilizar registros de serviços executados caso sejam originários de agendamento.
+### [RF nn] Cotas de serviço
+A solução deverá manter um registro com a quantia de serviços executados poderão ser registrados pelas contas dos Utilizadores com licença básica, denominada "cota de serviço". No momento em que um agendamento tiver seu estado alterado para "concluído" ou um serviço executado for cadastrado manualmente, a cota de serviço deverá ser reduzida em 1.
 
 Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 
-### [RF nn] Cotas de geração de relatórios
-**Completar**: funcionamento, contabilização e solicitação.
+### [RF nn] Verificação de cotas de serviço
+Se a licença atual da conta do Utilizador for a licença básica, a solução deverá verificar antes do cadastro de um agendamento e de serviço executado se a conta possui cotas de serviço disponíveis. Se houver cotas disponíveis, deverá ser permitido a criação do agendamento ou registro de serviço executado. Se não houver cotas disponíveis, uma mensagem de erro deverá ser exibida.
+
+### [RF nn] Cotas de relatórios
+A solução deverá manter um registro com a quantia de relatórios poderão ser registrados pelas contas dos Utilizadores, denominada "cota de relatório". No momento em que um relatório for gerado, a cota de relatório deverá ser reduzida em 1, de acordo com o tipo de relatório gerado.
 
 Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
+
+### [RF nn] Tipos de cota de relatório
+A solução deverá distinguir entre dois tipos de cota de relatório: cota de relatório simples e cota de relatório detalhado. Cotas de relatório simples serão contabilizadas ao Utilizador gerar relatórios do tipo simples e cotas de relatório detalhado serão contabilizadas ao Utilizador gerar relatórios do tipo detalhado.
+
+Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
+
+### [RF nn] Verificação de cotas de relatório
+A solução deverá verificar antes da geração de um relatório se a conta possui cotas de relatórios disponíveis para o tipo de relatório específico. Se houver cotas disponíveis, deverá ser permitido a geração do relatório. Se não houver cotas disponíveis, uma mensagem de erro deverá ser exibida.
+
+### [RF nn] Geração automática de cotas
+A solução deverá conceder 75 cotas de serviço e 2 cotas de relatório simples no momento em que o Utilizador adquirir ou renovar a licença básica. A solução também deverá conceder 12 cotas de relatório simples e 8 cotas de relatório detalhado no momento em que o Utilizador adquirir ou renovar a licença profissional.
 
 ### [RF nn] Gerenciamento de cotas pelo Administrador
-**Completar**: Verificar, adicionar, remover e alterar cotas de agendamento e execução de serviços das empresas cadastradas.
+A solução deverá permitir ao Administrador: consultar o número de cotas disponíveis por cada conta de Utilizador, adicionar cotas, remover cotas e alterar a quantia de cotas.
 
 Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 
 ### [RF nn] Gerenciamento de cotas pelo Empreendedor
-**Completar**: Verificar e solicitar mais.
+A solução deverá permitir ao Empreendedor consultar a quantidade de cotas que possui e solicitar mais.
 
 Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 
 ### [RF nn] Cadastro de dados adicionais da empresa do Empreendedor
-**Completar**: Descrição dos dados inseridos durante o cadastro opcional das informações da empresa, usados na emissão de nota fiscal. Razão social, nome fantasia, cnpj, local, cnae, etc.
+O sistema deverá permitir opcionalmente o cadastro das informações da empresa, que poderão ser usados na emissão de nota fiscal. Os dados serão razão social, nome fantasia, cnpj e endereço, contendo logradouro, número, bairro, cidade e estado.
 
 Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 
@@ -100,12 +128,12 @@ A solução deverá permitir a atribuição manual do estado de disponibilidade 
 Prioridade:  ( )Essencial  (x)Importante  ( )Desejável
 
 ### [RF 01] Cadastro de clientes
-A solução permitirá ao operador realizar o cadastro dos clientes, informando nome completo, endereço, rua, número, bairro, cidade, telefone de contato.
+A solução permitirá ao operador realizar o cadastro dos clientes, informando nome completo, telefone de contato e endereço, contendo logradouro, número, bairro, cidade e estado.
 
 Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 
 ### [RF 33] Lista de Clientes
-A solução permitirá ao administrador e ao empreendedor consultar a lista de clientes cadastrados.
+A solução permitirá ao Empreendedor consultar a lista de clientes cadastrados.
 
 Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 
@@ -115,24 +143,45 @@ A solução permitirá que o operador realize o cadastro dos pets, informando o 
 Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 
 ### [RF 34] Lista de Pets Cadastrados
-A solução permitirá ao administrador visualizar a lista de pets cadastrados, sem detalhar as informações para cada consulta.
+A solução permitirá ao Empreendedor visualizar a lista de pets cadastrados, sem detalhar as informações para cada consulta.
 
 Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 
 ### [RF 03] Criação de serviços
-A solução permitirá a criação de novos serviços com os seguintes campos: nome do serviço, preço cobrado por cada Pet participante, descrição (opcional), foto (opcional), e categoria do serviço. As categorias podem incluir PS, DW, Saúde, Transporte, Hospedagem, Creche, PetCare, entre outras. Também permitirá adicionar restrições aos serviços, como restrição de espécies para o serviço ou restrição de participantes (individual ou coletivo), caso desejado.
+A solução permitirá a criação de novos serviços com os seguintes campos: nome do serviço, preço cobrado por cada Pet participante, descrição (opcional), foto (opcional) e a categoria do serviço. Também permitirá adicionar restrições aos serviços, como restrição de espécies para o serviço e/ou restrição de participantes (individual ou coletivo), caso desejado.
 
 Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 
 ### [RF nn] Categorias de serviço
-**Completar**: Descrição do uso na filtragem por serviços. Significado de PS, DW, Saúde, Transporte, Hospedagem, Creche, PetCare, etc.
+O sistema deverá permitir ao Utilizador a atribuição de categorias de serviço a determinados serviços. As categorias disponíveis serão: Pet Sitting, Passeio, Saúde, Transporte, Hospedagem, Creche e PetCare.
+
+Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
+
+### [RF nn] Serviços executados
+A solução deverá permitir o registro de um serviço realizado. Poderá ser gerado manualmente pelo Utilizador por meio de cadastro manual ou automaticamente, ao atribuir o estado de "concluído" ao agendamento.
+
+Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
+
+### [RF nn] Cadastro de serviços executados
+A solução deverá permitir o cadastro de serviços executados. As informações que deverão estar contidas serão:
+- os pets participantes do serviço;
+- o serviço agendado;
+- a data e hora de início do serviço;
+- a data e hora de finalização do serviço;
+- o endereço onde o Pet foi buscado, se aplicável;
+- o endereço de devolução do pet, se aplicável;
+- o funcionário atribuído;
+- observações do serviço, opcionalmente;
+- os remédios que foram administrados, se aplicável;
+- o horário de administração, nome do remédio e instrução de administração de cada remédio, se aplicável;
+- os horários de alimentação, se aplicável;
+- as instruções de alimentação, se aplicável;
+- incidentes, se aplicável;
 
 Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 
 ### [RF nn] Cadastro de agendamento de serviços
-**Completar**: A solução deverá permitir o cadastro de agendamentos de serviços, requerindo as informações comuns a todos as categorias de agendamentos e dados específicos à categoria atribuída ao serviço selecionado, se aplicável.
-
-Os dados que deverão ser informados em quaisquer cadastramento de agendamento serão:
+A solução deverá permitir o cadastro de agendamentos de serviços, requerindo as seguintes informações:
 - os pets participantes do agendamento;
 - o serviço agendado;
 - a data e hora marcadas para início do serviço;
@@ -145,50 +194,69 @@ Os dados que deverão ser informados em quaisquer cadastramento de agendamento s
 - os horários de alimentação, se aplicável;
 - as instruções de alimentação, se aplicável;
 
+A solução deverá definir o estado inicial de um agendamento recém criado como "criado" se o funcionário atribuído não for informado. Se o funcionário atribuído for informado, a solução deverá definir o estado do agendamento como "preparado".
+
 Prioridade:  (X)Essencial  ( )Importante  ( )Desejável
 
-### [RF 25] Suporte para múltiplos agendamentos por cliente
-A solução permitirá o suporte para agendamentos recorrentes (semanal, mensal, trimestral). O operador poderá criar, visualizar, alterar e cancelar esses agendamentos recorrentes.
+### [RF nn] Definição do funcionário atribuído para agendamento
+A solução deverá permitir a definição ou alteração do funcionário atribuído para um serviço agendado durante o cadastro do agendamento ou após sua criação. Ao atribuir um funcionário para um agendamento já existente e com o estado "criado", a solução deverá alterar seu estado para "preparado".
+
+### [RF 30] Controle do estado do agendamento
+A solução permitirá a controle do estado do agendamento. Os estados possíveis serão: "criado", "preparado", "pendente", "concluído" ou "cancelado". Esses estados serão gerenciados pela solução automaticamente.
 
 Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 
-### [RF 30] Gerenciamento de status do agendamento
-A solução permitirá o gerenciamento do estado do agendamento, com estados como criado, preparado, concluído ou cancelado.
+### [RF nn] Atribuição automática de estados de agendamento
+O sistema deverá atribuir estados aos agendamentos automaticamente dependendo das ações do Utilizador:
+- O estado "criado" será atribuído a agendamentos cadastrados, mas sem funcionário atribuído;
+- O estado "preparado" será atribuído a agendamentos cadastrados e com funcionário atribuído; 
+- O estado "pendente" será atribuído a agendamentos com estado de "preparado" que ultrapassaram a data e hora agendadas, mas ainda não tiveram o estado atualizado para "concluído" ou "cancelado"; 
+- O estado "concluído" será atribuído para agendamentos com estado prévio "preparado" ou "pendente" que foram marcados como concluídos pelo Utilizador; 
+- O estado "cancelado" será atribuído a agendamentos cadastrados que foram cancelados pelo Utilizador ou a agendamentos com estado "criado" que ultrapassaram a data e hora de agendamento;
+
+Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
+
+### [RF nn] Conclusão de agendamentos
+A solução deverá permitir ao Utilizador marcar agendamentos com o estado "preparado" ou "pendente" como concluídos. Ao concluir um agendamento, a solução deverá alterar o estado do agendamento para "concluído", gerar um registro de serviço executado utilizando as informações do agendamento, definir a data e hora atual como a data de finalização.
 
 Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 
 ### [RF 28] Cancelamento de agendamentos
-A solução permitirá o cancelamento de agendamentos, mantendo os dados no sistema e alterando apenas o estado do agendamento para "cancelado".
-
-Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
-
-### [RF nn] Visualização de agendamentos recorrentes.
-Descrição do requisito.
-
-Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
-
-### [RF nn] Cancelamento de agendamentos recorrentes
-Descrição do requisito.
-
-Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
-
-### [RF nn] Serviços executados
-**Completar**: Descrição de um registro de um serviço realizado, seja ele agendado ou não. Data, hora, funcionário, pets participantes, etc. Poderá ser gerado manualmente pelo Utilizador por meio de cadastro ou automaticamente, ao atribuir o estado de "concluído" ao agendamento.
-
-Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
-
-### [RF nn] Cadastro manual de serviços executados
-**Completar**: Descrição de um registro de um serviço realizado, seja ele agendado ou não. Informar dados comuns a todos os serviços e específicos de categorias de serviços, se aplicável. Descrição do processo, serviço executado, se foi agendado, data e hora de finalização, data e hora de início, incidentes, observações, pets envolvidos, tutor responsável)
-
-Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
-
-### [RF nn] Cadastro automático de serviços executados
-**Completar**: Gerado pelo sistema ao alterar o estado de um agendamento para "concluído". **?Gerar um registro para um pet, se serviço do agendento tiver restrição "individual" de participantes. Gerar um resgistro contendo todos os pets participantes, se serviço do agendamento for "coletivo"?**
+A solução permitirá ao Utilizador o cancelamento de agendamentos que ainda não possuem o estado "concluído", mantendo os dados no sistema. Ao cancelar um agendamento, a solução deverá alterar o estado do agendamento para "cancelado".
 
 Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 
 ### [RF 13] Consulta de agendamentos
-A solução permitirá a consulta ao histórico de agendamentos, com informações como dia, hora, funcionário responsável, pet, serviço realizado e observações adicionais. Será possível filtrar agendamentos por data, cliente e funcionário.
+A solução permitirá a consulta ao histórico de agendamentos, com informações como dia, hora, funcionário responsável, pet, serviço realizado e observações adicionais. Será possível filtrar agendamentos por data, cliente, funcionário e estado do agendamento.
+
+Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
+
+### [RF 25] Suporte para múltiplos agendamentos por cliente
+A solução permitirá o suporte para agendamentos recorrentes, onde o sistema cadastrará os agendamentos automaticamente para o período definido. O operador poderá criar, visualizar, alterar e cancelar esses agendamentos recorrentes. Os pacotes de agendamento possuirão três possíveis estados: "ativo", "concluído" ou "cancelado".
+
+Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
+
+### [RF nn] Criação de agendamentos recorrentes
+A solução permitirá o cadastro de agendamentos recorrentes, requerendo como informações necessárias:
+- o serviço requerido;
+- os pets participantes;
+- a data de início dos agendamentos;
+- a frequência dos agendamentos, sendo semanal ou mensal;
+- os dias dentro da semana ou mês;
+- a data final dos agendamentos;
+
+Ao criar um novo pacote de agendamentos recorrentes, a solução deverá atribuir o estado do pacote como "ativo".
+
+### [RF nn] Visualização de agendamentos recorrentes
+A solução deverá permitir a visualização dos agendamentos recorrentes em estado "ativo" para determinado cliente, exibindo os agendamentos de forma organizada.
+
+Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
+
+### [RF nn] Conclusão de pacote de agendamentos recorrentes
+A solução deverá alterar o estado de determinado pacote de agendamentos para "concluído" quando o último agendamento for concluído.
+
+### [RF nn] Cancelamento de agendamentos recorrentes
+A solução deverá permitir o cancelamento de agendamentos recorrentes de determinado cliente, marcando todos os agendamentos com o estado de "criado" ou "preparado" como "cancelado" e atualizando pacote de agendamento para o estado de "cancelado".
 
 Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 
@@ -207,33 +275,46 @@ A solução permitirá a exclusão de dados, com a possibilidade de excluir agen
 
 Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 
+### [RF 31] Exportação de Dados
+A solução permitirá a exportação de dados por Administradores e Empreendedores, conforme as permissões atribuídas.
+
+Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
+
 ### [RF 17] Registro de incidentes
 A solução permitirá o registro de incidentes, associando-os aos serviços realizados. O registro incluirá o tipo de incidente (emergência médica, brigas com outros pets, mau comportamento, agressão), pets envolvidos, data, hora, descrição do incidente e medidas tomadas.
 
 Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 
-### [RF 18] Relatório em PDF com informações de serviços prestados
-A solução permitirá a geração de relatórios em PDF com as informações dos serviços prestados, mas sem incluir o endereço do cliente.
-
-Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
-
-### [RF 19] Relatórios de desempenho de funcionários
-A solução permitirá a geração de relatórios de desempenho de funcionários, com filtros de período e métricas ajustadas, removendo a métrica de tempo médio.
-
-Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
-
-### [RF 20] Relatório financeiro
-A solução permitirá a geração de relatórios financeiros, detalhando informações como valor gasto com funcionários e montante gerado por agendamentos. O relatório incluirá filtros de período.
-
-Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
-
-### [RF 31] Exportação de Dados
-A solução permitirá a exportação de dados por administradores e empreendedores, conforme as permissões atribuídas.
-
-Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
-
 ### [RF 37] Visualização de Incidentes
 A solução permitirá visualizar os incidentes registrados, incluindo todas as informações descritas no requisito de tipo de incidente.
+
+Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
+
+### [RF 18] Exportação do registro de informações de serviços prestados
+A solução permitirá a exportação em PDF das informações dos serviços prestados, sem incluir o endereço do cliente.
+
+Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
+
+### [RF nn] Registro mensal de gastos com pagamento de colaboradores
+A solução permitirá o registro de gasto mensal com pagamento de funcionários, informando o mês referente e a quantia gasta em Reais.
+
+Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
+
+### [RF nn] Geração de relatórios
+A solução deverá permitir ao Utilizador a geração de relatórios simples e detalhados, de acordo com a quantidade de cotas disponíveis para cada tipo de relatório.
+
+### [RF 20] Relatório simples financeiro
+A solução permitirá a geração de relatórios simples financeiro, detalhando informações como valor gasto com funcionários e montante gerado por serviços executados. O relatório incluirá filtros de período.
+
+Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
+
+### [RF 19] Relatório detalhado de desempenho de funcionários
+A solução permitirá a geração de relatórios detalhados de desempenho de funcionários, com filtros de período e métricas ajustadas.
+
+Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
+
+### [RF 19] Relatório detalhado de desempenho de serviços
+A solução permitirá a geração de relatórios detalhados de desempenho de serviço, informando quais os serviços mais executados em determinado período de tempo e ordem descendente.
 
 Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 
