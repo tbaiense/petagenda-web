@@ -204,6 +204,8 @@ Prioridade:  (X)Essencial  ( )Importante  ( )Desejável
 ### [RF nn] Definição do funcionário atribuído para agendamento
 A solução deverá permitir a definição ou alteração do funcionário atribuído para um serviço agendado durante o cadastro do agendamento ou após sua criação. Ao atribuir um funcionário para um agendamento já existente e com o estado "criado", a solução deverá alterar seu estado para "preparado".
 
+Prioridade:  (X)Essencial  ( )Importante  ( )Desejável
+
 ### [RF 30] Controle do estado do agendamento
 A solução permitirá a controle do estado do agendamento. Os estados possíveis serão: "criado", "preparado", "pendente", "concluído" ou "cancelado". Esses estados serão gerenciados pela solução automaticamente.
 
@@ -232,7 +234,7 @@ Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 ### [RF 13] Consulta de agendamentos
 A solução permitirá a consulta ao histórico de agendamentos, com informações como dia, hora, funcionário responsável, pet, serviço realizado e observações adicionais. Será possível filtrar agendamentos por data, cliente, funcionário e estado do agendamento.
 
-Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
+Prioridade:  (x)Essencial  ( )Importante  ( )Desejável
 
 ### [RF 25] Suporte para múltiplos agendamentos por cliente
 A solução permitirá o suporte para agendamentos recorrentes, onde o sistema cadastrará os agendamentos automaticamente para o período definido. O operador poderá criar, visualizar, alterar e cancelar esses agendamentos recorrentes. Os pacotes de agendamento possuirão três possíveis estados: "ativo", "concluído" ou "cancelado".
@@ -299,7 +301,7 @@ A solução permitirá a exportação em PDF das informações dos serviços pre
 Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 
 ### [RF nn] Registro mensal de gastos com pagamento de colaboradores
-A solução permitirá o registro de gasto mensal com pagamento de funcionários, informando o mês referente e a quantia gasta em Reais.
+A solução permitirá o registro opcional de gasto mensal com pagamento de funcionários, informando o mês referente e a quantia gasta em Reais.
 
 Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 
@@ -316,7 +318,7 @@ A solução permitirá a geração de relatórios detalhados de desempenho de fu
 
 Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
 
-### [RF 19] Relatório detalhado de desempenho de serviços
+### [RF nn] Relatório detalhado de desempenho de serviços
 A solução permitirá a geração de relatórios detalhados de desempenho de serviço, informando quais os serviços mais executados em determinado período de tempo e ordem descendente.
 
 Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
@@ -348,7 +350,7 @@ A solução deverá garantir o cumprimento das restrições do serviço selecion
 Prioridade:  ( )Essencial  ( )Importante  (x)Desejável
 
 ### [RNF nn] Restrição de espécies para serviço
-Esta restrição limita as espécies que poderão ser atendidas  pelo serviço, podendo ser um ou mais.
+Esta restrição limita as espécies que poderão ser atendidas pelo serviço, podendo ser uma ou mais.
 
 Prioridade:  ( )Essencial  ( )Importante  (x)Desejável
 
