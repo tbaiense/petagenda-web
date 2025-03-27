@@ -176,8 +176,7 @@ A solução deverá permitir o cadastro de serviços executados. As informaçõe
 - o funcionário atribuído;
 - observações do serviço, opcionalmente;
 - os remédios que foram administrados, se aplicável;
-- o horário de administração, nome do remédio e instrução de administração de cada remédio, se aplicável;
-- os horários de alimentação, se aplicável;
+- nome do remédio e instrução de administração de cada remédio, se aplicável;
 - as instruções de alimentação, se aplicável;
 - incidentes, se aplicável;
 
@@ -193,8 +192,7 @@ A solução deverá permitir o cadastro de agendamentos de serviços, requerindo
 - o funcionário atribuído, opcionalmente informado após o cadastramento;
 - observações do agendamento, opcionalmente;
 - os remédios que deverão ser administrados, se aplicável;
-- o horário de administração, nome do remédio e instrução de administração de cada remédio, se aplicável;
-- os horários de alimentação, se aplicável;
+- nome do remédio e instrução de administração de cada remédio, se aplicável;
 - as instruções de alimentação, se aplicável;
 
 A solução deverá definir o estado inicial de um agendamento recém criado como "criado" se o funcionário atribuído não for informado. Se o funcionário atribuído for informado, a solução deverá definir o estado do agendamento como "preparado".
