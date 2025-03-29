@@ -1,2 +1,5 @@
 *.drawio.bkp
 *.kate-swp
+bd/.dbeaver
+bd/.settings
+bd.project
