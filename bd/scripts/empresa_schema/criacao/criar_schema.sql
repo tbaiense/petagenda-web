@@ -113,6 +113,7 @@ CREATE TABLE info_servico (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     id_funcionario INT,
     observacoes VARCHAR(250),
+    end_pet_buscar_devolver_igual ENUM("S", "N"),
     
     FOREIGN KEY (id_funcionario) REFERENCES funcionario(id)
 );
@@ -123,6 +124,7 @@ CREATE TABLE pet_servico (
     id_info_servico INT NOT NULL,
     instrucao_alimentacao TEXT,
     
+    UNIQUE (id_pet, id_info_servico),
     FOREIGN KEY (id_pet) REFERENCES pet(id),
     FOREIGN KEY (id_info_servico) REFERENCES info_servico(id)
 );
@@ -136,14 +138,15 @@ CREATE TABLE remedio_pet_servico (
 ); 
 
 CREATE TABLE endereco_info_servico (
-    id_info_servico INT NOT NULL PRIMARY KEY,
+    id_info_servico INT NOT NULL,
     tipo ENUM("buscar", "devolver") NOT NULL,
     logradouro VARCHAR(128) NOT NULL,
     numero VARCHAR(16) NOT NULL,
-    bairo VARCHAR(64) NOT NULL,
+    bairro VARCHAR(64) NOT NULL,
     cidade VARCHAR(64) NOT NULL,
     estado CHAR(2) NOT NULL DEFAULT "ES",
     
+    PRIMARY KEY (id_info_servico, tipo),
     FOREIGN KEY (id_info_servico) REFERENCES info_servico(id)
 );
 
