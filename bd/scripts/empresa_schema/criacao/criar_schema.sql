@@ -114,6 +114,8 @@ CREATE TABLE info_servico (
     id_servico_oferecido INT NOT NULL,
     id_funcionario INT,
     observacoes VARCHAR(250),
+    valor_servico DECIMAL(8,2),
+    valor_total DECIMAL(8,2) NOT NULL,
 
     FOREIGN KEY (id_servico_oferecido) REFERENCES servico_oferecido(id),
     FOREIGN KEY (id_funcionario) REFERENCES funcionario(id)
@@ -124,7 +126,8 @@ CREATE TABLE pet_servico (
     id_pet INT NOT NULL,
     id_info_servico INT NOT NULL,
     instrucao_alimentacao TEXT,
-    
+    valor_pet DECIMAL(7,2),
+
     UNIQUE (id_pet, id_info_servico),
     FOREIGN KEY (id_pet) REFERENCES pet(id),
     FOREIGN KEY (id_info_servico) REFERENCES info_servico(id)
@@ -212,7 +215,12 @@ CREATE TABLE agendamento (
     FOREIGN KEY (id_servico_realizado) REFERENCES servico_realizado(id)
 );
 
-
+CREATE TABLE despesa (
+    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    data DATE NOT NULL,
+    tipo ENUM("pagamento-funcionario", "prejuizo", "manutencao", "outro") NOT NULL,
+    valor DECIMAL(10,2) NOT NULL
+);
 
 
 
