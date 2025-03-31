@@ -188,18 +188,4 @@ INSERT INTO pet (id_cliente, id_especie, nome, raca, porte, cor, sexo, e_castrad
     (47, 2, 'Pepper', 'Cornish Rex', 'P', 'Preto', 'F', 'S', 'Curiosa'),
     (47, 1, 'Daisy', 'Yorkshire Terrier', 'P', 'Cinza e dourado', 'F', 'N', 'Energética'),
     (50, 2, 'Jack', 'Norueguês da Floresta', 'G', 'Rajado', 'M', 'S', 'Gentil');
-```
-
-
-
-
-
-
-
-
-
-
-
-
-
 
