@@ -5,6 +5,7 @@ CREATE TABLE pet_servico (
     instrucao_alimentacao TEXT,
     valor_pet DECIMAL(7,2),
 
+	CONSTRAINT chk_pet_servico_valor_pet CHECK (valor_pet >= 0),
     UNIQUE (id_pet, id_info_servico),
     FOREIGN KEY (id_pet) REFERENCES pet(id),
     FOREIGN KEY (id_info_servico) REFERENCES info_servico(id)

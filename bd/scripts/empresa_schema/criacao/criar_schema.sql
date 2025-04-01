@@ -1,7 +1,6 @@
 CREATE SCHEMA 
     empresa_teste 
-    CHARACTER SET utf8mb4 
-    COLLATE utf8mb4_0900_ai_ci;
+    CHARACTER SET utf8mb4;
 
 SET foreign_key_checks = OFF;
 
@@ -13,13 +12,13 @@ CREATE TABLE funcionario (
     telefone CHAR(15) NOT NULL
 );
 
-
 CREATE TABLE reserva_funcionario(
     id_funcionario INT NOT NULL,
     data DATE NOT NULL,
     hora_inicio TIME NOT NULL,
     hora_fim TIME NOT NULL,
     
+	CONSTRAINT chk_reserva_funcionario_hora_inicio_AND_hora_fim CHECK (hora_inicio < hora_fim),
     FOREIGN KEY (id_funcionario) REFERENCES funcionario(id)
 );
 
@@ -38,6 +37,7 @@ CREATE TABLE servico_oferecido (
     foto TEXT,
     restricao_participante ENUM("coletivo", "individual") NOT NULL DEFAULT "coletivo",
     
+	CONSTRAINT chk_servico_oferecido_preco CHECK (preco >= 0),
     FOREIGN KEY (id_categoria) REFERENCES categoria_servico(id)
 );
 
@@ -54,7 +54,6 @@ CREATE TABLE especie (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(64) NOT NULL
 );
-
 
 CREATE TABLE restricao_especie (
     id_servico_oferecido INT NOT NULL,
@@ -117,6 +116,8 @@ CREATE TABLE info_servico (
     valor_servico DECIMAL(8,2),
     valor_total DECIMAL(8,2) NOT NULL,
 
+	CONSTRAINT chk_info_servico_valor_servico CHECK (valor_servico >= 0),
+	CONSTRAINT chk_info_servico_valor_total CHECK (valor_total >= 0),
     FOREIGN KEY (id_servico_oferecido) REFERENCES servico_oferecido(id),
     FOREIGN KEY (id_funcionario) REFERENCES funcionario(id)
 );
@@ -128,6 +129,7 @@ CREATE TABLE pet_servico (
     instrucao_alimentacao TEXT,
     valor_pet DECIMAL(7,2),
 
+	CONSTRAINT chk_pet_servico_valor_pet CHECK (valor_pet >= 0),
     UNIQUE (id_pet, id_info_servico),
     FOREIGN KEY (id_pet) REFERENCES pet(id),
     FOREIGN KEY (id_info_servico) REFERENCES info_servico(id)
@@ -188,6 +190,7 @@ CREATE TABLE servico_realizado (
     dt_hr_fim DATETIME NOT NULL,
     dt_hr_inicio DATETIME,
     
+	CONSTRAINT chk_servico_realizado_dt_hr_fim_AND_dt_hr_inicio CHECK (dt_hr_fim > dt_hr_inicio),
     FOREIGN KEY (id_info_servico) REFERENCES info_servico(id)
 );
 
@@ -219,7 +222,9 @@ CREATE TABLE despesa (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     data DATE NOT NULL,
     tipo ENUM("pagamento-funcionario", "prejuizo", "manutencao", "outro") NOT NULL,
-    valor DECIMAL(10,2) NOT NULL
+    valor DECIMAL(10,2) NOT NULL,
+	
+	CONSTRAINT chk_despesa_valor CHECK (valor > 0)
 );
 
 

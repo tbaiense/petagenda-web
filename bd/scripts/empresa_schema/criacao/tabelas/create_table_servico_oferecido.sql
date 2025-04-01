@@ -8,5 +8,6 @@ CREATE TABLE servico_oferecido (
     foto TEXT,
     restricao_participante ENUM("coletivo", "individual") NOT NULL DEFAULT "coletivo",
     
+	CONSTRAINT chk_servico_oferecido_preco CHECK (preco >= 0),
     FOREIGN KEY (id_categoria) REFERENCES categoria_servico(id)
 );
