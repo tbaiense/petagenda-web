@@ -6,7 +6,7 @@ CREATE TABLE agendamento (
     id_pacote_agend INT,
     id_servico_realizado INT UNIQUE,
     valor_servico DECIMAL(8,2),
-    valor_total DECIMAL(8,2) NOT NULL,
+    valor_total DECIMAL(8,2),
 
     CONSTRAINT chk_agendamento_valor_servico CHECK (valor_servico >= 0),
     CONSTRAINT chk_agendamento_valor_total CHECK (valor_total >= 0),

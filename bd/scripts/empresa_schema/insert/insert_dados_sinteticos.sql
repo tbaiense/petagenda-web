@@ -2,9 +2,6 @@
 SCRIPT DE INSERÇÃO DE DADOS PARA TESTE DO SISTEMA. NÃO APLICAR EM PRODUÇÃO!
 */
 
-SET autocommit = 0;
-START TRANSACTION;
-
 INSERT INTO servico_oferecido (nome, preco, tipo_preco, id_categoria, restricao_participante) VALUES
     ("Passeio para cães", 50.00, "pet", 1, "coletivo"),
     ("Passeio para gatos", 45.00, "pet", 2, "coletivo"),
@@ -291,7 +288,3 @@ INSERT INTO info_servico (
     (1, 1),
     (2, 1),
     (5, 2);
-
-
-COMMIT;
-SET autocommit = 1;

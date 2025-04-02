@@ -1,3 +1,48 @@
+/* EXEMPLO DE USO:
+CALL ins_servico_realizado('
+{
+    "servico": 1,
+    "funcionario": 1,
+    "inicio": "2025-01-01T10:00:00",
+    "fim": "2025-01-01T12:00:00",
+    "observacoes": "observacaoooooooo",
+    "pets" : [
+        {
+            "id": 1,
+            "alimentacao": "comida 1",
+            "remedios": [
+                {
+                    "nome": "remedio 1 pet 1",
+                    "instrucoes": "aplicar 1 ao pet 1"
+                }
+            ]
+        },
+        {
+            "id": 2,
+            "alimentacao": "comida 2"
+        },
+        {
+            "id": 4,
+            "alimentacao": "comida 3",
+            "remedios": [
+                {
+                    "nome": "remedio 1 pet 3",
+                    "instrucoes": "aplicar 1 ao pet 3"
+                },
+                {
+                    "nome": "remedio 2 pet 3",
+                    "instrucoes": "aplicar 2 ao pet 3"
+                }
+            ]
+        }
+    ],
+    "enderecos": [
+        {"tipo": "devolver", "logradouro": "Rua A", "numero": "1", "bairro": "Primeiro", "cidade": "I", "estado": "ST"},
+        {"tipo": "buscar", "logradouro": "RUA B", "numero": "2", "bairro": "Segundo", "cidade": "II", "estado": "ND"}
+    ]
+}');
+*/
+
 DELIMITER $$
 CREATE PROCEDURE ins_servico_realizado (IN obj JSON)
     /* Formato para objeto JSON:
@@ -21,80 +66,104 @@ CREATE PROCEDURE ins_servico_realizado (IN obj JSON)
     NOT DETERMINISTIC
     MODIFIES SQL DATA
     BEGIN
-		-- Infos de serviço
-		DECLARE id_info_servico INT;
-		DECLARE id_serv, id_func, enderecos_length INT;
-		DECLARE dt_hr_ini, dt_hr_fim DATETIME;
-		DECLARE obs  VARCHAR(250);
-		-- Info pets
-		DECLARE c_pet INT DEFAULT 0;
-		DECLARE pet_obj JSON;
-		DECLARE pets_length INT;
-		DECLARE id_pet INT;
-		DECLARE alimentacao  TEXT;
-		
-		DECLARE c_remedio INT DEFAULT 0;
-		DECLARE remedio_obj JSON;
-		DECLARE remedios_length INT;
-		DECLARE nome_rem VARCHAR(128);
-		DECLARE instrucoes_rem TEXT;
-		-- Endereços
-		DECLARE c_end INT DEFAULT 0;
-		DECLARE end_obj JSON;
-		DECLARE tipo_end VARCHAR(16);
-		DECLARE logr VARCHAR(128);
-		DECLARE num_end VARCHAR(16);
-		DECLARE bairro VARCHAR(64);
-		DECLARE cid VARCHAR(64);
-		DECLARE est VARCHAR(2);
-	
-		-- Condições
-		DECLARE err_not_object CONDITION FOR SQLSTATE '45000';
-		DECLARE err_no_pets CONDITION FOR SQLSTATE '45001';
-		
-		-- Validação
-		/*
-		IF JSON_TYPE(obj) <> "OBJECT" THEN
-			SIGNAL err_not_object SET MESSAGE_TEXT = 'Argumento não é um objeto JSON';
-		ELSEIF JSON_TYPE(JSON_EXTRACT(obj, '$.servico')) <> 'INTEGER' THEN 
-			-- erro servico
-		ELSEIF JSON_TYPE(JSON_EXTRACT(obj, '$.funcionario')) <> 'INTEGER' THEN
-			-- erro funcionario
-		ELSEIF JSON_TYPE(JSON_EXTRACT(obj, '$.inicio')) <> 'DATETIME' THEN
-			-- erro data
-		ELSEIF JSON_TYPE(JSON_EXTRACT(obj, '$.observacoes')) NOT IN ('STRING', 'NULL') THEN
-			-- erro obs
-		ELSEIF JSON_TYPE(JSON_EXTRACT(obj, '$.pets')) <> 'ARRAY' THEN
-			SIGNAL err_no_pets SET MESSAGE_TEXT = 'Pets nao sao array';
-		ELSEIF JSON_LENGTH(obj, '$.pets') = 0 THEN
-			SIGNAL err_no_pets SET MESSAGE_TEXT = 'Array de pets nao pode ser vazia';
-		ELSEIF JSON_TYPE(obj, '$.enderecos') NOT IN ('ARRAY', 'NULL') THEN
-			-- erro enderecos
-		END IF;
-		*/
-		START TRANSACTION;
-		-- Cadastro do info_servico
-		SET id_serv = JSON_EXTRACT(obj, '$.servico');
-		SET id_func = JSON_EXTRACT(obj, '$.funcionario');
-		SET obs = JSON_UNQUOTE(JSON_EXTRACT(obj, '$.observacoes'));
-		CALL ins_info_servico(id_serv, id_func, obs);
-		SET id_info_servico = LAST_INSERT_ID();
-		
-		SET pets_length = JSON_LENGTH(obj, '$.pets');
-		WHILE c_pet < pets_length do
-			SET pet_obj = JSON_EXTRACT(obj, CONCAT('$.pets[', c_pet, ']'));
-			
-			SET id_pet = JSON_EXTRACT(pet_obj, '$.id');
-			SET alimentacao = JSON_UNQUOTE(JSON_EXTRACT(pet_obj, '$.alimentacao'));
-			CALL ins_pet_servico(id_pet, id_info_servico, alimentacao);
-			
-			SET c_pet = c_pet + 1;
-		END WHILE;
-		
-		COMMIT;
+        -- Infos de serviço
+        DECLARE id_info_serv INT; /* PK da tabela info_servico*/
+        DECLARE id_serv, id_func, enderecos_length INT;
+        DECLARE dt_hr_ini, dt_hr_fim DATETIME;
+        DECLARE obs  VARCHAR(250);
+        -- Info pets
+        DECLARE c_pet INT DEFAULT 0;
+        DECLARE pet_obj JSON;
+        DECLARE pets_length INT;
+        DECLARE id_pet_servico INT; /* PK da tabela pet_servico*/
+        DECLARE id_pet INT;
+        DECLARE alimentacao  TEXT;
+        -- Remedios pet
+        DECLARE c_remedio INT DEFAULT 0; /* Variável de contagem do remédio atual da array*/
+        DECLARE remedio_obj JSON; /* Objeto remédio da array */
+        DECLARE remedios_length INT; /* Tamanho da array remedios*/
+        DECLARE nome_rem VARCHAR(128);
+        DECLARE instrucoes_rem TEXT;
+        -- Endereços
+        DECLARE c_endereco INT DEFAULT 0;
+        DECLARE endereco_length INT;
+        DECLARE end_obj JSON;
+        DECLARE tipo_end VARCHAR(16);
+        DECLARE logr VARCHAR(128);
+        DECLARE num_end VARCHAR(16);
+        DECLARE bairro VARCHAR(64);
+        DECLARE cid VARCHAR(64);
+        DECLARE est VARCHAR(2);
+    
+        -- Condições
+        DECLARE err_not_object CONDITION FOR SQLSTATE '45000';
+        DECLARE err_no_pets CONDITION FOR SQLSTATE '45001';
+        
+        -- Validação
+
+        IF JSON_TYPE(obj) <> "OBJECT" THEN
+            SIGNAL err_not_object SET MESSAGE_TEXT = 'Argumento não é um objeto JSON';
+        ELSEIF JSON_TYPE(JSON_EXTRACT(obj, '$.pets')) <> 'ARRAY' THEN
+            SIGNAL err_no_pets SET MESSAGE_TEXT = 'Pets nao sao array';
+        ELSEIF JSON_LENGTH(obj, '$.pets') = 0 THEN
+            SIGNAL err_no_pets SET MESSAGE_TEXT = 'Array de pets nao pode ser vazia';
+        END IF;
+
+        -- Cadastro do info_servico
+        SET id_serv = JSON_EXTRACT(obj, '$.servico');
+        SET id_func = JSON_EXTRACT(obj, '$.funcionario');
+        SET obs = JSON_UNQUOTE(JSON_EXTRACT(obj, '$.observacoes'));
+        CALL ins_info_servico(id_serv, id_func, obs);
+        SET id_info_serv = LAST_INSERT_ID();
+        
+        -- Loop de inserção de pets e remédios
+        SET pets_length = JSON_LENGTH(obj, '$.pets');
+        WHILE c_pet < pets_length DO
+            -- Obtem objeto da array
+            SET pet_obj = JSON_EXTRACT(obj, CONCAT('$.pets[', c_pet, ']'));
+            
+            SET id_pet = JSON_EXTRACT(pet_obj, '$.id');
+            SET alimentacao = JSON_UNQUOTE(JSON_EXTRACT(pet_obj, '$.alimentacao'));
+            CALL ins_pet_servico(id_pet, id_info_serv, alimentacao);
+            SET id_pet_servico = LAST_INSERT_ID();
+            
+            -- Loop de inserção de remédios do pet
+            SET c_remedio = 0;
+            SET remedios_length = JSON_LENGTH(pet_obj, '$.remedios');
+            WHILE c_remedio < remedios_length DO
+                SET remedio_obj = JSON_EXTRACT( pet_obj, CONCAT('$.remedios[', c_remedio, ']') );
+                SET nome_rem = JSON_EXTRACT(remedio_obj, '$.nome');
+                SET instrucoes_rem = JSON_EXTRACT(remedio_obj, '$.instrucoes');
+                
+                CALL ins_remedio_pet_servico(id_pet_servico, nome_rem, instrucoes_rem);
+                SET c_remedio = c_remedio + 1;
+            END WHILE;
+        
+            SET c_pet = c_pet + 1;
+        END WHILE;
+        
+        -- Loop de inserção de endereços (validação é feita por trigger da tabela endereco_info_servico)
+        SET endereco_length = JSON_LENGTH(obj, '$.enderecos');
+        WHILE c_endereco < endereco_length DO
+            SET end_obj =   JSON_EXTRACT( obj, CONCAT('$.enderecos[', c_endereco, ']') );
+        
+            SET tipo_end = JSON_UNQUOTE(JSON_EXTRACT(end_obj, '$.tipo'));
+            SET logr = JSON_UNQUOTE(JSON_EXTRACT(end_obj, '$.logradouro'));
+            SET num_end = JSON_UNQUOTE(JSON_EXTRACT(end_obj, '$.numero'));
+            SET bairro = JSON_UNQUOTE(JSON_EXTRACT(end_obj, '$.bairro'));
+            SET cid = JSON_UNQUOTE(JSON_EXTRACT(end_obj, '$.cidade'));
+            SET est = JSON_UNQUOTE(JSON_EXTRACT(end_obj, '$.estado'));
+        
+            CALL ins_endereco_info_servico(id_info_serv, tipo_end, logr, num_end, bairro, cid, est);
+        
+            SET c_endereco = c_endereco + 1;
+        END WHILE;
+    
+        -- Inserção do serviço realizado
+        SET dt_hr_ini = CAST( JSON_UNQUOTE(JSON_EXTRACT(obj, '$.inicio')) AS DATETIME );
+        SET dt_hr_fim = CAST( JSON_UNQUOTE(JSON_EXTRACT(obj, '$.fim')) AS DATETIME );
+    
+        INSERT INTO servico_realizado (id_info_servico, dt_hr_inicio, dt_hr_fim) VALUE (id_info_serv, dt_hr_ini, dt_hr_fim);
     END;$$
 DELIMITER ;
 
-/* TESTE: 
-'{"servico": 1,"funcionario": 1,"observacoes": "observacaoooooooo","pets" : [{"id": 1,"alimentacao": "comida 1"},{"id": 2,"alimentacao": "comida 2"},{"id": 4,"alimentacao": "comida 3"}]}'
-*/

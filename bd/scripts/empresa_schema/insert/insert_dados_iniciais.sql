@@ -2,9 +2,6 @@
 SCRIPT DE INSERÇÃO DE DADOS INICIAIS NECESSÁRIOS PARA O FUNCIONAMENTO
 */
 
-SET autocommit = 0;
-START TRANSACTION;
-
 INSERT INTO especie (nome) VALUES
     ("Cão"),
     ("Gato"),
@@ -24,6 +21,3 @@ INSERT INTO categoria_servico (nome) VALUES
     ("Hospedagem"),
     ("Creche"),
     ("PetCare");
-
-COMMIT;
-SET autocommit = 1;
