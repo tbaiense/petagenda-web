@@ -92,7 +92,7 @@ CREATE PROCEDURE ins_agendamento (IN obj JSON)
         DECLARE num_end VARCHAR(16);
         DECLARE bairro VARCHAR(64);
         DECLARE cid VARCHAR(64);
-        DECLARE est VARCHAR(2);
+        DECLARE est CHAR(2);
     
         -- Condições
         DECLARE err_not_object CONDITION FOR SQLSTATE '45000';

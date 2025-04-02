@@ -9,3 +9,10 @@ Este _schema_ irá conter:
 - Os eventos utilizados pelo SGDB
 - Os triggers utilizados pelo SGBD
 - Os stored programs utilizados pelo SGBD
+- 
+# O _schema_ "empresa"
+Este _schema_ irá conter:
+- dados da empresa em questão
+- serviços oferecidos
+- registros de agendamentos e serviços executados
+- os triggers de validação dos dados e automatização
