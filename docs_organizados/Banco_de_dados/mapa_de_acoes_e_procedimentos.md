@@ -3,10 +3,10 @@
 Para a comunicação com o SGBD e a realização das atividades de CRUD, será possível usar procedimentos já existentes para tornar esses processos mais fáceis.
 
 ### Convenções utilizadas na descrição de formatos JSON:  
-- **?**`<`_TIPO_`>` | **?**`{}` | **?**`[]`  
+- **?**`<TIPO>` | **?**`{}` | **?**`[]`  
     **Descrição:** Sinaliza que o valor é opcional. O valor da propriedade poderá ser atribuído como `undefined` ou `null`. A propriedade poderá ser omitida caso desejado.
     
-- **+**`<`_TIPO_`>` | **+**`{}` | **+**`[]`  
+- **+**`<TIPO>` | **+**`{}` | **+**`[]`  
     **Descrição:** Sinaliza que o valor deverá ocorrer uma ou mais vezes.
 <hr>
 
