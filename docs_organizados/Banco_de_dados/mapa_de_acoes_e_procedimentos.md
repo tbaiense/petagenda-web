@@ -118,7 +118,7 @@ Tabela: `agendamento`
         "data_hora_marcada": <DATETIME>,
         "info": {
             "servico": <INT>,
-            "funcionario": <INT>,
+            "funcionario": ?<INT>,
             "observacoes": ?<VARCHAR(250)>,
             "pets" : [
                 +{

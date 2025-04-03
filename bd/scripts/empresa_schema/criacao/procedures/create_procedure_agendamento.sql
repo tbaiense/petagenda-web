@@ -1,17 +1,16 @@
 /*
-REALIZA PROCESSOS NA TABELA "servico_realizado" com base nos parâmetros
+REALIZA PROCESSOS NA TABELA "agendamento" com base nos parâmetros
 
-Formato para "objServ" para "acao" "insert":
+Formato para "objAgend" para "acao" "insert":
 {
-    "inicio": "2025-04-01T08:34:23.388", <-- Data e hora de início da realização do serviço
-    "fim": "2025-04-01T10:12:23.388", <-- Data e hora de finalização do serviço
+    "data_hora_marcada": <DATETIME>,
     "info": {
-        "servico": <INT>, <-- id serviço a ser realizado (id_servico_oferecido)
+        "servico": <INT>, <-- PK da tabela servico_oferecido (id_servico_oferecido em "info_servico")
         "funcionario": ?<INT>, <-- id do funcionário atribuído
         "observacoes": ?<VARCHAR(250)>,
         "pets" : [
             +{
-                "id": <INT>,
+                "id": <INT>, <-- PK da tabela pet (id_pet em "pet_servico")
                 "alimentacao": ?<TEXT>,
                 "remedios": ?[
                     +{"nome": <VARCHAR(128)>, "instrucoes": <TEXT>}
@@ -31,18 +30,17 @@ Formato para "objServ" para "acao" "insert":
     }
 }
 
-Formato para "objServ" para "acao" "update":
-    {
-        "id": 1, <-- id do serviço realizado
-        "inicio": "2025-04-01T08:34:23.388", <-- Data e hora de início da realização do serviço
-        "fim": "2025-04-01T10:12:23.388", <-- Data e hora de finalização do serviço
-        "info": ?{ <-- Não incluir se deverá ser mantido como está
-        "servico": <INT>, <-- id serviço a ser realizado (id_servico_oferecido)
+Formato para "objAgend" para "acao" "update":
+{
+    "id": <INT>, <-- id do agendamento
+    "data_hora_marcada": <DATETIME>,
+    "info": ?{ <-- Não incluir se deverá ser mantido como está
+        "servico": <INT>, <-- PK da tabela servico_oferecido (id_servico_oferecido em "info_servico")
         "funcionario": ?<INT> | "", <-- id do funcionário atribuído (deixar "" se deverá ser removido, ou não incluir se deverá ser mantido)
         "observacoes": ?<VARCHAR(250)>, <-- Observações opcionais do registro (não incluir se deverá ser apagado)
         "pets" : ?[ <-- Não incluir se deverá ser mantido como está
             +{
-                "id": <INT>,
+                "id": <INT>, <-- PK da tabela pet (id_pet em "pet_servico")
                 "alimentacao": ?<TEXT>, <-- Não incluir se deverá ser mantido como está
                 "remedios": ?[ <-- Não incluir se deverá ser mantido como está
                     +{ <-- não inclur se deverá ser apagado
@@ -64,23 +62,23 @@ Formato para "objServ" para "acao" "update":
             }
         ]
     }
-    }
+}
 */
 
 DELIMITER $$
-CREATE PROCEDURE servico_realizado
+CREATE PROCEDURE agendamento /* FINALIZAR */
     (
         IN acao ENUM("insert", "update"),
-        IN objServ JSON
+        IN objAgend JSON
     )
-    COMMENT 'Insere ou modifica o registro de um servico realizado e suas tabelas relacionadas'
+    COMMENT 'Insere ou modifica o registro de um agendamento e suas tabelas relacionadas'
     NOT DETERMINISTIC
     MODIFIES SQL DATA
     BEGIN
-        -- Infos de serviço
-        DECLARE id_serv_real INT; /* PK em "servico_realizado" */
+        -- Infos de agendamento
+        DECLARE id_agend INT;
         DECLARE id_info_serv INT; /* PK da tabela info_servico*/
-        DECLARE dt_hr_ini, dt_hr_fin DATETIME;
+        DECLARE dt_hr_marc DATETIME;
         DECLARE objInfo JSON;
 
         -- Condições
@@ -89,15 +87,14 @@ CREATE PROCEDURE servico_realizado
         DECLARE err_no_for_id_update CONDITION FOR SQLSTATE '45002';
 
         -- Validação geral
-        IF JSON_TYPE(objServ) <> "OBJECT" THEN
+        IF JSON_TYPE(objAgend) <> "OBJECT" THEN
             SIGNAL err_not_object SET MESSAGE_TEXT = 'Argumento não é um objeto JSON';
         END IF;
 
-        SET dt_hr_ini = CAST( JSON_UNQUOTE(JSON_EXTRACT(objServ, '$.inicio')) AS DATETIME );
-        SET dt_hr_fin = CAST( JSON_UNQUOTE(JSON_EXTRACT(objServ, '$.fim')) AS DATETIME );
-        SET objInfo = JSON_EXTRACT(objServ, '$.info');
+        SET dt_hr_marc = JSON_EXTRACT(objAgend, '$.data_hora_marcada');
+        SET objInfo = JSON_EXTRACT(objAgend, '$.info');
 
-        -- Processos para inserção de servico_realizado
+        -- Processos para inserção de agendamento
         IF acao = "insert" THEN
             IF ISNULL(objInfo) THEN
                 SIGNAL err_no_info_object SET MESSAGE_TEXT = 'Nenhum objeto de info_servico foi informado para insert do servico_realizado';
@@ -107,14 +104,15 @@ CREATE PROCEDURE servico_realizado
             CALL info_servico('insert', objInfo);
             SET id_info_serv = get_last_insert_info_servico(); /* Recebe o último id de info_servico cadastrado */
 
-            -- Inserção do serviço realizado
-            INSERT INTO servico_realizado (id_info_servico, dt_hr_inicio, dt_hr_fim) VALUE (id_info_serv, dt_hr_ini, dt_hr_fin);
+            -- TODO: Inserção do agendamento
+
 
         ELSEIF acao = "update" THEN
-            SET id_serv_real = JSON_EXTRACT(objServ, '$.id');
+            -- Obtendo o id do agendamento a ser atualizado
+            SET id_agend = JSON_EXTRACT(objAgend, '$.id');
 
-            IF ISNULL(id_serv_real) THEN /* Se id_servico_realizado não for informado */
-                SIGNAL err_no_for_id_update SET MESSAGE_TEXT = "Nao foi informado id de servico_realizado para acao update";
+            IF ISNULL(id_agend) THEN /* Se id_agendamento não for informado */
+                SIGNAL err_no_for_id_update SET MESSAGE_TEXT = "Nao foi informado id de agendamento para acao update";
             END IF;
 
             IF (objInfo IS NOT NULL) THEN /* Info_servico foi incluida para ser modificada */
@@ -122,12 +120,12 @@ CREATE PROCEDURE servico_realizado
                 SELECT
                     id_info_servico
                 INTO id_info_serv
-                FROM servico_realizado
+                FROM agendamento
                 WHERE
-                    id = id_serv_real;
+                    id = id_agend;
 
                 IF ISNULL(id_info_serv) THEN
-                    SIGNAL err_no_for_id_update SET MESSAGE_TEXT = 'id de servico inexistente para update';
+                    SIGNAL err_no_for_id_update SET MESSAGE_TEXT = 'id de agendamento inexistente para update';
                 END IF;
 
                 SET objInfo = JSON_INSERT(objInfo, '$.id', id_info_serv);
@@ -136,7 +134,8 @@ CREATE PROCEDURE servico_realizado
             END IF;
 
             -- Altera registro do servico_realizad
-            UPDATE servico_realizado SET dt_hr_inicio = dt_hr_ini, dt_hr_fim = dt_hr_fin WHERE id = id_serv_real;
+            UPDATE agendamento SET dt_hr_marcada = dt_hr_marc WHERE id = id_agend;
         END IF;
     END;$$
 DELIMITER ;
+
