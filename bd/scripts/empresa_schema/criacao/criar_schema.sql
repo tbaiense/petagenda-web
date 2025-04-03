@@ -127,7 +127,7 @@ CREATE TABLE pet_servico (
     id_pet INT NOT NULL,
     id_info_servico INT NOT NULL,
     instrucao_alimentacao TEXT,
-    valor_pet DECIMAL(7,2),
+    valor_pet DECIMAL(8,2),
 
     CONSTRAINT chk_pet_servico_valor_pet CHECK (valor_pet >= 0),
     UNIQUE (id_pet, id_info_servico),
@@ -153,7 +153,8 @@ CREATE TABLE endereco_info_servico (
     bairro VARCHAR(64) NOT NULL,
     cidade VARCHAR(64) NOT NULL,
     estado CHAR(2) NOT NULL DEFAULT "ES",
-    
+
+    UNIQUE (id_info_servico, tipo),
     PRIMARY KEY (id_info_servico, tipo),
     FOREIGN KEY (id_info_servico) REFERENCES info_servico(id)
 );
@@ -235,7 +236,34 @@ CREATE TABLE despesa (
     CONSTRAINT chk_despesa_valor CHECK (valor > 0)
 );
 
+-- FUNCTIONS
+
+SET GLOBAL log_bin_trust_function_creators = 1;
+
+DELIMITER $$
+CREATE FUNCTION get_last_insert_info_servico ()
+    RETURNS INT
+    COMMENT 'Retorna o último registro cadastrado em info_servico'
+    NOT DETERMINISTIC
+    CONTAINS SQL
+    BEGIN
+        RETURN @last_insert_info_servico_id;
+    END;$$
+DELIMITER ;
+
+
 -- TRIGGERS
+
+DELIMITER $$
+CREATE TRIGGER trg_info_servico_insert
+    AFTER INSERT
+    ON info_servico
+    FOR EACH ROW
+    BEGIN
+        SET @last_insert_info_servico_id = NEW.id;
+    END;$$
+DELIMITER ;
+
 
 DELIMITER $$
 CREATE TRIGGER trg_reserva_funcionario_insert
@@ -285,6 +313,103 @@ CREATE TRIGGER trg_pet_servico_insert /* Faz a atribuição do valor do preço d
     END;$$
 DELIMITER ;
 
+DELIMITER $$
+CREATE TRIGGER trg_servico_realizado_insert
+    BEFORE INSERT
+    ON servico_realizado
+    FOR EACH ROW
+    BEGIN
+        DECLARE id_serv INT; /* PK da tabela "servico_oferecido"*/
+        DECLARE tipo_p VARCHAR(16); /* Valor da coluna "tipo_preco" */
+        DECLARE p DECIMAL(8,2); /* Valor de cobrança do serviço (coluna "preco") */
+        DECLARE soma_valor_pet DECIMAL(8,2); /* Valor a ser inserido na coluna "valor_total"
+                                            em "servico_realizado", caso ele deva ser totalizado
+                                            por meio dos "valor_pet" contidos em "pet_servico"
+                                            associado ao serviço realizado */
+
+        -- Verificação dos valores a serem inseridos
+        IF ISNULL(NEW.valor_servico) AND ISNULL(NEW.valor_total) THEN
+            -- Buscando valor e forma de cobrança da tabela "servico_oferecido"
+            SELECT
+                preco, tipo_preco
+            INTO p, tipo_p
+            FROM servico_oferecido
+            WHERE id = (SELECT id_servico_oferecido FROM info_servico WHERE id = NEW.id_info_servico);
+
+            IF tipo_p = "servico" THEN
+                SET NEW.valor_servico = p;
+                SET NEW.valor_total = p;
+            ELSEIF tipo_p = "pet" THEN
+                -- Totalizar o "valor_total" usando valores dos registros associados na tabela "pet_servico"
+                SELECT SUM(valor_pet) as soma_valor_pet
+                INTO soma_valor_pet
+                FROM pet_servico
+                WHERE
+                    id_info_servico = NEW.id_info_servico
+                    AND valor_pet IS NOT NULL
+                GROUP BY id_info_servico;
+
+                SET NEW.valor_total = soma_valor_pet;
+            END IF;
+        END IF;
+    END;$$
+DELIMITER ;
+
+
+DELIMITER $$
+CREATE TRIGGER trg_agendamento_insert
+    BEFORE INSERT
+    ON agendamento
+    FOR EACH ROW
+    BEGIN
+        -- Variáveis usadas na definição do estado inicial
+        DECLARE id_func INT;
+
+        -- Variáveis usadas na verificação e definição do valor cobrado
+        DECLARE id_serv INT; /* PK da tabela "servico_oferecido"*/
+        DECLARE tipo_p VARCHAR(16); /* Valor da coluna "tipo_preco" */
+        DECLARE p DECIMAL(8,2); /* Valor de cobrança do serviço (coluna "preco") */
+        DECLARE soma_valor_pet DECIMAL(8,2); /* Valor a ser inserido na coluna "valor_total"
+                                            em "agendamento", caso ele deva ser totalizado
+                                            por meio dos "valor_pet" contidos em "pet_servico"
+                                            associado ao agendamento */
+
+        -- Verificação de funcionário atribuído e atribuição de estado inicial
+        SELECT id_funcionario INTO id_func FROM info_servico WHERE id = NEW.id_info_servico;
+
+        IF (id_func IS NOT NULL) THEN /* Se funcionário está atribuído */
+            SET NEW.estado = "preparado";
+        ELSE
+            SET NEW.estado = "criado";
+        END IF;
+
+        -- Verificação dos valores a serem inseridos
+        IF ISNULL(NEW.valor_servico) AND ISNULL(NEW.valor_total) THEN
+            -- Buscando valor e forma de cobrança da tabela "servico_oferecido"
+            SELECT
+                preco, tipo_preco
+            INTO p, tipo_p
+            FROM servico_oferecido
+            WHERE id = (SELECT id_servico_oferecido FROM info_servico WHERE id = NEW.id_info_servico);
+
+            IF tipo_p = "servico" THEN
+                SET NEW.valor_servico = p;
+                SET NEW.valor_total = p;
+            ELSEIF tipo_p = "pet" THEN
+                -- Totalizar o "valor_total" usando valores dos registros associados na tabela "pet_servico"
+                SELECT SUM(valor_pet) as soma_valor_pet
+                INTO soma_valor_pet
+                FROM pet_servico
+                WHERE
+                    id_info_servico = NEW.id_info_servico
+                    AND valor_pet IS NOT NULL
+                GROUP BY id_info_servico;
+
+                SET NEW.valor_total = soma_valor_pet;
+            END IF;
+        END IF;
+    END;$$
+DELIMITER ;
 
 
 -- PROCEDURES
@@ -362,6 +487,131 @@ CREATE PROCEDURE  set_funcionario_info_servico(
         UPDATE info_servico SET id_funcionario = id_func WHERE id = id_info_serv LIMIT 1;
     END;$$
 DELIMITER ;
+
+
+DELIMITER $$
+CREATE PROCEDURE info_servico
+    (
+        IN acao ENUM("insert", "update"),
+        IN objServ JSON
+    )
+    COMMENT 'Insere ou modifica o registro de um info_servico e suas tabelas relacionadas'
+    NOT DETERMINISTIC
+    MODIFIES SQL DATA
+    BEGIN
+        -- Infos de serviço
+        DECLARE id_info_serv INT; /* PK da tabela info_servico*/
+        DECLARE id_serv_oferec, id_func, enderecos_length INT;
+        DECLARE obs VARCHAR(250);
+        -- Info pets
+        DECLARE c_pet INT DEFAULT 0;
+        DECLARE pet_obj JSON;
+        DECLARE pets_length INT;
+        DECLARE id_pet_servico INT; /* PK da tabela pet_servico*/
+        DECLARE id_pet INT;
+        DECLARE alimentacao  TEXT;
+        -- Remedios pet
+        DECLARE c_remedio INT DEFAULT 0; /* Variável de contagem do remédio atual da array*/
+        DECLARE remedio_obj JSON; /* Objeto remédio da array */
+        DECLARE remedios_length INT; /* Tamanho da array remedios*/
+        DECLARE nome_rem VARCHAR(128);
+        DECLARE instrucoes_rem TEXT;
+        -- Endereços
+        DECLARE c_endereco INT DEFAULT 0;
+        DECLARE endereco_length INT;
+        DECLARE end_obj JSON;
+        DECLARE tipo_end VARCHAR(16);
+        DECLARE logr VARCHAR(128);
+        DECLARE num_end VARCHAR(16);
+        DECLARE bairro VARCHAR(64);
+        DECLARE cid VARCHAR(64);
+        DECLARE est CHAR(2);
+
+        -- Condições
+        DECLARE err_not_object CONDITION FOR SQLSTATE '45000';
+        DECLARE err_no_pets CONDITION FOR SQLSTATE '45001';
+        DECLARE err_no_for_id_update CONDITION FOR SQLSTATE '45002';
+
+        -- Validação geral
+        IF JSON_TYPE(objServ) <> "OBJECT" THEN
+            SIGNAL err_not_object SET MESSAGE_TEXT = 'Argumento não é um objeto JSON';
+        END IF;
+
+        -- Obtendo informações para info_servico
+        SET id_serv_oferec = JSON_EXTRACT(objServ, '$.servico');
+        SET id_func = JSON_EXTRACT(objServ, '$.funcionario');
+        SET obs = JSON_UNQUOTE(JSON_EXTRACT(objServ, '$.observacoes'));
+
+        -- Processos para inserção de info_servico
+        IF acao = "insert" THEN
+            -- Validação para "insert"
+            IF JSON_TYPE(JSON_EXTRACT(objServ, '$.pets')) <> 'ARRAY' THEN
+                SIGNAL err_no_pets SET MESSAGE_TEXT = 'Pets nao sao array';
+            ELSEIF JSON_LENGTH(objServ, '$.pets') = 0 THEN
+                SIGNAL err_no_pets SET MESSAGE_TEXT = 'Array de pets nao pode ser vazia';
+            END IF;
+
+            -- Insere novo info_servico
+            CALL ins_info_servico(id_serv_oferec, id_func, obs);
+            SET id_info_serv = get_last_insert_info_servico(); /* Retorna id de último info_servico inserido */
+
+            -- Loop de inserção de pets e remédios
+            SET pets_length = JSON_LENGTH(objServ, '$.pets');
+            WHILE c_pet < pets_length DO
+                -- Obtem objeto da array
+                SET pet_obj = JSON_EXTRACT(objServ, CONCAT('$.pets[', c_pet, ']'));
+
+                SET id_pet = JSON_EXTRACT(pet_obj, '$.id');
+                SET alimentacao = JSON_UNQUOTE(JSON_EXTRACT(pet_obj, '$.alimentacao'));
+                CALL ins_pet_servico(id_pet, id_info_serv, alimentacao);
+                SET id_pet_servico = LAST_INSERT_ID();
+
+                -- Loop de inserção de remédios do pet
+                SET c_remedio = 0;
+                SET remedios_length = JSON_LENGTH(pet_obj, '$.remedios');
+                WHILE c_remedio < remedios_length DO
+                    SET remedio_obj = JSON_EXTRACT( pet_obj, CONCAT('$.remedios[', c_remedio, ']') );
+                    SET nome_rem = JSON_EXTRACT(remedio_obj, '$.nome');
+                    SET instrucoes_rem = JSON_EXTRACT(remedio_obj, '$.instrucoes');
+
+                    CALL ins_remedio_pet_servico(id_pet_servico, nome_rem, instrucoes_rem);
+                    SET c_remedio = c_remedio + 1;
+                END WHILE;
+
+                SET c_pet = c_pet + 1;
+            END WHILE;
+
+            -- Loop de inserção de endereços (validação é feita por trigger da tabela endereco_info_servico)
+            SET endereco_length = JSON_LENGTH(objServ, '$.enderecos');
+            WHILE c_endereco < endereco_length DO
+                SET end_obj =   JSON_EXTRACT( objServ, CONCAT('$.enderecos[', c_endereco, ']') );
+
+                SET tipo_end = JSON_UNQUOTE(JSON_EXTRACT(end_obj, '$.tipo'));
+                SET logr = JSON_UNQUOTE(JSON_EXTRACT(end_obj, '$.logradouro'));
+                SET num_end = JSON_UNQUOTE(JSON_EXTRACT(end_obj, '$.numero'));
+                SET bairro = JSON_UNQUOTE(JSON_EXTRACT(end_obj, '$.bairro'));
+                SET cid = JSON_UNQUOTE(JSON_EXTRACT(end_obj, '$.cidade'));
+                SET est = JSON_UNQUOTE(JSON_EXTRACT(end_obj, '$.estado'));
+
+                CALL ins_endereco_info_servico(id_info_serv, tipo_end, logr, num_end, bairro, cid, est);
+
+                SET c_endereco = c_endereco + 1;
+            END WHILE;
+
+        ELSEIF acao = "update" THEN
+            SET id_info_serv = JSON_EXTRACT(objServ, '$.id');
+
+            IF ISNULL(id_info_serv) THEN
+                SIGNAL err_no_for_id_update SET MESSAGE_TEXT = "Nao foi informado id de info_servico para acao update";
+            END IF;
+
+            UPDATE info_servico SET id_servico_oferecido = id_serv_oferec, id_funcionario = id_func, observacoes = obs WHERE id = id_info_serv;
+
+            -- TODO: DELEGAR ALTERAÇÃO DE PETS E ENDEREÇOS PARA PROCEDIMENTOS ESPECÍFICOS
+        END IF;
+    END;$$
+DELIMITER ;
+
 
 DELIMITER $$
 CREATE PROCEDURE ins_servico_realizado (IN obj JSON)
@@ -577,6 +827,18 @@ CREATE PROCEDURE ins_agendamento (IN obj JSON)
     END;$$
 DELIMITER ;
 
+DELIMITER $$
+CREATE PROCEDURE set_estado_agendamento(
+    IN est ENUM("criado", "preparado", "pendente", "concluido", "cancelado"),
+    IN id_agend INT
+    )
+    COMMENT 'Define um novo estado para o agendamento'
+    NOT DETERMINISTIC
+    MODIFIES SQL DATA
+    BEGIN
+        UPDATE agendamento SET estado = est WHERE id = id_agend;
+    END;$$
+DELIMITER ;
 
 -- FINALIZAÇÃO
 SET foreign_key_checks = ON;

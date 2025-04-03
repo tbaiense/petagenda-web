@@ -144,7 +144,6 @@ Tabela: `agendamento`
         "servico": 5,
         "funcionario": 3,
         "data_hora_marcada": "2026-03-04T19:00:00",
-        "pacote": 1,
         "observacoes": "Observação fantástica",
         "pets" : [
             {
