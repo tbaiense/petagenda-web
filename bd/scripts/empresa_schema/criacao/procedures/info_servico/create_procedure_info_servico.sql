@@ -21,15 +21,19 @@ Formato para "objServ" para "acao" "update": (NÃO IMPLEMENTADO POR COMPLETO -> 
         "id": 13, <-- Id do "info_servico" que deverá ser modificado
         "servico": 1, <-- Id do serviço oferecido pela empresa
         "funcionario": 1, <-- Id do funcionário que realizou
-        "observacoes": "", <-- Observações opcionais do registro (deixar null, se deverá ser removido)
+        "observacoes": "", <-- Observações opcionais do registro (deixar "" se deverá ser removido, ou não incluir se deverá ser mantido)
         "pets" : [
             {
                 "id": 1, <- id do pet
-                "alimentacao": "", <- Instruções opcionais de alimentação (deixar null, se deverá ser removido)
-                "remedios": [{"id": 1, "nome": "", "instrucoes": ""}, {"id": 2, "nome": "", "instrucoes": ""}]  <-- deixar núlo se deverá ser removido
+                "alimentacao": "", <- Instruções opcionais de alimentação (deixar "" se deverá ser removido, ou não incluir se deverá ser mantido como está)
+                "remedios": [
+                    {"id": 1, "nome": "", "instrucoes": ""}, {"id": 2, "nome": "", "instrucoes": ""} <-- não inclur se deverá ser apagado
+                ] <-- não incluir se deverá ser mantido como está
             }
         ],
-        "enderecos": [{"id": 1, "tipo": "devolver", "logradouro": "", "numero": "", "bairro": "", "cidade": "", "estado": ""}] <-- deixar núlo se deverá ser removido
+        "enderecos": [
+            {"id": 1, "tipo": "devolver", "logradouro": "", "numero": "", "bairro": "", "cidade": "", "estado": ""} <-- não inclur se deverá ser apagado
+        ] <-- não incluir se deverá ser mantido como está
     }
 */
 

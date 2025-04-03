@@ -48,3 +48,30 @@ CREATE TRIGGER trg_servico_realizado_insert
     END;$$
 DELIMITER ;
 
+/* TRIGGER DE INSERÇÃO 2
+ *  Atualiza referência de id_servico_realizado em agendamento quando um novo servico_realizado for inserido
+ *  + OBJETIVOS:
+ *
+ * */
+-- DELIMITER $$
+-- CREATE TRIGGER trg_servico_realizado_insert_after
+--     AFTER INSERT
+--     ON servico_realizado
+--     FOR EACH ROW
+--     BEGIN
+--         DECLARE id_agend INT DEFAULT (
+--             SELECT id
+--             FROM agendamento
+--             WHERE
+--                 estado = 'concluido'
+--                 AND id_info_servico = NEW.id_info_servico
+--             LIMIT 1
+--         );
+--
+--         IF (id_agend IS NOT NULL) THEN
+--             UPDATE agendamento
+--             SET id_servico_realizado = NEW.id
+--             WHERE id = id_agend;
+--         END IF;
+--     END;$$
+-- DELIMITER ;

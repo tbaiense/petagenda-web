@@ -62,3 +62,30 @@ CREATE TRIGGER trg_agendamento_insert
     END;$$
 DELIMITER ;
  
+/* TRIGGER DE UPDATE 1
+ *  Monitora a alteração do estado do agendamento para concluído e cria registro de "servico_realizado" automaticamente
+ *  + OBJETIVOS:
+ *
+ * */
+
+DELIMITER $$
+CREATE TRIGGER trg_agendamento_update
+    BEFORE UPDATE
+    ON agendamento
+    FOR EACH ROW
+    BEGIN
+        DECLARE dt_hr_ini DATETIME DEFAULT NEW.dt_hr_marcada;
+        DECLARE dt_hr_fin DATETIME DEFAULT CURRENT_TIMESTAMP();
+
+        IF NEW.estado = "concluido" AND NEW.id_servico_realizado IS NULL AND OLD.estado IN ("preparado", "pendente") THEN
+            IF dt_hr_ini > dt_hr_fin OR DATEDIFF(dt_hr_fin, dt_hr_ini) <> 0 THEN
+                SET dt_hr_ini = NULL;
+            END IF;
+
+            INSERT INTO servico_realizado (id_info_servico, dt_hr_inicio, dt_hr_fim) VALUE
+                (NEW.id_info_servico, dt_hr_ini, CURRENT_TIMESTAMP());
+
+            SET NEW.id_servico_realizado = LAST_INSERT_ID();
+        END IF;
+    END;$$
+DELIMITER ;
