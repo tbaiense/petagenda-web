@@ -1,14 +1,14 @@
--- SCHEMA
+-- SCHEMA ================================================================================================================================================================
 CREATE SCHEMA 
     empresa_teste 
     CHARACTER SET utf8mb4;
 
 USE empresa_teste;
 
--- SETUP
+-- SETUP ================================================================================================================================================================
 SET foreign_key_checks = OFF;
 
--- TABELAS
+-- TABELAS ==============================================================================================================================================================
 
 CREATE TABLE funcionario (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -236,7 +236,7 @@ CREATE TABLE despesa (
     CONSTRAINT chk_despesa_valor CHECK (valor > 0)
 );
 
--- FUNCTIONS
+-- FUNCTIONS ========================================================================================================================================================================
 
 SET GLOBAL log_bin_trust_function_creators = 1;
 
@@ -252,7 +252,7 @@ CREATE FUNCTION get_last_insert_info_servico ()
 DELIMITER ;
 
 
--- TRIGGERS
+-- TRIGGERS ========================================================================================================================================================================
 
 DELIMITER $$
 CREATE TRIGGER trg_info_servico_insert
@@ -434,7 +434,91 @@ CREATE TRIGGER trg_agendamento_update
 DELIMITER ;
 
 
--- PROCEDURES
+-- PROCEDURES ================================================================================================================================================================
+
+
+DELIMITER $$
+CREATE PROCEDURE funcionario (
+    IN acao ENUM('insert', 'update'),
+    IN objFunc JSON
+    )
+    COMMENT 'Altera registro de funcionario de acordo com ações informadas'
+    NOT DETERMINISTIC
+    MODIFIES SQL DATA
+    BEGIN
+        -- Infos de funcionario
+        DECLARE id_func INT;
+        DECLARE nome_func VARCHAR(64);
+        DECLARE tel_func CHAR(15);
+        DECLARE arrayServExerc JSON; /* Array de serviços exercidos incluídos */
+        DECLARE e_length INT; /* quantidade de serviços exercidos incluídos no array JSON de "exerce"*/
+        DECLARE e_count INT;
+        DECLARE id_serv INT;
+
+        -- Condições
+        DECLARE err_not_object CONDITION FOR SQLSTATE '45000';
+        DECLARE err_no_info_object CONDITION FOR SQLSTATE '45001';
+        DECLARE err_no_for_id_update CONDITION FOR SQLSTATE '45002';
+        DECLARE err_not_array CONDITION FOR SQLSTATE '45003';
+
+        -- Validação geral
+        IF JSON_TYPE(objFunc) <> "OBJECT" THEN
+            SIGNAL err_not_object SET MESSAGE_TEXT = 'Argumento não é um objeto JSON';
+        END IF;
+
+        -- Validaçao do servico exercido ("exerce")
+        SET arrayServExerc = JSON_EXTRACT(objFunc, '$.exerce');
+        IF (arrayServExerc IS NOT NULL) AND JSON_TYPE(arrayServExerc) <> "ARRAY" THEN
+            SIGNAL err_not_array SET MESSAGE_TEXT = 'Servicos exercidos deve ser nulo ou do tipo Array';
+        END IF;
+
+        SET nome_func = JSON_UNQUOTE(JSON_EXTRACT(objFunc, '$.nome'));
+        SET tel_func = JSON_UNQUOTE(JSON_EXTRACT(objFunc, '$.telefone'));
+        SET e_length = JSON_LENGTH(arrayServExerc); -- NULL se Array não for incluída
+
+        -- Processos para inserção de funcionario
+        IF acao = "insert" THEN
+            -- Inserção do funcionario
+            INSERT INTO funcionario (nome, telefone) VALUE (nome_func, tel_func);
+            SET id_func = LAST_INSERT_ID();
+
+            -- Loop de inserção de serviços exercidos
+            SET e_count = 0;
+            WHILE e_count < e_length DO
+                SET id_serv = JSON_EXTRACT(arrayServExerc, CONCAT('$[', e_count ,'].servico'));
+                INSERT INTO servico_exercido (id_funcionario, id_servico_oferecido) VALUE (id_func, id_serv);
+
+                SET e_count = e_count + 1;
+            END WHILE;
+
+
+        ELSEIF acao = "update" THEN
+            -- Obtendo o id do funcionario a ser atualizado
+            SET id_func = JSON_EXTRACT(objFunc, '$.id');
+
+            IF ISNULL(id_func) THEN /* Se id_funcionario não for informado */
+                SIGNAL err_no_for_id_update SET MESSAGE_TEXT = "Nao foi informado id de funcionario para acao update";
+            END IF;
+
+            -- Altera registro do funcionario
+            UPDATE funcionario SET nome = nome_func, telefone = tel_func WHERE id = id_func;
+
+            -- Atualização de serviços exercidos
+            IF e_length IS NOT NULL THEN
+                DELETE FROM servico_exercido WHERE id_funcionario = id_func;
+
+                SET e_count = 0;
+                WHILE e_count < e_length DO
+                    SET id_serv = JSON_EXTRACT(arrayServExerc, CONCAT('$[', e_count ,'].servico'));
+                    INSERT INTO servico_exercido (id_funcionario, id_servico_oferecido) VALUE (id_func, id_serv);
+
+                    SET e_count = e_count + 1;
+                END WHILE;
+            END IF;
+        END IF;
+    END;$$
+DELIMITER ;
+
 
 DELIMITER $$
 CREATE PROCEDURE ins_info_servico(
@@ -636,109 +720,76 @@ DELIMITER ;
 
 
 DELIMITER $$
-CREATE PROCEDURE ins_agendamento (IN obj JSON)
-    COMMENT 'Cadastra um agendamento, criando as informações secundárias necessárias (info_servico, pet_servico, etc)'
+CREATE PROCEDURE agendamento
+    (
+        IN acao ENUM("insert", "update"),
+        IN objAgend JSON
+    )
+    COMMENT 'Insere ou modifica o registro de um agendamento e suas tabelas relacionadas'
     NOT DETERMINISTIC
     MODIFIES SQL DATA
     BEGIN
         -- Infos de agendamento
+        DECLARE id_agend INT;
         DECLARE id_info_serv INT; /* PK da tabela info_servico*/
-        DECLARE id_serv, id_func, enderecos_length, id_pac INT;
         DECLARE dt_hr_marc DATETIME;
-        DECLARE obs VARCHAR(250);
-        -- Info pets
-        DECLARE c_pet INT DEFAULT 0;
-        DECLARE pet_obj JSON;
-        DECLARE pets_length INT;
-        DECLARE id_pet_servico INT; /* PK da tabela pet_servico*/
-        DECLARE id_pet INT;
-        DECLARE alimentacao  TEXT;
-        -- Remedios pet
-        DECLARE c_remedio INT DEFAULT 0; /* Variável de contagem do remédio atual da array*/
-        DECLARE remedio_obj JSON; /* Objeto remédio da array */
-        DECLARE remedios_length INT; /* Tamanho da array remedios*/
-        DECLARE nome_rem VARCHAR(128);
-        DECLARE instrucoes_rem TEXT;
-        -- Endereços
-        DECLARE c_endereco INT DEFAULT 0;
-        DECLARE endereco_length INT;
-        DECLARE end_obj JSON;
-        DECLARE tipo_end VARCHAR(16);
-        DECLARE logr VARCHAR(128);
-        DECLARE num_end VARCHAR(16);
-        DECLARE bairro VARCHAR(64);
-        DECLARE cid VARCHAR(64);
-        DECLARE est CHAR(2);
+        DECLARE objInfo JSON;
 
         -- Condições
         DECLARE err_not_object CONDITION FOR SQLSTATE '45000';
-        DECLARE err_no_pets CONDITION FOR SQLSTATE '45001';
+        DECLARE err_no_info_object CONDITION FOR SQLSTATE '45001';
+        DECLARE err_no_for_id_update CONDITION FOR SQLSTATE '45002';
 
-        -- Validação
-
-        IF JSON_TYPE(obj) <> "OBJECT" THEN
+        -- Validação geral
+        IF JSON_TYPE(objAgend) <> "OBJECT" THEN
             SIGNAL err_not_object SET MESSAGE_TEXT = 'Argumento não é um objeto JSON';
-        ELSEIF JSON_TYPE(JSON_EXTRACT(obj, '$.pets')) <> 'ARRAY' THEN
-            SIGNAL err_no_pets SET MESSAGE_TEXT = 'Pets nao sao array';
-        ELSEIF JSON_LENGTH(obj, '$.pets') = 0 THEN
-            SIGNAL err_no_pets SET MESSAGE_TEXT = 'Array de pets nao pode ser vazia';
         END IF;
 
-        -- Cadastro do info_servico
-        SET id_serv = JSON_EXTRACT(obj, '$.servico');
-        SET id_func = JSON_EXTRACT(obj, '$.funcionario');
-        SET obs = JSON_UNQUOTE(JSON_EXTRACT(obj, '$.observacoes'));
-        CALL ins_info_servico(id_serv, id_func, obs);
-        SET id_info_serv = LAST_INSERT_ID();
+        SET dt_hr_marc = JSON_EXTRACT(objAgend, '$.data_hora_marcada');
+        SET objInfo = JSON_EXTRACT(objAgend, '$.info');
 
-        -- Loop de inserção de pets e remédios
-        SET pets_length = JSON_LENGTH(obj, '$.pets');
-        WHILE c_pet < pets_length DO
-            -- Obtem objeto da array
-            SET pet_obj = JSON_EXTRACT(obj, CONCAT('$.pets[', c_pet, ']'));
+        -- Processos para inserção de agendamento
+        IF acao = "insert" THEN
+            IF ISNULL(objInfo) THEN
+                SIGNAL err_no_info_object SET MESSAGE_TEXT = 'Nenhum objeto de info_servico foi informado para insert do servico_realizado';
+            END IF;
 
-            SET id_pet = JSON_EXTRACT(pet_obj, '$.id');
-            SET alimentacao = JSON_UNQUOTE(JSON_EXTRACT(pet_obj, '$.alimentacao'));
-            CALL ins_pet_servico(id_pet, id_info_serv, alimentacao);
-            SET id_pet_servico = LAST_INSERT_ID();
+            SET objInfo = JSON_REMOVE(objInfo, '$.id'); /* Remove para não gerar problemas, pois id aqui é o do servico_realizado, mas no procedimento info_servico() é o do info_servico */
+            CALL info_servico('insert', objInfo);
+            SET id_info_serv = get_last_insert_info_servico(); /* Recebe o último id de info_servico cadastrado */
 
-            -- Loop de inserção de remédios do pet
-            SET c_remedio = 0;
-            SET remedios_length = JSON_LENGTH(pet_obj, '$.remedios');
-            WHILE c_remedio < remedios_length DO
-                SET remedio_obj = JSON_EXTRACT( pet_obj, CONCAT('$.remedios[', c_remedio, ']') );
-                SET nome_rem = JSON_EXTRACT(remedio_obj, '$.nome');
-                SET instrucoes_rem = JSON_EXTRACT(remedio_obj, '$.instrucoes');
+            -- Inserção do agendamento
+            INSERT INTO agendamento (id_info_servico, dt_hr_marcada) VALUE (id_info_serv, dt_hr_marc);
 
-                CALL ins_remedio_pet_servico(id_pet_servico, nome_rem, instrucoes_rem);
-                SET c_remedio = c_remedio + 1;
-            END WHILE;
+        ELSEIF acao = "update" THEN
+            -- Obtendo o id do agendamento a ser atualizado
+            SET id_agend = JSON_EXTRACT(objAgend, '$.id');
 
-            SET c_pet = c_pet + 1;
-        END WHILE;
+            IF ISNULL(id_agend) THEN /* Se id_agendamento não for informado */
+                SIGNAL err_no_for_id_update SET MESSAGE_TEXT = "Nao foi informado id de agendamento para acao update";
+            END IF;
 
-        -- Loop de inserção de endereços (validação é feita por trigger da tabela endereco_info_servico)
-        SET endereco_length = JSON_LENGTH(obj, '$.enderecos');
-        WHILE c_endereco < endereco_length DO
-            SET end_obj =   JSON_EXTRACT( obj, CONCAT('$.enderecos[', c_endereco, ']') );
+            IF (objInfo IS NOT NULL) THEN /* Info_servico foi incluida para ser modificada */
+                -- Obtendo FK de info_servico
+                SELECT
+                    id_info_servico
+                INTO id_info_serv
+                FROM agendamento
+                WHERE
+                    id = id_agend;
 
-            SET tipo_end = JSON_UNQUOTE(JSON_EXTRACT(end_obj, '$.tipo'));
-            SET logr = JSON_UNQUOTE(JSON_EXTRACT(end_obj, '$.logradouro'));
-            SET num_end = JSON_UNQUOTE(JSON_EXTRACT(end_obj, '$.numero'));
-            SET bairro = JSON_UNQUOTE(JSON_EXTRACT(end_obj, '$.bairro'));
-            SET cid = JSON_UNQUOTE(JSON_EXTRACT(end_obj, '$.cidade'));
-            SET est = JSON_UNQUOTE(JSON_EXTRACT(end_obj, '$.estado'));
+                IF ISNULL(id_info_serv) THEN
+                    SIGNAL err_no_for_id_update SET MESSAGE_TEXT = 'id de agendamento inexistente para update';
+                END IF;
 
-            CALL ins_endereco_info_servico(id_info_serv, tipo_end, logr, num_end, bairro, cid, est);
+                SET objInfo = JSON_INSERT(objInfo, '$.id', id_info_serv);
 
-            SET c_endereco = c_endereco + 1;
-        END WHILE;
+                CALL info_servico('update', objInfo);
+            END IF;
 
-        -- Inserção do agendamento
-        SET id_pac = JSON_EXTRACT(obj, '$.pacote');
-        SET dt_hr_marc = CAST( JSON_UNQUOTE(JSON_EXTRACT(obj, '$.data_hora_marcada')) AS DATETIME );
-
-        INSERT INTO agendamento (id_info_servico, dt_hr_marcada, id_pacote_agend) VALUE (id_info_serv, dt_hr_marc, id_pac);
+            -- Altera registro do servico_realizad
+            UPDATE agendamento SET dt_hr_marcada = dt_hr_marc WHERE id = id_agend;
+        END IF;
     END;$$
 DELIMITER ;
 
@@ -831,5 +882,5 @@ CREATE PROCEDURE servico_realizado
 DELIMITER ;
 
 
--- FINALIZAÇÃO
+-- FINALIZAÇÃO ========================================================================================================================================
 SET foreign_key_checks = ON;

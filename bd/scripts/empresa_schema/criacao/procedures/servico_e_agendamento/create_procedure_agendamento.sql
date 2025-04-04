@@ -1,5 +1,6 @@
 /*
-REALIZA PROCESSOS NA TABELA "agendamento" com base nos parâmetros
+REALIZA PROCESSOS NA TABELA "agendamento" com base nos parâmetros.
+TODO: Delegar ações para procedures específicos de cada ação, para simplificar este procedimento.
 
 Formato para "objAgend" para "acao" "insert":
 {
@@ -66,7 +67,7 @@ Formato para "objAgend" para "acao" "update":
 */
 
 DELIMITER $$
-CREATE PROCEDURE agendamento /* FINALIZAR */
+CREATE PROCEDURE agendamento
     (
         IN acao ENUM("insert", "update"),
         IN objAgend JSON
@@ -104,8 +105,8 @@ CREATE PROCEDURE agendamento /* FINALIZAR */
             CALL info_servico('insert', objInfo);
             SET id_info_serv = get_last_insert_info_servico(); /* Recebe o último id de info_servico cadastrado */
 
-            -- TODO: Inserção do agendamento
-
+            -- Inserção do agendamento
+            INSERT INTO agendamento (id_info_servico, dt_hr_marcada) VALUE (id_info_serv, dt_hr_marc);
 
         ELSEIF acao = "update" THEN
             -- Obtendo o id do agendamento a ser atualizado
