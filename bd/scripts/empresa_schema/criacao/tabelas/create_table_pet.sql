@@ -1,6 +1,6 @@
 CREATE TABLE pet (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    id_cliente INT NOT NULL,
+    id_cliente INT,
     id_especie INT NOT NULL,
     nome VARCHAR(64) NOT NULL,
     raca VARCHAR(64),
@@ -12,6 +12,6 @@ CREATE TABLE pet (
     estado_saude VARCHAR(32),
     comportamento VARCHAR(64),
     
-    FOREIGN KEY (id_cliente) REFERENCES cliente(id),
+    FOREIGN KEY (id_cliente) REFERENCES cliente(id) ON DELETE SET NULL,
     FOREIGN KEY (id_especie) REFERENCES especie(id)
 );

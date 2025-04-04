@@ -1,6 +1,6 @@
 -- SCHEMA ================================================================================================================================================================
-CREATE SCHEMA 
-    empresa_teste 
+CREATE SCHEMA
+    empresa_teste
     CHARACTER SET utf8mb4;
 
 USE empresa_teste;
@@ -22,7 +22,7 @@ CREATE TABLE reserva_funcionario(
     data DATE NOT NULL,
     hora_inicio TIME NOT NULL,
     hora_fim TIME NOT NULL,
-    
+
     UNIQUE (id_funcionario, data, hora_inicio),
     UNIQUE (id_funcionario, data, hora_fim),
     CONSTRAINT chk_reserva_funcionario_hora_inicio_AND_hora_fim CHECK (hora_inicio < hora_fim),
@@ -44,7 +44,7 @@ CREATE TABLE servico_oferecido (
     descricao TEXT,
     foto TEXT,
     restricao_participante ENUM("coletivo", "individual") NOT NULL DEFAULT "coletivo",
-    
+
     CONSTRAINT chk_servico_oferecido_preco CHECK (preco >= 0),
     FOREIGN KEY (id_categoria) REFERENCES categoria_servico(id)
 );
@@ -52,7 +52,7 @@ CREATE TABLE servico_oferecido (
 CREATE TABLE servico_exercido (
     id_funcionario INT NOT NULL,
     id_servico_oferecido INT NOT NULL,
-    
+
     PRIMARY KEY (id_funcionario, id_servico_oferecido),
     FOREIGN KEY (id_funcionario) REFERENCES funcionario(id),
     FOREIGN KEY (id_servico_oferecido) REFERENCES servico_oferecido(id)
@@ -66,7 +66,7 @@ CREATE TABLE especie (
 CREATE TABLE restricao_especie (
     id_servico_oferecido INT NOT NULL,
     id_especie INT NOT NULL,
-    
+
     PRIMARY KEY (id_servico_oferecido, id_especie),
     FOREIGN KEY (id_servico_oferecido) REFERENCES servico_oferecido(id),
     FOREIGN KEY (id_especie) REFERENCES especie(id)
@@ -85,14 +85,14 @@ CREATE TABLE endereco_cliente (
     bairro VARCHAR(64) NOT NULL,
     cidade VARCHAR(64) NOT NULL,
     estado CHAR(2) NOT NULL DEFAULT "ES",
-    
+
     FOREIGN KEY (id_cliente) REFERENCES cliente(id)
 );
 
 CREATE TABLE servico_requerido (
     id_cliente INT NOT NULL,
     id_servico_oferecido INT NOT NULL,
-    
+
     PRIMARY KEY (id_cliente, id_servico_oferecido),
     FOREIGN KEY (id_cliente) REFERENCES cliente(id),
     FOREIGN KEY (id_servico_oferecido) REFERENCES servico_oferecido(id)
@@ -100,7 +100,7 @@ CREATE TABLE servico_requerido (
 
 CREATE TABLE pet (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    id_cliente INT NOT NULL,
+    id_cliente INT,
     id_especie INT NOT NULL,
     nome VARCHAR(64) NOT NULL,
     raca VARCHAR(64),
@@ -111,10 +111,11 @@ CREATE TABLE pet (
     cartao_vacina TEXT,
     estado_saude VARCHAR(32),
     comportamento VARCHAR(64),
-    
-    FOREIGN KEY (id_cliente) REFERENCES cliente(id),
+
+    FOREIGN KEY (id_cliente) REFERENCES cliente(id) ON DELETE SET NULL,
     FOREIGN KEY (id_especie) REFERENCES especie(id)
 );
+
 
 CREATE TABLE info_servico (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -144,7 +145,7 @@ CREATE TABLE remedio_pet_servico (
     id_pet_servico INT NOT NULL,
     nome VARCHAR(128) NOT NULL,
     instrucoes TEXT NOT NULL,
-    
+
     UNIQUE (id_pet_servico, nome),
     FOREIGN KEY (id_pet_servico) REFERENCES pet_servico(id)
 );
@@ -168,14 +169,14 @@ CREATE TABLE pacote_agend (
     id_servico_oferecido INT NOT NULL,
     frequencia ENUM("semanal", "mensal_dia", "mensal_semana_dia") NOT NULL,
     estado ENUM("ativo", "concluido", "cancelado") NOT NULL DEFAULT "ativo",
-    
+
     FOREIGN KEY (id_servico_oferecido) REFERENCES servico_oferecido(id)
 );
 
 CREATE TABLE pet_pacote (
     id_pacote_agend INT NOT NULL PRIMARY KEY,
     id_pet INT NOT NULL,
-    
+
     FOREIGN KEY (id_pacote_agend) REFERENCES pacote_agend(id),
     FOREIGN KEY (id_pet) REFERENCES pet(id)
 );
@@ -185,7 +186,7 @@ CREATE TABLE dia_pacote (
     id_pacote_agend INT NOT NULL,
     dia INT NOT NULL,
     semana INT,
-    
+
     FOREIGN KEY (id_pacote_agend) REFERENCES pacote_agend(id)
 );
 
@@ -210,7 +211,7 @@ CREATE TABLE incidente (
     dt_hr_ocorrido DATETIME NOT NULL,
     relato TEXT NOT NULL,
     medida_tomada TEXT,
-    
+
     FOREIGN KEY (id_servico_realizado) REFERENCES servico_realizado(id)
 );
 
@@ -525,83 +526,6 @@ DELIMITER ;
 
 
 DELIMITER $$
-CREATE PROCEDURE reserva_funcionario (
-    IN acao ENUM('insert', 'update', 'delete'),
-    IN objReserva JSON
-    )
-    COMMENT 'Altera registro de reserva de funcionario de acordo com ações informadas'
-    NOT DETERMINISTIC
-    MODIFIES SQL DATA
-    BEGIN
-        -- Infos de funcionario
-        DECLARE id_reserva INT;
-        DECLARE id_func INT;
-        DECLARE dt DATE;
-        DECLARE hr_ini TIME;
-        DECLARE hr_fin TIME;
-        DECLARE res_found INT; /* Usado para verificar se reserva existe antes de update ou delete*/
-
-        -- Condições
-        DECLARE err_not_object CONDITION FOR SQLSTATE '45000';
-        DECLARE err_no_for_id_update CONDITION FOR SQLSTATE '45002';
-
-        -- Validação geral
-        IF JSON_TYPE(objReserva) <> "OBJECT" THEN
-            SIGNAL err_not_object SET MESSAGE_TEXT = 'Argumento não é um objeto JSON';
-        END IF;
-
-        SET id_reserva = JSON_EXTRACT(objReserva, '$.id');
-        SET id_func = JSON_EXTRACT(objReserva, '$.funcionario');
-        SET dt = CAST(JSON_UNQUOTE(JSON_EXTRACT(objReserva, '$.data')) AS DATE);
-        SET hr_ini = CAST(JSON_UNQUOTE(JSON_EXTRACT(objReserva, '$.hora_inicio')) AS TIME);
-        SET hr_fin= CAST(JSON_UNQUOTE(JSON_EXTRACT(objReserva, '$.hora_fim')) AS TIME);
-
-        -- Processos para inserção de reserva
-        IF acao = "insert" THEN
-            INSERT INTO reserva_funcionario (
-                    id_funcionario, data, hora_inicio, hora_fim)
-                VALUE (id_func, dt, hr_ini, hr_fin);
-
-        ELSEIF acao IN ("update", "delete") THEN
-            IF id_reserva IS NULL THEN
-                SIGNAL err_no_for_id_update SET MESSAGE_TEXT ="Nao foi informado id de reserva para acao";
-            END IF;
-
-            -- Buscando se existe alguma reserva correspondente já existente
-            SELECT id
-                INTO res_found
-                FROM reserva_funcionario
-                WHERE id = id_reserva;
-
-            IF res_found IS NULL THEN
-                SIGNAL err_no_for_id_update
-                    SET MESSAGE_TEXT = "Nao foi encontrada reserva existente para acao";
-            ELSE
-                CASE acao
-                    WHEN "update" THEN
-                        -- Altera registro da reserva
-                        UPDATE reserva_funcionario
-                        SET
-                            data = dt,
-                            hora_inicio = hr_ini,
-                            hora_fim = hr_fin
-                        WHERE id = id_reserva;
-
-                    WHEN "delete" THEN
-                        -- Obtendo o id da reserva a ser removida
-                        SET id_reserva = JSON_EXTRACT(objReserva, '$.id');
-
-                        -- Altera registro do funcionario
-                        DELETE FROM reserva_funcionario WHERE id = id_reserva;
-                END CASE;
-            END IF;
-        END IF;
-    END;$$
-DELIMITER ;
-
-
-
-DELIMITER $$
 CREATE PROCEDURE servico_oferecido (
     IN acao ENUM('insert', 'update', 'delete'),
     IN objServ JSON
@@ -636,7 +560,7 @@ CREATE PROCEDURE servico_oferecido (
             SIGNAL err_not_object SET MESSAGE_TEXT = 'Argumento não é um objeto JSON';
         END IF;
 
-        SET arrayRestEsp = JSON_EXTRACT(objServ, '$.restricao_especie');
+        SET arrayRestEsp = JSON_EXTRACT(objServ, '$.restricaoEspecie');
 
         IF JSON_TYPE(arrayRestEsp) NOT IN ("ARRAY", NULL) THEN
             SIGNAL err_not_array SET MESSAGE_TEXT = 'Restricoes de especie devem ser Array ou NULL';
@@ -645,10 +569,10 @@ CREATE PROCEDURE servico_oferecido (
         SET nome_serv = JSON_UNQUOTE(JSON_EXTRACT(objServ, '$.nome'));
         SET id_cat = JSON_EXTRACT(objServ, '$.categoria');
         SET p = JSON_EXTRACT(objServ, '$.preco');
-        SET tipo_p = JSON_UNQUOTE(JSON_EXTRACT(objServ, '$.tipo_preco'));
+        SET tipo_p = JSON_UNQUOTE(JSON_EXTRACT(objServ, '$.tipoPreco'));
         SET desc_serv = JSON_UNQUOTE(JSON_EXTRACT(objServ, '$.descricao'));
         SET ft = JSON_UNQUOTE(JSON_EXTRACT(objServ, '$.foto'));
-        SET rest_part = JSON_UNQUOTE(JSON_EXTRACT(objServ, '$.restricao_participante'));
+        SET rest_part = JSON_UNQUOTE(JSON_EXTRACT(objServ, '$.restricaoParticipante'));
         SET rest_esp_length = JSON_LENGTH(arrayRestEsp);
 
         -- Processos para inserção de servico_oferecido
@@ -775,7 +699,7 @@ CREATE PROCEDURE cliente (
             SIGNAL err_not_object SET MESSAGE_TEXT = 'Argumento não é um objeto JSON';
         END IF;
 
-        SET arrayServReq = JSON_EXTRACT(objCliente, '$.servico_requerido');
+        SET arrayServReq = JSON_EXTRACT(objCliente, '$.servicoRequerido');
 
         IF JSON_TYPE(arrayServReq) NOT IN ("ARRAY", NULL) THEN
             SIGNAL err_not_array SET MESSAGE_TEXT = 'Servicos requeridos devem ser Array ou NULL';
@@ -783,7 +707,7 @@ CREATE PROCEDURE cliente (
 
         SET nome_cli = JSON_UNQUOTE(JSON_EXTRACT(objCliente, '$.nome'));
         SET tel_cli = JSON_UNQUOTE(JSON_EXTRACT(objCliente, '$.telefone'));
-        SET arrayServReq = JSON_UNQUOTE(JSON_EXTRACT(objCliente, '$.servico_requerido'));
+        SET arrayServReq = JSON_UNQUOTE(JSON_EXTRACT(objCliente, '$.servicoRequerido'));
         SET serv_req_length = JSON_LENGTH(arrayServReq);
 
         -- Processos para inserção de cliente
@@ -819,7 +743,7 @@ CREATE PROCEDURE cliente (
             SET id_cli = JSON_EXTRACT(objCliente, '$.id');
 
             IF id_cli IS NULL THEN
-                SIGNAL err_no_for_id_update SET MESSAGE_TEXT = "Nao foi informado id de servico oferecido para acao";
+                SIGNAL err_no_for_id_update SET MESSAGE_TEXT = "Nao foi informado id de cliente para acao";
             END IF;
 
             -- Buscando se existe algum cliente correspondente já existente
@@ -868,6 +792,101 @@ CREATE PROCEDURE cliente (
                     WHEN "delete" THEN
                         DELETE FROM servico_requerido WHERE id_cliente = id_cli;
                         DELETE FROM cliente WHERE id = id_cli;
+                END CASE;
+            END IF;
+        END IF;
+    END;$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE pet (
+    IN acao ENUM('insert', 'update', 'delete'),
+    IN objPet JSON
+    )
+    COMMENT 'Altera registro de pet de acordo com ações informadas'
+    NOT DETERMINISTIC
+    MODIFIES SQL DATA
+    BEGIN
+        -- Infos de pet
+        DECLARE id_pet INT;
+        DECLARE id_cli INT;
+        DECLARE id_esp INT;
+        DECLARE nome_pet VARCHAR(64);
+        DECLARE sexo_pet ENUM("M", "F");
+        DECLARE porte_pet ENUM("P", "M", "G");
+        DECLARE e_cast ENUM("S", "N");
+        DECLARE est_saude VARCHAR(32);
+        DECLARE raca_pet VARCHAR(64);
+        DECLARE cor_pet VARCHAR(32);
+        DECLARE comp VARCHAR(64);
+        DECLARE cart_vac TEXT;
+        DECLARE pet_found INT;
+
+        -- Condições
+        DECLARE err_not_object CONDITION FOR SQLSTATE '45000';
+        DECLARE err_no_for_id_update CONDITION FOR SQLSTATE '45001';
+
+        -- Validação geral
+        IF JSON_TYPE(objPet) <> "OBJECT" THEN
+            SIGNAL err_not_object SET MESSAGE_TEXT = 'Argumento não é um objeto JSON';
+        END IF;
+
+        SET id_cli = JSON_EXTRACT(objPet, '$.dono');
+        SET id_esp = JSON_EXTRACT(objPet, '$.especie');
+        SET nome_pet = JSON_UNQUOTE(JSON_EXTRACT(objPet, '$.nome'));
+        SET sexo_pet = JSON_UNQUOTE(JSON_EXTRACT(objPet, '$.sexo'));
+        SET porte_pet = JSON_UNQUOTE(JSON_EXTRACT(objPet, '$.porte'));
+        SET e_cast = JSON_UNQUOTE(JSON_EXTRACT(objPet, '$.eCastrado'));
+        SET est_saude = JSON_UNQUOTE(JSON_EXTRACT(objPet, '$.estadoSaude'));
+        SET raca_pet = JSON_UNQUOTE(JSON_EXTRACT(objPet, '$.raca'));
+        SET cor_pet = JSON_UNQUOTE(JSON_EXTRACT(objPet, '$.cor'));
+        SET comp = JSON_UNQUOTE(JSON_EXTRACT(objPet, '$.comportamento'));
+        SET cart_vac = JSON_UNQUOTE(JSON_EXTRACT(objPet, '$.cartaoVacina'));
+
+        -- Processos para inserção de pet
+        IF acao = "insert" THEN
+            -- Inserção do pet
+            INSERT INTO pet (
+                id_cliente, id_especie, nome, sexo, porte, e_castrado, estado_saude, raca, cor, comportamento, cartao_vacina)
+                VALUE (id_cli, id_esp, nome_pet, sexo_pet, porte_pet, e_cast, est_saude, raca_pet, cor_pet, comp, cart_vac);
+            SET id_pet = LAST_INSERT_ID();
+
+        ELSEIF acao IN ("update", "delete") THEN
+            SET id_pet = JSON_EXTRACT(objPet, '$.id');
+
+            IF id_pet IS NULL THEN
+                SIGNAL err_no_for_id_update SET MESSAGE_TEXT = "Nao foi informado id de pet para acao";
+            END IF;
+
+            -- Buscando se existe algum pet correspondente já existente
+            SELECT id
+                INTO pet_found
+                FROM pet
+                WHERE id = id_pet;
+
+            IF pet_found IS NULL THEN
+                SIGNAL err_no_for_id_update
+                    SET MESSAGE_TEXT = "Nao foi encontrado pet existente para acao";
+            ELSE
+                CASE acao
+                    WHEN "update" THEN
+                        UPDATE pet
+                            SET
+                                id_cliente = id_cli,
+                                id_especie = id_esp,
+                                nome = nome_pet,
+                                sexo = sexo_pet,
+                                porte = porte_pet,
+                                e_castrado = e_cast,
+                                estado_saude = est_saude,
+                                raca = raca_pet,
+                                cor = cor_pet,
+                                comportamento = comp,
+                                cartao_vacina = cart_vac
+                            WHERE id = id_pet;
+
+                    WHEN "delete" THEN
+                        DELETE FROM pet WHERE id = id_pet;
                 END CASE;
             END IF;
         END IF;

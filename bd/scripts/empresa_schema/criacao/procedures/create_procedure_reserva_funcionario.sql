@@ -7,8 +7,8 @@ Formato esperado para JSON objReserva:
     {
         "funcionario": <INT>,  <--- PK da tabela funcionario (coluna id_funcionario em "reserva_funcionario")
         "data": <DATE>,
-        "hora_inicio": <TIME>,
-        "hora_fim": <TIME>
+        "horaInicio": <TIME>,
+        "horaFim": <TIME>
     }
 
 
@@ -17,8 +17,8 @@ Formato esperado para JSON objReserva:
         "id": <INT>,  <--- id da reserva
         "funcionario": <INT>,  <--- PK da tabela funcionario (coluna id_funcionario em "reserva_funcionario")
         "data": <DATE>,
-        "hora_inicio": <TIME>,
-        "hora_fim": <TIME>
+        "horaInicio": <TIME>,
+        "horaFim": <TIME>
     }
 
 - em ação "delete":
@@ -56,13 +56,13 @@ CREATE PROCEDURE reserva_funcionario (
         SET id_reserva = JSON_EXTRACT(objReserva, '$.id');
         SET id_func = JSON_EXTRACT(objReserva, '$.funcionario');
         SET dt = CAST(JSON_UNQUOTE(JSON_EXTRACT(objReserva, '$.data')) AS DATE);
-        SET hr_ini = CAST(JSON_UNQUOTE(JSON_EXTRACT(objReserva, '$.hora_inicio')) AS TIME);
-        SET hr_fin= CAST(JSON_UNQUOTE(JSON_EXTRACT(objReserva, '$.hora_fim')) AS TIME);
+        SET hr_ini = CAST(JSON_UNQUOTE(JSON_EXTRACT(objReserva, '$.horaInicio')) AS TIME);
+        SET hr_fin= CAST(JSON_UNQUOTE(JSON_EXTRACT(objReserva, '$.horaFim')) AS TIME);
 
         -- Processos para inserção de reserva
         IF acao = "insert" THEN
             INSERT INTO reserva_funcionario (
-                    id_funcionario, data, hora_inicio, hora_fim)
+                    id_funcionario, data, hora_inicio, horaFim)
                 VALUE (id_func, dt, hr_ini, hr_fin);
 
         ELSEIF acao IN ("update", "delete") THEN

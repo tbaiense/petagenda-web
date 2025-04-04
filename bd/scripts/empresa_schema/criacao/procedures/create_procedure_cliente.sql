@@ -7,7 +7,7 @@ Formato esperado para JSON objCliente:
     {
         "nome": <VARCHAR(64)>,
         "telefone": <CHAR(15)>,
-        "servico_requerido": ?[
+        "servicoRequerido": ?[
             +{
                 "servico": <INT>  <-- PK da tabela "servico_oferecido"
             }
@@ -20,7 +20,7 @@ Formato esperado para JSON objCliente:
         "id": <INT>,  <--- id do cliente
         "nome": <VARCHAR(64)>,
         "telefone": <CHAR(15)>,
-        "servico_requerido": ?[ <-- omitir se deverá ser mantido como está
+        "servicoRequerido": ?[ <-- omitir se deverá ser mantido como está
             +{ <--- não mencionar, se deverá ser apagado
                 "servico": <INT>  <-- PK da tabela "servico_oferecido"
             }
@@ -62,7 +62,7 @@ CREATE PROCEDURE cliente (
             SIGNAL err_not_object SET MESSAGE_TEXT = 'Argumento não é um objeto JSON';
         END IF;
 
-        SET arrayServReq = JSON_EXTRACT(objCliente, '$.servico_requerido');
+        SET arrayServReq = JSON_EXTRACT(objCliente, '$.servicoRequerido');
 
         IF JSON_TYPE(arrayServReq) NOT IN ("ARRAY", NULL) THEN
             SIGNAL err_not_array SET MESSAGE_TEXT = 'Servicos requeridos devem ser Array ou NULL';
@@ -70,7 +70,7 @@ CREATE PROCEDURE cliente (
 
         SET nome_cli = JSON_UNQUOTE(JSON_EXTRACT(objCliente, '$.nome'));
         SET tel_cli = JSON_UNQUOTE(JSON_EXTRACT(objCliente, '$.telefone'));
-        SET arrayServReq = JSON_UNQUOTE(JSON_EXTRACT(objCliente, '$.servico_requerido'));
+        SET arrayServReq = JSON_UNQUOTE(JSON_EXTRACT(objCliente, '$.servicoRequerido'));
         SET serv_req_length = JSON_LENGTH(arrayServReq);
 
         -- Processos para inserção de cliente
@@ -106,7 +106,7 @@ CREATE PROCEDURE cliente (
             SET id_cli = JSON_EXTRACT(objCliente, '$.id');
 
             IF id_cli IS NULL THEN
-                SIGNAL err_no_for_id_update SET MESSAGE_TEXT = "Nao foi informado id de servico oferecido para acao";
+                SIGNAL err_no_for_id_update SET MESSAGE_TEXT = "Nao foi informado id de cliente para acao";
             END IF;
 
             -- Buscando se existe algum cliente correspondente já existente

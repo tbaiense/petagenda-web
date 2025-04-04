@@ -8,11 +8,11 @@ Formato esperado para JSON objServ:
         "nome": <VARCHAR(64)>,
         "categoria": ?<INT>,
         "preco": <DECIMAL(8,2)>,
-        "tipo_preco": <ENUM("pet", "servico")>,  <-- forma de cobrança do preço
+        "tipoPreco": <ENUM("pet", "servico")>,  <-- forma de cobrança do preço
         "descricao": ?<TEXT>,
         "foto": ?<TEXT>,   <-- caminho de arquivo "/caminho/image.png"
-        "restricao_participante": <ENUM("coletivo", "individual")>,
-        "restricao_especie": ?[
+        "restricaoParticipante": <ENUM("coletivo", "individual")>,
+        "restricaoEspecie": ?[
             +{
                 "especie": <INT>  <-- PK da tabela "especie"
             }
@@ -26,11 +26,11 @@ Formato esperado para JSON objServ:
         "nome": <VARCHAR(64)>,
         "categoria": ?<INT>,
         "preco": <DECIMAL(8,2)>,
-        "tipo_preco": <ENUM("pet", "servico")>,  <-- forma de cobrança do preço
+        "tipoPreco": <ENUM("pet", "servico")>,  <-- forma de cobrança do preço
         "descricao": ?<TEXT>,
         "foto": ?<TEXT>,   <-- caminho de arquivo "/caminho/image.png"
-        "restricao_participante": <ENUM("coletivo", "individual")>,
-        "restricao_especie": ?[ <-- omitir se deverá ser mantido como está
+        "restricaoParticipante": <ENUM("coletivo", "individual")>,
+        "restricaoEspecie": ?[ <-- omitir se deverá ser mantido como está
             +{ <--- não mencionar, se deverá ser apagado
                 "especie": <INT>  <-- PK da tabela "especie"
             }
@@ -77,7 +77,7 @@ CREATE PROCEDURE servico_oferecido (
             SIGNAL err_not_object SET MESSAGE_TEXT = 'Argumento não é um objeto JSON';
         END IF;
 
-        SET arrayRestEsp = JSON_EXTRACT(objServ, '$.restricao_especie');
+        SET arrayRestEsp = JSON_EXTRACT(objServ, '$.restricaoEspecie');
 
         IF JSON_TYPE(arrayRestEsp) NOT IN ("ARRAY", NULL) THEN
             SIGNAL err_not_array SET MESSAGE_TEXT = 'Restricoes de especie devem ser Array ou NULL';
@@ -86,10 +86,10 @@ CREATE PROCEDURE servico_oferecido (
         SET nome_serv = JSON_UNQUOTE(JSON_EXTRACT(objServ, '$.nome'));
         SET id_cat = JSON_EXTRACT(objServ, '$.categoria');
         SET p = JSON_EXTRACT(objServ, '$.preco');
-        SET tipo_p = JSON_UNQUOTE(JSON_EXTRACT(objServ, '$.tipo_preco'));
+        SET tipo_p = JSON_UNQUOTE(JSON_EXTRACT(objServ, '$.tipoPreco'));
         SET desc_serv = JSON_UNQUOTE(JSON_EXTRACT(objServ, '$.descricao'));
         SET ft = JSON_UNQUOTE(JSON_EXTRACT(objServ, '$.foto'));
-        SET rest_part = JSON_UNQUOTE(JSON_EXTRACT(objServ, '$.restricao_participante'));
+        SET rest_part = JSON_UNQUOTE(JSON_EXTRACT(objServ, '$.restricaoParticipante'));
         SET rest_esp_length = JSON_LENGTH(arrayRestEsp);
 
         -- Processos para inserção de servico_oferecido
