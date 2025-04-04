@@ -2,7 +2,7 @@
 PROCEDIMENTO DE GERENCIAMENTO DE REGISTRO DE RESERVA DE FUNCIONARIO.
 TABELA: reserva_funcionario
 
-Formato esperado para JSON ObjReserva:
+Formato esperado para JSON objReserva:
 - em ação "insert":
     {
         "funcionario": <INT>,  <--- PK da tabela funcionario (coluna id_funcionario em "reserva_funcionario")
@@ -14,91 +14,89 @@ Formato esperado para JSON ObjReserva:
 
 - em ação "update":
     {
-        "id":
+        "id": <INT>,  <--- id da reserva
         "funcionario": <INT>,  <--- PK da tabela funcionario (coluna id_funcionario em "reserva_funcionario")
         "data": <DATE>,
         "hora_inicio": <TIME>,
         "hora_fim": <TIME>
     }
+
+- em ação "delete":
+    {
+        "id": <INT>  <--- id da reserva
+    }
 */
 
 DELIMITER $$
-CREATE PROCEDURE funcionario (
-    IN acao ENUM('insert', 'update'),
-    IN objFunc JSON
+CREATE PROCEDURE reserva_funcionario (
+    IN acao ENUM('insert', 'update', 'delete'),
+    IN objReserva JSON
     )
-    COMMENT 'Altera registro de funcionario de acordo com ações informadas'
+    COMMENT 'Altera registro de reserva de funcionario de acordo com ações informadas'
     NOT DETERMINISTIC
     MODIFIES SQL DATA
     BEGIN
         -- Infos de funcionario
+        DECLARE id_reserva INT;
         DECLARE id_func INT;
-        DECLARE nome_func VARCHAR(64);
-        DECLARE tel_func CHAR(15);
-        DECLARE arrayServExerc JSON; /* Array de serviços exercidos incluídos */
-        DECLARE e_length INT; /* quantidade de serviços exercidos incluídos no array JSON de "exerce"*/
-        DECLARE e_count INT;
-        DECLARE id_serv INT;
+        DECLARE dt DATE;
+        DECLARE hr_ini TIME;
+        DECLARE hr_fin TIME;
+        DECLARE res_found INT; /* Usado para verificar se reserva existe antes de update ou delete*/
 
         -- Condições
         DECLARE err_not_object CONDITION FOR SQLSTATE '45000';
-        DECLARE err_no_info_object CONDITION FOR SQLSTATE '45001';
         DECLARE err_no_for_id_update CONDITION FOR SQLSTATE '45002';
-        DECLARE err_not_array CONDITION FOR SQLSTATE '45003';
 
         -- Validação geral
-        IF JSON_TYPE(objFunc) <> "OBJECT" THEN
+        IF JSON_TYPE(objReserva) <> "OBJECT" THEN
             SIGNAL err_not_object SET MESSAGE_TEXT = 'Argumento não é um objeto JSON';
         END IF;
 
-        -- Validaçao do servico exercido ("exerce")
-        SET arrayServExerc = JSON_EXTRACT(objFunc, '$.exerce');
-        IF (arrayServExerc IS NOT NULL) AND JSON_TYPE(arrayServExerc) <> "ARRAY" THEN
-            SIGNAL err_not_array SET MESSAGE_TEXT = 'Servicos exercidos deve ser nulo ou do tipo Array';
-        END IF;
+        SET id_reserva = JSON_EXTRACT(objReserva, '$.id');
+        SET id_func = JSON_EXTRACT(objReserva, '$.funcionario');
+        SET dt = CAST(JSON_UNQUOTE(JSON_EXTRACT(objReserva, '$.data')) AS DATE);
+        SET hr_ini = CAST(JSON_UNQUOTE(JSON_EXTRACT(objReserva, '$.hora_inicio')) AS TIME);
+        SET hr_fin= CAST(JSON_UNQUOTE(JSON_EXTRACT(objReserva, '$.hora_fim')) AS TIME);
 
-        SET nome_func = JSON_UNQUOTE(JSON_EXTRACT(objFunc, '$.nome'));
-        SET tel_func = JSON_UNQUOTE(JSON_EXTRACT(objFunc, '$.telefone'));
-        SET e_length = JSON_LENGTH(arrayServExerc); -- NULL se Array não for incluída
-
-        -- Processos para inserção de funcionario
+        -- Processos para inserção de reserva
         IF acao = "insert" THEN
-            -- Inserção do funcionario
-            INSERT INTO funcionario (nome, telefone) VALUE (nome_func, tel_func);
-            SET id_func = LAST_INSERT_ID();
+            INSERT INTO reserva_funcionario (
+                    id_funcionario, data, hora_inicio, hora_fim)
+                VALUE (id_func, dt, hr_ini, hr_fin);
 
-            -- Loop de inserção de serviços exercidos
-            SET e_count = 0;
-            WHILE e_count < e_length DO
-                SET id_serv = JSON_EXTRACT(arrayServExerc, CONCAT('$[', e_count ,'].servico'));
-                INSERT INTO servico_exercido (id_funcionario, id_servico_oferecido) VALUE (id_func, id_serv);
-
-                SET e_count = e_count + 1;
-            END WHILE;
-
-
-        ELSEIF acao = "update" THEN
-            -- Obtendo o id do funcionario a ser atualizado
-            SET id_func = JSON_EXTRACT(objFunc, '$.id');
-
-            IF ISNULL(id_func) THEN /* Se id_funcionario não for informado */
-                SIGNAL err_no_for_id_update SET MESSAGE_TEXT = "Nao foi informado id de funcionario para acao update";
+        ELSEIF acao IN ("update", "delete") THEN
+            IF id_reserva IS NULL THEN
+                SIGNAL err_no_for_id_update SET MESSAGE_TEXT ="Nao foi informado id de reserva para acao";
             END IF;
 
-            -- Altera registro do funcionario
-            UPDATE funcionario SET nome = nome_func, telefone = tel_func WHERE id = id_func;
+            -- Buscando se existe alguma reserva correspondente já existente
+            SELECT id
+                INTO res_found
+                FROM reserva_funcionario
+                WHERE id = id_reserva;
 
-            -- Atualização de serviços exercidos
-            IF e_length IS NOT NULL THEN
-                DELETE FROM servico_exercido WHERE id_funcionario = id_func;
+            IF res_found IS NULL THEN
+                SIGNAL err_no_for_id_update
+                    SET MESSAGE_TEXT = "Nao foi encontrada reserva existente para acao";
+            ELSE
+                CASE acao
+                    WHEN "update" THEN
+                        -- Altera registro da reserva
+                        UPDATE reserva_funcionario
+                        SET
+                            data = dt,
+                            hora_inicio = hr_ini,
+                            hora_fim = hr_fin
+                        WHERE id = id_reserva;
 
-                SET e_count = 0;
-                WHILE e_count < e_length DO
-                    SET id_serv = JSON_EXTRACT(arrayServExerc, CONCAT('$[', e_count ,'].servico'));
-                    INSERT INTO servico_exercido (id_funcionario, id_servico_oferecido) VALUE (id_func, id_serv);
+                    WHEN "delete" THEN
+                        -- Obtendo o id da reserva a ser removida
+                        SET id_reserva = JSON_EXTRACT(objReserva, '$.id');
 
-                    SET e_count = e_count + 1;
-                END WHILE;
+                        -- Altera registro do funcionario
+                        DELETE FROM reserva_funcionario WHERE id = id_reserva;
+                END CASE;
             END IF;
         END IF;
     END;$$
