@@ -86,8 +86,9 @@ CREATE TABLE endereco_cliente (
     cidade VARCHAR(64) NOT NULL,
     estado CHAR(2) NOT NULL DEFAULT "ES",
 
-    FOREIGN KEY (id_cliente) REFERENCES cliente(id)
+    FOREIGN KEY (id_cliente) REFERENCES cliente(id) ON DELETE CASCADE
 );
+
 
 CREATE TABLE servico_requerido (
     id_cliente INT NOT NULL,
@@ -688,6 +689,13 @@ CREATE PROCEDURE cliente (
         DECLARE id_serv INT;
         DECLARE serv_req_length INT;
         DECLARE serv_req_count INT;
+        -- Endereco
+        DECLARE objEnd JSON;
+        DECLARE logr VARCHAR(128);
+        DECLARE num VARCHAR(16);
+        DECLARE bairro_end VARCHAR(64);
+        DECLARE cid VARCHAR(64);
+        DECLARE est CHAR(2);
 
         -- Condições
         DECLARE err_not_object CONDITION FOR SQLSTATE '45000';
@@ -700,7 +708,7 @@ CREATE PROCEDURE cliente (
         END IF;
 
         SET arrayServReq = JSON_EXTRACT(objCliente, '$.servicoRequerido');
-
+        -- Validacao dos servicos requeridos
         IF JSON_TYPE(arrayServReq) NOT IN ("ARRAY", NULL) THEN
             SIGNAL err_not_array SET MESSAGE_TEXT = 'Servicos requeridos devem ser Array ou NULL';
         END IF;
@@ -709,6 +717,12 @@ CREATE PROCEDURE cliente (
         SET tel_cli = JSON_UNQUOTE(JSON_EXTRACT(objCliente, '$.telefone'));
         SET arrayServReq = JSON_UNQUOTE(JSON_EXTRACT(objCliente, '$.servicoRequerido'));
         SET serv_req_length = JSON_LENGTH(arrayServReq);
+
+        SET objEnd = JSON_EXTRACT(objCliente, '$.endereco');
+
+        IF JSON_TYPE(objEnd) NOT IN ("OBJECT", NULL) THEN
+            SIGNAL err_not_array SET MESSAGE_TEXT = 'Endereco deve ser Objeto ou NULL';
+        END IF;
 
         -- Processos para inserção de cliente
         IF acao = "insert" THEN
@@ -738,6 +752,18 @@ CREATE PROCEDURE cliente (
                 END WHILE;
             END IF;
 
+            -- Inserção de endereço do cliente
+            IF objEnd IS NOT NULL THEN
+                SET logr = JSON_UNQUOTE(JSON_EXTRACT(objEnd, '$.logradouro'));
+                SET num = JSON_UNQUOTE(JSON_EXTRACT(objEnd, '$.numero'));
+                SET bairro_end = JSON_UNQUOTE(JSON_EXTRACT(objEnd, '$.bairro'));
+                SET cid = JSON_UNQUOTE(JSON_EXTRACT(objEnd, '$.cidade'));
+                SET est = JSON_UNQUOTE(JSON_EXTRACT(objEnd, '$.estado'));
+
+                INSERT INTO endereco_cliente (
+                    id_cliente, logradouro, numero, bairro, cidade, estado)
+                    VALUES (id_cli, logr, num, bairro_end, cid, est);
+            END IF;
 
         ELSEIF acao IN ("update", "delete") THEN
             SET id_cli = JSON_EXTRACT(objCliente, '$.id');
@@ -789,7 +815,28 @@ CREATE PROCEDURE cliente (
                                 END WHILE;
                             END IF;
                         END IF;
+
+                        -- Atualização de endereço do cliente
+                        IF objEnd IS NOT NULL THEN
+                            SET logr = JSON_UNQUOTE(JSON_EXTRACT(objEnd, '$.logradouro'));
+                            SET num = JSON_UNQUOTE(JSON_EXTRACT(objEnd, '$.numero'));
+                            SET bairro_end = JSON_UNQUOTE(JSON_EXTRACT(objEnd, '$.bairro'));
+                            SET cid = JSON_UNQUOTE(JSON_EXTRACT(objEnd, '$.cidade'));
+                            SET est = JSON_UNQUOTE(JSON_EXTRACT(objEnd, '$.estado'));
+
+                            UPDATE endereco_cliente
+                                SET
+                                    logradouro = logr,
+                                    numero = num,
+                                    bairro = bairro_end,
+                                    cidade = cid,
+                                    estado = est
+                                WHERE id_cliente = id_cli;
+                        ELSE
+                            DELETE FROM endereco_cliente WHERE id_cliente = id_cli;
+                        END IF;
                     WHEN "delete" THEN
+                        /* OBS.: deleção do endereço é feito por Referential Action ON DELETE na tabela "endereco_cliente"*/
                         DELETE FROM servico_requerido WHERE id_cliente = id_cli;
                         DELETE FROM cliente WHERE id = id_cli;
                 END CASE;
@@ -797,6 +844,7 @@ CREATE PROCEDURE cliente (
         END IF;
     END;$$
 DELIMITER ;
+
 
 DELIMITER $$
 CREATE PROCEDURE pet (
