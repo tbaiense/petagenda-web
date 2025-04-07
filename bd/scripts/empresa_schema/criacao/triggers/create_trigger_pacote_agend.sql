@@ -12,7 +12,7 @@ CREATE TRIGGER trg_pacote_agend_update
     BEGIN
         DECLARE pets_found INT;
         DECLARE dias_found INT;
-        DECLARE cur_done INT FALSE; /* variável de controle do loop dos cursores */
+        DECLARE cur_done INT DEFAULT FALSE; /* variável de controle do loop dos cursores */
         DECLARE id_pac INT DEFAULT OLD.id;
         DECLARE qtd_count INT DEFAULT 0; /* Controla quantas recorrências da frequêncai foram cadastradas */
         -- Infos para agendamento
@@ -87,8 +87,9 @@ CREATE TRIGGER trg_pacote_agend_update
 
             -- Inserindo pets no JSON de info_servico
             SET objInfoServ = JSON_INSERT(objInfoServ, '$.pets', arrayObjPetServ);
-            SET objAgend = JSON_OBJECT('$.info', objInfoServ);
-
+            SET objAgend = JSON_OBJECT('info', objInfoServ);
+			set @info_s = objInfoServ;
+			set @agend = objAgend;
             -- Loop de criação de agendamentos
             SET cur_done = FALSE;
             OPEN cur_dias;
@@ -101,34 +102,39 @@ CREATE TRIGGER trg_pacote_agend_update
                     END IF;
 
                     -- Definindo a data base para os cálculos
-                    SET dt_base = DATE_ADD(NEW.dt_inicio, INTERVAL hr_agendada HOUR_MINUTE);
-                    CASE NEW.frequencia
-                        WHEN "dias-semana" THEN
-                            SET dt_base = DATE_ADD(dt_base, INTERVAL -(DAYOFWEEK(NEW.dt_inicio) -1) DAY); /* Encontra o primeiro dia da semana (domingo = 1) de "dt_inicio" */
+                    SET dt_base = DATE_ADD(OLD.dt_inicio, INTERVAL OLD.hr_agendada HOUR_SECOND);
+                    CASE OLD.frequencia
+                        WHEN "dias_semana" THEN
+                            SET dt_base = DATE_ADD(dt_base, INTERVAL -(DAYOFWEEK(OLD.dt_inicio) -1) DAY); /* Encontra o primeiro dia da semana (domingo = 1) de "dt_inicio" */
 
-                        WHEN "dias-mes" THEN
-                            SET dt_base = DATE_ADD(dt_base, INTERVAL -(DAYOFMONTH(NEW.dt_inicio) -1) DAY); /* Encontra o primeiro dia do mês (= 1) de "dt_inicio" */
+                        WHEN "dias_mes" THEN
+                            SET dt_base = DATE_ADD(dt_base, INTERVAL -(DAYOFMONTH(OLD.dt_inicio) -1) DAY); /* Encontra o primeiro dia do mês (= 1) de "dt_inicio" */
 
-                        WHEN "dias-ano" THEN
-                            SET dt_base = DATE_ADD(dt_base, INTERVAL -(DAYOFYEAR(NEW.dt_inicio) -1) DAY); /* Encontra o primeiro dia do ano (= 1) de "dt_inicio" */
+                        WHEN "dias_ano" THEN
+                            SET dt_base = DATE_ADD(dt_base, INTERVAL -(DAYOFYEAR(OLD.dt_inicio) -1) DAY); /* Encontra o primeiro dia do ano (= 1) de "dt_inicio" */
                     END CASE;
-
+					
+					SET @inicio = OLD.dt_inicio;
+					SET @dt_base = dt_base;
+					SET @hr_agen = OLD.hr_agendada;
                     -- Loop de repetição do dia especificado, de acordo com "qtd_recorrencia"
                     SET qtd_count = 0;
                     WHILE qtd_count < NEW.qtd_recorrencia DO
-                        SET dt_hr_marc = DATE_ADD(dt_base, INTERVAL (NEW.dia_pac - 1) DAY);
+                        SET dt_hr_marc = DATE_ADD(dt_base, INTERVAL (dia_pac - 1) DAY);
 
                         CASE NEW.frequencia
-                            WHEN "dias-semana" THEN
+                            WHEN "dias_semana" THEN
                                 SET dt_base = DATE_ADD(dt_base, INTERVAL qtd_count WEEK);
-                            WHEN "dias-mes" THEN
+                            WHEN "dias_mes" THEN
                                 SET dt_base = DATE_ADD(dt_base, INTERVAL qtd_count MONTH);
-                            WHEN "dias-ano" THEN
+                            WHEN "dias_ano" THEN
                                 SET dt_base = DATE_ADD(dt_base, INTERVAL qtd_count YEAR);
                         END CASE;
 
+						set @rodou = FALSE;
+						SET @dt = dt_hr_marc;
                         -- se dt_agend é igual ou superior a dt_inicio
-                        IF dt_hr_marc >= dt_inicio THEN
+                        IF dt_hr_marc >= NEW.dt_inicio THEN
 
                             -- Criação do agendamento
                             SET objAgend = JSON_REPLACE(objAgend, '$.dtHrMarcada', dt_hr_marc);
@@ -136,7 +142,7 @@ CREATE TRIGGER trg_pacote_agend_update
                             SET id_agend = LAST_INSERT_ID();
                             -- Atribuição da FK de pacote_agend
                             UPDATE agendamento SET id_pacote_agend = id_pac WHERE id = id_agend;
-                            
+                            set @rodou = TRUE;
                         END IF;
 
                         SET qtd_count = qtd_count + 1;
