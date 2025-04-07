@@ -171,10 +171,11 @@ CREATE TABLE pacote_agend (
     dt_inicio DATE NOT NULL,
     hr_agendada TIME NOT NULL,
     frequencia ENUM("dias_semana", "dias_mes", "dias_ano") NOT NULL,
-    estado ENUM("ativo", "concluido", "cancelado") NOT NULL DEFAULT "ativo",
+    estado ENUM("criado", "ativo", "concluido", "cancelado") NOT NULL DEFAULT "criado",
 
     FOREIGN KEY (id_servico_oferecido) REFERENCES servico_oferecido(id)
 );
+
 
 CREATE TABLE pet_pacote (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
