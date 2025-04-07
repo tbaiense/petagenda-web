@@ -440,6 +440,66 @@ CREATE TRIGGER trg_agendamento_update
 DELIMITER ;
 
 
+DELIMITER $$
+CREATE TRIGGER trg_incidente_insert
+    BEFORE INSERT
+    ON incidente
+    FOR EACH ROW
+    BEGIN
+        DECLARE dt_hr_ini_serv DATETIME;
+        DECLARE dt_hr_fim_serv DATETIME;
+
+        DECLARE err_dt_hr CONDITION FOR SQLSTATE '45000';
+
+        SELECT dt_hr_inicio, dt_hr_fim
+            INTO dt_hr_ini_serv, dt_hr_fim_serv
+            FROM servico_realizado
+            WHERE id = NEW.id_servico_realizado;
+
+        IF NEW.dt_hr_ocorrido > CURRENT_TIMESTAMP() THEN
+            SIGNAL err_dt_hr
+                SET MESSAGE_TEXT = "Data de ocorrencia deve ser anterior ao momento atual";
+        ELSEIF NEW.dt_hr_ocorrido > dt_hr_fim_serv THEN
+            SIGNAL err_dt_hr
+                    SET MESSAGE_TEXT = "Data de ocorrencia deve ser anterior a finalizacao do servico realizado";
+        ELSEIF NEW.dt_hr_ocorrido < dt_hr_ini_serv THEN
+            SIGNAL err_dt_hr
+                    SET MESSAGE_TEXT = "Data de ocorrencia deve ser posterior ao inicio do servico realizado";
+        END IF;
+    END;$$
+DELIMITER ;
+
+
+DELIMITER $$
+CREATE TRIGGER trg_incidente_update
+    BEFORE UPDATE
+    ON incidente
+    FOR EACH ROW
+    BEGIN
+        DECLARE dt_hr_ini_serv DATETIME;
+        DECLARE dt_hr_fim_serv DATETIME;
+
+        DECLARE err_dt_hr CONDITION FOR SQLSTATE '45000';
+
+        SELECT dt_hr_inicio, dt_hr_fim
+            INTO dt_hr_ini_serv, dt_hr_fim_serv
+            FROM servico_realizado
+            WHERE id = NEW.id_servico_realizado;
+
+        IF NEW.dt_hr_ocorrido > CURRENT_TIMESTAMP() THEN
+            SIGNAL err_dt_hr
+                SET MESSAGE_TEXT = "Data de ocorrencia deve ser anterior ao momento atual";
+        ELSEIF NEW.dt_hr_ocorrido > dt_hr_fim_serv THEN
+            SIGNAL err_dt_hr
+                    SET MESSAGE_TEXT = "Data de ocorrencia deve ser anterior a finalizacao do servico realizado";
+        ELSEIF NEW.dt_hr_ocorrido < dt_hr_ini_serv THEN
+            SIGNAL err_dt_hr
+                    SET MESSAGE_TEXT = "Data de ocorrencia deve ser posterior ao inicio do servico realizado";
+        END IF;
+    END;$$
+DELIMITER ;
+
+
 -- PROCEDURES ================================================================================================================================================================
 
 
@@ -1303,6 +1363,84 @@ CREATE PROCEDURE servico_realizado
     END;$$
 DELIMITER ;
 
+
+DELIMITER $$
+CREATE PROCEDURE incidente (
+    IN acao ENUM('insert', 'update', 'delete'),
+    IN objInc JSON
+    )
+    COMMENT 'Altera registro de incidente de acordo com ações informadas'
+    NOT DETERMINISTIC
+    MODIFIES SQL DATA
+    BEGIN
+        -- Infos de incidente
+        DECLARE id_inc INT;
+        DECLARE id_serv_real INT;
+        DECLARE tipo_inc ENUM("emergencia-medica", "briga", "mau-comportamento", "agressao");
+        DECLARE dt_hr_ocorr DATETIME;
+        DECLARE rel TEXT;
+        DECLARE med_tom TEXT;
+        DECLARE inc_found INT; /* Usado para verificar se incidente existe antes de update ou delete*/
+
+        -- Condições
+        DECLARE err_not_object CONDITION FOR SQLSTATE '45000';
+        DECLARE err_not_array CONDITION FOR SQLSTATE '45001';
+        DECLARE err_no_for_id_update CONDITION FOR SQLSTATE '45002';
+
+        -- Validação geral
+        IF JSON_TYPE(objInc) <> "OBJECT" THEN
+            SIGNAL err_not_object SET MESSAGE_TEXT = 'Argumento não é um objeto JSON';
+        END IF;
+
+        SET id_serv_real = JSON_EXTRACT(objInc, '$.servicoRealizado');
+        SET tipo_inc = JSON_UNQUOTE(JSON_EXTRACT(objInc, '$.tipo'));
+        SET dt_hr_ocorr = CAST(JSON_UNQUOTE(JSON_EXTRACT(objInc, '$.dtHrOcorrido')) AS DATETIME);
+        SET rel = JSON_UNQUOTE(JSON_EXTRACT(objInc, '$.relato'));
+        SET med_tom = JSON_UNQUOTE(JSON_EXTRACT(objInc, '$.medidaTomada'));
+
+        -- Processos para inserção de incidente
+        IF acao = "insert" THEN
+            -- Inserção do incidente
+            INSERT INTO incidente (
+                id_servico_realizado, tipo, dt_hr_ocorrido, relato, medida_tomada)
+                VALUE (id_serv_real, tipo_inc, dt_hr_ocorr, rel, med_tom);
+            SET id_inc = LAST_INSERT_ID();
+
+        ELSEIF acao IN ("update", "delete") THEN
+            SET id_inc = JSON_EXTRACT(objInc, '$.id');
+
+            IF id_inc IS NULL THEN
+                SIGNAL err_no_for_id_update SET MESSAGE_TEXT = "Nao foi informado id de incidente para acao";
+            END IF;
+
+            -- Buscando se existe algum incidente correspondente já existente
+            SELECT id
+                INTO inc_found
+                FROM incidente
+                WHERE id = id_inc;
+
+            IF inc_found IS NULL THEN
+                SIGNAL err_no_for_id_update
+                    SET MESSAGE_TEXT = "Nao foi encontrado incidente existente para acao";
+            ELSE
+                CASE acao
+                    WHEN "update" THEN
+                        UPDATE incidente
+                            SET
+                                id_servico_realizado = id_serv_real,
+                                tipo = tipo_inc,
+                                dt_hr_ocorrido = dt_hr_ocorr,
+                                relato = rel,
+                                medida_tomada = med_tom
+                            WHERE id = id_inc;
+
+                    WHEN "delete" THEN
+                        DELETE FROM incidente WHERE id = id_inc;
+                END CASE;
+            END IF;
+        END IF;
+    END;$$
+DELIMITER ;
 
 -- FINALIZAÇÃO ========================================================================================================================================
 SET foreign_key_checks = ON;
