@@ -147,6 +147,8 @@ CREATE PROCEDURE pacote_agend (
 
                 SET p_count = p_count + 1;
             END WHILE;
+												
+												UPDATE pacote_agend SET estado = "preparado" WHERE id = id_pac;
 
         ELSEIF acao IN ("update", "delete") THEN
             SET id_pac = JSON_EXTRACT(objPac, '$.id');
