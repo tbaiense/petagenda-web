@@ -17,7 +17,7 @@ Formato esperado para JSON "objPac":
     ],
     "petsPacote" : [
         +{
-            "pet": <INT>
+            "pet": <INT>    <--- PK da tabela "pet"
         }
     ]
 }
@@ -30,15 +30,15 @@ Formato esperado para JSON "objPac":
     "hrAgendada": <TIME>,
     "diasPacote": [   <--- omitir para manter como está
         +{   <-- omitir para remover
-            "id": <INT>,    <--- PK da tabela "dia_pacote"
+            "id": <INT>,    <--- omitir para inserir novo (PK da tabela "dia_pacote")
             "dia": <INT>
         }
     ],
     "estado": <ENUM("ativo", "concluido", "cancelado")>,
     "petsPacote" : [    <--- omitir para manter como está
         +{   <-- omitir para remover
-            "id": <INT>,    <--- PK da tabela "pet_pacote"
-            "pet": <INT>
+            "id": <INT>,    <--- omitir para inserir novo (PK da tabela "pet_pacote")
+            "pet": <INT>    <--- PK da tabela "pet"
         }
     ]
 }
@@ -49,7 +49,6 @@ Formato esperado para JSON "objPac":
         "id": <INT>  <--- id do pacote_agend
     }
 */
-
 
 DELIMITER $$
 CREATE PROCEDURE pacote_agend (
@@ -69,6 +68,7 @@ CREATE PROCEDURE pacote_agend (
         DECLARE pac_found INT; /* Usado para verificar se pacote_agend existe antes de update ou delete*/
         -- Infos de dia_pacote
         DECLARE arrayObjDiaPac JSON; /* Array de dia_pacote incluídos */
+        DECLARE id_dia_pac INT;
         DECLARE d_length INT; /* quantidade de dia_pacote incluídos no array JSON de "diasPacote"*/
         DECLARE d_count INT;
         DECLARE dia_pac INT;
@@ -79,7 +79,8 @@ CREATE PROCEDURE pacote_agend (
         DECLARE arrayObjPetPac JSON; /* Array de pet_pacote incluídos */
         DECLARE p_length INT; /* quantidade de pet_pacote incluídos no array JSON de "petsPacote"*/
         DECLARE p_count INT;
-        DECLARE id_pet_pac INT;
+        DECLARE id_pet_pac INT; /* PK de pet_pacote */
+        DECLARE id_pet_cliente INT;  /* PK de tabela "pet" */
         DECLARE pet_found INT; /* id_pet, se encontrado na busca pelo update */
         DECLARE arrayPetPac JSON;
 
@@ -90,18 +91,18 @@ CREATE PROCEDURE pacote_agend (
         DECLARE err_not_array CONDITION FOR SQLSTATE '45003';
 
         -- Validação geral
-        IF JSON_TYPE(objFunc) <> "OBJECT" THEN
+        IF JSON_TYPE(objPac) <> "OBJECT" THEN
             SIGNAL err_not_object SET MESSAGE_TEXT = 'Argumento não é um objeto JSON';
         END IF;
 
         -- Validaçao dos dias do pacote ("diasPacote")
-        SET arrayObjDiaPac = JSON_EXTRACT(objFunc, '$.diasPacote');
+        SET arrayObjDiaPac = JSON_EXTRACT(objPac, '$.diasPacote');
         IF (arrayObjDiaPac IS NOT NULL) AND JSON_TYPE(arrayObjDiaPac) <> "ARRAY" THEN
             SIGNAL err_not_array SET MESSAGE_TEXT = 'Dias do pacote devem ser nulo ou do tipo Array';
         END IF;
 
         -- Validaçao dos pets do pacote ("petsPacote")
-        SET arrayObjPetPac = JSON_EXTRACT(objFunc, '$.petsPacote');
+        SET arrayObjPetPac = JSON_EXTRACT(objPac, '$.petsPacote');
         IF (arrayObjPetPac IS NOT NULL) AND JSON_TYPE(arrayObjPetPac) <> "ARRAY" THEN
             SIGNAL err_not_array SET MESSAGE_TEXT = 'Pets do pacote devem ser nulo ou do tipo Array';
         END IF;
@@ -127,7 +128,7 @@ CREATE PROCEDURE pacote_agend (
                 -- Obtem objeto da array
                 SET dia_pac = JSON_EXTRACT(arrayObjDiaPac, CONCAT('$[', d_count, '].dia'));
 
-                INSERT INTO dia_pacote (id_pacote_agend, dia) VALUE (id_pac, dia);
+                INSERT INTO dia_pacote (id_pacote_agend, dia) VALUE (id_pac, dia_pac);
 
                 SET d_count = d_count + 1;
             END WHILE;
@@ -137,9 +138,9 @@ CREATE PROCEDURE pacote_agend (
             SET p_length = JSON_LENGTH(arrayObjPetPac);
             WHILE p_count < p_length DO
                 -- Obtem objeto da array
-                SET id_pet_pac = JSON_EXTRACT(arrayObjPetPac, CONCAT('$[', p_count, '].pet'));
+                SET id_pet_cliente = JSON_EXTRACT(arrayObjPetPac, CONCAT('$[', p_count, '].pet'));
 
-                INSERT INTO pet_pacote (id_pacote_agend, id_pet) VALUE (id_pac, id_pet_pac);
+                INSERT INTO pet_pacote (id_pacote_agend, id_pet) VALUE (id_pac, id_pet_cliente);
 
                 SET p_count = p_count + 1;
             END WHILE;
@@ -176,14 +177,20 @@ CREATE PROCEDURE pacote_agend (
                             IF (arrayObjDiaPac IS NOT NULL) THEN /* Se dias de recorrência deverão ser atualizadas */
                                 SET arrayDiaPac = JSON_ARRAY();
 
-                                -- Cria array json com inteiros representando os dias
+                                -- Cria array json com inteiros representando os dias e atualiza os registros dos dias do pacote
                                 WHILE d_count < d_length DO
                                     -- Obtem objeto da array
+                                    SET id_dia_pac = JSON_EXTRACT(arrayObjDiaPac, CONCAT('$[', d_count, '].id'));
                                     SET dia_pac = JSON_EXTRACT(arrayObjDiaPac, CONCAT('$[', d_count, '].dia'));
 
-                                    UPDATE dia_pacote SET dia = dia_pac WHERE
+                                    IF id_dia_pac IS NULL THEN
+                                        INSERT INTO dia_pacote (id_pacote_agend, dia) VALUE (id_pac, dia_pac);
+                                        SET id_dia_pac = LAST_INSERT_ID();
+                                    END IF;
 
-                                    SET arrayDiaPac = JSON_ARRAY_INSERT(arrayDiaPac, '$[0]', dia_pac);
+                                    UPDATE dia_pacote SET dia = dia_pac WHERE id = id_dia_pac;
+
+                                    SET arrayDiaPac = JSON_ARRAY_INSERT(arrayDiaPac, '$[0]', id_dia_pac);
 
                                     SET d_count = d_count + 1;
                                 END WHILE;
@@ -192,28 +199,46 @@ CREATE PROCEDURE pacote_agend (
                                 DELETE FROM dia_pacote
                                     WHERE
                                         id_pacote_agend = id_pac
-                                        AND dia NOT MEMBER OF (arrayDiaPac);
+                                        AND (id MEMBER OF (arrayDiaPac)) IS NOT TRUE;   /* Implementar trigger que cancela agendamentos futuros não preparados */
 
                             END IF;
 
-                            -- Loop de inserção de pet_pacote
+                            -- Loop de atualizacao de pet_pacote
                             SET p_count = 0;
                             SET p_length = JSON_LENGTH(arrayObjPetPac);
-                            WHILE p_count < p_length DO
-                                -- Obtem objeto da array
-                                SET id_pet_pac = JSON_EXTRACT(arrayObjPetPac, CONCAT('$[', p_count, '].pet'));
+                            IF (arrayObjPetPac IS NOT NULL) THEN /* Se pets deverão ser atualizadas */
+                                SET arrayPetPac = JSON_ARRAY();
 
-                                INSERT INTO pet_pacote (id_pacote_agend, id_pet) VALUE (id_pac, id_pet_pac);
+                                -- Cria array json com inteiros representando os IDs de tabela "pet_pacote" e atualiza os registros dos pets do pacote
+                                WHILE p_count < p_length DO
+                                    -- Obtem objeto da array
+                                    SET id_pet_pac = JSON_EXTRACT(arrayObjPetPac, CONCAT('$[', p_count, '].id'));
+                                    SET id_pet_cliente = JSON_EXTRACT(arrayObjPetPac, CONCAT('$[', p_count, '].pet'));
 
-                                SET p_count = p_count + 1;
-                            END WHILE;
+                                    IF id_pet_pac IS NULL THEN
+                                        INSERT INTO pet_pacote (id_pacote_agend, id_pet) VALUE (id_pac, id_pet_cliente);
+                                        SET id_pet_pac = LAST_INSERT_ID();
+                                    END IF;
 
+                                    UPDATE pet_pacote SET id_pet = id_pet_cliente WHERE id = id_pet_pac;
+
+                                    SET arrayPetPac = JSON_ARRAY_INSERT(arrayPetPac, '$[0]', id_pet_pac);
+
+                                    SET p_count = p_count + 1;
+                                END WHILE;
+
+                                -- Apagando pets omitidos da array
+                                DELETE FROM pet_pacote
+                                    WHERE
+                                        id_pacote_agend = id_pac
+                                        AND (id MEMBER OF (arrayPetPac)) IS NOT TRUE;   /* Implementar trigger que cancela agendamentos futuros não preparados */
+
+                            END IF;
 
                     WHEN "delete" THEN
-                        DELETE FROM pacote_agend WHERE id = id_pac;
+                        DELETE FROM pacote_agend WHERE id = id_pac; /* refential action nas tabelas dias e pets garantem a exclusão delas */
                 END CASE;
             END IF;
         END IF;
     END;$$
 DELIMITER ;
-
