@@ -168,11 +168,14 @@ CREATE TABLE endereco_info_servico (
 CREATE TABLE pacote_agend (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     id_servico_oferecido INT NOT NULL,
-    frequencia ENUM("semanal", "mensal_dia", "mensal_semana_dia") NOT NULL,
+    dt_inicio DATE NOT NULL,
+    hr_agendado TIME NOT NULL,
+    frequencia ENUM("dias_semana", "dias_mes", "dias_ano") NOT NULL,
     estado ENUM("ativo", "concluido", "cancelado") NOT NULL DEFAULT "ativo",
 
     FOREIGN KEY (id_servico_oferecido) REFERENCES servico_oferecido(id)
 );
+
 
 CREATE TABLE pet_pacote (
     id_pacote_agend INT NOT NULL PRIMARY KEY,
@@ -186,10 +189,10 @@ CREATE TABLE dia_pacote (
     id_dia_pacote INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     id_pacote_agend INT NOT NULL,
     dia INT NOT NULL,
-    semana INT,
 
     FOREIGN KEY (id_pacote_agend) REFERENCES pacote_agend(id)
 );
+
 
 CREATE TABLE servico_realizado (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
