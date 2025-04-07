@@ -34,7 +34,6 @@ Formato esperado para JSON "objPac":
             "dia": <INT>
         }
     ],
-    "estado": <ENUM("ativo", "concluido", "cancelado")>,
     "petsPacote" : [    <--- omitir para manter como está
         +{   <-- omitir para remover
             "id": <INT>,    <--- omitir para inserir novo (PK da tabela "pet_pacote")
