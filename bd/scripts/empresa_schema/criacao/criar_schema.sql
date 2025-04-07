@@ -141,6 +141,7 @@ CREATE TABLE pet_servico (
     FOREIGN KEY (id_info_servico) REFERENCES info_servico(id)
 );
 
+
 CREATE TABLE remedio_pet_servico (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     id_pet_servico INT NOT NULL,
@@ -150,6 +151,7 @@ CREATE TABLE remedio_pet_servico (
     UNIQUE (id_pet_servico, nome),
     FOREIGN KEY (id_pet_servico) REFERENCES pet_servico(id)
 );
+
 
 CREATE TABLE endereco_info_servico (
     id_info_servico INT NOT NULL,
@@ -165,14 +167,17 @@ CREATE TABLE endereco_info_servico (
     FOREIGN KEY (id_info_servico) REFERENCES info_servico(id)
 );
 
+
 CREATE TABLE pacote_agend (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     id_servico_oferecido INT NOT NULL,
     dt_inicio DATE NOT NULL,
     hr_agendada TIME NOT NULL,
     frequencia ENUM("dias_semana", "dias_mes", "dias_ano") NOT NULL,
-    estado ENUM("criado", "ativo", "concluido", "cancelado") NOT NULL DEFAULT "criado",
+    estado ENUM("criado", "preparado", "ativo", "concluido", "cancelado") NOT NULL DEFAULT "criado",
+    qtd_recorrencia INT NOT NULL,
 
+    CONSTRAINT chk_pacote_agend_qtd_recorrencia CHECK (qtd_recorrencia > 0),
     FOREIGN KEY (id_servico_oferecido) REFERENCES servico_oferecido(id)
 );
 
@@ -1235,7 +1240,7 @@ CREATE PROCEDURE agendamento
             SIGNAL err_not_object SET MESSAGE_TEXT = 'Argumento não é um objeto JSON';
         END IF;
 
-        SET dt_hr_marc = JSON_EXTRACT(objAgend, '$.data_hora_marcada');
+        SET dt_hr_marc = JSON_EXTRACT(objAgend, '$.dtHrMarcada');
         SET objInfo = JSON_EXTRACT(objAgend, '$.info');
 
         -- Processos para inserção de agendamento
@@ -1282,6 +1287,7 @@ CREATE PROCEDURE agendamento
         END IF;
     END;$$
 DELIMITER ;
+
 
 DELIMITER $$
 CREATE PROCEDURE set_estado_agendamento(
@@ -1466,6 +1472,7 @@ CREATE PROCEDURE pacote_agend (
         DECLARE dt_ini DATE;
         DECLARE hr_agend TIME;
         DECLARE freq ENUM("dias_semana", "dias_mes", "dias_ano");
+        DECLARE qtd_rec INT;
         DECLARE pac_found INT; /* Usado para verificar se pacote_agend existe antes de update ou delete*/
         -- Infos de dia_pacote
         DECLARE arrayObjDiaPac JSON; /* Array de dia_pacote incluídos */
@@ -1512,13 +1519,14 @@ CREATE PROCEDURE pacote_agend (
         SET dt_ini = CAST(JSON_UNQUOTE(JSON_EXTRACT(objPac, '$.dtInicio')) AS DATETIME); /* Validação é feita por trigger na tabela "pacote_agend" */
         SET hr_agend = CAST(JSON_UNQUOTE(JSON_EXTRACT(objPac, '$.hrAgendada')) AS TIME);
         SET freq = JSON_UNQUOTE(JSON_EXTRACT(objPac, '$.frequencia'));
+        SET qtd_rec = JSON_EXTRACT(objPac, '$.qtdRecorrencia');
 
         -- Processos para inserção de pacote_agend
         IF acao = "insert" THEN
             -- Inserção do pacote_agend
             INSERT INTO pacote_agend (
-                id_servico_oferecido, dt_inicio, hr_agendada, frequencia)
-                VALUE (id_serv_ofer, dt_ini, hr_agend, freq);
+                id_servico_oferecido, dt_inicio, hr_agendada, frequencia, qtd_recorrencia)
+                VALUE (id_serv_ofer, dt_ini, hr_agend, freq, qtd_rec);
             SET id_pac = LAST_INSERT_ID();
 
             -- Loop de inserção de dia_pac
@@ -1569,7 +1577,8 @@ CREATE PROCEDURE pacote_agend (
                             SET
                                 id_servico_oferecido = id_serv_ofer,   /* Implementar trigger que atualiza serviço escolhido nos agendamentos criados */
                                 dt_inicio = dt_ini,
-                                hr_agendada = hr_agend   /* Implementar trigger que atualiza serviço escolhido nos agendamentos criados */
+                                hr_agendada = hr_agend,   /* Implementar trigger que atualiza serviço escolhido nos agendamentos criados */
+                                qtd_recorrencia = qtd_rec  /* Implementar trigger para cancelar ou excluir agendamentos que sobrarem ao diminuir ou adicionar agendamentos ao aumentar */
                             WHERE id = id_pac;
 
                             -- Loop de atualização de dia_pac
@@ -1643,7 +1652,6 @@ CREATE PROCEDURE pacote_agend (
         END IF;
     END;$$
 DELIMITER ;
-
 
 -- FINALIZAÇÃO ========================================================================================================================================
 SET foreign_key_checks = ON;
