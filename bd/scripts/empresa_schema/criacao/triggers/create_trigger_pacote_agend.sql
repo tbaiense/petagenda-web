@@ -17,8 +17,8 @@ CREATE TRIGGER trg_pacote_agend_update
         DECLARE qtd_count INT DEFAULT 0; /* Controla quantas recorrências da frequêncai foram cadastradas */
         -- Infos para agendamento
         DECLARE id_agend INT;
-        DECLARE dt_hr_marc DATETIME;
-        DECLARE dt_agend DATE; /* Guarda o dia que foi calculado para ser inserido no agendamento, e adicionado do horário do pacote */
+        DECLARE dt_hr_marc DATETIME; /* Guarda o dia que foi calculado para ser inserido no agendamento, e adicionado do horário do pacote */
+        
         DECLARE dia_pac INT;
         DECLARE dt_base DATETIME;
         DECLARE objAgend JSON;
@@ -116,7 +116,7 @@ CREATE TRIGGER trg_pacote_agend_update
                     -- Loop de repetição do dia especificado, de acordo com "qtd_recorrencia"
                     SET qtd_count = 0;
                     WHILE qtd_count < NEW.qtd_recorrencia DO
-                        SET dt_agend = DATE_ADD(dt_base, INTERVAL (NEW.dia_pac - 1) DAY);
+                        SET dt_hr_marc = DATE_ADD(dt_base, INTERVAL (NEW.dia_pac - 1) DAY);
 
                         CASE NEW.frequencia
                             WHEN "dias-semana" THEN
@@ -128,13 +128,15 @@ CREATE TRIGGER trg_pacote_agend_update
                         END CASE;
 
                         -- se dt_agend é igual ou superior a dt_inicio
-                        IF dt_agend >= dt_inicio THEN
+                        IF dt_hr_marc >= dt_inicio THEN
 
                             -- Criação do agendamento
-
-
-
+                            SET objAgend = JSON_REPLACE(objAgend, '$.dtHrMarcada', dt_hr_marc);
+                            CALL agendamento('insert', objAgend);
+                            SET id_agend = LAST_INSERT_ID();
                             -- Atribuição da FK de pacote_agend
+                            UPDATE agendamento SET id_pacote_agend = id_pac WHERE id = id_agend;
+                            
                         END IF;
 
                         SET qtd_count = qtd_count + 1;
