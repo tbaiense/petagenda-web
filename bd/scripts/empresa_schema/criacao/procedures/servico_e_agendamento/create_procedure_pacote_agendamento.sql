@@ -10,6 +10,7 @@ Formato esperado para JSON "objPac":
     "dtInicio": <DATE>,
     "hrAgendada": <TIME>,
     "frequencia": <ENUM("dias_semana", "dias_mes", "dias_ano")>,
+    "qtdRecorrencia": <INT>,
     "diasPacote": [
         +{
             "dia": <INT>
@@ -28,6 +29,7 @@ Formato esperado para JSON "objPac":
     "servicoOferecido": <INT>,    <--- PK da tabela "servico_oferecido"
     "dtInicio": <DATE>,
     "hrAgendada": <TIME>,
+    "qtdRecorrencia": <INT>,
     "diasPacote": [   <--- omitir para manter como está
         +{   <-- omitir para remover
             "id": <INT>,    <--- omitir para inserir novo (PK da tabela "dia_pacote")
@@ -64,6 +66,7 @@ CREATE PROCEDURE pacote_agend (
         DECLARE dt_ini DATE;
         DECLARE hr_agend TIME;
         DECLARE freq ENUM("dias_semana", "dias_mes", "dias_ano");
+        DECLARE qtd_rec INT;
         DECLARE pac_found INT; /* Usado para verificar se pacote_agend existe antes de update ou delete*/
         -- Infos de dia_pacote
         DECLARE arrayObjDiaPac JSON; /* Array de dia_pacote incluídos */
@@ -110,13 +113,14 @@ CREATE PROCEDURE pacote_agend (
         SET dt_ini = CAST(JSON_UNQUOTE(JSON_EXTRACT(objPac, '$.dtInicio')) AS DATETIME); /* Validação é feita por trigger na tabela "pacote_agend" */
         SET hr_agend = CAST(JSON_UNQUOTE(JSON_EXTRACT(objPac, '$.hrAgendada')) AS TIME);
         SET freq = JSON_UNQUOTE(JSON_EXTRACT(objPac, '$.frequencia'));
+        SET qtd_rec = JSON_EXTRACT(objPac, '$.qtdRecorrencia');
 
         -- Processos para inserção de pacote_agend
         IF acao = "insert" THEN
             -- Inserção do pacote_agend
             INSERT INTO pacote_agend (
-                id_servico_oferecido, dt_inicio, hr_agendada, frequencia)
-                VALUE (id_serv_ofer, dt_ini, hr_agend, freq);
+                id_servico_oferecido, dt_inicio, hr_agendada, frequencia, qtd_recorrencia)
+                VALUE (id_serv_ofer, dt_ini, hr_agend, freq, qtd_rec);
             SET id_pac = LAST_INSERT_ID();
 
             -- Loop de inserção de dia_pac
@@ -167,7 +171,8 @@ CREATE PROCEDURE pacote_agend (
                             SET
                                 id_servico_oferecido = id_serv_ofer,   /* Implementar trigger que atualiza serviço escolhido nos agendamentos criados */
                                 dt_inicio = dt_ini,
-                                hr_agendada = hr_agend   /* Implementar trigger que atualiza serviço escolhido nos agendamentos criados */
+                                hr_agendada = hr_agend,   /* Implementar trigger que atualiza serviço escolhido nos agendamentos criados */
+                                qtd_recorrencia = qtd_rec  /* Implementar trigger para cancelar ou excluir agendamentos que sobrarem ao diminuir ou adicionar agendamentos ao aumentar */
                             WHERE id = id_pac;
 
                             -- Loop de atualização de dia_pac

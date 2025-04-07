@@ -4,7 +4,7 @@ TODO: Delegar ações para procedures específicos de cada ação, para simplifi
 
 Formato para "objAgend" para "acao" "insert":
 {
-    "data_hora_marcada": <DATETIME>,
+    "dtHrMarcada": <DATETIME>,
     "info": {
         "servico": <INT>, <-- PK da tabela servico_oferecido (id_servico_oferecido em "info_servico")
         "funcionario": ?<INT>, <-- id do funcionário atribuído
@@ -34,7 +34,7 @@ Formato para "objAgend" para "acao" "insert":
 Formato para "objAgend" para "acao" "update":
 {
     "id": <INT>, <-- id do agendamento
-    "data_hora_marcada": <DATETIME>,
+    "dtHrMarcada": <DATETIME>,
     "info": ?{ <-- Não incluir se deverá ser mantido como está
         "servico": <INT>, <-- PK da tabela servico_oferecido (id_servico_oferecido em "info_servico")
         "funcionario": ?<INT> | "", <-- id do funcionário atribuído (deixar "" se deverá ser removido, ou não incluir se deverá ser mantido)
@@ -92,7 +92,7 @@ CREATE PROCEDURE agendamento
             SIGNAL err_not_object SET MESSAGE_TEXT = 'Argumento não é um objeto JSON';
         END IF;
 
-        SET dt_hr_marc = JSON_EXTRACT(objAgend, '$.data_hora_marcada');
+        SET dt_hr_marc = JSON_EXTRACT(objAgend, '$.dtHrMarcada');
         SET objInfo = JSON_EXTRACT(objAgend, '$.info');
 
         -- Processos para inserção de agendamento
