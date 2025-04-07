@@ -3,37 +3,55 @@ REALIZA PROCESSOS NA TABELA "info_servico" com base nos parâmetros
 
 Formato para "objServ" para "acao" "insert":
     {
-        "servico": 1, <-- Id do serviço oferecido pela empresa
-        "funcionario": 1, <-- Id do funcionário que realizou
-        "observacoes": "", <-- Observações opcionais do registro (deixar null, se não aplicável)
+        "servico": <INT>, <-- Id do serviço oferecido pela empresa
+        "funcionario": <INT>, <-- Id do funcionário que realizou
+        "observacoes": ?<VARCHAR(250)>,
         "pets" : [
-            {
-                "id": 1, <- id do pet
-                "alimentacao": "", <- Instruções opcionais de alimentação (deixar null, se não aplicável)
-                "remedios": [{"nome": "", "instrucoes": ""}, {"nome": "", "instrucoes": ""}]  <-- deixar núlo se não aplicável
+            +{
+                "id": <INT>, <- id do pet
+                "alimentacao": ?<TEXT>,
+                "remedios": ?[
+                    +{"nome": <VARCHAR(128)>, "instrucoes": <TEXT>}
+                ]
             }
         ],
-        "enderecos": [{"tipo": "devolver", "logradouro": "", "numero": "", "bairro": "", "cidade": "", "estado": ""}] <-- deixar núlo se não aplicável
+        "enderecos": ?[
+            1,2{
+                "tipo": <ENUM("buscar", "devolver", "buscar-devolver")>,
+                "logradouro": <VARCHAR(128)>,
+                "numero":  <VARCHAR(16)>,
+                "bairro":  <VARCHAR(64)>,
+                "cidade":  <VARCHAR(64)>,
+                "estado":  <CHAR(2)>
+            }
+        ]
     }
 
 Formato para "objServ" para "acao" "update": (NÃO IMPLEMENTADO POR COMPLETO -> NÃO ALTERA PETS E ENDERECOS!!)
     {
         "id": 13, <-- Id do "info_servico" que deverá ser modificado
-        "servico": 1, <-- Id do serviço oferecido pela empresa
-        "funcionario": 1, <-- Id do funcionário que realizou
-        "observacoes": "", <-- Observações opcionais do registro (deixar "" se deverá ser removido, ou não incluir se deverá ser mantido)
+        "servico": <INT>, <-- Id do serviço oferecido pela empresa
+        "funcionario": <INT>, <-- Id do funcionário que realizou
+        "observacoes": ?<VARCHAR(250)>,
         "pets" : [
             {
-                "id": 1, <- id do pet
-                "alimentacao": "", <- Instruções opcionais de alimentação (deixar "" se deverá ser removido, ou não incluir se deverá ser mantido como está)
-                "remedios": [
-                    {"id": 1, "nome": "", "instrucoes": ""}, {"id": 2, "nome": "", "instrucoes": ""} <-- não inclur se deverá ser apagado
-                ] <-- não incluir se deverá ser mantido como está
+                "id": <INT>, <- id do pet
+                "alimentacao": ?<TEXT>,
+                "remedios": ?[   <-- omitir se deverá ser mantido como está
+                    +{"nome": <VARCHAR(128)>, "instrucoes": <TEXT>}   <-- omitir para REMOVER
+                ]
             }
         ],
-        "enderecos": [
-            {"id": 1, "tipo": "devolver", "logradouro": "", "numero": "", "bairro": "", "cidade": "", "estado": ""} <-- não inclur se deverá ser apagado
-        ] <-- não incluir se deverá ser mantido como está
+        "enderecos": [   <-- omitir se deverá ser mantido como está
+            1,2{   <-- omitir para REMOVER
+                "tipo": <ENUM("buscar", "devolver", "buscar-devolver")>,
+                "logradouro": <VARCHAR(128)>,
+                "numero":  <VARCHAR(16)>,
+                "bairro":  <VARCHAR(64)>,
+                "cidade":  <VARCHAR(64)>,
+                "estado":  <CHAR(2)>
+            }
+        ]
     }
 */
 
