@@ -283,6 +283,23 @@ CREATE TRIGGER trg_info_servico_insert
     END;$$
 DELIMITER ;
 
+DELIMITER $$
+CREATE TRIGGER trg_info_servico_update
+    AFTER UPDATE
+    ON info_servico
+    FOR EACH ROW
+    BEGIN
+        IF OLD.id_funcionario IS NULL AND NEW.id_funcionario IS NOT NULL THEN
+                UPDATE agendamento
+                    SET estado = "preparado"
+                    WHERE
+                        id_info_servico = NEW.id
+                        AND estado = "criado" LIMIT 1;
+        END IF;
+
+    END;$$
+DELIMITER ;
+
 
 DELIMITER $$
 CREATE TRIGGER trg_reserva_funcionario_insert
@@ -635,8 +652,8 @@ CREATE TRIGGER trg_pacote_agend_update
                             SET dt_hr_marc = DATE_ADD(dt_agend, INTERVAL offset_count YEAR);
                     END CASE;
 
-                    -- se dt_agend é igual ou superior a dt_inicio
-                    IF dt_hr_marc >= OLD.dt_inicio THEN
+                    -- se dt_agend é igual ou superior a dt_inicio e ao momento atual
+                    IF dt_hr_marc >= OLD.dt_inicio AND dt_hr_marc > CURRENT_TIMESTAMP() THEN
                         -- Criação do agendamento
                         SET objAgend = JSON_SET(objAgend, '$.dtHrMarcada', dt_hr_marc);
                         CALL agendamento('insert', objAgend);
@@ -1814,6 +1831,23 @@ CREATE PROCEDURE set_estado_pacote_agend(
     MODIFIES SQL DATA
     BEGIN
         UPDATE pacote_agend SET estado = est WHERE id = id_pac;
+    END;$$
+DELIMITER ;
+
+
+-- EVENTS =============================================================================================================================================
+
+DELIMITER $$
+CREATE EVENT agendamento_set_estado_pendente
+    ON SCHEDULE EVERY 1 MINUTE
+    ON COMPLETION PRESERVE
+    COMMENT 'Verifica agendamentos que passaram da data agendada e com estado "preparado" e altera para "pendente"'
+    DO BEGIN
+        UPDATE agendamento
+            SET estado = "pendente"
+            WHERE
+                dt_hr_marcada < CURRENT_TIMESTAMP()
+                AND estado = "preparado";
     END;$$
 DELIMITER ;
 
