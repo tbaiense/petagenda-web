@@ -54,6 +54,94 @@ CREATE TABLE usuario (
 
 -- FUNCTIONS ========================================================================================================================================================================
 
+SET GLOBAL log_bin_trust_function_creators = 1;
+
+DELIMITER $$
+CREATE FUNCTION validar_cotas (
+    tipo_cota ENUM("servico", "relatorio-simples", "relatorio-detalhado")
+    )
+    RETURNS INT
+    NOT DETERMINISTIC
+    MODIFIES SQL DATA
+    BEGIN
+        DECLARE id_emp INT DEFAULT @empresa_atual;
+        DECLARE cotas_atual INT;
+        DECLARE cotas_apos INT;
+        DECLARE licenca_atual ENUM("basico", "profissional", "corporativo");
+
+        DECLARE err_empresa_undefined CONDITION FOR SQLSTATE '45000';
+        DECLARE err_no_license CONDITION FOR SQLSTATE '45001';
+
+        IF id_emp IS NULL THEN
+            SIGNAL err_empresa_undefined
+                SET MESSAGE_TEXT = "A empresa atual nao foi definida para contabilizacao de cotas";
+        END IF;
+
+        -- Obtendo licença atual da empresa
+        SELECT licenca_empresa INTO licenca_atual FROM empresa WHERE id = id_emp;
+
+        IF licenca_atual IS NULL THEN
+            SIGNAL err_no_license
+                SET MESSAGE_TEXT = "A empresa nao possui uma licenca ativa para realizar esta acao";
+        END IF;
+
+        IF licenca_atual = "corporativo" THEN
+            RETURN TRUE;
+        ELSEIF licenca_atual IN ("basico", "profissional") THEN
+            IF tipo_cota =  "servico" THEN
+                IF licenca_atual = "basico" THEN
+                    SELECT cota_servico INTO cotas_atual FROM empresa WHERE id = id_emp;
+                    -- Verificar quantidade de cotas
+                    IF cotas_atual > 0 THEN
+                        UPDATE empresa
+                            SET cota_servico = cotas_atual - 1
+                            WHERE id = id_emp;
+
+                        RETURN TRUE;
+                    ELSE
+                        RETURN FALSE;
+                    END IF;
+
+                ELSE
+                    RETURN TRUE;
+                END IF;
+            ELSEIF tipo_cota = "relatorio-simples" THEN
+                -- Verificar quantidade de cotas
+                SELECT cota_relatorio_simples INTO cotas_atual FROM empresa WHERE id = id_emp;
+                IF cotas_atual > 0 THEN
+                    UPDATE empresa
+                        SET cota_relatorio_simples = cotas_atual - 1
+                        WHERE id = id_emp;
+
+                    RETURN TRUE;
+                ELSE
+                    RETURN FALSE;
+                END IF;
+
+            ELSEIF tipo_cota = "relatorio-detalhado" THEN
+                -- Verificar licença
+                IF licenca_atual = "profissional" THEN
+                    -- Verificar quantidade de cotas
+                    SELECT cota_relatorio_detalhado INTO cotas_atual FROM empresa WHERE id = id_emp;
+                    IF cotas_atual > 0 THEN
+                        UPDATE empresa
+                            SET cota_relatorio_detalhado = cotas_atual - 1
+                            WHERE id = id_emp;
+
+                        RETURN TRUE;
+                    ELSE /* Sem cotas para gerar relatório detalhado */
+                        RETURN FALSE;
+                    END IF;
+                ELSE /* Plano for "basico" */
+                    RETURN FALSE;
+                END IF;
+            END IF;
+        END IF;
+
+        RETURN FALSE;
+    END;$$
+DELIMITER ;
+
 
 
 -- TRIGGERS ========================================================================================================================================================================
@@ -91,6 +179,23 @@ CREATE TRIGGER trg_empresa_insert
 DELIMITER ;
 
 -- PROCEDURES ================================================================================================================================================================
+
+DELIMITER $$
+CREATE PROCEDURE set_empresa_atual(IN id_emp INT)
+    DETERMINISTIC
+    CONTAINS SQL
+    BEGIN
+        DECLARE emp_found INT;
+
+        SELECT id INTO emp_found FROM empresa WHERE id = id_emp;
+
+        IF emp_found IS NULL THEN
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Empresa atual definida nao existente!";
+        END IF;
+        SET @empresa_atual = id_emp;
+    END;$$
+DELIMITER ;
+
 
 DELIMITER $$
 CREATE PROCEDURE usuario (
@@ -179,6 +284,132 @@ CREATE PROCEDURE usuario (
 
                     WHEN "delete" THEN
                         DELETE FROM usuario WHERE id = id_u;
+                END CASE;
+            END IF;
+        END IF;
+    END;$$
+DELIMITER ;
+
+
+DELIMITER $$
+CREATE PROCEDURE empresa (
+    IN acao ENUM('insert', 'update', 'delete'),
+    IN objEmp JSON
+    )
+    COMMENT 'Altera registro de empresa de acordo com ações informadas'
+    NOT DETERMINISTIC
+    MODIFIES SQL DATA
+    BEGIN
+        -- Infos de empresa
+        DECLARE id_emp INT;
+        DECLARE razao_soc VARCHAR(128);
+        DECLARE nome_fant VARCHAR(128);
+        DECLARE cnpj_emp CHAR(14);
+        DECLARE ft TEXT;
+        DECLARE lema_emp VARCHAR(180);
+        DECLARE emp_found INT; /* Usado para verificar se empresa existe antes de update ou delete*/
+
+        -- Endereco
+        DECLARE objEnd JSON;
+        DECLARE logr VARCHAR(128);
+        DECLARE num VARCHAR(16);
+        DECLARE bairro_end VARCHAR(64);
+        DECLARE cid VARCHAR(64);
+        DECLARE est CHAR(2);
+
+        -- Condições
+        DECLARE err_not_object CONDITION FOR SQLSTATE '45000';
+        DECLARE err_not_array CONDITION FOR SQLSTATE '45001';
+        DECLARE err_no_for_id_update CONDITION FOR SQLSTATE '45002';
+
+        -- Validação geral
+        IF JSON_TYPE(objEmp) <> "OBJECT" THEN
+            SIGNAL err_not_object SET MESSAGE_TEXT = 'Argumento não é um objeto JSON';
+        END IF;
+
+
+        SET razao_soc = JSON_UNQUOTE(JSON_EXTRACT(objEmp, '$.razaoSocial'));
+        SET nome_fant = JSON_UNQUOTE(JSON_EXTRACT(objEmp, '$.nomeFantasia'));
+        SET cnpj_emp = JSON_UNQUOTE(JSON_EXTRACT(objEmp, '$.cnpj'));
+        SET ft = JSON_UNQUOTE(JSON_EXTRACT(objEmp, '$.foto'));
+        SET lema_emp = JSON_UNQUOTE(JSON_EXTRACT(objEmp, '$.lema'));
+
+        SET objEnd = JSON_EXTRACT(objEmp, '$.endereco');
+
+        IF JSON_TYPE(objEnd) NOT IN ("OBJECT", NULL) THEN
+            SIGNAL err_not_array SET MESSAGE_TEXT = 'Endereco deve ser Objeto ou NULL';
+        END IF;
+
+        -- Processos para inserção de empresa
+        IF acao = "insert" THEN
+            -- Inserção do empresa
+            INSERT INTO empresa (
+                nome_fantasia, razao_social, cnpj, foto, lema)
+                VALUE (nome_fant, razao_soc, cnpj_emp, ft, lema_emp);
+            SET id_emp = LAST_INSERT_ID();
+
+            -- Inserção de endereço do empresa
+            IF objEnd IS NOT NULL THEN
+                SET logr = JSON_UNQUOTE(JSON_EXTRACT(objEnd, '$.logradouro'));
+                SET num = JSON_UNQUOTE(JSON_EXTRACT(objEnd, '$.numero'));
+                SET bairro_end = JSON_UNQUOTE(JSON_EXTRACT(objEnd, '$.bairro'));
+                SET cid = JSON_UNQUOTE(JSON_EXTRACT(objEnd, '$.cidade'));
+                SET est = JSON_UNQUOTE(JSON_EXTRACT(objEnd, '$.estado'));
+
+                INSERT INTO endereco_empresa (
+                    id_empresa, logradouro, numero, bairro, cidade, estado)
+                    VALUES (id_emp, logr, num, bairro_end, cid, est);
+            END IF;
+
+        ELSEIF acao IN ("update", "delete") THEN
+            SET id_emp = JSON_EXTRACT(objEmp, '$.id');
+
+            IF id_emp IS NULL THEN
+                SIGNAL err_no_for_id_update SET MESSAGE_TEXT = "Nao foi informado id de empresa para acao";
+            END IF;
+
+            -- Buscando se existe algum empresa correspondente já existente
+            SELECT id
+                INTO emp_found
+                FROM empresa
+                WHERE id = id_emp;
+
+            IF emp_found IS NULL THEN
+                SIGNAL err_no_for_id_update
+                    SET MESSAGE_TEXT = "Nao foi encontrado empresa existente para acao";
+            ELSE
+                CASE acao
+                    WHEN "update" THEN
+                        UPDATE empresa
+                            SET
+                                nome_fantasia = nome_fant,
+                                razao_social = razao_soc,
+                                foto = ft,
+                                lema = lema_emp
+                            WHERE id = id_emp;
+
+                        -- Atualização de endereço do empresa
+                        IF objEnd IS NOT NULL THEN
+                            SET logr = JSON_UNQUOTE(JSON_EXTRACT(objEnd, '$.logradouro'));
+                            SET num = JSON_UNQUOTE(JSON_EXTRACT(objEnd, '$.numero'));
+                            SET bairro_end = JSON_UNQUOTE(JSON_EXTRACT(objEnd, '$.bairro'));
+                            SET cid = JSON_UNQUOTE(JSON_EXTRACT(objEnd, '$.cidade'));
+                            SET est = JSON_UNQUOTE(JSON_EXTRACT(objEnd, '$.estado'));
+
+                            UPDATE endereco_empresa
+                                SET
+                                    logradouro = logr,
+                                    numero = num,
+                                    bairro = bairro_end,
+                                    cidade = cid,
+                                    estado = est
+                                WHERE id_empresa = id_emp;
+                        ELSE
+                            DELETE FROM endereco_empresa WHERE id_empresa = id_emp;
+                        END IF;
+                    WHEN "delete" THEN
+                        /* OBS.: deleção do endereço é feito por Referential Action ON DELETE na tabela "endereco_empresa"*/
+                        DELETE FROM empresa WHERE id = id_emp;
                 END CASE;
             END IF;
         END IF;

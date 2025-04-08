@@ -24,7 +24,7 @@ CREATE TRIGGER trg_agendamento_insert
                                             em "agendamento", caso ele deva ser totalizado 
                                             por meio dos "valor_pet" contidos em "pet_servico" 
                                             associado ao agendamento */
-        
+
         -- Verificação de funcionário atribuído e atribuição de estado inicial
         SELECT id_funcionario INTO id_func FROM info_servico WHERE id = NEW.id_info_servico;
         
