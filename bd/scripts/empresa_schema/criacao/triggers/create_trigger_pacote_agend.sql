@@ -126,8 +126,8 @@ CREATE TRIGGER trg_pacote_agend_update
                             SET dt_hr_marc = DATE_ADD(dt_agend, INTERVAL offset_count YEAR);
                     END CASE;
 
-                    -- se dt_agend é igual ou superior a dt_inicio
-                    IF dt_hr_marc >= OLD.dt_inicio THEN
+                    -- se dt_agend é igual ou superior a dt_inicio e ao momento atual
+                    IF dt_hr_marc >= OLD.dt_inicio AND dt_hr_marc > CURRENT_TIMESTAMP() THEN
                         -- Criação do agendamento
                         SET objAgend = JSON_SET(objAgend, '$.dtHrMarcada', dt_hr_marc);
                         CALL agendamento('insert', objAgend);
