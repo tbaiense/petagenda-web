@@ -5,8 +5,7 @@ REALIZA PROCESSOS NA TABELA "pacote_agend" com base nos parâmetros
 Formato esperado para JSON "objPac":
 - em "acao" "insert":
 {
-    "id": <INT>,  <-- PK da tabela "pacote_agend"
-    "servicoOferecido": <INT>,    <--- PK da tabela "servico_oferecido"
+    "servicoOferecido": <INT>    <--- PK da tabela "servico_oferecido"
     "dtInicio": <DATE>,
     "hrAgendada": <TIME>,
     "frequencia": <ENUM("dias_semana", "dias_mes", "dias_ano")>,
@@ -147,8 +146,6 @@ CREATE PROCEDURE pacote_agend (
 
                 SET p_count = p_count + 1;
             END WHILE;
-												
-			UPDATE pacote_agend SET estado = "preparado" WHERE id = id_pac;
 
         ELSEIF acao IN ("update", "delete") THEN
             SET id_pac = JSON_EXTRACT(objPac, '$.id');
