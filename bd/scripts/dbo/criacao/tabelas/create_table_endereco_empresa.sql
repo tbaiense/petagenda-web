@@ -5,6 +5,6 @@ CREATE TABLE endereco_empresa (
     bairro VARCHAR(64) NOT NULL,
     cidade VARCHAR(64) NOT NULL,
     estado CHAR(2) NOT NULL,
-    
-    FOREIGN KEY (id_empresa) REFERENCES empresa(id)
+
+    FOREIGN KEY (id_empresa) REFERENCES empresa(id) ON DELETE CASCADE
 );

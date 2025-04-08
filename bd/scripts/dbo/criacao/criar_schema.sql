@@ -12,19 +12,20 @@ SET foreign_key_checks = OFF;
 
 CREATE TABLE empresa (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    nome_bd VARCHAR(32) NOT NULL UNIQUE,
-    licenca_empresa ENUM("basico", "profissional"),
-    dt_inicio_licenca DATE,
-    dt_fim_licenca DATE,
-    cota_servico INT NOT NULL DEFAULT 0,
-    cota_relatorio_simples INT NOT NULL DEFAULT 0,
-    cota_relatorio_detalhado INT NOT NULL DEFAULT 0,
+    nome_bd VARCHAR(32) UNIQUE,    /* Gerado automaticamente por trigger */
+    licenca_empresa ENUM("basico", "profissional", "corporativo"),  /* Definido por meio de procedimento set_licenca_empresa */
+    dt_inicio_licenca DATE,  /* Definido por meio de procedimento set_licenca_empresa */
+    dt_fim_licenca DATE,  /* Definido por meio de procedimento set_licenca_empresa */
+    cota_servico INT NOT NULL DEFAULT 0,  /* Definido por meio de procedimento set_cotas_empresa */
+    cota_relatorio_simples INT NOT NULL DEFAULT 0,  /* Definido por meio de procedimento set_cotas_empresa */
+    cota_relatorio_detalhado INT NOT NULL DEFAULT 0,  /* Definido por meio de procedimento set_cotas_empresa */
     razao_social VARCHAR(128),
     nome_fantasia VARCHAR(128),
-    cnpj CHAR(14) UNIQUE,
+    cnpj CHAR(14) UNIQUE,   /* TODO: fazer validação por regex */
     foto TEXT,
     lema VARCHAR(180)
 );
+
 
 CREATE TABLE endereco_empresa (
     id_empresa INT NOT NULL PRIMARY KEY,
@@ -34,7 +35,7 @@ CREATE TABLE endereco_empresa (
     cidade VARCHAR(64) NOT NULL,
     estado CHAR(2) NOT NULL,
 
-    FOREIGN KEY (id_empresa) REFERENCES empresa(id)
+    FOREIGN KEY (id_empresa) REFERENCES empresa(id) ON DELETE CASCADE
 );
 
 
@@ -57,43 +58,39 @@ CREATE TABLE usuario (
 
 -- TRIGGERS ========================================================================================================================================================================
 
+DELIMITER $$
+CREATE TRIGGER trg_empresa_insert
+    BEFORE UPDATE
+    ON empresa
+    FOR EACH ROW
+    BEGIN
+        DECLARE c_servico, c_rel_simples, c_rel_detalhado INT;
+        IF OLD.nome_bd IS NULL AND NEW.licenca_empresa IS NOT NULL THEN
+            SET NEW.nome_bd = CONCAT("emp_", NEW.id);
 
+            CASE NEW.licenca_empresa
+                WHEN "basico" THEN
+                    SET c_servico = 75;
+                    SET c_rel_simples = 2;
+                    SET c_rel_detalhado = OLD.cota_relatorio_detalhado;
+                WHEN "profissional" THEN
+                    SET c_servico = OLD.cota_servico;
+                    SET c_rel_simples = 12;
+                    SET c_rel_detalhado = 8;
+                WHEN "corporativo" THEN
+                    SET c_servico = OLD.cota_servico;
+                    SET c_rel_simples = OLD.cota_relatorio_simples;
+                    SET c_rel_detalhado = OLD.cota_relatorio_detalhado;
+            END CASE;
+
+            SET NEW.cota_servico = c_servico;
+            SET NEW.cota_relatorio_simples = c_rel_simples;
+            SET NEW.cota_relatorio_detalhado = c_rel_detalhado;
+        END IF;
+    END;$$
+DELIMITER ;
 
 -- PROCEDURES ================================================================================================================================================================
-
-/*
-PROCEDIMENTO DE GERENCIAMENTO DE REGISTRO DE USUARIO.
-TABELA: usuario
-
-※ OBS.: empresa deverá ser atribuída por procedimento "set_empresa_usuario"
-
-Formato esperado para JSON objUsuario:
-- em ação "insert":
-    {
-        "email": <VARCHAR(128)>,
-        "senha": <VARCHAR(32)>,
-        "perguntaSeguranca": ?{
-            "pergunta": <VARCHAR(64)>,
-            "resposta": <VARCHAR(32)>
-        }
-    }
-
-
-- em ação "update":
-    {
-        "id": <INT>,
-        "email": <VARCHAR(128)>,
-        "senha": <VARCHAR(32)>,
-        "perguntaSeguranca": ?{
-            "pergunta": <VARCHAR(64)>,
-            "resposta": <VARCHAR(32)>
-        }
-    }
-- em ação "delete":
-    {
-        "id": <INT>  <--- id do usuario
-    }
-*/
 
 DELIMITER $$
 CREATE PROCEDURE usuario (
@@ -185,6 +182,19 @@ CREATE PROCEDURE usuario (
                 END CASE;
             END IF;
         END IF;
+    END;$$
+DELIMITER ;
+
+
+DELIMITER $$
+CREATE PROCEDURE set_empresa_usuario (
+    IN id_emp INT,
+    IN id_u INT
+    )
+    NOT DETERMINISTIC
+    MODIFIES SQL DATA
+    BEGIN
+        UPDATE usuario SET id_empresa = id_emp WHERE id = id_u;
     END;$$
 DELIMITER ;
 
