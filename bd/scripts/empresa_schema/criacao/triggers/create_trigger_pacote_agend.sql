@@ -114,18 +114,19 @@ CREATE TRIGGER trg_pacote_agend_update
 					SET @inicio = OLD.dt_inicio;
 					SET @dt_base = dt_base;
 					SET @hr_agen = OLD.hr_agendada;
+                    SET dt_hr_marc = DATE_ADD(dt_base, INTERVAL (dia_pac - 1) DAY);
                     -- Loop de repetição do dia especificado, de acordo com "qtd_recorrencia"
                     SET qtd_count = 0;
                     WHILE qtd_count < OLD.qtd_recorrencia DO
-                        SET dt_hr_marc = DATE_ADD(dt_base, INTERVAL (dia_pac - 1) DAY);
+                        
 
                         CASE OLD.frequencia
                             WHEN "dias_semana" THEN
-                                SET dt_base = DATE_ADD(dt_base, INTERVAL qtd_count WEEK);
+                                SET dt_hr_marc = DATE_ADD(dt_hr_marc, INTERVAL qtd_count WEEK);
                             WHEN "dias_mes" THEN
-                                SET dt_base = DATE_ADD(dt_base, INTERVAL qtd_count MONTH);
+                                SET dt_hr_marc = DATE_ADD(dt_hr_marc, INTERVAL qtd_count MONTH);
                             WHEN "dias_ano" THEN
-                                SET dt_base = DATE_ADD(dt_base, INTERVAL qtd_count YEAR);
+                                SET dt_hr_marc = DATE_ADD(dt_hr_marc, INTERVAL qtd_count YEAR);
                         END CASE;
 
 						set @rodou = FALSE;
