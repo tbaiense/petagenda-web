@@ -92,7 +92,7 @@ CREATE PROCEDURE agendamento
             SIGNAL err_not_object SET MESSAGE_TEXT = 'Argumento não é um objeto JSON';
         END IF;
 
-        SET dt_hr_marc = JSON_EXTRACT(objAgend, '$.dtHrMarcada');
+        SET dt_hr_marc = CAST(JSON_UNQUOTE(JSON_EXTRACT(objAgend, '$.dtHrMarcada')) AS DATETIME);
         SET objInfo = JSON_EXTRACT(objAgend, '$.info');
 
         -- Processos para inserção de agendamento

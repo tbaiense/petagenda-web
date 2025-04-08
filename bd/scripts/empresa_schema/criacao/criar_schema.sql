@@ -512,6 +512,11 @@ CREATE TRIGGER trg_incidente_update
     END;$$
 DELIMITER ;
 
+-- ======== TRIGGERS DA TABELA "pacote_agend" ========
+
+/* TRIGGER DE UPDATE 1
+ * Gerencia os agendamentos relacionados ao pacote com base no estado do pacote.
+ * */
 
 DELIMITER $$
 CREATE TRIGGER trg_pacote_agend_update
@@ -545,11 +550,7 @@ CREATE TRIGGER trg_pacote_agend_update
                 }
             */
 
-        -- Infos de serviço
-        DECLARE objInfoServ JSON;
-        DECLARE id_serv_oferec INT;
         -- Info pets
-        DECLARE arrayObjPetServ JSON;
         DECLARE id_pet_cli INT;
 
         DECLARE err_missing_info CONDITION FOR SQLSTATE '45000';
@@ -577,8 +578,10 @@ CREATE TRIGGER trg_pacote_agend_update
             END IF;
 
             -- Criar JSON modelo para agendamentos
-            SET objInfoServ = JSON_OBJECT("servico", NEW.id_servico_oferecido);
-            SET arrayObjPetServ = JSON_ARRAY();
+            SET objAgend = JSON_OBJECT();
+            SET objAgend = JSON_INSERT(objAgend, '$.info', JSON_OBJECT());
+			SET objAgend = JSON_INSERT(objAgend, '$.info.servico', OLD.id_servico_oferecido); 
+			SET objAgend = JSON_INSERT(objAgend, '$.info.pets', JSON_ARRAY());
 
             -- Preenchendo array de pets
             OPEN cur_pets;
@@ -589,16 +592,28 @@ CREATE TRIGGER trg_pacote_agend_update
                     LEAVE pets_loop;
                 END IF;
 
-                SET arrayObjPetServ = JSON_ARRAY_INSERT(arrayObjPetServ, '$[0]', JSON_OBJECT("id", id_pet_cli));
-
+                SET objAgend = JSON_ARRAY_INSERT(objAgend, '$.info.pets[0]', JSON_OBJECT());
+				SET objAgend = JSON_INSERT(objAgend, '$.info.pets[0].id', id_pet_cli);
+				
             END LOOP;
             CLOSE cur_pets;
 
             -- Inserindo pets no JSON de info_servico
-            SET objInfoServ = JSON_INSERT(objInfoServ, '$.pets', arrayObjPetServ);
-            SET objAgend = JSON_OBJECT('info', objInfoServ);
-			set @info_s = objInfoServ;
+
 			set @agend = objAgend;
+			-- Definindo a data base para os cálculos
+			SET dt_base = DATE_ADD(OLD.dt_inicio, INTERVAL OLD.hr_agendada HOUR_SECOND);
+			CASE OLD.frequencia
+				WHEN "dias_semana" THEN
+					SET dt_base = DATE_ADD(dt_base, INTERVAL -(DAYOFWEEK(OLD.dt_inicio) -1) DAY); /* Encontra o primeiro dia da semana (domingo = 1) de "dt_inicio" */
+
+				WHEN "dias_mes" THEN
+					SET dt_base = DATE_ADD(dt_base, INTERVAL -(DAYOFMONTH(OLD.dt_inicio) -1) DAY); /* Encontra o primeiro dia do mês (= 1) de "dt_inicio" */
+
+				WHEN "dias_ano" THEN
+					SET dt_base = DATE_ADD(dt_base, INTERVAL -(DAYOFYEAR(OLD.dt_inicio) -1) DAY); /* Encontra o primeiro dia do ano (= 1) de "dt_inicio" */
+			END CASE;
+			
             -- Loop de criação de agendamentos
             SET cur_done = FALSE;
             OPEN cur_dias;
@@ -609,29 +624,16 @@ CREATE TRIGGER trg_pacote_agend_update
                     IF cur_done = TRUE THEN
                         LEAVE dias_loop;
                     END IF;
-
-                    -- Definindo a data base para os cálculos
-                    SET dt_base = DATE_ADD(OLD.dt_inicio, INTERVAL OLD.hr_agendada HOUR_SECOND);
-                    CASE OLD.frequencia
-                        WHEN "dias_semana" THEN
-                            SET dt_base = DATE_ADD(dt_base, INTERVAL -(DAYOFWEEK(OLD.dt_inicio) -1) DAY); /* Encontra o primeiro dia da semana (domingo = 1) de "dt_inicio" */
-
-                        WHEN "dias_mes" THEN
-                            SET dt_base = DATE_ADD(dt_base, INTERVAL -(DAYOFMONTH(OLD.dt_inicio) -1) DAY); /* Encontra o primeiro dia do mês (= 1) de "dt_inicio" */
-
-                        WHEN "dias_ano" THEN
-                            SET dt_base = DATE_ADD(dt_base, INTERVAL -(DAYOFYEAR(OLD.dt_inicio) -1) DAY); /* Encontra o primeiro dia do ano (= 1) de "dt_inicio" */
-                    END CASE;
 					
 					SET @inicio = OLD.dt_inicio;
 					SET @dt_base = dt_base;
 					SET @hr_agen = OLD.hr_agendada;
                     -- Loop de repetição do dia especificado, de acordo com "qtd_recorrencia"
                     SET qtd_count = 0;
-                    WHILE qtd_count < NEW.qtd_recorrencia DO
+                    WHILE qtd_count < OLD.qtd_recorrencia DO
                         SET dt_hr_marc = DATE_ADD(dt_base, INTERVAL (dia_pac - 1) DAY);
 
-                        CASE NEW.frequencia
+                        CASE OLD.frequencia
                             WHEN "dias_semana" THEN
                                 SET dt_base = DATE_ADD(dt_base, INTERVAL qtd_count WEEK);
                             WHEN "dias_mes" THEN
@@ -643,15 +645,16 @@ CREATE TRIGGER trg_pacote_agend_update
 						set @rodou = FALSE;
 						SET @dt = dt_hr_marc;
                         -- se dt_agend é igual ou superior a dt_inicio
-                        IF dt_hr_marc >= NEW.dt_inicio THEN
+                        IF dt_hr_marc >= OLD.dt_inicio THEN
 
                             -- Criação do agendamento
-                            SET objAgend = JSON_REPLACE(objAgend, '$.dtHrMarcada', dt_hr_marc);
+                            SET objAgend = JSON_SET(objAgend, '$.dtHrMarcada', dt_hr_marc);
                             CALL agendamento('insert', objAgend);
                             SET id_agend = LAST_INSERT_ID();
                             -- Atribuição da FK de pacote_agend
                             UPDATE agendamento SET id_pacote_agend = id_pac WHERE id = id_agend;
                             set @rodou = TRUE;
+							SET @agend = objAgend;
                         END IF;
 
                         SET qtd_count = qtd_count + 1;
@@ -662,7 +665,6 @@ CREATE TRIGGER trg_pacote_agend_update
         END IF;
     END;$$
 DELIMITER ;
-
 
 
 
@@ -1393,7 +1395,7 @@ CREATE PROCEDURE agendamento
             SIGNAL err_not_object SET MESSAGE_TEXT = 'Argumento não é um objeto JSON';
         END IF;
 
-        SET dt_hr_marc = JSON_EXTRACT(objAgend, '$.dtHrMarcada');
+        SET dt_hr_marc = CAST(JSON_UNQUOTE(JSON_EXTRACT(objAgend, '$.dtHrMarcada')) AS DATETIME);
         SET objInfo = JSON_EXTRACT(objAgend, '$.info');
 
         -- Processos para inserção de agendamento
@@ -1440,6 +1442,8 @@ CREATE PROCEDURE agendamento
         END IF;
     END;$$
 DELIMITER ;
+
+
 
 
 DELIMITER $$
@@ -1807,7 +1811,6 @@ CREATE PROCEDURE pacote_agend (
         END IF;
     END;$$
 DELIMITER ;
-
 
 -- FINALIZAÇÃO ========================================================================================================================================
 SET foreign_key_checks = ON;
