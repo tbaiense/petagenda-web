@@ -15,6 +15,7 @@ CREATE TRIGGER trg_pacote_agend_update
         DECLARE cur_done INT DEFAULT FALSE; /* variável de controle do loop dos cursores */
         DECLARE id_pac INT DEFAULT OLD.id;
         DECLARE qtd_count INT DEFAULT 0; /* Controla quantas recorrências da frequêncai foram cadastradas */
+        DECLARE offset_count INT DEFAULT 0;
         -- Infos para agendamento
         DECLARE id_agend INT;
         DECLARE dt_hr_marc DATETIME; /* Guarda o dia que foi calculado para ser inserido no agendamento, e adicionado do horário do pacote */
@@ -78,15 +79,14 @@ CREATE TRIGGER trg_pacote_agend_update
                     LEAVE pets_loop;
                 END IF;
 
+                -- Inserindo pets no JSON
                 SET objAgend = JSON_ARRAY_INSERT(objAgend, '$.info.pets[0]', JSON_OBJECT());
                 SET objAgend = JSON_INSERT(objAgend, '$.info.pets[0].id', id_pet_cli);
 
             END LOOP;
             CLOSE cur_pets;
 
-            -- Inserindo pets no JSON de info_servico
 
-            set @agend = objAgend;
             -- Definindo a data base para os cálculos
             SET dt_base = DATE_ADD(OLD.dt_inicio, INTERVAL OLD.hr_agendada HOUR_SECOND);
             CASE OLD.frequencia
@@ -114,20 +114,20 @@ CREATE TRIGGER trg_pacote_agend_update
                 SET dt_agend = DATE_ADD(dt_base, INTERVAL (dia_pac - 1) DAY);
                 -- Loop de repetição do dia especificado, de acordo com "qtd_recorrencia"
                 SET qtd_count = 0;
+                SET offset_count = 0;
                 WHILE qtd_count < OLD.qtd_recorrencia DO
 
                     CASE OLD.frequencia
                         WHEN "dias_semana" THEN
-                            SET dt_hr_marc = DATE_ADD(dt_agend, INTERVAL qtd_count WEEK);
+                            SET dt_hr_marc = DATE_ADD(dt_agend, INTERVAL offset_count WEEK);
                         WHEN "dias_mes" THEN
-                            SET dt_hr_marc = DATE_ADD(dt_agend, INTERVAL qtd_count MONTH);
+                            SET dt_hr_marc = DATE_ADD(dt_agend, INTERVAL offset_count MONTH);
                         WHEN "dias_ano" THEN
-                            SET dt_hr_marc = DATE_ADD(dt_agend, INTERVAL qtd_count YEAR);
+                            SET dt_hr_marc = DATE_ADD(dt_agend, INTERVAL offset_count YEAR);
                     END CASE;
 
                     -- se dt_agend é igual ou superior a dt_inicio
                     IF dt_hr_marc >= OLD.dt_inicio THEN
-
                         -- Criação do agendamento
                         SET objAgend = JSON_SET(objAgend, '$.dtHrMarcada', dt_hr_marc);
                         CALL agendamento('insert', objAgend);
@@ -135,9 +135,10 @@ CREATE TRIGGER trg_pacote_agend_update
                         -- Atribuição da FK de pacote_agend
                         UPDATE agendamento SET id_pacote_agend = id_pac WHERE id = id_agend;
 
+                        SET qtd_count = qtd_count + 1;
                     END IF;
 
-                    SET qtd_count = qtd_count + 1;
+                    SET offset_count = offset_count + 1;
                 END WHILE;
             END LOOP;
             CLOSE cur_dias;
