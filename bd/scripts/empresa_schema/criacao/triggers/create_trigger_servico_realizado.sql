@@ -3,6 +3,7 @@
 /* TRIGGER DE INSERÇÃO 1
  *  Controla definição de valores cobrados caso não sejam informados durante a inserção do registro.
  *  + OBJETIVOS:
+        - Verificar cotas antes de cadastrar
  *      - Inserir "valor_servico" nos registros em que o tipo da cobrança (coluna "tipo_preco" em "servico_oferecido") do serviço que foi realizado for "servico"
  *      - Inserir "valor_total" nos registros automaticamente caso "valor_servico" e "valor_total" seja inseridos como NULL
  * */
@@ -19,7 +20,7 @@ CREATE TRIGGER trg_servico_realizado_insert
                                             em "servico_realizado", caso ele deva ser totalizado 
                                             por meio dos "valor_pet" contidos em "pet_servico" 
                                             associado ao serviço realizado */
-        
+
         -- Verificação dos valores a serem inseridos
         IF ISNULL(NEW.valor_servico) AND ISNULL(NEW.valor_total) THEN
             -- Buscando valor e forma de cobrança da tabela "servico_oferecido"
