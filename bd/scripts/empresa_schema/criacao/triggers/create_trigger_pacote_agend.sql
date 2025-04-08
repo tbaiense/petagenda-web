@@ -18,7 +18,7 @@ CREATE TRIGGER trg_pacote_agend_update
         -- Infos para agendamento
         DECLARE id_agend INT;
         DECLARE dt_hr_marc DATETIME; /* Guarda o dia que foi calculado para ser inserido no agendamento, e adicionado do horário do pacote */
-        
+        DECLARE dt_agend DATETIME;
         DECLARE dia_pac INT;
         DECLARE dt_base DATETIME;
         DECLARE objAgend JSON;
@@ -66,8 +66,8 @@ CREATE TRIGGER trg_pacote_agend_update
             -- Criar JSON modelo para agendamentos
             SET objAgend = JSON_OBJECT();
             SET objAgend = JSON_INSERT(objAgend, '$.info', JSON_OBJECT());
-			SET objAgend = JSON_INSERT(objAgend, '$.info.servico', OLD.id_servico_oferecido); 
-			SET objAgend = JSON_INSERT(objAgend, '$.info.pets', JSON_ARRAY());
+            SET objAgend = JSON_INSERT(objAgend, '$.info.servico', OLD.id_servico_oferecido);
+            SET objAgend = JSON_INSERT(objAgend, '$.info.pets', JSON_ARRAY());
 
             -- Preenchendo array de pets
             OPEN cur_pets;
@@ -79,74 +79,67 @@ CREATE TRIGGER trg_pacote_agend_update
                 END IF;
 
                 SET objAgend = JSON_ARRAY_INSERT(objAgend, '$.info.pets[0]', JSON_OBJECT());
-				SET objAgend = JSON_INSERT(objAgend, '$.info.pets[0].id', id_pet_cli);
-				
+                SET objAgend = JSON_INSERT(objAgend, '$.info.pets[0].id', id_pet_cli);
+
             END LOOP;
             CLOSE cur_pets;
 
             -- Inserindo pets no JSON de info_servico
 
-			set @agend = objAgend;
-			-- Definindo a data base para os cálculos
-			SET dt_base = DATE_ADD(OLD.dt_inicio, INTERVAL OLD.hr_agendada HOUR_SECOND);
-			CASE OLD.frequencia
-				WHEN "dias_semana" THEN
-					SET dt_base = DATE_ADD(dt_base, INTERVAL -(DAYOFWEEK(OLD.dt_inicio) -1) DAY); /* Encontra o primeiro dia da semana (domingo = 1) de "dt_inicio" */
+            set @agend = objAgend;
+            -- Definindo a data base para os cálculos
+            SET dt_base = DATE_ADD(OLD.dt_inicio, INTERVAL OLD.hr_agendada HOUR_SECOND);
+            CASE OLD.frequencia
+                WHEN "dias_semana" THEN
+                    SET dt_base = DATE_ADD(dt_base, INTERVAL -(DAYOFWEEK(OLD.dt_inicio) -1) DAY); /* Encontra o primeiro dia da semana (domingo = 1) de "dt_inicio" */
 
-				WHEN "dias_mes" THEN
-					SET dt_base = DATE_ADD(dt_base, INTERVAL -(DAYOFMONTH(OLD.dt_inicio) -1) DAY); /* Encontra o primeiro dia do mês (= 1) de "dt_inicio" */
+                WHEN "dias_mes" THEN
+                    SET dt_base = DATE_ADD(dt_base, INTERVAL -(DAYOFMONTH(OLD.dt_inicio) -1) DAY); /* Encontra o primeiro dia do mês (= 1) de "dt_inicio" */
 
-				WHEN "dias_ano" THEN
-					SET dt_base = DATE_ADD(dt_base, INTERVAL -(DAYOFYEAR(OLD.dt_inicio) -1) DAY); /* Encontra o primeiro dia do ano (= 1) de "dt_inicio" */
-			END CASE;
-			
+                WHEN "dias_ano" THEN
+                    SET dt_base = DATE_ADD(dt_base, INTERVAL -(DAYOFYEAR(OLD.dt_inicio) -1) DAY); /* Encontra o primeiro dia do ano (= 1) de "dt_inicio" */
+            END CASE;
+
             -- Loop de criação de agendamentos
             SET cur_done = FALSE;
             OPEN cur_dias;
-                dias_loop: LOOP
+            dias_loop: LOOP
 
-                    FETCH cur_dias INTO dia_pac;
+                FETCH cur_dias INTO dia_pac;
 
-                    IF cur_done = TRUE THEN
-                        LEAVE dias_loop;
+                IF cur_done = TRUE THEN
+                    LEAVE dias_loop;
+                END IF;
+
+                SET dt_agend = DATE_ADD(dt_base, INTERVAL (dia_pac - 1) DAY);
+                -- Loop de repetição do dia especificado, de acordo com "qtd_recorrencia"
+                SET qtd_count = 0;
+                WHILE qtd_count < OLD.qtd_recorrencia DO
+
+                    CASE OLD.frequencia
+                        WHEN "dias_semana" THEN
+                            SET dt_hr_marc = DATE_ADD(dt_agend, INTERVAL qtd_count WEEK);
+                        WHEN "dias_mes" THEN
+                            SET dt_hr_marc = DATE_ADD(dt_agend, INTERVAL qtd_count MONTH);
+                        WHEN "dias_ano" THEN
+                            SET dt_hr_marc = DATE_ADD(dt_agend, INTERVAL qtd_count YEAR);
+                    END CASE;
+
+                    -- se dt_agend é igual ou superior a dt_inicio
+                    IF dt_hr_marc >= OLD.dt_inicio THEN
+
+                        -- Criação do agendamento
+                        SET objAgend = JSON_SET(objAgend, '$.dtHrMarcada', dt_hr_marc);
+                        CALL agendamento('insert', objAgend);
+                        SET id_agend = LAST_INSERT_ID();
+                        -- Atribuição da FK de pacote_agend
+                        UPDATE agendamento SET id_pacote_agend = id_pac WHERE id = id_agend;
+
                     END IF;
-					
-					SET @inicio = OLD.dt_inicio;
-					SET @dt_base = dt_base;
-					SET @hr_agen = OLD.hr_agendada;
-                    SET dt_hr_marc = DATE_ADD(dt_base, INTERVAL (dia_pac - 1) DAY);
-                    -- Loop de repetição do dia especificado, de acordo com "qtd_recorrencia"
-                    SET qtd_count = 0;
-                    WHILE qtd_count < OLD.qtd_recorrencia DO
-                        
 
-                        CASE OLD.frequencia
-                            WHEN "dias_semana" THEN
-                                SET dt_hr_marc = DATE_ADD(dt_hr_marc, INTERVAL qtd_count WEEK);
-                            WHEN "dias_mes" THEN
-                                SET dt_hr_marc = DATE_ADD(dt_hr_marc, INTERVAL qtd_count MONTH);
-                            WHEN "dias_ano" THEN
-                                SET dt_hr_marc = DATE_ADD(dt_hr_marc, INTERVAL qtd_count YEAR);
-                        END CASE;
-
-						set @rodou = FALSE;
-						SET @dt = dt_hr_marc;
-                        -- se dt_agend é igual ou superior a dt_inicio
-                        IF dt_hr_marc >= OLD.dt_inicio THEN
-
-                            -- Criação do agendamento
-                            SET objAgend = JSON_SET(objAgend, '$.dtHrMarcada', dt_hr_marc);
-                            CALL agendamento('insert', objAgend);
-                            SET id_agend = LAST_INSERT_ID();
-                            -- Atribuição da FK de pacote_agend
-                            UPDATE agendamento SET id_pacote_agend = id_pac WHERE id = id_agend;
-                            set @rodou = TRUE;
-							SET @agend = objAgend;
-                        END IF;
-
-                        SET qtd_count = qtd_count + 1;
-                    END WHILE;
-                END LOOP;
+                    SET qtd_count = qtd_count + 1;
+                END WHILE;
+            END LOOP;
             CLOSE cur_dias;
             SET NEW.estado = "ativo"; /* Atualiza o estado final */
         END IF;
