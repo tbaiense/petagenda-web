@@ -1856,6 +1856,8 @@ DELIMITER ;
 
 -- EVENTS =============================================================================================================================================
 
+SET GLOBAL event_scheduler=ON;
+
 DELIMITER $$
 CREATE EVENT agendamento_set_estado_pendente
     ON SCHEDULE EVERY 1 MINUTE
