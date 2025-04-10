@@ -255,6 +255,88 @@ CREATE TABLE despesa (
     CONSTRAINT chk_despesa_valor CHECK (valor > 0)
 );
 
+-- VIEWS ========================================================================================================================================================================
+
+CREATE OR REPLACE VIEW vw_cliente AS
+    SELECT
+        c.id AS id_cliente,
+        c.nome AS nome,
+        c.telefone AS telefone,
+        e_c.logradouro AS logradouro_end,
+        e_c.numero AS numero_end,
+        e_c.bairro AS bairro_end,
+        e_c.cidade AS cidade_end,
+        e_c.estado AS estado_end
+    FROM cliente AS c
+        LEFT JOIN endereco_cliente AS e_c ON (e_c.id_cliente = c.id);
+
+CREATE OR REPLACE VIEW vw_pet AS
+    SELECT
+        p_c.id AS id_pet,
+        p_c.nome AS nome,
+        c.id AS id_cliente,
+        c.nome AS nome_cliente,
+        e.id AS id_especie,
+        e.nome AS nome_especie,
+        p_c.raca AS raca,
+        p_c.porte AS porte,
+        p_c.cor AS cor,
+        p_c.sexo AS sexo,
+        p_c.e_castrado AS e_castrado,
+        p_c.cartao_vacina AS cartao_vacina,
+        p_c.estado_saude AS estado_saude,
+        p_c.comportamento AS comportamento
+    FROM pet AS p_c
+        INNER JOIN cliente AS c ON (c.id = p_c.id_cliente)
+        LEFT JOIN especie AS e ON (e.id = p_c.id_especie)
+    ORDER BY id_pet;
+
+
+CREATE OR REPLACE PROCEDURE vw_servico_requerido AS
+    SELECT
+        s_r.id_cliente AS id_cliente,
+        c.nome AS nome_cliente,
+        s_r.id_servico_oferecido AS id_servico_requerido,
+        s_o.nome AS nome_servico,
+        s_o.id_categoria AS id_cat_serv_ofer,
+        c_s.nome AS nome_categoria,
+        s_o.foto AS foto_servico
+    FROM servico_requerido AS s_r
+        INNER JOIN servico_oferecido AS s_o ON (s_o.id = s_r.id_servico_oferecido)
+        LEFT JOIN categoria_servico AS c_s ON (c_s.id = s_o.id_categoria)
+        INNER JOIN cliente AS c ON (c.id = s_r.id_cliente);
+
+
+CREATE OR REPLACE VIEW vw_servico_oferecido AS
+    SELECT
+        s_o.id AS id_servico_oferecido,
+        s_o.nome AS nome,
+        s_o.preco AS preco,
+        s_o.tipo_preco AS tipo_preco,
+        s_o.id_categoria AS id_categoria,
+        c_s.nome AS nome_categoria,
+        s_o.descricao AS descricao,
+        s_o.foto AS foto,
+        s_o.restricao_participante AS restricao_participante,
+        e.nome AS nome_especie
+    FROM
+        servico_oferecido AS s_o
+        LEFT JOIN categoria_servico AS c_s ON (c_s.id = s_o.id_categoria)
+        CROSS JOIN restricao_especie AS r_e ON (r_e.id_servico_oferecido = s_o.id)
+        LEFT JOIN especie AS e ON (e.id = r_e.id_especie);
+
+
+CREATE OR REPLACE VIEW vw_restricao_especie_servico AS
+    SELECT
+        s_o.id AS id_servico_oferecido,
+        s_o.nome AS nome,
+        r_e.id_especie,
+        e.nome AS nome_especie
+    FROM
+        restricao_especie AS r_e
+        INNER JOIN servico_oferecido AS s_o ON (s_o.id = r_e.id_servico_oferecido)
+        INNER JOIN especie AS e ON (e.id = r_e.id_especie);
+
 -- FUNCTIONS ========================================================================================================================================================================
 
 SET GLOBAL log_bin_trust_function_creators = 1;
@@ -1738,8 +1820,8 @@ CREATE PROCEDURE pacote_agend (
 
                 SET p_count = p_count + 1;
             END WHILE;
-												
-			UPDATE pacote_agend SET estado = "preparado" WHERE id = id_pac;
+
+            UPDATE pacote_agend SET estado = "preparado" WHERE id = id_pac;
 
         ELSEIF acao IN ("update", "delete") THEN
             SET id_pac = JSON_EXTRACT(objPac, '$.id');
