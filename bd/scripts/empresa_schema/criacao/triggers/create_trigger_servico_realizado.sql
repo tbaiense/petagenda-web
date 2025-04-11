@@ -8,43 +8,16 @@
  *      - Inserir "valor_total" nos registros automaticamente caso "valor_servico" e "valor_total" seja inseridos como NULL
  * */
 DELIMITER $$
-CREATE TRIGGER trg_servico_realizado_insert
+CREATE TRIGGER trg_servico_realizado_insert /* Fazer procedimento que atualiza preços */
     BEFORE INSERT
     ON servico_realizado
     FOR EACH ROW
     BEGIN
-        DECLARE id_serv INT; /* PK da tabela "servico_oferecido"*/
-        DECLARE tipo_p VARCHAR(16); /* Valor da coluna "tipo_preco" */
-        DECLARE p DECIMAL(8,2); /* Valor de cobrança do serviço (coluna "preco") */
-        DECLARE soma_valor_pet DECIMAL(8,2); /* Valor a ser inserido na coluna "valor_total" 
-                                            em "servico_realizado", caso ele deva ser totalizado 
-                                            por meio dos "valor_pet" contidos em "pet_servico" 
-                                            associado ao serviço realizado */
-
         -- Verificação dos valores a serem inseridos
         IF ISNULL(NEW.valor_servico) AND ISNULL(NEW.valor_total) THEN
-            -- Buscando valor e forma de cobrança da tabela "servico_oferecido"
-            SELECT 
-                preco, tipo_preco 
-            INTO p, tipo_p 
-            FROM servico_oferecido 
-            WHERE id = (SELECT id_servico_oferecido FROM info_servico WHERE id = NEW.id_info_servico);
-        
-            IF tipo_p = "servico" THEN
-                SET NEW.valor_servico = p;
-                SET NEW.valor_total = p;
-            ELSEIF tipo_p = "pet" THEN
-                -- Totalizar o "valor_total" usando valores dos registros associados na tabela "pet_servico"
-                SELECT SUM(valor_pet) as soma_valor_pet 
-                INTO soma_valor_pet
-                FROM pet_servico 
-                WHERE 
-                    id_info_servico = NEW.id_info_servico
-                    AND valor_pet IS NOT NULL 
-                GROUP BY id_info_servico;
-
-                SET NEW.valor_total = soma_valor_pet;
-            END IF;
+            -- Buscando valor e forma de cobrança da tabela "servico_oferecido" e atualizando automaticamente
+            CALL get_valores_info_servico(NEW.id_info_servico, NEW.valor_servico, NEW.valor_total);
         END IF;
     END;$$
 DELIMITER ;
+

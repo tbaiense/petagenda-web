@@ -5,22 +5,22 @@ TABELA: incidente
 Formato esperado para JSON objIncidente:
 - em ação "insert":
     {
-        "servicoRealizado" <INT>,  <-- PK da tabela "servico_realizado"
-        "tipo" <ENUM("emergencia-medica", "briga", "mau-comportamento", "agressao")>,
-        "dtHrOcorrido" <DATETIME>,
-        "relato" <TEXT>,
-        "medidaTomada" ?<TEXT>
+        "servicoRealizado": <INT>,  <-- PK da tabela "servico_realizado"
+        "tipo": <ENUM("emergencia-medica", "briga", "mau-comportamento", "agressao")>,
+        "dtHrOcorrido": <DATETIME>,
+        "relato": <TEXT>,
+        "medidaTomada": ?<TEXT>
     }
 
 
 - em ação "update":
     {
-        "id" <INT>,  <--- id do incidente
-        "servicoRealizado" <INT>,  <-- PK da tabela "servico_realizado"
-        "tipo" <ENUM("emergencia-medica", "briga", "mau-comportamento", "agressao")>,
-        "dtHrOcorrido" <DATETIME>,
-        "relato" <TEXT>,
-        "medidaTomada" ?<TEXT>   <--- omitir para remover
+        "id": <INT>,  <--- id do incidente
+        "servicoRealizado": <INT>,  <-- PK da tabela "servico_realizado"
+        "tipo": <ENUM("emergencia-medica", "briga", "mau-comportamento", "agressao")>,
+        "dtHrOcorrido": <DATETIME>,
+        "relato": <TEXT>,
+        "medidaTomada": ?<TEXT>   <--- omitir para remover
     }
 - em ação "delete":
     {
