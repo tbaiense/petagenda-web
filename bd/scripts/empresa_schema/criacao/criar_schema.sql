@@ -292,7 +292,7 @@ CREATE OR REPLACE VIEW vw_pet AS
     ORDER BY id_pet;
 
 
-CREATE OR REPLACE PROCEDURE vw_servico_requerido AS
+CREATE OR REPLACE VIEW vw_servico_requerido AS
     SELECT
         s_r.id_cliente AS id_cliente,
         c.nome AS nome_cliente,
@@ -418,7 +418,6 @@ BEGIN
     END IF;
 END;$$
 DELIMITER ;
-
 DELIMITER $$
 CREATE TRIGGER trg_pet_servico_insert /* Faz a atribuição do valor do preço do pet, se aplicável */
     BEFORE INSERT
@@ -450,44 +449,122 @@ CREATE TRIGGER trg_pet_servico_insert /* Faz a atribuição do valor do preço d
     END;$$
 DELIMITER ;
 
+
 DELIMITER $$
-CREATE TRIGGER trg_servico_realizado_insert
+CREATE TRIGGER trg_pet_servico_insert_after
+    AFTER INSERT
+    ON pet_servico
+    FOR EACH ROW
+    BEGIN
+        DECLARE id_agend INT;
+        DECLARE id_serv_real INT;
+        DECLARE NEW_valor_total DECIMAL(8,2);
+        DECLARE NEW_valor_servico DECIMAL(8,2);
+
+        -- Obtém valores para cobrança do agendamento ou servico_realizado
+        IF NEW.id_info_servico IS NOT NULL THEN
+            CALL get_valores_info_servico(NEW.id_info_servico, NEW_valor_servico, NEW_valor_total);
+
+            -- Obtendo id do servico_realizado
+            SELECT
+                id
+                INTO id_serv_real
+                FROM servico_realizado
+                WHERE
+                    id_info_servico = NEW.id_info_servico
+                LIMIT 1;
+
+            -- Atualizando valores no servico_realizado
+            IF id_serv_real IS NOT NULL THEN
+                UPDATE servico_realizado
+                    SET valor_servico = NEW_valor_servico,
+                        valor_total = NEW_valor_total
+                    WHERE id = id_serv_real;
+            END IF;
+
+            -- Obtendo o id do agendamento
+            SELECT
+                id
+                INTO id_agend
+                FROM agendamento
+                WHERE
+                    id_info_servico = NEW.id_info_servico
+                LIMIT 1;
+
+            -- Atualizando valores no agendamento
+            IF id_agend IS NOT NULL THEN
+                UPDATE agendamento
+                SET valor_servico = NEW_valor_servico,
+                    valor_total = NEW_valor_total
+                WHERE id = id_agend;
+            END IF;
+        END IF;
+    END;$$
+DELIMITER ;
+
+
+DELIMITER $$
+CREATE TRIGGER trg_pet_servico_update
+    AFTER UPDATE
+    ON pet_servico
+    FOR EACH ROW
+    BEGIN
+        DECLARE id_agend INT;
+        DECLARE id_serv_real INT;
+        DECLARE NEW_valor_total DECIMAL(8,2);
+        DECLARE NEW_valor_servico DECIMAL(8,2);
+
+        -- Obtém valores atualizados para cobrança do agendamento ou servico_realizado
+        IF NEW.id_info_servico IS NOT NULL THEN
+            CALL get_valores_info_servico(NEW.id_info_servico, NEW_valor_servico, NEW_valor_total);
+
+            -- Obtendo id do servico_realizado
+            SELECT
+                id
+                INTO id_serv_real
+                FROM servico_realizado
+                WHERE
+                    id_info_servico = NEW.id_info_servico
+                LIMIT 1;
+
+            -- Atualizando servico_realizado
+            IF id_serv_real IS NOT NULL THEN
+                UPDATE servico_realizado
+                    SET valor_servico = NEW_valor_servico,
+                        valor_total = NEW_valor_total
+                    WHERE id = id_serv_real;
+            END IF;
+
+            -- Obtendo o id do agendamento
+            SELECT
+                id
+                INTO id_agend
+                FROM agendamento
+                WHERE
+                    id_info_servico = NEW.id_info_servico
+                LIMIT 1;
+
+            IF id_agend IS NOT NULL THEN
+                UPDATE agendamento
+                SET valor_servico = NEW_valor_servico,
+                    valor_total = NEW_valor_total
+                WHERE id = id_agend;
+            END IF;
+        END IF;
+    END;$$
+DELIMITER ;
+
+
+DELIMITER $$
+CREATE TRIGGER trg_servico_realizado_insert /* Fazer procedimento que atualiza preços */
     BEFORE INSERT
     ON servico_realizado
     FOR EACH ROW
     BEGIN
-        DECLARE id_serv INT; /* PK da tabela "servico_oferecido"*/
-        DECLARE tipo_p VARCHAR(16); /* Valor da coluna "tipo_preco" */
-        DECLARE p DECIMAL(8,2); /* Valor de cobrança do serviço (coluna "preco") */
-        DECLARE soma_valor_pet DECIMAL(8,2); /* Valor a ser inserido na coluna "valor_total"
-                                            em "servico_realizado", caso ele deva ser totalizado
-                                            por meio dos "valor_pet" contidos em "pet_servico"
-                                            associado ao serviço realizado */
-
         -- Verificação dos valores a serem inseridos
         IF ISNULL(NEW.valor_servico) AND ISNULL(NEW.valor_total) THEN
-            -- Buscando valor e forma de cobrança da tabela "servico_oferecido"
-            SELECT
-                preco, tipo_preco
-            INTO p, tipo_p
-            FROM servico_oferecido
-            WHERE id = (SELECT id_servico_oferecido FROM info_servico WHERE id = NEW.id_info_servico);
-
-            IF tipo_p = "servico" THEN
-                SET NEW.valor_servico = p;
-                SET NEW.valor_total = p;
-            ELSEIF tipo_p = "pet" THEN
-                -- Totalizar o "valor_total" usando valores dos registros associados na tabela "pet_servico"
-                SELECT SUM(valor_pet) as soma_valor_pet
-                INTO soma_valor_pet
-                FROM pet_servico
-                WHERE
-                    id_info_servico = NEW.id_info_servico
-                    AND valor_pet IS NOT NULL
-                GROUP BY id_info_servico;
-
-                SET NEW.valor_total = soma_valor_pet;
-            END IF;
+            -- Buscando valor e forma de cobrança da tabela "servico_oferecido" e atualizando automaticamente
+            CALL get_valores_info_servico(NEW.id_info_servico, NEW.valor_servico, NEW.valor_total);
         END IF;
     END;$$
 DELIMITER ;
@@ -502,15 +579,6 @@ CREATE TRIGGER trg_agendamento_insert
         -- Variáveis usadas na definição do estado inicial
         DECLARE id_func INT;
 
-        -- Variáveis usadas na verificação e definição do valor cobrado
-        DECLARE id_serv INT; /* PK da tabela "servico_oferecido"*/
-        DECLARE tipo_p VARCHAR(16); /* Valor da coluna "tipo_preco" */
-        DECLARE p DECIMAL(8,2); /* Valor de cobrança do serviço (coluna "preco") */
-        DECLARE soma_valor_pet DECIMAL(8,2); /* Valor a ser inserido na coluna "valor_total"
-                                            em "agendamento", caso ele deva ser totalizado
-                                            por meio dos "valor_pet" contidos em "pet_servico"
-                                            associado ao agendamento */
-
         -- Verificação de funcionário atribuído e atribuição de estado inicial
         SELECT id_funcionario INTO id_func FROM info_servico WHERE id = NEW.id_info_servico;
 
@@ -522,31 +590,12 @@ CREATE TRIGGER trg_agendamento_insert
 
         -- Verificação dos valores a serem inseridos
         IF ISNULL(NEW.valor_servico) AND ISNULL(NEW.valor_total) THEN
-            -- Buscando valor e forma de cobrança da tabela "servico_oferecido"
-            SELECT
-                preco, tipo_preco
-            INTO p, tipo_p
-            FROM servico_oferecido
-            WHERE id = (SELECT id_servico_oferecido FROM info_servico WHERE id = NEW.id_info_servico);
-
-            IF tipo_p = "servico" THEN
-                SET NEW.valor_servico = p;
-                SET NEW.valor_total = p;
-            ELSEIF tipo_p = "pet" THEN
-                -- Totalizar o "valor_total" usando valores dos registros associados na tabela "pet_servico"
-                SELECT SUM(valor_pet) as soma_valor_pet
-                INTO soma_valor_pet
-                FROM pet_servico
-                WHERE
-                    id_info_servico = NEW.id_info_servico
-                    AND valor_pet IS NOT NULL
-                GROUP BY id_info_servico;
-
-                SET NEW.valor_total = soma_valor_pet;
-            END IF;
+            -- Buscando valor e forma de cobrança da tabela "agendamento" e atualizando automaticamente
+            CALL get_valores_info_servico(NEW.id_info_servico, NEW.valor_servico, NEW.valor_total);
         END IF;
     END;$$
 DELIMITER ;
+
 
 DELIMITER $$
 CREATE TRIGGER trg_agendamento_update
@@ -1932,6 +1981,56 @@ CREATE PROCEDURE set_estado_pacote_agend(
     MODIFIES SQL DATA
     BEGIN
         UPDATE pacote_agend SET estado = est WHERE id = id_pac;
+    END;$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE get_valores_info_servico(
+        IN NEW_id_info_serv INT,
+        INOUT NEW_valor_servico INT,
+        INOUT NEW_valor_total INT
+    )
+    BEGIN
+        DECLARE tipo_p VARCHAR(16); /* Valor da coluna "tipo_preco" */
+        DECLARE p DECIMAL(8,2); /* Valor de cobrança do serviço (coluna "preco") */
+        DECLARE valor_pet_total DECIMAL(8,2); /* Valor a ser inserido na coluna "valor_total"
+                                            , caso ele deva ser totalizado
+                                            por meio dos "valor_pet" contidos em "pet_servico"*/
+
+        DECLARE info_serv_found INT;
+
+        DECLARE err_info_serv_not_found CONDITION FOR SQLSTATE '45001';
+
+        SELECT id INTO info_serv_found FROM info_servico WHERE id = NEW_id_info_serv;
+
+        -- Verifica se id de info_servico existe
+        IF info_serv_found IS NULL THEN
+            SIGNAL err_info_serv_not_found
+                SET MESSAGE_TEXT = "Id de info_servico nao existente";
+        END IF;
+
+        SELECT
+            preco, tipo_preco
+        INTO p, tipo_p
+        FROM servico_oferecido
+        WHERE id = (SELECT id_servico_oferecido FROM info_servico WHERE id = NEW_id_info_serv);
+
+        IF tipo_p = "servico" THEN
+            SET NEW_valor_servico = p;
+            SET NEW_valor_total = p;
+        ELSEIF tipo_p = "pet" THEN
+            -- Totalizar o "valor_total" usando valores dos registros associados na tabela "pet_servico"
+            SELECT SUM(valor_pet) as soma_valor_pet
+            INTO valor_pet_total
+            FROM pet_servico
+            WHERE
+                id_info_servico = NEW_id_info_serv
+                AND valor_pet IS NOT NULL
+            GROUP BY id_info_servico;
+
+            SET NEW_valor_servico = NULL;
+            SET NEW_valor_total = valor_pet_total;
+        END IF;
     END;$$
 DELIMITER ;
 
