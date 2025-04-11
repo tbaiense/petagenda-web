@@ -1,4 +1,4 @@
-CREATE OR REPLACE PROCEDURE vw_servico_requerido AS
+CREATE OR REPLACE VIEW vw_servico_requerido AS
     SELECT
         s_r.id_cliente AS id_cliente,
         c.nome AS nome_cliente,
