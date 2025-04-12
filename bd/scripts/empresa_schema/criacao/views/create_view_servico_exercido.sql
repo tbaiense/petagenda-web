@@ -1,4 +1,4 @@
-CREATE OR REPLACE VIEW vw_servico_oferecido AS
+CREATE OR REPLACE VIEW vw_servico_exercido AS
     SELECT
         s_e.id_funcionario AS id_funcionario,
         f.nome AS nome_funcionario,
