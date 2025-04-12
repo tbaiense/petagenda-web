@@ -304,6 +304,48 @@ CREATE OR REPLACE VIEW vw_pet AS
         LEFT JOIN especie AS e ON (e.id = p_c.id_especie)
     ORDER BY id_pet;
 
+
+CREATE OR REPLACE VIEW vw_info_servico AS
+    SELECT
+        i_s.*,
+        eb_i_s.tipo AS tipo_endereco_buscar,
+        eb_i_s.logradouro AS logradouro_endereco_buscar,
+        eb_i_s.numero AS numero_endereco_buscar,
+        eb_i_s.bairro AS bairro_endereco_buscar,
+        eb_i_s.cidade AS cidade_endereco_buscar,
+        eb_i_s.estado AS estado_endereco_buscar,
+        ed_i_s.tipo AS tipo_endereco_devolver,
+        ed_i_s.logradouro AS logradouro_endereco_devolver,
+        ed_i_s.numero AS numero_endereco_devolver,
+        ed_i_s.bairro AS bairro_endereco_devolver,
+        ed_i_s.cidade AS cidade_endereco_devolver,
+        ed_i_s.estado AS estado_endereco_devolver
+    FROM (
+        SELECT
+            i_s.id AS id_info_servico,
+            s_o.id AS id_servico_oferecido,
+            s_o.nome AS nome_servico_oferecido,
+            s_o.id_categoria AS id_categoria_servico_oferecido,
+            c_s.nome AS nome_categoria_servico,
+            COUNT(DISTINCT p_s.id_pet) AS qtd_pet_servico,
+            i_s.id_funcionario AS id_funcionario,
+            f.nome AS nome_funcionario,
+            i_s.observacoes AS observacoes
+        FROM info_servico AS i_s
+                INNER JOIN servico_oferecido AS s_o ON (s_o.id = i_s.id_servico_oferecido)
+                    LEFT JOIN categoria_servico AS c_s ON (c_s.id = s_o.id_categoria)
+                LEFT JOIN funcionario AS f ON (f.id = i_s.id_funcionario)
+                LEFT JOIN pet_servico AS p_s ON (p_s.id_info_servico = i_s.id)
+        GROUP BY i_s.id
+        ORDER BY
+            nome_servico_oferecido ASC,
+            nome_funcionario ASC
+    ) AS i_s
+        LEFT JOIN endereco_info_servico AS eb_i_s ON (eb_i_s.id_info_servico = i_s.id_info_servico AND eb_i_s.tipo IN ("buscar", "buscar-devolver"))
+        LEFT JOIN endereco_info_servico AS ed_i_s ON (ed_i_s.id_info_servico = i_s.id_info_servico AND ed_i_s.tipo IN ("devolver", "buscar-devolver"));
+
+
+
 CREATE OR REPLACE VIEW vw_servico_requerido AS
     SELECT
         s_r.id_cliente AS id_cliente,
@@ -370,34 +412,15 @@ CREATE OR REPLACE VIEW vw_servico_exercido AS
 
 
 CREATE OR REPLACE VIEW vw_servico_realizado AS
-    SELECT 
+    SELECT
         s_r.id AS id_servico_realizado,
         s_r.dt_hr_inicio AS dt_hr_inicio,
         s_r.dt_hr_fim AS dt_hr_fim,
-        i_s.id AS id_info_servico,
-        s_o.id AS id_servico_oferecido,
-        s_o.nome AS nome_servico_oferecido,
-        s_o.id_categoria AS id_categoria_servico_oferecido,
-        c_s.nome AS nome_categoria_servico,
-        COUNT(DISTINCT p_s.id_pet) AS qtd_pet_servico,
-        s_r.valor_servico AS valor_servico,
-        s_r.valor_total AS valor_total,
-        i_s.id_funcionario AS id_funcionario,
-        f.nome AS nome_funcionario,
-        i_s.observacoes AS observacoes
+        i_s.*
     FROM servico_realizado AS s_r
-        INNER JOIN info_servico AS i_s ON (i_s.id = s_r.id_info_servico)
-            INNER JOIN servico_oferecido AS s_o ON (s_o.id = i_s.id_servico_oferecido)
-                LEFT JOIN categoria_servico AS c_s ON (c_s.id = s_o.id_categoria)
-            INNER JOIN funcionario AS f ON (f.id = i_s.id_funcionario)
-            INNER JOIN pet_servico AS p_s ON (p_s.id_info_servico = i_s.id)
-    GROUP BY s_r.id
-    ORDER BY 
-        dt_hr_inicio DESC, 
-        dt_hr_fim DESC, 
-        nome_servico_oferecido ASC, 
-        nome_funcionario ASC, 
-        valor_total DESC;
+        INNER JOIN vw_info_servico AS i_s ON (i_s.id_info_servico = s_r.id_info_servico)
+    ORDER BY
+        dt_hr_fim DESC;
 
 
 CREATE OR REPLACE VIEW vw_pet_servico AS
@@ -432,26 +455,9 @@ CREATE OR REPLACE VIEW vw_agendamento AS
         a.id AS id_agendamento,
         a.dt_hr_marcada AS dt_hr_marcada,
         a.estado AS estado,
-        i_s.id AS id_info_servico,
-        s_o.id AS id_servico_oferecido,
-        s_o.nome AS nome_servico_oferecido,
-        s_o.id_categoria AS id_categoria_servico_oferecido,
-        c_s.nome AS nome_categoria_servico,
-        COUNT(DISTINCT p_s.id_pet) AS qtd_pet_servico,
-        a.valor_servico AS valor_servico,
-        a.valor_total AS valor_total,
-        i_s.id_funcionario AS id_funcionario,
-        f.nome AS nome_funcionario,
-        i_s.observacoes AS observacoes,
-        a.id_pacote_agend AS id_pacote_agend,
-        a.id_servico_realizado AS id_servico_realizado
+        i_s.*
     FROM agendamento AS a
-        INNER JOIN info_servico AS i_s ON (i_s.id = a.id_info_servico)
-            INNER JOIN servico_oferecido AS s_o ON (s_o.id = i_s.id_servico_oferecido)
-                LEFT JOIN categoria_servico AS c_s ON (c_s.id = s_o.id_categoria)
-            LEFT JOIN funcionario AS f ON (f.id = i_s.id_funcionario)
-            INNER JOIN pet_servico AS p_s ON (p_s.id_info_servico = i_s.id)
-    GROUP BY a.id
+        INNER JOIN vw_info_servico AS i_s ON (i_s.id_info_servico = a.id_info_servico)
     ORDER BY
         id_agendamento DESC;
 
