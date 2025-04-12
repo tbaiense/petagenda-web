@@ -202,7 +202,7 @@ CREATE PROCEDURE pacote_agend (
                                 DELETE FROM dia_pacote
                                     WHERE
                                         id_pacote_agend = id_pac
-                                        AND (JSON_CONTAINS(arrayPetPac, id)) IS NOT TRUE;   /* Implementar trigger que cancela agendamentos futuros não preparados */
+                                        AND (JSON_CONTAINS(arrayDiaPac, id)) IS NOT TRUE;   /* Implementar trigger que cancela agendamentos futuros não preparados */
 
                             END IF;
 

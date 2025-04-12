@@ -257,6 +257,19 @@ CREATE TABLE despesa (
 
 -- VIEWS ========================================================================================================================================================================
 
+CREATE OR REPLACE VIEW vw_funcionario AS
+    SELECT
+        f.id AS id_funcionario,
+        f.nome,
+        f.telefone,
+        COUNT(s_e.id_funcionario) AS qtd_servico_exercido
+    FROM funcionario AS f
+        LEFT JOIN servico_exercido AS s_e ON (s_e.id_funcionario = f.id)
+    GROUP BY f.id
+    ORDER BY nome ASC, qtd_servico_exercido ASC;
+
+
+
 CREATE OR REPLACE VIEW vw_cliente AS
     SELECT
         c.id AS id_cliente,
@@ -290,7 +303,6 @@ CREATE OR REPLACE VIEW vw_pet AS
         INNER JOIN cliente AS c ON (c.id = p_c.id_cliente)
         LEFT JOIN especie AS e ON (e.id = p_c.id_especie)
     ORDER BY id_pet;
-
 
 CREATE OR REPLACE VIEW vw_servico_requerido AS
     SELECT
@@ -336,6 +348,155 @@ CREATE OR REPLACE VIEW vw_restricao_especie_servico AS
         restricao_especie AS r_e
         INNER JOIN servico_oferecido AS s_o ON (s_o.id = r_e.id_servico_oferecido)
         INNER JOIN especie AS e ON (e.id = r_e.id_especie);
+
+
+CREATE OR REPLACE VIEW vw_servico_exercido AS
+    SELECT
+        s_e.id_funcionario AS id_funcionario,
+        f.nome AS nome_funcionario,
+        s_e.id_servico_oferecido AS id_servico_oferecido,
+        s_o.nome AS nome_servico,
+        s_o.id_categoria AS id_categoria,
+        c_s.nome AS nome_categoria,
+        s_o.foto AS foto_servico
+    FROM
+        servico_exercido AS s_e
+        INNER JOIN funcionario AS f ON (f.id = s_e.id_funcionario)
+        INNER JOIN
+        servico_oferecido AS s_o ON (s_o.id = s_e.id_servico_oferecido)
+        LEFT JOIN categoria_servico AS c_s ON (c_s.id = s_o.id_categoria)
+        ORDER BY id_funcionario ASC, nome_funcionario ASC, nome_servico ASC, nome_categoria ASC;
+
+
+
+CREATE OR REPLACE VIEW vw_servico_realizado AS
+    SELECT 
+        s_r.id AS id_servico_realizado,
+        s_r.dt_hr_inicio AS dt_hr_inicio,
+        s_r.dt_hr_fim AS dt_hr_fim,
+        i_s.id AS id_info_servico,
+        s_o.id AS id_servico_oferecido,
+        s_o.nome AS nome_servico_oferecido,
+        s_o.id_categoria AS id_categoria_servico_oferecido,
+        c_s.nome AS nome_categoria_servico,
+        COUNT(DISTINCT p_s.id_pet) AS qtd_pet_servico,
+        s_r.valor_servico AS valor_servico,
+        s_r.valor_total AS valor_total,
+        i_s.id_funcionario AS id_funcionario,
+        f.nome AS nome_funcionario,
+        i_s.observacoes AS observacoes
+    FROM servico_realizado AS s_r
+        INNER JOIN info_servico AS i_s ON (i_s.id = s_r.id_info_servico)
+            INNER JOIN servico_oferecido AS s_o ON (s_o.id = i_s.id_servico_oferecido)
+                LEFT JOIN categoria_servico AS c_s ON (c_s.id = s_o.id_categoria)
+            INNER JOIN funcionario AS f ON (f.id = i_s.id_funcionario)
+            INNER JOIN pet_servico AS p_s ON (p_s.id_info_servico = i_s.id)
+    GROUP BY s_r.id
+    ORDER BY 
+        dt_hr_inicio DESC, 
+        dt_hr_fim DESC, 
+        nome_servico_oferecido ASC, 
+        nome_funcionario ASC, 
+        valor_total DESC;
+
+
+CREATE OR REPLACE VIEW vw_pet_servico AS
+    SELECT
+		p_s.id AS id_pet_servico,
+		p_s.id_info_servico AS id_info_servico,
+		s_o.nome AS nome_servico,
+        p_c.id AS id_pet,
+        p_c.nome AS nome,
+		e.id AS id_especie,
+        e.nome AS nome_especie,
+        p_c.raca AS raca,
+        p_c.porte AS porte,
+        c.id AS id_cliente,
+        c.nome AS nome_cliente,
+		p_s.valor_pet AS valor_pet,
+		p_s.instrucao_alimentacao AS instrucao_alimentacao,
+		COUNT(DISTINCT r_p_s.id) AS qtd_remedio_pet_servico
+    FROM pet_servico AS p_s
+		INNER JOIN pet AS p_c ON (p_c.id = p_s.id_pet)
+			LEFT JOIN especie AS e ON (e.id = p_c.id_especie)
+			INNER JOIN cliente AS c ON (c.id = p_c.id_cliente)
+		INNER JOIN info_servico AS i_s ON (i_s.id = p_s.id_info_servico)
+		INNER JOIN servico_oferecido AS s_o ON (s_o.id = i_s.id_servico_oferecido)
+		LEFT JOIN remedio_pet_servico AS r_p_s ON (r_p_s.id_pet_servico = p_s.id)
+	GROUP BY p_s.id
+    ORDER BY id_info_servico DESC, nome ASC;
+
+
+CREATE OR REPLACE VIEW vw_agendamento AS
+    SELECT
+        a.id AS id_agendamento,
+        a.dt_hr_marcada AS dt_hr_marcada,
+        a.estado AS estado,
+        i_s.id AS id_info_servico,
+        s_o.id AS id_servico_oferecido,
+        s_o.nome AS nome_servico_oferecido,
+        s_o.id_categoria AS id_categoria_servico_oferecido,
+        c_s.nome AS nome_categoria_servico,
+        COUNT(DISTINCT p_s.id_pet) AS qtd_pet_servico,
+        a.valor_servico AS valor_servico,
+        a.valor_total AS valor_total,
+        i_s.id_funcionario AS id_funcionario,
+        f.nome AS nome_funcionario,
+        i_s.observacoes AS observacoes,
+        a.id_pacote_agend AS id_pacote_agend,
+        a.id_servico_realizado AS id_servico_realizado
+    FROM agendamento AS a
+        INNER JOIN info_servico AS i_s ON (i_s.id = a.id_info_servico)
+            INNER JOIN servico_oferecido AS s_o ON (s_o.id = i_s.id_servico_oferecido)
+                LEFT JOIN categoria_servico AS c_s ON (c_s.id = s_o.id_categoria)
+            LEFT JOIN funcionario AS f ON (f.id = i_s.id_funcionario)
+            INNER JOIN pet_servico AS p_s ON (p_s.id_info_servico = i_s.id)
+    GROUP BY a.id
+    ORDER BY
+        id_agendamento DESC;
+
+
+CREATE OR REPLACE VIEW vw_pacote_agend AS
+	SELECT
+		p_a.id AS id_pacote_agend,
+		p_a.dt_inicio AS dt_inicio,
+		p_a.hr_agendada AS hr_agendada,
+		p_a.frequencia AS frequencia,
+		p_a.estado AS estado,
+		p_a.qtd_recorrencia AS qtd_recorrencia,
+		COUNT(DISTINCT d_p.id) AS qtd_dia_pacote,
+		COUNT(DISTINCT a.id) AS qtd_agendamento,
+		s_o.id AS id_servico_oferecido,
+		s_o.nome AS nome_servico_oferecido,
+		s_o.id_categoria AS id_categoria_servico_oferecido,
+		c_s.nome AS nome_categoria_servico,
+		COUNT(DISTINCT p_p.id_pet) AS qtd_pet_pacote
+	FROM pacote_agend AS p_a
+		INNER JOIN servico_oferecido AS s_o ON (s_o.id = p_a.id_servico_oferecido)
+			LEFT JOIN categoria_servico AS c_s ON (c_s.id = s_o.id_categoria)
+		INNER JOIN dia_pacote AS d_p ON (d_p.id_pacote_agend = p_a.id)
+		INNER JOIN pet_pacote AS p_p ON (p_p.id_pacote_agend = p_a.id)
+		LEFT JOIN agendamento AS a ON (a.id_pacote_agend = p_a.id)
+	GROUP BY id_pacote_agend;
+
+CREATE OR REPLACE VIEW vw_pet_pacote AS
+    SELECT
+		p_p.id AS id_pet_pacote,
+		p_p.id_pacote_agend AS id_pacote_agend,
+        p_c.id AS id_pet,
+        p_c.nome AS nome,
+		e.id AS id_especie,
+        e.nome AS nome_especie,
+        p_c.raca AS raca,
+        p_c.porte AS porte,
+        c.id AS id_cliente,
+        c.nome AS nome_cliente
+    FROM pet_pacote AS p_p
+		INNER JOIN pet AS p_c ON (p_c.id = p_p.id_pet)
+			LEFT JOIN especie AS e ON (e.id = p_c.id_especie)
+			INNER JOIN cliente AS c ON (c.id = p_c.id_cliente)
+    ORDER BY id_pacote_agend DESC, nome ASC;
+
 
 -- FUNCTIONS ========================================================================================================================================================================
 
@@ -679,7 +840,6 @@ CREATE TRIGGER trg_incidente_update
     END;$$
 DELIMITER ;
 
-
 DELIMITER $$
 CREATE TRIGGER trg_pacote_agend_update
     BEFORE UPDATE
@@ -822,9 +982,6 @@ CREATE TRIGGER trg_pacote_agend_update
         END IF;
     END;$$
 DELIMITER ;
-
-
-
 
 
 -- PROCEDURES ================================================================================================================================================================
@@ -1772,7 +1929,6 @@ CREATE PROCEDURE incidente (
     END;$$
 DELIMITER ;
 
-
 DELIMITER $$
 CREATE PROCEDURE pacote_agend (
     IN acao ENUM('insert', 'update', 'delete'),
@@ -1870,8 +2026,6 @@ CREATE PROCEDURE pacote_agend (
                 SET p_count = p_count + 1;
             END WHILE;
 
-            UPDATE pacote_agend SET estado = "preparado" WHERE id = id_pac;
-
         ELSEIF acao IN ("update", "delete") THEN
             SET id_pac = JSON_EXTRACT(objPac, '$.id');
 
@@ -1927,7 +2081,7 @@ CREATE PROCEDURE pacote_agend (
                                 DELETE FROM dia_pacote
                                     WHERE
                                         id_pacote_agend = id_pac
-                                        AND (JSON_CONTAINS(arrayPetPac, id)) IS NOT TRUE;   /* Implementar trigger que cancela agendamentos futuros não preparados */
+                                        AND (JSON_CONTAINS(arrayDiaPac, id)) IS NOT TRUE;   /* Implementar trigger que cancela agendamentos futuros não preparados */
 
                             END IF;
 
@@ -1970,6 +2124,7 @@ CREATE PROCEDURE pacote_agend (
         END IF;
     END;$$
 DELIMITER ;
+
 
 DELIMITER $$
 CREATE PROCEDURE set_estado_pacote_agend(
