@@ -85,14 +85,14 @@ CREATE TRIGGER trg_pet_servico_insert
 
         -- Validação dos participantes do info_servico
         SELECT restricao_participante INTO restr_partic FROM servico_oferecido WHERE id = (
-            SELECT id_servico_oferecido FROM info_servico WHERE id = NEW.id_info_servico;
+            SELECT id_servico_oferecido FROM info_servico WHERE id = NEW.id_info_servico
         );
 
         IF id_pet_outro IS NOT NULL THEN /* Já existe outro pet para o info_servico */
 
             -- Validação se o pet pertence ao mesmo dono
             SELECT id_cliente, id_especie INTO id_cli_este, id_esp_este FROM pet WHERE id = NEW.id_pet;
-            SELECT id_cliente INTO id_cli_outro FROM pet WHERE id = id_pet_outro
+            SELECT id_cliente INTO id_cli_outro FROM pet WHERE id = id_pet_outro;
 
             IF id_cli_este <> id_cli_outro THEN
                 SIGNAL err_dono_diferente

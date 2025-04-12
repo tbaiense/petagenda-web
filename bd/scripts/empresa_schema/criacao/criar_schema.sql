@@ -589,19 +589,15 @@ END;$$
 DELIMITER ;
 
 DELIMITER $$
-CREATE TRIGGER trg_pet_servico_insert
+CREATE TRIGGER trg_pet_pacote_insert /* Validação semelhante à aplicada à tabela pet_pacote */
     BEFORE INSERT
-    ON pet_servico
+    ON pet_pacote
     FOR EACH ROW
     BEGIN
-        -- Variáveis de definição do valor_pet
-        DECLARE tipo_p VARCHAR(16); /*Tipo da cobrança do serviço*/
-        DECLARE p DECIMAL(8,2); /* Preço cobrado pelo serviço */
-
         -- Variáveis de validação do dono
         DECLARE id_cli_este INT; /* cliente associado a este pet */
-        DECLARE id_pet_outro INT; /* id de outro pet associado a este info_servico */
-        DECLARE id_cli_outro INT; /* cliente associado a outro pet do info_servico*/
+        DECLARE id_pet_outro INT; /* id de outro pet associado a este pacote_agend */
+        DECLARE id_cli_outro INT; /* cliente associado a outro pet do pacote_agend */
 
         -- Variáveis de validação da espécie
         DECLARE id_ser_ofer INT;
@@ -623,55 +619,36 @@ CREATE TRIGGER trg_pet_servico_insert
                 FROM restricao_especie
                 WHERE id_servico_oferecido = (
                     SELECT id_servico_oferecido
-                        FROM info_servico
-                        WHERE id = NEW.id_info_servico
+                        FROM pacote_agend
+                        WHERE id = NEW.id_pacote_agend
                 );
 
         -- Handlers
         DECLARE CONTINUE HANDLER FOR NOT FOUND SET cur_done = TRUE;
 
-        -- Obtendo informação sobre a forma de cobrança do serviço
-        SELECT
-            preco, tipo_preco
-        INTO
-            p, tipo_p
-        FROM
-            servico_oferecido
-        WHERE
-            id = (
-                SELECT id_servico_oferecido
-                FROM info_servico
-                WHERE
-                    id = NEW.id_info_servico LIMIT 1);
 
-        IF tipo_p = 'pet' THEN
-            SET NEW.valor_pet = p;
-        ELSE
-            SET NEW.valor_pet = NULL;
-        END IF;
-
-        -- Buscando o id de outro pet existe para o mesmo info_servico
+        -- Buscando o id de outro pet existe para o mesmo pacote_agend
         SELECT id_pet
             INTO id_pet_outro
-            FROM pet_servico
+            FROM pet_pacote
             WHERE
-                id_info_servico = NEW.id_info_servico
+                id_pacote_agend = NEW.id_pacote_agend
             LIMIT 1;
 
-        -- Validação dos participantes do info_servico
+        -- Validação dos participantes do pacote_agend
         SELECT restricao_participante INTO restr_partic FROM servico_oferecido WHERE id = (
-            SELECT id_servico_oferecido FROM info_servico WHERE id = NEW.id_info_servico;
+            SELECT id_servico_oferecido FROM pacote_agend WHERE id = NEW.id_pacote_agend
         );
 
-        IF id_pet_outro IS NOT NULL THEN /* Já existe outro pet para o info_servico */
+        IF id_pet_outro IS NOT NULL THEN /* Já existe outro pet para o pacote_agend */
 
             -- Validação se o pet pertence ao mesmo dono
             SELECT id_cliente, id_especie INTO id_cli_este, id_esp_este FROM pet WHERE id = NEW.id_pet;
-            SELECT id_cliente INTO id_cli_outro FROM pet WHERE id = id_pet_outro
+            SELECT id_cliente INTO id_cli_outro FROM pet WHERE id = id_pet_outro;
 
             IF id_cli_este <> id_cli_outro THEN
                 SIGNAL err_dono_diferente
-                    SET MESSAGE_TEXT = "Pet nao pode ser inserido, pois pertence a um dono diferente dos que já existem para este info_servico";
+                    SET MESSAGE_TEXT = "Pet nao pode ser inserido, pois pertence a um dono diferente dos que já existem para este pacote_agend";
             END IF;
 
             IF restr_partic = "individual" THEN
