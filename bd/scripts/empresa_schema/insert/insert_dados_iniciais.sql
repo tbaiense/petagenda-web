@@ -1,7 +1,3 @@
-/*
-SCRIPT DE INSERÇÃO DE DADOS INICIAIS NECESSÁRIOS PARA O FUNCIONAMENTO
-*/
-
 INSERT INTO especie (nome) VALUES
     ("Cão"),
     ("Gato"),
