@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro</title>
+  </head>
+  <body>
+    <header>Cadastro</header>
+    <main>
+      <form action="http://127.0.0.1:8080/cadastro" method="post" >
+        <label for="email">
+          Email
+          <input type="email" id="email" name="email" required>
+        </label>
+        <label for="senha">
+          Senha
+          <input type="password" id="senha" name="senha" required>
+        </label>
+        <label for="senha-denovo">
+          Confirmação da senha
+          <input type="password" id="senha-denovo" required>
+        </label>
+        <label for="perg-seg">
+          Pergunta de segurança
+          <select name="perg-seg">
+            <option value="Nome do primeiro pet">Nome do primeiro pet</option>
+            <option value="Nome do melhor amigo de infância">Nome do melhor amigo de infância</option>
+          </select>
+        </label>
+        <label for="resp-seg">
+          Resposta
+          <input type="text" id="resp-seg" name="resp-seg">
+        </label>
+        <button type="submit" id="btn-submit">Cadastrar-se</button>
+      </form>
+    </main>
+    <footer>Teste de backend 0.1</footer>
+  </body>
+</html>

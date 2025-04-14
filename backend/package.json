@@ -1,0 +1,17 @@
+{
+  "name": "petagenda-backend",
+  "version": "0.1.0",
+  "description": "",
+  "type": "module",
+  "main": "main.js",
+  "scripts": {
+    "dev": "node main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "tbaiense",
+  "license": "ISC",
+  "dependencies": {
+    "@mysql/xdevapi": "^8.0.35"
+  }
+}

@@ -3,3 +3,4 @@
 bd/.dbeaver
 bd/.settings
 bd.project
+**/node_modules/*
