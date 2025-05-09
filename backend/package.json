@@ -5,7 +5,7 @@
   "type": "module",
   "main": "main.js",
   "scripts": {
-    "server": "node main.js",
+    "server": "node main.js"
   },
   "keywords": [],
   "author": "tbaiense",
