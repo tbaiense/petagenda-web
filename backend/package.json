@@ -5,8 +5,7 @@
   "type": "module",
   "main": "main.js",
   "scripts": {
-    "dev": "node main.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "server": "node main.js",
   },
   "keywords": [],
   "author": "tbaiense",

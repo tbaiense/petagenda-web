@@ -1,6 +1,1 @@
-*.drawio.bkp
-*.kate-swp
-bd/.dbeaver
-bd/.settings
-bd.project
-**/node_modules/*
+**/node_mudules/
