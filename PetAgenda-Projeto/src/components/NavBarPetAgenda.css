@@ -1,0 +1,40 @@
+@import '../styles/variaveis.css';
+
+.navbar {
+  font-family: var(--font-roboto);
+  background-color: #FFF8F0;
+  border-bottom: 1px solid #242424;
+}
+
+.navbar_brand {
+  display: flex;
+  align-items: center;
+}
+
+.navbar_logo {
+  height: 40px;
+  width: auto; 
+}
+
+.navbar_button_login {
+  border-color: dark;
+  border-radius: 0px;
+}
+
+.navbar_button_registrar {
+  background-color: #8a3601;
+  border-radius: 0px;
+  border: none;
+}
+
+.navbar_nav {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  font-weight: bold;
+  color: black;
+}
+
+.navbar_container {
+  padding: 0rem 0rem;
+}
