@@ -15,13 +15,13 @@ const NavbarPetAgenda = () => {
 
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ms-auto navbar_nav">
-            <Nav.Link as={Link} to="/">
+            <Nav.Link as={Link} >
               Home
             </Nav.Link>
-            <Nav.Link as={Link} to="/sobre">
+            <Nav.Link as={Link} >
               Sobre
             </Nav.Link>
-            <Nav.Link as={Link} to="/contato">
+            <Nav.Link as={Link} >
               Contato
             </Nav.Link>
             <Button

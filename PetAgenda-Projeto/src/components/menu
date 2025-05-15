@@ -1,0 +1,23 @@
+<header className={styles.styleMenu}>
+    <div>
+    <p>Pet</p>
+    <p>Agenda</p>
+    </div>
+
+    <div>
+
+    <nav>
+        <ul>
+        <a href=""><li>Home</li></a>
+        <a href=""><li>Contato</li></a>
+        <a href=""><li>Sobre</li></a>
+        </ul>
+    </nav>
+
+    <div>
+        <Link to="/login"><button>Login</button></Link>
+        <Link to="/registrar"><button>Register</button></Link>
+    </div>
+    </div>
+      
+</header>
