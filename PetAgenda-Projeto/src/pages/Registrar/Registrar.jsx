@@ -3,6 +3,7 @@ import { Container, Button, Form, Row, Col } from "react-bootstrap";
 import "./Registrar.css";
 
 function Registrar() {
+  
   const [etapaAtual, setEtapaAtual] = useState(1);
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
