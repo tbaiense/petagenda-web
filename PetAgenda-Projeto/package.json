@@ -7,13 +7,15 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "server": "json-server --watch src/data/db.json --port 5000"
   },
   "dependencies": {
     "bootstrap": "^5.3.6",
     "react": "^19.1.0",
     "react-bootstrap": "^2.10.10",
     "react-dom": "^19.1.0",
+    "react-hook-form": "^7.56.3",
     "react-router-dom": "^7.6.0"
   },
   "devDependencies": {
@@ -25,6 +27,7 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^16.0.0",
+    "json-server": "^1.0.0-beta.3",
     "vite": "^6.3.5"
   }
 }

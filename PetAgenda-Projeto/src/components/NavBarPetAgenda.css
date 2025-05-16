@@ -1,40 +1,44 @@
-@import '../styles/variaveis.css';
+@import "../styles/variaveis.css";
 
-.navbar {
-  font-family: var(--font-roboto);
-  background-color: #FFF8F0;
-  border-bottom: 1px solid #242424;
+.navbar-petagenda {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  background-color: #fff8f0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.navbar_brand {
-  display: flex;
-  align-items: center;
-}
-
-.navbar_logo {
+.navbar-logo {
   height: 40px;
-  width: auto; 
+  width: auto;
 }
 
-.navbar_button_login {
-  border-color: dark;
-  border-radius: 0px;
+.btn-login {
+  border-radius: 0;
+  font-weight: 500;
+  padding: 0.4rem 1.1rem;
+  border-color: #333;
 }
 
-.navbar_button_registrar {
+.btn-login:hover {
+  background-color: #333;
+  color: white;
+}
+
+.btn-registrar {
   background-color: #8a3601;
-  border-radius: 0px;
   border: none;
+  border-radius: 0;
+  font-weight: 500;
+  padding: 0.4rem 1.1rem;
+  color: white;
 }
 
-.navbar_nav {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-  font-weight: bold;
-  color: black;
+.btn-registrar:hover {
+  background-color: #6d2800;
+  color: white;
 }
 
-.navbar_container {
-  padding: 0rem 0rem;
-}
+
