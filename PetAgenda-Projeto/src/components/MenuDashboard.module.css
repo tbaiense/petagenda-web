@@ -1,0 +1,40 @@
+.sideBar{
+    height: 100vh;
+    width: 12vw;
+    background-color: rgb(157, 64, 5);
+}
+.navegacao{
+    display: flex;
+    flex-direction: column;
+}
+.logo{
+    display: flex;
+    padding: 22px;
+    background-color: rgb(191, 106, 4);
+    border-bottom: 2px solid #000000;
+}
+.logo a {
+    text-decoration: none;
+    color: white; 
+    display: flex;
+    align-items: center;
+    gap: 8px; 
+}
+.logo p {
+    margin: 0;
+    font-size: 1rem;
+}
+.navegacao button{
+  background-color:  rgb(157, 64, 5);
+  border:none;
+  color: white;
+  padding: 10px;
+  border-radius: 6px;
+}
+.navegacao{
+  gap: 1rem;
+  padding: 10px;
+}
+.navegacao button:hover{
+  background-color: rgb(191, 106, 4)
+}
