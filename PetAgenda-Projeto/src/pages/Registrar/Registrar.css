@@ -118,15 +118,6 @@
   font-weight: bold;
 }
 
-.linha {
-  position: absolute;
-  height: 4px;
-  background-color: #dee2e6;
-  top: 14px;
-  left: -50%;
-  width: 100%;
-  z-index: 1;
-}
 
 .label {
   margin-top: 8px;
