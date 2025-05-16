@@ -5,9 +5,9 @@
   top: 0;
   left: 0;
   right: 0;
-  z-index: 9999; 
-  background-color: #FFF8F0;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+  z-index: 9999;
+  background-color: #fff8f0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .navbar-logo {
@@ -40,3 +40,5 @@
   background-color: #6d2800;
   color: white;
 }
+
+

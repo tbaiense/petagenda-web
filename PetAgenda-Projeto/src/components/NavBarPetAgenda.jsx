@@ -7,7 +7,7 @@ import "./NavBarPetAgenda.css";
 const NavbarPetAgenda = () => {
   return (
     <Navbar expand="lg" fixed="top" className="navbar-petagenda">
-      <Container>
+      <Container className="container__navbar">
         <Navbar.Brand as={Link} to="/">
           <img src={LogoNav} alt="Logo PetAgenda" className="navbar-logo" />
         </Navbar.Brand>

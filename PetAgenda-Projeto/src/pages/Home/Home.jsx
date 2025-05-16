@@ -3,8 +3,6 @@ import { Container, Row, Col, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import NavBarPetAgenda from "../../components/NavBarPetAgenda";
 import "./Home.css";
-
-// Imagens
 import imgNote from "../../assets/ImagensHome/Note.png";
 import imgTimer from "../../assets/ImagensHome/Timer.png";
 import imgLayout from "../../assets/ImagensHome/Layout.png";
