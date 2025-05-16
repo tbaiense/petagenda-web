@@ -10,6 +10,8 @@ import PageTeste from "../routers/PageTeste"
 //Importando os metodos de navegações
 import { createBrowserRouter } from "react-router-dom"
 import PrivateRoute from "./PrivateRouter"
+import MenuDashBoard from "../components/MenuDashboard"
+import CadastroEmpresa from "../pages/Empresa/CadastroEmpresa"
 
 
 const router = createBrowserRouter([
@@ -30,14 +32,21 @@ const router = createBrowserRouter([
                 element:<Registrar/>,
             },
             {
-                path:"/teste",
-                element:(
-                    //Só pode entrar nessa rota se tiver token
-                    <PrivateRoute>
-                        <PageTeste/>
-                    </PrivateRoute>
-                )
+                path:"/andamento",
+                element:<MenuDashBoard/>
+            },
+            {
+                path:"/perfilempresa",
+                element:<CadastroEmpresa/>
             }
+            // {
+            //     path:"/perfilempresa",
+            //     element:(
+            //         <PrivateRoute>
+            //             <CadastroEmpresa/>
+            //         </PrivateRoute>
+            //     )
+            // }
         ]
     },
 ])

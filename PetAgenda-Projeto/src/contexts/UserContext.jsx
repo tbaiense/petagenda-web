@@ -23,9 +23,20 @@ export const AuthProvider = ({ children }) => {
     setToken(""); 
   }
 
+  //Aqui vai gerar o token quando o usuario se registrar
+  const gerarToken = (usuario) => {
+    //tudo que estiver dentro do token false, vai ser transformado em token, essa não é a forma correta de fazer
+  const tokenFalse = {
+    email: usuario.email,
+    data: new Date().toISOString(), // uma informação adicional para criar um token
+    senha: usuario.resposta
+  };
+  return btoa(JSON.stringify(payload));
+}
+
   return (
     //Defino que todos os filhos do elemento pai pode acessar essas informações
-    <AuthContext.Provider value={{ token, login, logout }}>
+    <AuthContext.Provider value={{ token, login, logout, gerarToken }}>
       {children}
     </AuthContext.Provider>
   )

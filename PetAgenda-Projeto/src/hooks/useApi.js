@@ -1,7 +1,7 @@
 const url = import.meta.env.VITE_API_URL;
 
 // API não esta em funcionamento ainda
-export function useAddUser(user) {
+export function useAddUser() {
   const addUser = async (user) => {
     try{
         const req = await fetch(`${url}/usuario`, {
@@ -17,7 +17,6 @@ export function useAddUser(user) {
     }catch(errors){
         console.log("Erro ao cadastrar usuario:",errors)
     }
-    
   };
   return { addUser };
 }
