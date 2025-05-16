@@ -1,0 +1,72 @@
+@import "../../styles/variaveis.css";
+
+.home__section {
+  padding: 4rem 0;
+  font-family: var(--font-roboto);
+  background-color: #fff8f0;
+}
+
+.home__title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #8a3601;
+  margin-bottom: 1rem;
+}
+
+.home__subtitle {
+  font-size: 1.5rem;
+}
+
+.home__paragraph {
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  color: #333;
+}
+
+.home__list {
+  padding-left: 1.2rem;
+  color: #bf6a04;
+}
+
+.home__solucao {
+  color: #bf6a04;
+}
+
+.home__button,
+.home__button__outline {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.home__button {
+  background-color: #d97706;
+  border: none;
+  color: white;
+}
+
+.home__button:hover {
+  background-color: #b45309;
+  color: white;
+}
+
+.home__button__outline {
+  background-color: transparent;
+  border: 1px solid black;
+  color: black;
+}
+
+.home__button__outline:hover {
+  background-color: #000;
+  color: white;
+}
+
+.home__icon {
+  height: 60px;
+  width: auto;
+}
+
+.home__imagem{
+  border-radius: 0px;
+}
