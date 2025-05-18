@@ -33,7 +33,11 @@ const router = createBrowserRouter([
             },
             {
                 path:"/andamento",
-                element:<MenuDashBoard/>
+                element:(
+                    <PrivateRoute>
+                        <MenuDashBoard/>
+                    </PrivateRoute>
+                )
             },
             {
                 path:"/perfilempresa",
@@ -42,9 +46,9 @@ const router = createBrowserRouter([
             // {
             //     path:"/perfilempresa",
             //     element:(
-            //         <PrivateRoute>
+            //         <PrivateRouter>
             //             <CadastroEmpresa/>
-            //         </PrivateRoute>
+            //         </PrivateRouter>
             //     )
             // }
         ]

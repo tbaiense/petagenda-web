@@ -1,5 +1,9 @@
 import React from "react";
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from "../../contexts/UserContext";
 import NavBarPetAgenda from "../../components/NavBarPetAgenda";
+import api from '../../api';
+
 import {
   Container,
   Col,
@@ -8,8 +12,59 @@ import {
   Row,
   Button,
 } from "react-bootstrap";
+
 import "./Login.css";
 function Login() {
+  const navigate = useNavigate();
+  const { login } = useAuth();
+
+  const checkCredentials = async (userCredentials) => {
+    console.log('checando credenciais...');
+
+    fetch(`${api.URL}/usuario/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(userCredentials)
+    })
+      .then( async (response) => {
+        switch (response.status) {
+          case 200: {
+            const jsonResponse = await response.json();
+            const jwt = jsonResponse.token;
+
+            if (jwt) {
+              login(jwt);
+            }
+
+            navigate('/andamento');
+            break;
+          };
+
+          case 400: {
+            alert('Usuário ou senha incorretos.');
+            break;
+          };
+          default: {
+            alert('Erro ao realizar autenticação: HTTP Status Code não esperado.');
+          }
+        }
+      })
+      .catch( err => {
+        alert('Erro ao realizar autenticação: ', err.message);
+      });
+  };
+
+  const handleSubmit = (formData) => {
+    const userCredentials = {
+      email: formData.get('email'),
+      senha: formData.get('senha')
+    };
+
+    checkCredentials(userCredentials);
+  };
+
   return (
     <div>
       <NavBarPetAgenda />
@@ -22,7 +77,7 @@ function Login() {
               </div>
             </Row>
             <Row style={{ width: "90%", maxWidth: "500px" }}>
-              <Form className="">
+              <Form action={handleSubmit} className="">
                 <FloatingLabel
                   controlId="floatingInput"
                   label="Email"
@@ -32,6 +87,7 @@ function Login() {
                     type="email"
                     placeholder="name@example.com"
                     className="login__input"
+                    name="email"
                   />
                 </FloatingLabel>
                 <FloatingLabel controlId="floatingPassword" label="Password">
@@ -39,6 +95,7 @@ function Login() {
                     type="password"
                     placeholder="Password"
                     className="login__input"
+                    name="senha"
                   />
                 </FloatingLabel>
                 <Button
