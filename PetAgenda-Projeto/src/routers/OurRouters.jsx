@@ -5,7 +5,6 @@ import App from "../App"
 import Home from "../pages/Home/Home"
 import Login from "../pages/Login/Login"
 import Registrar from "../pages/Registrar/Registrar"
-import PageTeste from "../routers/PageTeste"
 
 //Importando os metodos de navegações
 import { createBrowserRouter } from "react-router-dom"
