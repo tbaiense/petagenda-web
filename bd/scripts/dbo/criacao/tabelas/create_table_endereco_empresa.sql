@@ -1,5 +1,6 @@
 CREATE TABLE endereco_empresa (
-    id_empresa INT NOT NULL PRIMARY KEY,
+	id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    id_empresa INT NOT NULL,
     logradouro VARCHAR(128) NOT NULL,
     numero VARCHAR(16) NOT NULL,
     bairro VARCHAR(64) NOT NULL,

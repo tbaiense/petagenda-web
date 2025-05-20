@@ -97,6 +97,8 @@ CREATE PROCEDURE empresa (
                 VALUE (nome_fant, razao_soc, cnpj_emp, ft, lema_emp);
             SET id_emp = LAST_INSERT_ID();
 
+        	SELECT id_emp AS id_empresa;
+        
             -- Inserção de endereço do empresa
             IF objEnd IS NOT NULL THEN
                 SET logr = JSON_UNQUOTE(JSON_EXTRACT(objEnd, '$.logradouro'));

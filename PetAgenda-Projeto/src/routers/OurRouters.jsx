@@ -34,9 +34,9 @@ const router = createBrowserRouter([
             {
                 path:"/andamento",
                 element:(
-                    <PrivateRoute>
+                    // <PrivateRoute>
                         <MenuDashBoard/>
-                    </PrivateRoute>
+                    // </PrivateRoute>
                 )
             },
             {
