@@ -40,16 +40,12 @@ const router = createBrowserRouter([
             },
             {
                 path:"/perfilempresa",
-                element:<CadastroEmpresa/>
+                element:(
+                    <PrivateRoute>
+                        <CadastroEmpresa/>
+                    </PrivateRoute>
+                )
             }
-            // {
-            //     path:"/perfilempresa",
-            //     element:(
-            //         <PrivateRouter>
-            //             <CadastroEmpresa/>
-            //         </PrivateRouter>
-            //     )
-            // }
         ]
     },
 ])

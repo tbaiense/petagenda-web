@@ -2,9 +2,12 @@ import LogoPetAgenda from "../../components/LogoPetAgenda"
 import MenuDashBoard from "../../components/MenuDashboard"
 import styles from "./CadastroEmpresa.module.css"
 import { useForm } from "react-hook-form"
-
+import api from  '../../api';
+import { useAuth } from "../../contexts/UserContext";
 
 const CadastroEmpresa = () => {
+    const { token } = useAuth();
+
     const {
         register,
         handleSubmit,
@@ -16,8 +19,37 @@ const CadastroEmpresa = () => {
     const imagemEmpresa = watch("pathImgFile")
     const imagemURL = imagemEmpresa && imagemEmpresa[0] ? URL.createObjectURL(imagemEmpresa[0]) : null
 
-    const onSubmit = (data) => {
-        console.log("Dados Enviados:",data)
+    const onSubmit = async (data) => {
+        console.log(typeof data);
+        const fileFoto = data.pathImgFile.item(0);
+        const byteString = await fileFoto.bytes();
+        const base64 = byteString.toBase64();
+
+        const objEmp = {
+            nomeFantasia: data.NomeFantasia,
+            razaoSocial: data.RazaoSocial,
+            cnpj: data.CNPJ,
+            lema: data.Lema,
+            foto: {
+                type: fileFoto.type,
+                data: base64
+            }
+        };
+
+        fetch(`${api.URL}/empresa`, {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(objEmp)
+        }).then( res => { 
+            if (res.status == 200) {
+                alert('cadastrado');
+            } else {
+                alert('erro ao cadastrar empresa');
+            }
+        });
     }
 
     const onError = (errors) => {
