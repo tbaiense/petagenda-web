@@ -1,7 +1,7 @@
 import React from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import "./PlanosEmpresa.css";
-import MenuDashBoard from "../../components/SideBar/MenuDashboard";
+import MenuDashBoard from "../../components/SideBar/SideBar";
 
 function PlanosEmpresa() {
   return (

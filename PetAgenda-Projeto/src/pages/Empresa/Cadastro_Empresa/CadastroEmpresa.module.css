@@ -1,21 +1,4 @@
-.tese {
-  display: flex;
-  height: 100vh; 
-}
 
-.tese > div:nth-child(2) {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-.areaDoCadastro{
-  margin: 1rem;
-  background-color: rgb(255, 255, 255);
-  border-radius: 20px;
-  border: 1px solid rgba(0, 0, 0, 0.3);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  height: 100vh;
-}
 .areaDoCadastro h2{
   text-align: center;
   padding: 1rem 1rem;

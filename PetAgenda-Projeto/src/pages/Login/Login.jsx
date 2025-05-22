@@ -38,7 +38,7 @@ function Login() {
               login(jwt);
             }
 
-            navigate('/andamento');
+            navigate('/dashboard/perfilempresa');
             break;
           };
 

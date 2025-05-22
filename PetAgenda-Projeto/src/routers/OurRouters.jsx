@@ -5,13 +5,17 @@ import App from "../App";
 import Home from "../pages/Home/Home";
 import Login from "../pages/Login/Login";
 import Registrar from "../pages/Registrar/Registrar";
+import CadastroEmpresa from "../pages/Empresa/Cadastro_Empresa/CadastroEmpresa";
+import PlanosEmpresa from "../pages/Planos/PlanosEmpresa";
+import MenuDashBoard from "../MenuDashboard";
+import ViewEmpresa from "../pages/Empresa/Visualizar_Dados/ViewEmpresa"
 
 //Importando os metodos de navegações
 import { createBrowserRouter } from "react-router-dom";
 import PrivateRoute from "./PrivateRouter";
-import MenuDashBoard from "../components/SideBar/MenuDashboard";
-import CadastroEmpresa from "../pages/Empresa/CadastroEmpresa";
-import PlanosEmpresa from "../pages/Planos/PlanosEmpresa";
+
+
+
 
 const router = createBrowserRouter([
   {
@@ -30,31 +34,42 @@ const router = createBrowserRouter([
         path: "/registrar",
         element: <Registrar />,
       },
+    ]
+  },
+  // Esse elemento pai não vai ser o dashboard porque ele é para cadastrar a empresa
+  {
+    path: "/dashboard",
+    element: (
+      // <PrivateRoute>
+      <MenuDashBoard />
+      // </PrivateRoute>
+    ),
+    children:[
       {
-        path: "/andamento",
+        path: "empresa",
         element: (
           // <PrivateRoute>
-          <MenuDashBoard />
+          <ViewEmpresa/>
+          // <PrivateRoute>
+        ),
+      },
+      {
+        path: "/dashboard",
+        element: (
+          // <PrivateRoute>
+            <CadastroEmpresa />
           // </PrivateRoute>
         ),
       },
       {
-        path: "/perfilempresa",
-        element: (
-          <PrivateRoute>
-            <CadastroEmpresa />
-          </PrivateRoute>
-        ),
-      },
-      {
-        path: "/Planos",
+        path: "Planos",
         element: (
         //   <PrivateRoute>
             <PlanosEmpresa />
         //   </PrivateRoute>
         ),
       },
-    ],
+    ]
   },
 ]);
 
