@@ -1,13 +1,13 @@
-import styles from "./MenuDashboard.module.css";
+import styles from "./SideBar.module.css";
 import iconPerfil from "../../assets/icon_perfil.svg";
 import { Link } from "react-router-dom";
-import PetAgenda from "../../assets/LogoNav.png"
 
-const MenuDashBoard = () => {
+
+const SideBar = () => {
   return (
     <div className={styles.sideBar}>
       <div className={styles.logo}>
-          <Link to="/perfilempresa">
+          <Link to="/dashboard/empresa">
               <img src={iconPerfil} alt="Ícone do Perfil" />
               <p>Nome da Empresa</p>
           </Link>
@@ -35,4 +35,4 @@ const MenuDashBoard = () => {
   );
 };
 
-export default MenuDashBoard;
+export default SideBar;

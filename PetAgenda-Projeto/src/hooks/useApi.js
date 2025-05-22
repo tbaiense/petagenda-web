@@ -20,3 +20,9 @@ export function useAddUser() {
   };
   return { addUser };
 }
+
+export function useVerificarCadastroEmpresa () {
+  const getEmpresa = async (empresa) => {
+
+  }
+}
