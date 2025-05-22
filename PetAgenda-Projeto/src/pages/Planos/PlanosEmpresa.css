@@ -5,14 +5,13 @@ body {
 .plano__section {
   margin-top: 30px;
 }
-.plano__linha {
-}
 .plano__coluna {
-  border: 1px solid #a7a7a7;
-  padding: 2rem;
-  height: 700px;
+  border: 1px solid rgba(0, 0, 0, 0.2);;
+  border-radius: 10px;
+  background-color: #FFFFFF;
 }
 .plano__item {
+  padding: 1rem;
 }
 .plano__imagem {
   max-width: 100%;
@@ -21,9 +20,53 @@ body {
   margin: 0 auto;
 }
 .plano__titulo {
+  margin-top: 1rem;
 }
 .plano__preco {
+  margin-bottom: 1rem;
+  font-size: 2.19rem;
+  color: rgba(0, 0, 0, 0.2);
 }
 .plano__lista {
+  padding-left: 1rem;
   text-align: start;
+  list-style: none;
+}
+
+.plano__botao {
+  margin-bottom: 1rem;
+  width: 85%;
+  padding: 10px;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.2);
+  border: 0px solid rgba(0, 0, 0, 0.2);;
+}
+.plano__botao:hover {
+  margin-bottom: 1rem;
+  width: 85%;
+  padding: 10px;
+  text-align: center;
+  background-color: #6D6D6D;
+}
+
+.plano__item__caracteristica {
+  position: relative;
+  padding-left: 1.5em;
+  margin-bottom: 2em;
+  color: #333;
+}
+
+.plano__item__caracteristica::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.4em;
+  width: 0.7em;
+  height: 0.7em;
+  background-color: #6D6D6D;
+  border-radius: 50%;
+}
+
+.plano__preco_unidade{
+  font-size: 1.2rem;
 }

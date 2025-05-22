@@ -9,7 +9,7 @@ import Registrar from "../pages/Registrar/Registrar";
 //Importando os metodos de navegações
 import { createBrowserRouter } from "react-router-dom";
 import PrivateRoute from "./PrivateRouter";
-import MenuDashBoard from "../components/MenuDashboard";
+import MenuDashBoard from "../components/SideBar/MenuDashboard";
 import CadastroEmpresa from "../pages/Empresa/CadastroEmpresa";
 import PlanosEmpresa from "../pages/Planos/PlanosEmpresa";
 

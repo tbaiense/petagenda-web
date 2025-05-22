@@ -1,7 +1,7 @@
 import styles from "./MenuDashboard.module.css";
-import iconPerfil from "../assets/icon_perfil.svg";
+import iconPerfil from "../../assets/icon_perfil.svg";
 import { Link } from "react-router-dom";
-import PetAgenda from "../assets/LogoNav.png"
+import PetAgenda from "../../assets/LogoNav.png"
 
 const MenuDashBoard = () => {
   return (

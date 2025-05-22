@@ -1,5 +1,5 @@
-import LogoPetAgenda from "../../components/LogoPetAgenda"
-import MenuDashBoard from "../../components/MenuDashboard"
+import LogoPetAgenda from "../../components/LogoPet/LogoPetAgenda";
+import MenuDashBoard from "../../components/SideBar/MenuDashboard"
 import styles from "./CadastroEmpresa.module.css"
 import { useForm } from "react-hook-form"
 import api from  '../../api';

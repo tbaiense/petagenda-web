@@ -1,5 +1,5 @@
 import styles from "./LogoPetAgenda.module.css"
-import PetAgenda from "../assets/LogoNav.png"
+import PetAgenda from "../../assets/LogoNav.png";
 
 const LogoPetAgenda = () => {
     return(

@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../../contexts/UserContext";
-import NavBarPetAgenda from "../../components/NavBarPetAgenda";
+import NavBarPetAgenda from "../../components/NavBar/NavBarPetAgenda";
 import api from '../../api';
 
 import {

@@ -1,7 +1,7 @@
 import React from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import NavBarPetAgenda from "../../components/NavBarPetAgenda";
+import NavBarPetAgenda from "../../components/NavBar/NavBarPetAgenda";
 import "./Home.css";
 import imgNote from "../../assets/ImagensHome/Note.png";
 import imgTimer from "../../assets/ImagensHome/Timer.png";
