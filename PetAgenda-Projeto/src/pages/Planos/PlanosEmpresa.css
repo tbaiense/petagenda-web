@@ -2,9 +2,6 @@ body {
   background-color: #fff8f0;
 }
 
-.plano__section {
-  margin-top: 30px;
-}
 .plano__coluna {
   border: 1px solid rgba(0, 0, 0, 0.2);;
   border-radius: 10px;
@@ -12,6 +9,7 @@ body {
 }
 .plano__item {
   padding: 1rem;
+  height: 685px;
 }
 .plano__imagem {
   max-width: 100%;
@@ -52,7 +50,7 @@ body {
 .plano__item__caracteristica {
   position: relative;
   padding-left: 1.5em;
-  margin-bottom: 2em;
+  margin-bottom: 1.5em;
   color: #333;
 }
 
@@ -69,4 +67,48 @@ body {
 
 .plano__preco_unidade{
   font-size: 1.2rem;
+}
+
+.radio-inputs {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  border-radius: 0.5rem;
+  background-color: #EEE;
+  box-sizing: border-box;
+  box-shadow: 0 0 0px 1px rgba(0, 0, 0, 0.06);
+  padding: 0.25rem;
+  width: 300px;
+  font-size: 14px;
+}
+
+.radio-inputs{
+  justify-self: center;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+.radio-inputs .radio {
+  flex: 1 1 auto;
+  text-align: center;
+}
+
+.radio-inputs .radio input {
+  display: none;
+}
+
+.radio-inputs .radio .name {
+  display: flex;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  border: none;
+  padding: .5rem 0;
+  color: rgba(51, 65, 85, 1);
+  transition: all .15s ease-in-out;
+}
+
+.radio-inputs .radio input:checked + .name {
+  background-color: #fff;
+  font-weight: 600;
 }
