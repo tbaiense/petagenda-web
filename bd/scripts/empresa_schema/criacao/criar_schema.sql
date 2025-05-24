@@ -1052,6 +1052,34 @@ DELIMITER ;
 
 -- PROCEDURES ================================================================================================================================================================
 
+/*
+PROCEDIMENTO DE GERENCIAMENTO DE REGISTRO DE FUNCIONÁRIO.
+
+Formato esperado para JSON ObjFunc:
+- em ação "insert":
+    {
+        "nome": <VARCHAR(64)>,   <--- Nome do funcionário
+        "telefone": <CHAR(15)>,  <--- Telefone do funcionário no formato "(27) 99900-8181"
+        "exerce": ?[
+            +{
+                "servico": <INT>  <-- PK da tabela "servico_oferecido" (coluna id_servico_oferecido em "servico_exercido")
+            }
+        ]
+    }
+
+
+- em ação "update":
+    {
+        "id": <INT>,   <--- PK de tabela "funcionario"
+        "nome": <VARCHAR(64)>,   <--- Nome do funcionário
+        "telefone": <CHAR(15)>,  <--- Telefone do funcionário no formato "(27) 99900-8181"
+        "exerce": ?[ <--- Não mencionar se deverá ser mantido como está
+            +{ <--- Não mencionar se deverá ser excluído de servico_exercido
+                "servico": <INT>  <-- PK da tabela "servico_oferecido" (coluna id_servico_oferecido em "servico_exercido")
+            }
+        ]
+    }
+*/
 
 DELIMITER $$
 CREATE PROCEDURE funcionario (
@@ -1106,7 +1134,7 @@ CREATE PROCEDURE funcionario (
 
                 SET e_count = e_count + 1;
             END WHILE;
-
+            SELECT id_func AS id_funcionario;
 
         ELSEIF acao = "update" THEN
             -- Obtendo o id do funcionario a ser atualizado
@@ -1131,9 +1159,12 @@ CREATE PROCEDURE funcionario (
                     SET e_count = e_count + 1;
                 END WHILE;
             END IF;
+        
+            SELECT id_func AS id_funcionario;
         END IF;
     END;$$
 DELIMITER ;
+
 
 
 DELIMITER $$
@@ -1213,7 +1244,7 @@ CREATE PROCEDURE servico_oferecido (
                     SET rest_esp_count = rest_esp_count + 1;
                 END WHILE;
             END IF;
-
+            SELECT id_serv AS id_servico_oferecido;
 
         ELSEIF acao IN ("update", "delete") THEN
             SET id_serv = JSON_EXTRACT(objServ, '$.id');
@@ -1275,6 +1306,7 @@ CREATE PROCEDURE servico_oferecido (
                         DELETE FROM servico_oferecido WHERE id = id_serv;
                 END CASE;
             END IF;
+            SELECT id_serv AS id_servico_oferecido;
         END IF;
     END;$$
 DELIMITER ;
@@ -1374,7 +1406,7 @@ CREATE PROCEDURE cliente (
                     id_cliente, logradouro, numero, bairro, cidade, estado)
                     VALUES (id_cli, logr, num, bairro_end, cid, est);
             END IF;
-
+            SELECT id_cli AS id_cliente;
         ELSEIF acao IN ("update", "delete") THEN
             SET id_cli = JSON_EXTRACT(objCliente, '$.id');
 
@@ -1451,6 +1483,7 @@ CREATE PROCEDURE cliente (
                         DELETE FROM cliente WHERE id = id_cli;
                 END CASE;
             END IF;
+            SELECT id_cli AS id_cliente;
         END IF;
     END;$$
 DELIMITER ;
@@ -1508,7 +1541,7 @@ CREATE PROCEDURE pet (
                 id_cliente, id_especie, nome, sexo, porte, e_castrado, estado_saude, raca, cor, comportamento, cartao_vacina)
                 VALUE (id_cli, id_esp, nome_pet, sexo_pet, porte_pet, e_cast, est_saude, raca_pet, cor_pet, comp, cart_vac);
             SET id_pet = LAST_INSERT_ID();
-
+            SELECT id_pet;
         ELSEIF acao IN ("update", "delete") THEN
             SET id_pet = JSON_EXTRACT(objPet, '$.id');
 
@@ -1547,6 +1580,7 @@ CREATE PROCEDURE pet (
                         DELETE FROM pet WHERE id = id_pet;
                 END CASE;
             END IF;
+            SELECT id_pet;
         END IF;
     END;$$
 DELIMITER ;

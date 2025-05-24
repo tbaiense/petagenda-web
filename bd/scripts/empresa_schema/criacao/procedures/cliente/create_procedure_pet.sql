@@ -93,7 +93,7 @@ CREATE PROCEDURE pet (
                 id_cliente, id_especie, nome, sexo, porte, e_castrado, estado_saude, raca, cor, comportamento, cartao_vacina)
                 VALUE (id_cli, id_esp, nome_pet, sexo_pet, porte_pet, e_cast, est_saude, raca_pet, cor_pet, comp, cart_vac);
             SET id_pet = LAST_INSERT_ID();
-
+            SELECT id_pet;
         ELSEIF acao IN ("update", "delete") THEN
             SET id_pet = JSON_EXTRACT(objPet, '$.id');
 
@@ -132,9 +132,7 @@ CREATE PROCEDURE pet (
                         DELETE FROM pet WHERE id = id_pet;
                 END CASE;
             END IF;
+            SELECT id_pet;
         END IF;
     END;$$
 DELIMITER ;
-
-
-

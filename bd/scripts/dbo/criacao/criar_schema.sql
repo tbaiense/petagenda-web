@@ -176,7 +176,7 @@ DELIMITER ;
 -- TRIGGERS ========================================================================================================================================================================
 
 DELIMITER $$
-CREATE TRIGGER trg_empresa_insert
+CREATE TRIGGER trg_empresa_update
     BEFORE UPDATE
     ON empresa
     FOR EACH ROW
@@ -184,7 +184,9 @@ CREATE TRIGGER trg_empresa_insert
         DECLARE c_servico, c_rel_simples, c_rel_detalhado INT;
         IF OLD.nome_bd IS NULL AND NEW.licenca_empresa IS NOT NULL THEN
             SET NEW.nome_bd = CONCAT("emp_", NEW.id);
-
+        END IF;
+        
+        IF NEW.licenca_empresa <> OLD.licenca_empresa THEN 
             CASE NEW.licenca_empresa
                 WHEN "basico" THEN
                     SET c_servico = 75;
@@ -206,6 +208,7 @@ CREATE TRIGGER trg_empresa_insert
         END IF;
     END;$$
 DELIMITER ;
+
 
 -- PROCEDURES ================================================================================================================================================================
 

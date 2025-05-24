@@ -45,7 +45,6 @@ Formato esperado para JSON objCliente:
         "id": <INT>  <--- id do cliente
     }
 */
-
 DELIMITER $$
 CREATE PROCEDURE cliente (
     IN acao ENUM('insert', 'update', 'delete'),
@@ -140,7 +139,7 @@ CREATE PROCEDURE cliente (
                     id_cliente, logradouro, numero, bairro, cidade, estado)
                     VALUES (id_cli, logr, num, bairro_end, cid, est);
             END IF;
-
+            SELECT id_cli AS id_cliente;
         ELSEIF acao IN ("update", "delete") THEN
             SET id_cli = JSON_EXTRACT(objCliente, '$.id');
 
@@ -217,9 +216,7 @@ CREATE PROCEDURE cliente (
                         DELETE FROM cliente WHERE id = id_cli;
                 END CASE;
             END IF;
+            SELECT id_cli AS id_cliente;
         END IF;
     END;$$
 DELIMITER ;
-
-
-

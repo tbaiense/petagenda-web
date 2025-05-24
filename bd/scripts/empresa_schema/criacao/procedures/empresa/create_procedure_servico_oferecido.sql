@@ -119,7 +119,7 @@ CREATE PROCEDURE servico_oferecido (
                     SET rest_esp_count = rest_esp_count + 1;
                 END WHILE;
             END IF;
-
+            SELECT id_serv AS id_servico_oferecido;
 
         ELSEIF acao IN ("update", "delete") THEN
             SET id_serv = JSON_EXTRACT(objServ, '$.id');
@@ -181,8 +181,7 @@ CREATE PROCEDURE servico_oferecido (
                         DELETE FROM servico_oferecido WHERE id = id_serv;
                 END CASE;
             END IF;
+            SELECT id_serv AS id_servico_oferecido;
         END IF;
     END;$$
 DELIMITER ;
-
-

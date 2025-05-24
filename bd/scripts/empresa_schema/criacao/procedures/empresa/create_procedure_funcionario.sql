@@ -80,7 +80,7 @@ CREATE PROCEDURE funcionario (
 
                 SET e_count = e_count + 1;
             END WHILE;
-
+            SELECT id_func AS id_funcionario;
 
         ELSEIF acao = "update" THEN
             -- Obtendo o id do funcionario a ser atualizado
@@ -105,6 +105,8 @@ CREATE PROCEDURE funcionario (
                     SET e_count = e_count + 1;
                 END WHILE;
             END IF;
+        
+            SELECT id_func AS id_funcionario;
         END IF;
     END;$$
 DELIMITER ;
