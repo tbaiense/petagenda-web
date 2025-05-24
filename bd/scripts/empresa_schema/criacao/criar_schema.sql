@@ -1052,35 +1052,6 @@ DELIMITER ;
 
 -- PROCEDURES ================================================================================================================================================================
 
-/*
-PROCEDIMENTO DE GERENCIAMENTO DE REGISTRO DE FUNCIONÁRIO.
-
-Formato esperado para JSON ObjFunc:
-- em ação "insert":
-    {
-        "nome": <VARCHAR(64)>,   <--- Nome do funcionário
-        "telefone": <CHAR(15)>,  <--- Telefone do funcionário no formato "(27) 99900-8181"
-        "exerce": ?[
-            +{
-                "servico": <INT>  <-- PK da tabela "servico_oferecido" (coluna id_servico_oferecido em "servico_exercido")
-            }
-        ]
-    }
-
-
-- em ação "update":
-    {
-        "id": <INT>,   <--- PK de tabela "funcionario"
-        "nome": <VARCHAR(64)>,   <--- Nome do funcionário
-        "telefone": <CHAR(15)>,  <--- Telefone do funcionário no formato "(27) 99900-8181"
-        "exerce": ?[ <--- Não mencionar se deverá ser mantido como está
-            +{ <--- Não mencionar se deverá ser excluído de servico_exercido
-                "servico": <INT>  <-- PK da tabela "servico_oferecido" (coluna id_servico_oferecido em "servico_exercido")
-            }
-        ]
-    }
-*/
-
 DELIMITER $$
 CREATE PROCEDURE funcionario (
     IN acao ENUM('insert', 'update'),
