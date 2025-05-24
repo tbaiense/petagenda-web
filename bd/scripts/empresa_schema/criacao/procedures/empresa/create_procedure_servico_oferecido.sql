@@ -6,7 +6,7 @@ Formato esperado para JSON objServ:
 - em ação "insert":
     {
         "nome": <VARCHAR(64)>,
-        "categoria": ?<INT>,
+        "categoria": <INT>,
         "preco": <DECIMAL(8,2)>,
         "tipoPreco": <ENUM("pet", "servico")>,  <-- forma de cobrança do preço
         "descricao": ?<TEXT>,
@@ -24,7 +24,7 @@ Formato esperado para JSON objServ:
     {
         "id": <INT>,  <--- id do servico_oferecido
         "nome": <VARCHAR(64)>,
-        "categoria": ?<INT>,
+        "categoria": <INT>,
         "preco": <DECIMAL(8,2)>,
         "tipoPreco": <ENUM("pet", "servico")>,  <-- forma de cobrança do preço
         "descricao": ?<TEXT>,
