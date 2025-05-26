@@ -1,4 +1,4 @@
-import ftTemp from "../../../assets/LogoNav.png"
+    import ftTemp from "../../../assets/LogoNav.png"
 
 
 

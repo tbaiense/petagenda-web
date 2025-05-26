@@ -15,8 +15,6 @@ import { createBrowserRouter } from "react-router-dom";
 import PrivateRoute from "./PrivateRouter";
 
 
-
-
 const router = createBrowserRouter([
   {
     path: "/",
@@ -40,33 +38,33 @@ const router = createBrowserRouter([
   {
     path: "/dashboard",
     element: (
-      // <PrivateRoute>
-      <MenuDashBoard />
-      // </PrivateRoute>
+      //<PrivateRoute>
+        <MenuDashBoard />
+      //</PrivateRoute>
     ),
     children:[
       {
         path: "empresa",
         element: (
-          // <PrivateRoute>
-          <ViewEmpresa/>
-          // <PrivateRoute>
+          //<PrivateRoute>
+            <ViewEmpresa/>
+          //</PrivateRoute>
         ),
       },
       {
         path: "/dashboard",
         element: (
-          // <PrivateRoute>
+          //<PrivateRoute>
             <CadastroEmpresa />
-          // </PrivateRoute>
+          //</PrivateRoute>
         ),
       },
       {
         path: "Planos",
         element: (
-        //   <PrivateRoute>
+          // <PrivateRoute>
             <PlanosEmpresa />
-        //   </PrivateRoute>
+          // </PrivateRoute>
         ),
       },
     ]
