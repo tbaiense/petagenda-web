@@ -9,6 +9,8 @@ import CadastroEmpresa from "../pages/Empresa/Cadastro_Empresa/CadastroEmpresa";
 import PlanosEmpresa from "../pages/Planos/PlanosEmpresa";
 import MenuDashBoard from "../MenuDashboard";
 import ViewEmpresa from "../pages/Empresa/Visualizar_Dados/ViewEmpresa"
+import CadastroFuncionario from "../pages/CadastroFuncionario/CadastroFuncionario";
+
 
 //Importando os metodos de navegações
 import { createBrowserRouter } from "react-router-dom";
@@ -67,6 +69,46 @@ const router = createBrowserRouter([
           // </PrivateRoute>
         ),
       },
+      // {
+      //   path:"servicos",
+      //   element:(
+      //     //<PrivateRoute>
+      //       <Servicos/>
+      //     //</PrivateRoute>,
+      //   )
+      // },
+      // {
+      //   path:"funcionarios",
+      //   element:(
+      //     //<PrivateRoute>
+      //       <CadastroFuncionario/>
+      //     //</PrivateRoute>
+      //   )
+      // },
+      // {
+      //   path:"clientes",
+      //   element:(
+      //     //<PrivateRoute>
+      //       <Clientes/>
+      //     //</PrivateRoute>,
+      //   )
+      // },
+      // {
+      //   path:"pets",
+      //   element:(
+      //     //<PrivateRoute>
+      //       <Pets/>
+      //     //</PrivateRoute>,
+      //   )
+      // },
+      // {
+      //   path:"relatorios",
+      //   element:(
+      //     //<PrivateRoute>
+      //       <Relatorios/>
+      //     //</PrivateRoute>,
+      //   )
+      // }
     ]
   },
 ]);

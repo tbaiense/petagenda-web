@@ -3,6 +3,9 @@ import { useForm } from "react-hook-form"
 import api from  '../../../api';
 import { useAuth } from "../../../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import NavEmpresa from "../../../components/navegacao empresa/navEmpresa";
+
 
 const CadastroEmpresa = () => {
     const { token } = useAuth();
@@ -58,89 +61,93 @@ const CadastroEmpresa = () => {
     }
 
     return(
+        <div>
+            <NavEmpresa/>
+            <div className={styles.areaDoCadastro}>
 
-        <div className={styles.areaDoCadastro}>
+                <h2>Cadastro</h2>
 
-            <h2>Cadastro</h2>
+                <div className={styles.cardCadastro}>
 
-            <div className={styles.cardCadastro}>
+                    <form className={styles.formCadastro} onSubmit={handleSubmit(onSubmit, onError)}>
 
-                <form className={styles.formCadastro} onSubmit={handleSubmit(onSubmit, onError)}>
+                        <input type="text" placeholder="Nome Fantasia:" 
+                        {...register("NomeFantasia", {
+                            required:"O nome fantasia é obrigatório",
+                            minLength:{
+                                value:10,
+                                message:"O nome fantasia deve ter pelo menos 10 caracteres"
+                            },
+                            maxLength:{
+                                value:80,
+                                message:"O nome fantasia dever ter no maximo 80 caracteres"
+                            }
+                        })} />
+                        {errors.NomeFantasia && <p className={styles.error}>{errors.NomeFantasia.message}</p>}
 
-                    <input type="text" placeholder="Nome Fantasia:" 
-                    {...register("NomeFantasia", {
-                        required:"O nome fantasia é obrigatório",
-                        minLength:{
-                            value:10,
-                            message:"O nome fantasia deve ter pelo menos 10 caracteres"
-                        },
-                        maxLength:{
-                            value:80,
-                            message:"O nome fantasia dever ter no maximo 80 caracteres"
-                        }
-                    })} />
-                    {errors.NomeFantasia && <p className={styles.error}>{errors.NomeFantasia.message}</p>}
+                        <input type="text" placeholder="Razão Social:" 
+                        {...register("RazaoSocial", {
+                            required:"A razão social é obrigatório",
+                            minLength:{
+                                value:10,
+                                message:"O razão social deve ter pelo menos 10 caracteres"
+                            },
+                            maxLength:{
+                                value:80,
+                                message:"O razão social dever ter no maximo 80 caracteres"
+                            }
+                        })} />
+                        {errors.RazaoSocial && <p className={styles.error}>{errors.RazaoSocial.message}</p>}
 
-                    <input type="text" placeholder="Razão Social:" 
-                    {...register("RazaoSocial", {
-                        required:"A razão social é obrigatório",
-                        minLength:{
-                            value:10,
-                            message:"O razão social deve ter pelo menos 10 caracteres"
-                        },
-                        maxLength:{
-                            value:80,
-                            message:"O razão social dever ter no maximo 80 caracteres"
-                        }
-                    })} />
-                    {errors.RazaoSocial && <p className={styles.error}>{errors.RazaoSocial.message}</p>}
+                        <input type="text" placeholder="CNPJ:" 
+                        {...register("CNPJ", {
+                            required:"O CNPJ é obrigatório",
+                            minLength:{
+                                value:10,
+                                message:"O CNPJ deve ter pelo menos 10 caracteres"
+                            },
+                            maxLength:{
+                                value:80,
+                                message:"O CNPJ dever ter no maximo 80 caracteres"
+                            },
+                            pattern: {
+                                value: /^[0-9]+$/,
+                                message: "O CNPJ deve conter apenas números"
+                            }
+                        })} />
+                        {errors.CNPJ && <p className={styles.error}>{errors.CNPJ.message}</p>}
 
-                    <input type="text" placeholder="CNPJ:" 
-                    {...register("CNPJ", {
-                        required:"O CNPJ é obrigatório",
-                        minLength:{
-                            value:10,
-                            message:"O CNPJ deve ter pelo menos 10 caracteres"
-                        },
-                        maxLength:{
-                            value:80,
-                            message:"O CNPJ dever ter no maximo 80 caracteres"
-                        },
-                        pattern: {
-                            value: /^[0-9]+$/,
-                            message: "O CNPJ deve conter apenas números"
-                        }
-                    })} />
-                    {errors.CNPJ && <p className={styles.error}>{errors.CNPJ.message}</p>}
+                        <textarea id={styles.inputLema} placeholder="Lema:" 
+                        {...register("Lema", {
+                            minLength:{
+                                value:10,
+                                message:"O Lema deve ter pelo menos 10 caracteres"
+                            },
+                            maxLength:{
+                                value:80,
+                                message:"O Lema dever ter no maximo 150 caracteres"
+                            }
+                        })} />
+                        {errors.Lema && <p className={styles.error}>{errors.Lema.message}</p>}
 
-                    <textarea id={styles.inputLema} placeholder="Lema:" 
-                    {...register("Lema", {
-                        minLength:{
-                            value:10,
-                            message:"O Lema deve ter pelo menos 10 caracteres"
-                        },
-                        maxLength:{
-                            value:80,
-                            message:"O Lema dever ter no maximo 150 caracteres"
-                        }
-                    })} />
-                    {errors.Lema && <p className={styles.error}>{errors.Lema.message}</p>}
+                        <input type="file" {...register("pathImgFile")}/>
+                        
+                        <div className={styles.bttn}> 
+                            <button type="submit">Finalizar</button>
+                            <button type="button" onClick={() => reset()}>Limpar</button>
+                        </div>
+                    </form>
 
-                    <input type="file" {...register("pathImgFile")}/>
-                    
-                    <div className={styles.bttn}> 
-                        <button type="submit">Finalizar</button>
-                        <button type="button" onClick={() => reset()}>Limpar</button>
+                    <div className={styles.viewImg}>
+                        {imagemURL && <img src={imagemURL} alt="Pre-Visualização" width={200} height={210}/>}
+                        <h2>Foto de Perfil</h2>
                     </div>
-                </form>
-
-                <div className={styles.viewImg}>
-                    {imagemURL && <img src={imagemURL} alt="Pre-Visualização" width={200} height={210}/>}
-                    <h2>Foto de Perfil</h2>
+                    
                 </div>
-                
             </div>
         </div>
+
+        
 
     )
 }

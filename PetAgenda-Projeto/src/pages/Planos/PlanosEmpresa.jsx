@@ -3,6 +3,7 @@ import { Container, Row, Col, Button } from "react-bootstrap";
 import "./PlanosEmpresa.css";
 import MenuDashBoard from "../../components/SideBar/SideBar";
 import { useState } from "react";
+import NavEmpresa from "../../components/navegacao empresa/navEmpresa";
 
 function PlanosEmpresa() {
   const [selected, setSelected] = useState("Mensal");
@@ -47,6 +48,7 @@ function PlanosEmpresa() {
 
   return (
     <div>
+      <NavEmpresa/>
       <section className="plano__section">
         <Container className="">
           <Row className="justify-content-center">
