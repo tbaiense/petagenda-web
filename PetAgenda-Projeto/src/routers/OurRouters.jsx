@@ -8,12 +8,11 @@ import Registrar from "../pages/Registrar/Registrar";
 import CadastroEmpresa from "../pages/Empresa/Cadastro_Empresa/CadastroEmpresa";
 import PlanosEmpresa from "../pages/Planos/PlanosEmpresa";
 import MenuDashBoard from "../MenuDashboard";
-import ViewEmpresa from "../pages/Empresa/Visualizar_Dados/ViewEmpresa"
-
+import ViewEmpresa from "../pages/Empresa/Visualizar_Dados/ViewEmpresa";
+import CadastrarServico from "../pages/CadastrarServico/CadastrarServico"
 //Importando os metodos de navegações
 import { createBrowserRouter } from "react-router-dom";
 import PrivateRoute from "./PrivateRouter";
-
 
 const router = createBrowserRouter([
   {
@@ -32,22 +31,22 @@ const router = createBrowserRouter([
         path: "/registrar",
         element: <Registrar />,
       },
-    ]
+    ],
   },
   // Esse elemento pai não vai ser o dashboard porque ele é para cadastrar a empresa
   {
     path: "/dashboard",
     element: (
       //<PrivateRoute>
-        <MenuDashBoard />
+      <MenuDashBoard />
       //</PrivateRoute>
     ),
-    children:[
+    children: [
       {
         path: "empresa",
         element: (
           //<PrivateRoute>
-            <ViewEmpresa/>
+          <ViewEmpresa />
           //</PrivateRoute>
         ),
       },
@@ -55,7 +54,7 @@ const router = createBrowserRouter([
         path: "/dashboard",
         element: (
           //<PrivateRoute>
-            <CadastroEmpresa />
+          <CadastroEmpresa />
           //</PrivateRoute>
         ),
       },
@@ -63,11 +62,15 @@ const router = createBrowserRouter([
         path: "Planos",
         element: (
           // <PrivateRoute>
-            <PlanosEmpresa />
+          <PlanosEmpresa />
           // </PrivateRoute>
         ),
       },
-    ]
+    ],
+  },
+  {
+    path: "/CadastrarServico",
+    element: <CadastrarServico />,
   },
 ]);
 
