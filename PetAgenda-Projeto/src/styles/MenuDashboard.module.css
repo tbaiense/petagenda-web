@@ -10,34 +10,12 @@
 }
 
 .navBarEmpresa{
-  display: flex;
-  gap: 70px;
-  justify-content: center;
-  height: 7%;
-  margin: 1rem 1rem 0rem 1rem;
-  background-color: white;
-  border-radius: 20px 20px 0px 0px ;
-  border: 1px solid rgb(0, 0, 0, 0.3);
-}
-.navBarEmpresa button{
-  background-color: white;
-  border: none;
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-.navBarEmpresa button:hover{
-  border-bottom: 5px solid blue;
-}
 
-.navBarEmpresa a{
-  text-decoration: none;
-  color: black;
-}
-.layoutConteudo{
-  height: 100vh;
+
+  justify-content: center;
+  height: 100%;
+  margin: 1rem 1rem 1rem 1rem;
   background-color: white;
-  margin: 0rem 1rem 1rem 1rem;
-  border: 1px solid rgba(0, 0, 0, 0.3);
-  border-top: none;
-  border-radius: 0px 0px 20px 20px;
+  border-radius: 20px 20px 20px 20px ;
+  border: 1px solid rgb(0, 0, 0, 0.3);
 }

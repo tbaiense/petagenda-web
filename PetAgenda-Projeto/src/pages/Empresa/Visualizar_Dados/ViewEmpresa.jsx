@@ -1,10 +1,23 @@
     import ftTemp from "../../../assets/LogoNav.png"
+import NavEmpresa from "../../../components/navegacao empresa/navEmpresa"
 
 
 
 const ViewEmpresa = () => {
+
+    // Faço a conexão com o banco
+
+    // Pego os Dados da empresa baseado no plano adquirido e no ID
+
+    // Converto os Dados em JSON
+
+    // Uso o Map para gerar as informações dentro de cada campo
+
+
+
     return(
-        <>
+        <div>
+            <NavEmpresa/>
             <div>
                 <img src={ftTemp} alt="Foto_da_sua_empresa" />
                 <div>
@@ -28,7 +41,7 @@ const ViewEmpresa = () => {
             </div>
             
             
-        </>
+        </div>
         
     )
 }

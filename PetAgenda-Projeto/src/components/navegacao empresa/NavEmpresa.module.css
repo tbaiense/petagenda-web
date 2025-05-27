@@ -1,0 +1,18 @@
+.navBarEmpresa{
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    padding: 1rem;
+}
+.navBarEmpresa button{
+    background-color: white;
+    border: none;
+}
+.navBarEmpresa a{
+    text-decoration: none;
+    color:black;
+    padding-bottom: 10px;
+}
+.navBarEmpresa a:hover{
+    border-bottom: 5px solid rgb(4, 0, 255);
+}

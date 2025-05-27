@@ -23,14 +23,6 @@ const MenuDashBoard = () => {
                     <div>
                         <LogoPetAgenda/>
                         <div className={styles.navBarEmpresa}>
-                                {/* Não vamos usar o LINK para navergar entre as paginas, vamos usar o onClick para fazer verificação e depois navegar pelas páginas */}
-                                <button><Link to="/dashboard">CADASTRO</Link></button>
-                                <button><Link to="/dashboard/empresa">EMPRESA</Link></button>
-                                <button><Link to="/dashboard/Planos">LICENÇA</Link></button>
-                                <button onClick={verifica}>ALTERAR DADOS</button>
-                        </div>
-
-                        <div className={styles.layoutConteudo}>
                             <Outlet/>
                         </div>
                     </div>
