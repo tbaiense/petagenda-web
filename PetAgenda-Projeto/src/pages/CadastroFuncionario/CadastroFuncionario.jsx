@@ -27,7 +27,7 @@ const CadastroFuncionario = () => {
 
     useEffect(() => {
         // Pego os funcionarios do banco da empresa
-        fetch(`${api.URL}/funcionario`, {
+        fetch(`${api.URL}/empresa/:id/funcionario`, {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${token}`,
@@ -35,7 +35,7 @@ const CadastroFuncionario = () => {
             },
         })
             // Converto os Serviços em JSON 
-            .then(res => res.json(funcionarios))
+            .then(res => res.json())
             .then(data => {
                 setFuncionarios(data);
             })
@@ -44,7 +44,7 @@ const CadastroFuncionario = () => {
             });
 
         // Pego os Serviços oferecidos do banco de dados
-        fetch(`${api.URL}/servicos`, {
+        fetch(`${api.URL}/empresa/:id/servicos-oferecido`, {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${token}`,
@@ -52,7 +52,7 @@ const CadastroFuncionario = () => {
             },
         })
             // Converto os Serviços em JSON 
-            .then(res => res.json(servicos))
+            .then(res => res.json())
             .then(data => {
                 setServicos(data);
             })
@@ -66,11 +66,13 @@ const CadastroFuncionario = () => {
         const objFun = {
             nome: data.nome,
             telefone: data.telefone,
-            servico: data.servico,
+            exerce:[{
+                servico: Number(data.servico)
+            }],
             sexo: data.sexo,
         }
 
-        fetch(`${api.URL}/funcionarios`, {
+        fetch(`${api.URL}/empresa/:id/funcionario`, {
             method: "POST",
             headers: {
                 "Authorization": `Bearer ${token}`,
@@ -136,10 +138,13 @@ const CadastroFuncionario = () => {
                     })}/>
                     
                     <select {...register("servico", { required: "Selecione um serviço" })}>
+
                         <option value="">Selecione um serviço</option>
-                        {servicos.map((servico, index) => (
-                        <option key={index} value={servico.nome}>{servico.nome}</option>
+
+                        {servicos.map((servico) => (
+                            <option key={servico.id} value={servico.id}>{servico.nome}</option>
                         ))}
+
                     </select>
 
                     <select {...register("sexo", { required: "Selecione um sexo" })}>

@@ -25,18 +25,18 @@ const CadastroEmpresa = () => {
     const onSubmit = async (data) => {
         console.log(typeof data);
         const fileFoto = data.pathImgFile.item(0);
-        const byteString = await fileFoto.bytes();
-        const base64 = byteString.toBase64();
+        // const byteString = await fileFoto.bytes();
+        // const base64 = byteString.toBase64();
 
         const objEmp = {
             nomeFantasia: data.NomeFantasia,
             razaoSocial: data.RazaoSocial,
             cnpj: data.CNPJ,
             lema: data.Lema,
-            foto: {
-                type: fileFoto.type,
-                data: base64
-            }
+            // foto: {
+            //     type: fileFoto.type,
+            //     data: base64
+            // }
         };
 
         fetch(`${api.URL}/empresa`, {

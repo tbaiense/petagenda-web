@@ -10,11 +10,16 @@ import PlanosEmpresa from "../pages/Planos/PlanosEmpresa";
 import MenuDashBoard from "../MenuDashboard";
 import ViewEmpresa from "../pages/Empresa/Visualizar_Dados/ViewEmpresa"
 import CadastroFuncionario from "../pages/CadastroFuncionario/CadastroFuncionario";
+import CadastrarServico from "../pages/CadastrarServico/CadastrarServico";
+import CadastarClientes from "../pages/Clientes/CadastarClientes";
+import CadastrarPets from "../pages/Pets/CadastrarPets"
+import Relatorios from "../pages/Relatorios/Relatorios";
 
 
 //Importando os metodos de navegações
 import { createBrowserRouter } from "react-router-dom";
 import PrivateRoute from "./PrivateRouter";
+import Agendamento from "../pages/Agendamentos/Agendamento";
 
 
 const router = createBrowserRouter([
@@ -40,75 +45,83 @@ const router = createBrowserRouter([
   {
     path: "/dashboard",
     element: (
-      //<PrivateRoute>
+      <PrivateRoute>
         <MenuDashBoard />
-      //</PrivateRoute>
+      </PrivateRoute>
     ),
     children:[
       {
         path: "empresa",
         element: (
-          //<PrivateRoute>
+          <PrivateRoute>
             <ViewEmpresa/>
-          //</PrivateRoute>
+          </PrivateRoute>
         ),
       },
       {
         path: "/dashboard",
         element: (
-          //<PrivateRoute>
+          <PrivateRoute>
             <CadastroEmpresa />
-          //</PrivateRoute>
+          </PrivateRoute>
         ),
       },
       {
         path: "Planos",
         element: (
-          // <PrivateRoute>
+          <PrivateRoute>
             <PlanosEmpresa />
-          // </PrivateRoute>
+          </PrivateRoute>
         ),
       },
-      // {
-      //   path:"servicos",
-      //   element:(
-      //     //<PrivateRoute>
-      //       <Servicos/>
-      //     //</PrivateRoute>,
-      //   )
-      // },
-      // {
-      //   path:"funcionarios",
-      //   element:(
-      //     //<PrivateRoute>
-      //       <CadastroFuncionario/>
-      //     //</PrivateRoute>
-      //   )
-      // },
-      // {
-      //   path:"clientes",
-      //   element:(
-      //     //<PrivateRoute>
-      //       <Clientes/>
-      //     //</PrivateRoute>,
-      //   )
-      // },
-      // {
-      //   path:"pets",
-      //   element:(
-      //     //<PrivateRoute>
-      //       <Pets/>
-      //     //</PrivateRoute>,
-      //   )
-      // },
-      // {
-      //   path:"relatorios",
-      //   element:(
-      //     //<PrivateRoute>
-      //       <Relatorios/>
-      //     //</PrivateRoute>,
-      //   )
-      // }
+      {
+        path:"servicos",
+        element:(
+          <PrivateRoute>
+            <CadastrarServico/>
+          </PrivateRoute>
+        )
+      },
+      {
+        path:"funcionarios",
+        element:(
+          <PrivateRoute>
+            <CadastroFuncionario/>
+          </PrivateRoute>
+        )
+      },
+      {
+        path:"clientes",
+        element:(
+          <PrivateRoute>
+            <CadastarClientes/>
+          </PrivateRoute>
+        )
+      },
+      {
+        path:"pets",
+        element:(
+          <PrivateRoute>
+            <CadastrarPets/>
+          </PrivateRoute>
+        )
+      },
+      {
+        path:"agendamentos",
+        element:(
+          <PrivateRoute>
+            <Agendamento/>
+          </PrivateRoute>
+        )
+      },
+      {
+        path:"relatorios",
+        element:(
+          <PrivateRoute>
+            <Relatorios/>
+          </PrivateRoute>
+        )
+      }
     ]
   },
 ]);
