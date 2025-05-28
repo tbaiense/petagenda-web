@@ -43,82 +43,82 @@ const router = createBrowserRouter([
   {
     path: "/dashboard",
     element: (
-      <PrivateRoute>
+      //<PrivateRoute>
         <MenuDashBoard />
-      </PrivateRoute>
+      //</PrivateRoute>
     ),
     children: [
       {
         path: "empresa",
         element: (
 
-          <PrivateRoute>
+          //<PrivateRoute>
             <ViewEmpresa/>
-          </PrivateRoute>
+          //</PrivateRoute>
         ),
       },
       {
         path: "/dashboard",
         element: (
-          <PrivateRoute>
+          //<PrivateRoute>
             <CadastroEmpresa />
-          </PrivateRoute>
+          //</PrivateRoute>
         ),
       },
       {
         path: "Planos",
         element: (
-          <PrivateRoute>
+          //<PrivateRoute>
             <PlanosEmpresa />
-          </PrivateRoute>
+          //</PrivateRoute>
         ),
       },
       {
         path:"servicos",
         element:(
-          <PrivateRoute>
+          //<PrivateRoute>
             <CadastrarServico/>
-          </PrivateRoute>
+          //</PrivateRoute>
         )
       },
       {
         path:"funcionarios",
         element:(
-          <PrivateRoute>
+          //<PrivateRoute>
             <CadastroFuncionario/>
-          </PrivateRoute>
+          //</PrivateRoute>
         )
       },
       {
         path:"clientes",
         element:(
-          <PrivateRoute>
+          //<PrivateRoute>
             <CadastarClientes/>
-          </PrivateRoute>
+          //</PrivateRoute>
         )
       },
       {
         path:"pets",
         element:(
-          <PrivateRoute>
+          //<PrivateRoute>
             <CadastrarPets/>
-          </PrivateRoute>
+          //</PrivateRoute>
         )
       },
       {
         path:"agendamentos",
         element:(
-          <PrivateRoute>
+          //<PrivateRoute>
             <Agendamento/>
-          </PrivateRoute>
+          //</PrivateRoute>
         )
       },
       {
         path:"relatorios",
         element:(
-          <PrivateRoute>
+          //<PrivateRoute>
             <Relatorios/>
-          </PrivateRoute>
+          //</PrivateRoute>
         )
       }
     ]

@@ -67,25 +67,26 @@ const CadastroFuncionario = () => {
         const objFun = {
             nome: data.nome,
             telefone: data.telefone,
-            exerce:[{
-                servico: Number(data.servico)
-            }],
-            sexo: data.sexo,
+            // exerce:[{
+            //     servico: Number(data.servico)
+            // }],
+            // sexo: data.sexo,
         }
 
-        fetch(`${api.URL}/empresa/:id/funcionario`, {
+        fetch(`${api.URL}/empresa/5/funcionario`, {
             method: "POST",
             headers: {
                 "Authorization": `Bearer ${token}`,
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(objFun)
-        }).then( res => { 
+        }).then( async res => { 
             if (res.status == 200) {
                 alert('cadastrado');
-                navigate("/dashboard/Planos")
+                const json = await res.json()
+                console.log(json)
             } else {
-                alert('erro ao cadastrar empresa');
+                alert('erro ao cadastrar funcionario');
             }
         });
 
@@ -138,7 +139,8 @@ const CadastroFuncionario = () => {
                         }
                     })}/>
                     
-                    <select {...register("servico", { required: "Selecione um serviço" })}>
+                    {/* VAi FUNIONAR DEPOIS*/}
+                    {/* <select {...register("servico", { required: "Selecione um serviço" })}>
 
                         <option value="">Selecione um serviço</option>
 
@@ -146,7 +148,7 @@ const CadastroFuncionario = () => {
                             <option key={servico.id} value={servico.id}>{servico.nome}</option>
                         ))}
 
-                    </select>
+                    </select> */}
 
                     <select {...register("sexo", { required: "Selecione um sexo" })}>
                         <option value="">Sexo</option>
