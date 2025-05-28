@@ -1,5 +1,5 @@
 .cadastrarServico__container {
-  max-width: 750px;
+  max-width: 850px;
   margin: auto;
   padding: 0 15px;
 }
@@ -32,10 +32,31 @@
   align-items: flex-start;
 }
 
-.valor{
+.valor {
   flex: 1;
 }
 
-.tipo__cobranca{
+.tipo__cobranca {
   flex: 1;
+}
+
+.check_box_especies {
+  border: var(--bs-border-width) solid var(--bs-border-color);
+  border-radius: var(--bs-border-radius);
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  padding: .375rem .75rem;
+}
+
+.botao__cadastrar{
+  background-color: #1FAF30;
+  border: 1px #1FAF30;
+  width: 130px;
+  font-size: 18px;
+}
+
+.botao__cadastrar:hover{
+  background-color: #0e811c;
+  border: 1px #0e811c;
 }

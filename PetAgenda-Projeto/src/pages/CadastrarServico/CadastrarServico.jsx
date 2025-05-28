@@ -11,13 +11,22 @@ function CadastrarServico() {
     reset();
   };
 
+  const especies = [
+    "Cachorro",
+    "Gato",
+    "Periquito",
+    "Hamster",
+    "Coelho",
+    "Porquinho-da-Índia",
+    "Papagaio",
+  ];
+
   return (
-    <div className="cadastrarServico__container">
+    <div className="cadastrarServico__container mt-4">
       <h2 className="cadastrarServico__title">Cadastrar Serviço</h2>
       <Form onSubmit={handleSubmit(onSubmit)}>
-        {/* Nome e Categoria */}
         <Row className="mb-3">
-          <Col md={6}>
+          <Col md={5}>
             <Form.Group controlId="formNome">
               <Form.Label>Nome</Form.Label>
               <Form.Control
@@ -27,7 +36,8 @@ function CadastrarServico() {
               />
             </Form.Group>
           </Col>
-          <Col md={6}>
+          <Col md={2} />
+          <Col md={5}>
             <Form.Group controlId="formCategoria">
               <Form.Label>Categoria</Form.Label>
               <Form.Select {...register("categoria")}>
@@ -40,10 +50,8 @@ function CadastrarServico() {
             </Form.Group>
           </Col>
         </Row>
-
-        {/* Valor e Tipo de Cobrança */}
         <Row className="mb-3">
-          <Col md={6}>
+          <Col md={5}>
             <Form.Group controlId="formValor">
               <Form.Label>Valor</Form.Label>
               <InputGroup>
@@ -56,7 +64,8 @@ function CadastrarServico() {
               </InputGroup>
             </Form.Group>
           </Col>
-          <Col md={6}>
+          <Col md={2} />
+          <Col md={5}>
             <Form.Group controlId="formTipo">
               <Form.Label>Tipo de cobrança</Form.Label>
               <Form.Select {...register("tipo")}>
@@ -67,11 +76,9 @@ function CadastrarServico() {
             </Form.Group>
           </Col>
         </Row>
-
-        {/* Restrição de Participantes e Pacientes */}
         <Row className="mb-3">
-          <Col md={6}>
-            <Form.Group controlId="formRestricaoParticipantes">
+          <Col md={5} className="oi">
+            <Form.Group className="" controlId="formRestricaoParticipantes">
               <Form.Label>Restrição de participantes</Form.Label>
               <Form.Select {...register("restricaoParticipantes")}>
                 <option value="">Selecione...</option>
@@ -79,30 +86,39 @@ function CadastrarServico() {
                 <option value="coletivo">Coletivo</option>
               </Form.Select>
             </Form.Group>
-            <Form.Group controlId="formRestricaoParticipantes">
-              <Form.Label>Restrição de participantes</Form.Label>
-              <Form.Select {...register("restricaoParticipantes")}>
-                <option value="">Selecione...</option>
-                <option value="individua">Indivídua</option>
-                <option value="coletivo">Coletivo</option>
-              </Form.Select>
+            <Form.Group controlId="formDescricaoRestricao" className="mt-3">
+              <Form.Label>Descrição</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={4}
+                placeholder="Descreva detalhes sobre o serviço"
+                {...register("descricao")}
+              />
             </Form.Group>
           </Col>
-          <Col md={6}>
-            <Form.Group controlId="formRestricaoPacientes">
-              <Form.Label>Restrição de pacientes</Form.Label>
-              <Form.Select {...register("restricaoPacientes")}>
-                <option value="">Selecione...</option>
-                <option value="individua">Indivídua</option>
-                <option value="coletivo">Coletivo</option>
-              </Form.Select>
+          <Col md={2} />
+          <Col md={5}>
+            <Form.Group controlId="formRestricaoEspecies">
+              <Form.Label>Restrição de espécies</Form.Label>
+              <div className="check_box_especies">
+                {especies.map((especie) => (
+                  <Form.Check
+                    key={especie}
+                    type="checkbox"
+                    label={especie}
+                    value={especie}
+                    {...register("restricaoEspecies[]")}
+                  />
+                ))}
+              </div>
             </Form.Group>
           </Col>
         </Row>
-
-        {/* Botão de Cadastro */}
+        <div>
+          <div className=""></div>
+        </div>
         <div className="cadastrarServico__btnWrapper">
-          <Button type="submit" variant="primary">
+          <Button type="submit" variant="primary" className="botao__cadastrar">
             Cadastrar
           </Button>
         </div>
@@ -110,5 +126,4 @@ function CadastrarServico() {
     </div>
   );
 }
-
 export default CadastrarServico;
