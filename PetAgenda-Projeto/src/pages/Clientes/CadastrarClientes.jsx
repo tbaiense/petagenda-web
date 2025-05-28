@@ -5,11 +5,13 @@ import { clientes } from "../../data/testeDeTabela";
 import api from  '../../api';
 import { useAuth } from '../../contexts/UserContext';
 import CamposEndereco from "../../components/Endereco/CamposEndereco";
+import { useNavigate } from "react-router-dom";
 
 const CadastrarClientes = () => {
   const { token } = useAuth();
   const [servicos, setServicos] = useState([]);
   const [enderecosExtras, setEnderecosExtras] = useState([]);
+  const navigate = useNavigate()
 
   const {
       register,
@@ -39,7 +41,11 @@ const CadastrarClientes = () => {
   }, []);
 
   const onSubmit = (data) => {
-    console.log(data)
+    navigate('/dashboard/pets', {
+      state:{
+        all: data
+      }
+    })
   }
 
   const onError = (data) => {
@@ -77,7 +83,7 @@ const CadastrarClientes = () => {
             <button
               type="button"
               onClick={adicionarEndereco}
-              disabled={enderecosExtras.length >= 1} // desabilita se não tiver extras
+              disabled={enderecosExtras.length >= 1}
             >
               +
             </button>
