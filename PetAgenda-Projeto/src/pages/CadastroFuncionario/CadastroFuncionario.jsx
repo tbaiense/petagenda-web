@@ -27,7 +27,7 @@ const CadastroFuncionario = () => {
 
     useEffect(() => {
         // Pego os funcionarios do banco da empresa
-        fetch(`${api.URL}/empresa/:id/funcionario`, {
+        fetch(`${api.URL}/empresa/5/funcionario`, {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${token}`,
@@ -37,7 +37,8 @@ const CadastroFuncionario = () => {
             // Converto os Serviços em JSON 
             .then(res => res.json())
             .then(data => {
-                setFuncionarios(data);
+                console.log(data.funcionarios)
+                setFuncionarios(data.funcionarios);
             })
             .catch(error => {
                 console.error("Erro ao buscar Funcionarios:", error);
@@ -149,8 +150,8 @@ const CadastroFuncionario = () => {
 
                     <select {...register("sexo", { required: "Selecione um sexo" })}>
                         <option value="">Sexo</option>
-                        <option value="Masculino">Masculino</option>
-                        <option value="Feminino">Feminino</option>
+                        <option value="M">Masculino</option>
+                        <option value="F">Feminino</option>
                     </select>
 
                     <button>Cadastrar</button>
