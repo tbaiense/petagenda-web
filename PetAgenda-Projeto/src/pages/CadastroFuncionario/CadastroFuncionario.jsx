@@ -140,6 +140,7 @@ const CadastroFuncionario = () => {
                     })}/>
                     
                     {/* VAi FUNIONAR DEPOIS*/}
+                    
                     {/* <select {...register("servico", { required: "Selecione um serviço" })}>
 
                         <option value="">Selecione um serviço</option>

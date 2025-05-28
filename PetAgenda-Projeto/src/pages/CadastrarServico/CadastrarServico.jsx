@@ -4,7 +4,10 @@ import { Button, Col, Form, InputGroup, Row } from "react-bootstrap";
 import "./CadastrarServico.css";
 
 function CadastrarServico() {
-  const { register, handleSubmit, reset } = useForm();
+  const { register, handleSubmit, reset, watch } = useForm();
+
+    const imagemEmpresa = watch("pathImgFile")
+    const imagemURL = imagemEmpresa && imagemEmpresa[0] ? URL.createObjectURL(imagemEmpresa[0]) : null
 
   const onSubmit = (data) => {
     console.log(data);
@@ -79,16 +82,16 @@ function CadastrarServico() {
                 <option value="coletivo">Coletivo</option>
               </Form.Select>
             </Form.Group>
-            <Form.Group controlId="formRestricaoParticipantes">
+            {/* <Form.Group controlId="formRestricaoParticipantes">
               <Form.Label>Restrição de participantes</Form.Label>
               <Form.Select {...register("restricaoParticipantes")}>
                 <option value="">Selecione...</option>
                 <option value="individua">Indivídua</option>
                 <option value="coletivo">Coletivo</option>
               </Form.Select>
-            </Form.Group>
+            </Form.Group> */}
           </Col>
-          <Col md={6}>
+          {/* <Col md={6}>
             <Form.Group controlId="formRestricaoPacientes">
               <Form.Label>Restrição de pacientes</Form.Label>
               <Form.Select {...register("restricaoPacientes")}>
@@ -97,8 +100,15 @@ function CadastrarServico() {
                 <option value="coletivo">Coletivo</option>
               </Form.Select>
             </Form.Group>
-          </Col>
+          </Col> */}
         </Row>
+
+        
+        <div>
+            <h4>Foto de Perfil</h4>
+            {imagemURL && <img src={imagemURL} alt="Pre-Visualização" width={200} height={210}/>}
+            <input type="file" {...register("pathImgFile")}/>
+        </div>
 
         {/* Botão de Cadastro */}
         <div className="cadastrarServico__btnWrapper">
