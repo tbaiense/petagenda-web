@@ -157,7 +157,7 @@ const CadastroFuncionario = () => {
                         <option value="F">Feminino</option>
                     </select>
 
-                    <button>Cadastrar</button>
+                    <button type="submit">Cadastrar</button>
                 </form>
 
             </ModalCadastroFuncionario>

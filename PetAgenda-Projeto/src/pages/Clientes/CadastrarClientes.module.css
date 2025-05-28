@@ -2,9 +2,8 @@
     display: flex;
     gap: 10px;
 }
-.estiloTitulos span{
-    align-items: center;
-    justify-content: center;
-    font-size: x-large;
-    cursor: pointer;
+
+.tabelaServicos{
+    max-height: 150px;
+    overflow: auto;
 }

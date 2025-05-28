@@ -11,7 +11,7 @@ import MenuDashBoard from "../MenuDashboard";
 import ViewEmpresa from "../pages/Empresa/Visualizar_Dados/ViewEmpresa"
 import CadastroFuncionario from "../pages/CadastroFuncionario/CadastroFuncionario";
 import CadastrarServico from "../pages/CadastrarServico/CadastrarServico";
-import CadastarClientes from "../pages/Clientes/CadastarClientes";
+import CadastrarClientes from "../pages/Clientes/CadastrarClientes";
 import CadastrarPets from "../pages/Pets/CadastrarPets"
 import Relatorios from "../pages/Relatorios/Relatorios";
 
@@ -93,7 +93,7 @@ const router = createBrowserRouter([
         path:"clientes",
         element:(
           //<PrivateRoute>
-            <CadastarClientes/>
+            <CadastrarClientes/>
           //</PrivateRoute>
         )
       },
