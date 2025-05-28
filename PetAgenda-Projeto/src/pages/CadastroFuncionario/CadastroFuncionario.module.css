@@ -1,0 +1,44 @@
+.viewConteudo{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+.viewConteudo h1{   
+    text-align: center;
+    padding-top: 0.5rem;
+}
+.estiloBotao{
+    display: flex;
+    justify-content: center;
+}
+.estiloBotao button{
+    padding: 5px 20px 5px 20px;
+    border-radius: 12px;
+    border: none;
+    background-color: rgb(0, 94, 255);
+    color: white;
+}
+.estiloBotao button:hover{
+    background-color: blue;
+}
+.tabelaBonita {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+  background-color: #f9f9f9;
+}
+
+.tabelaBonita th, .tabelaBonita td {
+  border: 1px solid #ccc;
+  padding: 12px;
+}
+
+.tabelaBonita th {
+  background-color: #e2e2e2;
+  color: #333;
+  font-weight: bold;
+}
+
+.tabelaBonita tr:hover {
+  background-color: #f1f1f1;
+}

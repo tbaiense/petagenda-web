@@ -5,12 +5,14 @@ import { useAuth } from '../../contexts/UserContext';
 import ModalCadastroFuncionario from "../../components/Modal Funcionario/ModalCadastroFuncionario";
 import CardFuncionario from "../../components/CardFuncionario/CardFuncionario"
 import styles from "./CadastroFuncionario.module.css"
+import { tempFuncionarios } from "../../data/Tempdata";
 
 const CadastroFuncionario = () => {
     const { token } = useAuth();
     const [showModal, setShowModal] = useState(false);
     const [funcionarios, setFuncionarios] = useState([]);
     const [servicos, setServicos] = useState([]);
+    
 
 
     const {
@@ -100,8 +102,7 @@ const CadastroFuncionario = () => {
         <div className={styles.viewConteudo}>
             <div>
                 <h1>Funcionarios Cadastrados</h1>
-                {/* Ao clicar em um "botão" abre um modal para cadastrar um novo funcionario */}
-                <p onClick={() => setShowModal(true)}>Adicionar</p>
+                <hr />
             </div>
 
             {/* Aqui estou criando um modal para o usuario poder cadastrar rapidamente um novo funcionario */}
@@ -163,18 +164,44 @@ const CadastroFuncionario = () => {
             </ModalCadastroFuncionario>
 
             {/* Aqui eu estou gerando a lista de funcionarios */}
-            <div className={styles.layoutFuncionario}>
-                {funcionarios.map((funcionario, index) => (
+            <div>
+                {/* {tempFuncionarios.map((tempFuncionario, index) => (
                 <CardFuncionario
                     key={index}
-                    nome={funcionario.nome}
-                    telefone={funcionario.telefone}
-                    servico={funcionario.servico}
-                    sexo={funcionario.sexo}
+                    nome={tempFuncionario.nome}
+                    telefone={tempFuncionario.telefone}
+                    servico={tempFuncionario.servico}
+                    sexo={tempFuncionario.sexo}
                 />
-                ))}
-            </div>
+                ))} */}
 
+                <table className={styles.tabelaBonita}>
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Telefone</th>
+                            <th>Serviço</th>
+                            <th>Sexo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {tempFuncionarios.map((tempFuncionario, index) => {
+                            return (
+                                <tr key={index}>
+                                    <td>{tempFuncionario.nome}</td>
+                                    <td>{tempFuncionario.telefone}</td>
+                                    <td>{tempFuncionario.servico}</td>
+                                    <td>{tempFuncionario.sexo}</td>
+                                </tr>
+                            )
+                        })}
+                    </tbody>
+                </table>
+            </div>
+            {/* Ao clicar em um "botão" abre um modal para cadastrar um novo funcionario */}
+            <div className={styles.estiloBotao}>
+                <button onClick={() => setShowModal(true)}>Adicionar</button>
+            </div>
         </div>
     )
 }

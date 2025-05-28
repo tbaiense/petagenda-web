@@ -60,7 +60,7 @@ const CadastrarClientes = () => {
   }
   return (
     <div>
-      <div>
+      <div className={styles.tituloPage}>
         <h1>Cadastro de Cliente</h1>
         <hr />
       </div>

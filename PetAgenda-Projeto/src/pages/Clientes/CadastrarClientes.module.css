@@ -1,8 +1,30 @@
+.tituloPage{
+    text-align: center;
+    padding-top: 0.5rem;
+}
+
+
+
+
+
+
+
+
+.estiloForm{
+
+}
+
+
+
+
+
+
+
+
 .estiloTitulos{
     display: flex;
     gap: 10px;
 }
-
 .tabelaServicos{
     max-height: 150px;
     overflow: auto;
