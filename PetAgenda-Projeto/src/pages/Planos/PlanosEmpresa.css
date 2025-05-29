@@ -36,7 +36,7 @@ body {
   width: 85%;
   padding: 10px;
   text-align: center;
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: #1FAF30;
   border: 0px solid rgba(0, 0, 0, 0.2);;
 }
 .plano__botao:hover {
@@ -44,7 +44,7 @@ body {
   width: 85%;
   padding: 10px;
   text-align: center;
-  background-color: #6D6D6D;
+  background-color: #0e811c;
 }
 
 .plano__item__caracteristica {

@@ -30,6 +30,7 @@
   color: white;
   padding: 10px;
   border-radius: 6px;
+  transition: background-color 0.3s ease;
 }
 .navegacao{
   gap: 1rem;
@@ -38,5 +39,4 @@
 .navegacao button:hover{
   background-color: rgb(191, 106, 4)
 }
-
 

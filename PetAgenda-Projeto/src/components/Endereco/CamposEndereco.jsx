@@ -1,7 +1,7 @@
 import { UFS } from "../../data/info"
 
 
-const CamposEndereco = ({index}) => {
+const CamposEndereco = ({index, register}) => {
     console.log("Renderizando endereço", index);
     return(
         <>

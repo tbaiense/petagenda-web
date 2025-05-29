@@ -58,9 +58,11 @@
   border: none;
   border-radius: 12px;
   transition: background-color 0.3s ease;
+  background-color: #1FAF30;
+  color: white;
 }
 .bttn button:hover {
-  background-color: #d6d6d6;
+  background-color: #0e811c;
   cursor: pointer;
 }
 @media (max-width: 768px) {

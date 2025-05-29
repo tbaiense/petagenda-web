@@ -1,25 +1,26 @@
 .viewConteudo{
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 .viewConteudo h1{   
-    text-align: center;
-    padding-top: 0.5rem;
+  text-align: center;
+  padding-top: 0.5rem;
 }
 .estiloBotao{
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
 }
 .estiloBotao button{
-    padding: 5px 20px 5px 20px;
-    border-radius: 12px;
-    border: none;
-    background-color: rgb(0, 94, 255);
-    color: white;
+  padding: 5px 20px 5px 20px;
+  border-radius: 12px;
+  border: none;
+  background-color: #1FAF30;
+  transition: background-color 0.3s ease;
+  color: white;
 }
 .estiloBotao button:hover{
-    background-color: blue;
+  background-color: #0e811c;
 }
 .tabelaBonita {
   width: 100%;

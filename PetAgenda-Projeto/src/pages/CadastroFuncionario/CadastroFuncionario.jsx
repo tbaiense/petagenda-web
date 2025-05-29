@@ -122,11 +122,11 @@ const CadastroFuncionario = () => {
                             {...register("nome", {
                                 required:"O nome é obrigatorio",
                                 minLength:{
-                                    value:10,
+                                    value:15,
                                     message:"O nome deve ter pelo menos 15 caracteres"
                                 },
                                 maxLength:{
-                                    value:80,
+                                    value:100,
                                     message:"O nome dever ter no maximo 100 caracteres"
                                 }
                             })} />
