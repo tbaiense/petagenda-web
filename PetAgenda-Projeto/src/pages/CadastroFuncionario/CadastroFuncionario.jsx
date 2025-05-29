@@ -113,12 +113,12 @@ const CadastroFuncionario = () => {
 
                 <h2>Cadastro de Funcionario</h2>
 
-                <form action="" onSubmit={handleSubmit(onSubmit, onError)}>
+                <form action="" className={styles.customeForm} onSubmit={handleSubmit(onSubmit, onError)}>
 
-                    <div className={styles.organizacaoConteudoModalOne}>
-                        <div className={styles.definicoesCampos}>
+                    <div className={styles.areaNomeSexo}>
+                        <div className={styles.controlaCampos}>
                             <label htmlFor="">Nome:</label>
-                            <input className={styles.campoNome} type="text" placeholder="Digite o nome" 
+                            <input type="text" placeholder="Digite o nome" 
                             {...register("nome", {
                                 required:"O nome é obrigatorio",
                                 minLength:{
@@ -132,7 +132,34 @@ const CadastroFuncionario = () => {
                             })} />
                         </div>
 
-                        <div className={styles.definicoesCampos}>
+                        <div className={styles.controlaCampos}>
+                            <label htmlFor="">Sexo:</label>
+                            <select {...register("sexo", { required: "Selecione um sexo" })}>
+                                <option value="">Sexo</option>
+                                <option value="M">Masculino</option>
+                                <option value="F">Feminino</option>
+                            </select>
+                        </div>
+
+                    </div>
+                    
+                    <div>
+
+                        <div className={styles.controlaCampos}>
+                            <label htmlFor="">Serviço Prestado:</label>
+                            {/* VAi FUNIONAR DEPOIS*/}
+                            <select {...register("servico", { required: "Selecione um serviço" })}>
+
+                                <option value="">Selecione um serviço</option>
+
+                                {servicos.map((servico) => (
+                                    <option key={servico.id} value={servico.id}>{servico.nome}</option>
+                                ))}
+
+                            </select>
+                        </div>
+
+                        <div className={styles.controlaCampos}>
                             <label htmlFor="">Telefone:</label>
                             <input type="text" placeholder="Digite o telefone" 
                             {...register("telefone", {
@@ -150,33 +177,11 @@ const CadastroFuncionario = () => {
 
                     </div>
                     
-                    <div className={styles.organizacaoConteudoModalTwo}>
-
-                        <div className={styles.definicoesCampos}>
-                            <label htmlFor="">Serviço Prestado:</label>
-                            {/* VAi FUNIONAR DEPOIS*/}
-                            <select {...register("servico", { required: "Selecione um serviço" })}>
-
-                                <option value="">Selecione um serviço</option>
-
-                                {servicos.map((servico) => (
-                                    <option key={servico.id} value={servico.id}>{servico.nome}</option>
-                                ))}
-
-                            </select>
-                        </div>
-
-                        <div className={styles.definicoesCampos}>
-                            <label htmlFor="">Sexo:</label>
-                            <select {...register("sexo", { required: "Selecione um sexo" })}>
-                                <option value="">Sexo</option>
-                                <option value="M">Masculino</option>
-                                <option value="F">Feminino</option>
-                            </select>
-                        </div>
+                    <div className={styles.posicaoBotaoForm}>
+                        <button type="submit">Cadastrar</button>
                     </div>
                     
-                    <button type="submit">Cadastrar</button>
+
                 </form>
 
             </ModalCadastroFuncionario>
@@ -211,6 +216,7 @@ const CadastroFuncionario = () => {
             <div className={styles.estiloBotao}>
                 <button onClick={() => setShowModal(true)}>Adicionar</button>
             </div>
+
         </div>
     )
 }

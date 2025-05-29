@@ -1,4 +1,4 @@
-.modalContent {
+.beforeModal {
   position: fixed;
   top: 0;
   left: 0;
@@ -6,55 +6,34 @@
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.7);
   z-index: 5;
-}
 
-.conteudoModal {
+}
+.cardModal {
   position: relative;
-  top: 20%;
-  left: 56%;
-  transform: translate(-50%, 50%);
+  transform: translate(123%, 50%);
   background-color: white;
   border-radius: 12px;
-  width: 30%;
-  display: flex;
-  flex-direction: column;
-  padding: 1rem;
+  width: 30vw;
+  padding: 1.5rem;
 }
-
 .containerFechar {
   position: absolute;
   top: 0px;
   right: 10px;
 }
-
-
+.posicaoBotao{
+  position: relative;
+  transform: translate(100%,-60%);
+}
 .botaoFechar {
   background-color: white;
   border: none;
   font-size: x-large;
   cursor: pointer;
+  padding: 0;
 }
-
-.childrenConteudo h2{
+.onlyTitle h2{
   text-align: center;
-}
-
-.childrenConteudo form{
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-/* .childrenConteudo input{
-  padding: 1rem;
-} */
-.childrenConteudo button{
-  padding: 5px 20px 5px 20px;
-  border-radius: 12px;
-  border: none;
-  transition: background-color 0.3s ease;
-  background-color: #1FAF30;
-  color: white;
-}
-.childrenConteudo button:hover{
-  background-color: #0e811c;
+  top: 0;
+  padding-bottom: 1rem;
 }
