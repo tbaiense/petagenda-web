@@ -105,6 +105,7 @@ const CadastroFuncionario = () => {
                 <hr />
             </div>
 
+{/* ------------------------------------------------------------------------------------------------------------------------ */}
             {/* Aqui estou criando um modal para o usuario poder cadastrar rapidamente um novo funcionario */}
             {/* Podemos reutilizar esse modal para a aba da empresa futuramente */}
 
@@ -114,67 +115,74 @@ const CadastroFuncionario = () => {
 
                 <form action="" onSubmit={handleSubmit(onSubmit, onError)}>
 
-                    <input type="text" placeholder="Nome:" 
-                    {...register("nome", {
-                        required:"O nome é obrigatorio",
-                        minLength:{
-                            value:10,
-                            message:"O nome deve ter pelo menos 15 caracteres"
-                        },
-                        maxLength:{
-                            value:80,
-                            message:"O nome dever ter no maximo 100 caracteres"
-                        }
-                    })} />
+                    <div className={styles.organizacaoConteudoModalOne}>
+                        <div className={styles.definicoesCampos}>
+                            <label htmlFor="">Nome:</label>
+                            <input className={styles.campoNome} type="text" placeholder="Digite o nome" 
+                            {...register("nome", {
+                                required:"O nome é obrigatorio",
+                                minLength:{
+                                    value:10,
+                                    message:"O nome deve ter pelo menos 15 caracteres"
+                                },
+                                maxLength:{
+                                    value:80,
+                                    message:"O nome dever ter no maximo 100 caracteres"
+                                }
+                            })} />
+                        </div>
 
-                    <input type="text" placeholder="Telefone:" 
-                    {...register("telefone", {
-                        required:"O telefone é obrigatorio",
-                        minLength:{
-                            value:14,
-                            message:"O telefone deve ter pelo menos 14 caracteres"
-                        },
-                        maxLength:{
-                            value:14,
-                            message:"O telefone dever ter no maximo 14 caracteres"
-                        }
-                    })}/>
+                        <div className={styles.definicoesCampos}>
+                            <label htmlFor="">Telefone:</label>
+                            <input type="text" placeholder="Digite o telefone" 
+                            {...register("telefone", {
+                                required:"O telefone é obrigatorio",
+                                minLength:{
+                                    value:14,
+                                    message:"O telefone deve ter pelo menos 14 caracteres"
+                                },
+                                maxLength:{
+                                    value:14,
+                                    message:"O telefone dever ter no maximo 14 caracteres"
+                                }
+                            })}/>
+                        </div>
+
+                    </div>
                     
-                    {/* VAi FUNIONAR DEPOIS*/}
+                    <div className={styles.organizacaoConteudoModalTwo}>
+
+                        <div className={styles.definicoesCampos}>
+                            <label htmlFor="">Serviço Prestado:</label>
+                            {/* VAi FUNIONAR DEPOIS*/}
+                            <select {...register("servico", { required: "Selecione um serviço" })}>
+
+                                <option value="">Selecione um serviço</option>
+
+                                {servicos.map((servico) => (
+                                    <option key={servico.id} value={servico.id}>{servico.nome}</option>
+                                ))}
+
+                            </select>
+                        </div>
+
+                        <div className={styles.definicoesCampos}>
+                            <label htmlFor="">Sexo:</label>
+                            <select {...register("sexo", { required: "Selecione um sexo" })}>
+                                <option value="">Sexo</option>
+                                <option value="M">Masculino</option>
+                                <option value="F">Feminino</option>
+                            </select>
+                        </div>
+                    </div>
                     
-                    {/* <select {...register("servico", { required: "Selecione um serviço" })}>
-
-                        <option value="">Selecione um serviço</option>
-
-                        {servicos.map((servico) => (
-                            <option key={servico.id} value={servico.id}>{servico.nome}</option>
-                        ))}
-
-                    </select> */}
-
-                    <select {...register("sexo", { required: "Selecione um sexo" })}>
-                        <option value="">Sexo</option>
-                        <option value="M">Masculino</option>
-                        <option value="F">Feminino</option>
-                    </select>
-
                     <button type="submit">Cadastrar</button>
                 </form>
 
             </ModalCadastroFuncionario>
-
+{/* ------------------------------------------------------------------------------------------------------------------------ */}
             {/* Aqui eu estou gerando a lista de funcionarios */}
             <div>
-                {/* {tempFuncionarios.map((tempFuncionario, index) => (
-                <CardFuncionario
-                    key={index}
-                    nome={tempFuncionario.nome}
-                    telefone={tempFuncionario.telefone}
-                    servico={tempFuncionario.servico}
-                    sexo={tempFuncionario.sexo}
-                />
-                ))} */}
-
                 <table className={styles.tabelaBonita}>
                     <thead>
                         <tr>
@@ -198,6 +206,7 @@ const CadastroFuncionario = () => {
                     </tbody>
                 </table>
             </div>
+
             {/* Ao clicar em um "botão" abre um modal para cadastrar um novo funcionario */}
             <div className={styles.estiloBotao}>
                 <button onClick={() => setShowModal(true)}>Adicionar</button>

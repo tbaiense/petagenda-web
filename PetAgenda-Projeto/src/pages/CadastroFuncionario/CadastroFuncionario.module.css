@@ -42,3 +42,25 @@
 .tabelaBonita tr:hover {
   background-color: #f1f1f1;
 }
+
+
+/* ---------------------------------------------------------------------------------------------- */
+.organizacaoConteudoModalOne{
+  display: flex;
+  justify-content: space-between;
+  padding: 0rem 1rem 0rem 1rem;
+
+}
+.organizacaoConteudoModalOne .campoNome{
+  width: 330px;
+}
+.organizacaoConteudoModalTwo{
+  display: flex;
+  gap: 30px;
+  padding-left: 1rem;
+  padding-bottom: 1rem;
+}
+.definicoesCampos{
+  display: flex;
+  flex-direction: column;
+}
