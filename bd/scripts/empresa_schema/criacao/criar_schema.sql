@@ -1882,8 +1882,8 @@ CREATE PROCEDURE info_servico
                 SET remedios_length = JSON_LENGTH(pet_obj, '$.remedios');
                 WHILE c_remedio < remedios_length DO
                     SET remedio_obj = JSON_EXTRACT( pet_obj, CONCAT('$.remedios[', c_remedio, ']') );
-                    SET nome_rem = JSON_EXTRACT(remedio_obj, '$.nome');
-                    SET instrucoes_rem = JSON_EXTRACT(remedio_obj, '$.instrucoes');
+                    SET nome_rem = JSON_UNQUOTE(JSON_EXTRACT(remedio_obj, '$.nome'));
+                    SET instrucoes_rem = JSON_UNQUOTE(JSON_EXTRACT(remedio_obj, '$.instrucoes'));
 
                     CALL ins_remedio_pet_servico(id_pet_servico, nome_rem, instrucoes_rem);
                     SET c_remedio = c_remedio + 1;
