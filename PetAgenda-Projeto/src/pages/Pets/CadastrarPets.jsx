@@ -91,7 +91,7 @@ const CadastrarPets = () => {
 
       <div className={styles.layoutCadastro}>
 
-        <form action="" onSubmit={handleSubmit(onSubmit, onErrors)}>
+        <form action="" onSubmit={handleSubmit(onSubmit, onErrors)} className={styles.previnindoVazamento}>
 
           <div className={styles.linhaDoisCampos}>
 

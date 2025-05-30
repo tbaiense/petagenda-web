@@ -6,7 +6,7 @@
   padding: 1rem;
 }
 
-form {
+.previnindoVazamento{
   width: 100%;
   max-width: 550px;
   display: flex;
@@ -16,42 +16,42 @@ form {
 
 /* ===================================== Geral Input ========================================= */
 
-form input{
+.previnindoVazamento input{
     border: 1px solid rgba(0, 0, 0, 0.2);
     padding: 5px 1rem;
     border-radius: 7px;
     transition: all 0.3s ease-in-out;
     outline: none; 
 }
-form input:focus{
+.previnindoVazamento input:focus{
     border-color: #1FAF30;
     box-shadow: 0 0 10px rgba(31, 175, 48, 0.6); 
 }
 
 /* ===================================== Geral Select ======================================== */
 
-form select{
+.previnindoVazamento select{
     border: 1px solid rgba(0, 0, 0, 0.2);
     padding: 5px 1rem;
     border-radius: 7px;
     transition: all 0.3s ease-in-out;
     outline: none;
 }
-form select:focus{
+.previnindoVazamento select:focus{
     border-color: #1FAF30;
     box-shadow: 0 0 10px rgba(31, 175, 48, 0.6);     
 }
 
 /* ===================================== Geral TextArea ====================================== */
 
-form textarea{
+.previnindoVazamento textarea{
     border: 1px solid rgba(0, 0, 0, 0.2);
     padding: 5px 1rem;
     border-radius: 7px;
     transition: all 0.3s ease-in-out;
     outline: none;
 }
-form textarea:focus{
+.previnindoVazamento textarea:focus{
     border-color: #1FAF30;
     box-shadow: 0 0 10px rgba(31, 175, 48, 0.6);  
 }
