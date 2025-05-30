@@ -454,7 +454,6 @@ CREATE OR REPLACE VIEW vw_pet_servico AS
 	GROUP BY p_s.id
     ORDER BY id_info_servico DESC, nome ASC;
 
-
 CREATE OR REPLACE VIEW vw_agendamento AS
     SELECT
         a.id AS id_agendamento,
@@ -463,12 +462,12 @@ CREATE OR REPLACE VIEW vw_agendamento AS
         a.id_pacote_agend AS id_pacote_agend,
         a.valor_servico AS valor_servico,
 		a.valor_total AS valor_total,
+		a.id_servico_realizado AS id_servico_realizado,
         i_s.*
     FROM agendamento AS a
         INNER JOIN vw_info_servico AS i_s ON (i_s.id_info_servico = a.id_info_servico)
     ORDER BY
         id_agendamento DESC;
-
 
 
 CREATE OR REPLACE VIEW vw_pacote_agend AS
