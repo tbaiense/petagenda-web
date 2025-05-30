@@ -146,7 +146,7 @@ CREATE PROCEDURE pacote_agend (
 
                 SET p_count = p_count + 1;
             END WHILE;
-
+			SELECT id_pac AS id_pacote_agendamento;
         ELSEIF acao IN ("update", "delete") THEN
             SET id_pac = JSON_EXTRACT(objPac, '$.id');
 
@@ -174,70 +174,69 @@ CREATE PROCEDURE pacote_agend (
                                 qtd_recorrencia = qtd_rec  /* Implementar trigger para cancelar ou excluir agendamentos que sobrarem ao diminuir ou adicionar agendamentos ao aumentar */
                             WHERE id = id_pac;
 
-                            -- Loop de atualização de dia_pac
-                            SET d_count = 0;
-                            SET d_length = JSON_LENGTH(arrayObjDiaPac);
-                            IF (arrayObjDiaPac IS NOT NULL) THEN /* Se dias de recorrência deverão ser atualizadas */
-                                SET arrayDiaPac = JSON_ARRAY();
+                        -- Loop de atualização de dia_pac
+                        SET d_count = 0;
+                        SET d_length = JSON_LENGTH(arrayObjDiaPac);
+                        IF (arrayObjDiaPac IS NOT NULL) THEN /* Se dias de recorrência deverão ser atualizadas */
+                            SET arrayDiaPac = JSON_ARRAY();
 
-                                -- Cria array json com inteiros representando os dias e atualiza os registros dos dias do pacote
-                                WHILE d_count < d_length DO
-                                    -- Obtem objeto da array
-                                    SET id_dia_pac = JSON_EXTRACT(arrayObjDiaPac, CONCAT('$[', d_count, '].id'));
-                                    SET dia_pac = JSON_EXTRACT(arrayObjDiaPac, CONCAT('$[', d_count, '].dia'));
+                            -- Cria array json com inteiros representando os dias e atualiza os registros dos dias do pacote
+                            WHILE d_count < d_length DO
+                                -- Obtem objeto da array
+                                SET id_dia_pac = JSON_EXTRACT(arrayObjDiaPac, CONCAT('$[', d_count, '].id'));
+                                SET dia_pac = JSON_EXTRACT(arrayObjDiaPac, CONCAT('$[', d_count, '].dia'));
 
-                                    IF id_dia_pac IS NULL THEN
-                                        INSERT INTO dia_pacote (id_pacote_agend, dia) VALUE (id_pac, dia_pac);
-                                        SET id_dia_pac = LAST_INSERT_ID();
-                                    END IF;
+                                IF id_dia_pac IS NULL THEN
+                                    INSERT INTO dia_pacote (id_pacote_agend, dia) VALUE (id_pac, dia_pac);
+                                    SET id_dia_pac = LAST_INSERT_ID();
+                                END IF;
 
-                                    UPDATE dia_pacote SET dia = dia_pac WHERE id = id_dia_pac;
+                                UPDATE dia_pacote SET dia = dia_pac WHERE id = id_dia_pac;
 
-                                    SET arrayDiaPac = JSON_ARRAY_INSERT(arrayDiaPac, '$[0]', id_dia_pac);
+                                SET arrayDiaPac = JSON_ARRAY_INSERT(arrayDiaPac, '$[0]', id_dia_pac);
 
-                                    SET d_count = d_count + 1;
-                                END WHILE;
+                                SET d_count = d_count + 1;
+                            END WHILE;
 
-                                -- Apagando dias omitidos da array
-                                DELETE FROM dia_pacote
-                                    WHERE
-                                        id_pacote_agend = id_pac
-                                        AND (JSON_CONTAINS(arrayDiaPac, id)) IS NOT TRUE;   /* Implementar trigger que cancela agendamentos futuros não preparados */
+                            -- Apagando dias omitidos da array
+                            DELETE FROM dia_pacote
+                                WHERE
+                                    id_pacote_agend = id_pac
+                                    AND (JSON_CONTAINS(arrayDiaPac, id)) IS NOT TRUE;   /* Implementar trigger que cancela agendamentos futuros não preparados */
 
-                            END IF;
+                        END IF;
 
-                            -- Loop de atualizacao de pet_pacote
-                            SET p_count = 0;
-                            SET p_length = JSON_LENGTH(arrayObjPetPac);
-                            IF (arrayObjPetPac IS NOT NULL) THEN /* Se pets deverão ser atualizadas */
-                                SET arrayPetPac = JSON_ARRAY();
+                        -- Loop de atualizacao de pet_pacote
+                        SET p_count = 0;
+                        SET p_length = JSON_LENGTH(arrayObjPetPac);
+                        IF (arrayObjPetPac IS NOT NULL) THEN /* Se pets deverão ser atualizadas */
+                            SET arrayPetPac = JSON_ARRAY();
 
-                                -- Cria array json com inteiros representando os IDs de tabela "pet_pacote" e atualiza os registros dos pets do pacote
-                                WHILE p_count < p_length DO
-                                    -- Obtem objeto da array
-                                    SET id_pet_pac = JSON_EXTRACT(arrayObjPetPac, CONCAT('$[', p_count, '].id'));
-                                    SET id_pet_cliente = JSON_EXTRACT(arrayObjPetPac, CONCAT('$[', p_count, '].pet'));
+                            -- Cria array json com inteiros representando os IDs de tabela "pet_pacote" e atualiza os registros dos pets do pacote
+                            WHILE p_count < p_length DO
+                                -- Obtem objeto da array
+                                SET id_pet_pac = JSON_EXTRACT(arrayObjPetPac, CONCAT('$[', p_count, '].id'));
+                                SET id_pet_cliente = JSON_EXTRACT(arrayObjPetPac, CONCAT('$[', p_count, '].pet'));
 
-                                    IF id_pet_pac IS NULL THEN
-                                        INSERT INTO pet_pacote (id_pacote_agend, id_pet) VALUE (id_pac, id_pet_cliente);
-                                        SET id_pet_pac = LAST_INSERT_ID();
-                                    END IF;
+                                IF id_pet_pac IS NULL THEN
+                                    INSERT INTO pet_pacote (id_pacote_agend, id_pet) VALUE (id_pac, id_pet_cliente);
+                                    SET id_pet_pac = LAST_INSERT_ID();
+                                END IF;
 
-                                    UPDATE pet_pacote SET id_pet = id_pet_cliente WHERE id = id_pet_pac;
+                                UPDATE pet_pacote SET id_pet = id_pet_cliente WHERE id = id_pet_pac;
 
-                                    SET arrayPetPac = JSON_ARRAY_INSERT(arrayPetPac, '$[0]', id_pet_pac);
+                                SET arrayPetPac = JSON_ARRAY_INSERT(arrayPetPac, '$[0]', id_pet_pac);
 
-                                    SET p_count = p_count + 1;
-                                END WHILE;
+                                SET p_count = p_count + 1;
+                            END WHILE;
 
-                                -- Apagando pets omitidos da array
-                                DELETE FROM pet_pacote
-                                    WHERE
-                                        id_pacote_agend = id_pac
-                                        AND (JSON_CONTAINS(arrayPetPac, id)) IS NOT TRUE;   /* Implementar trigger que cancela agendamentos futuros não preparados */
+                            -- Apagando pets omitidos da array
+                            DELETE FROM pet_pacote
+                                WHERE
+                                    id_pacote_agend = id_pac
+                                    AND (JSON_CONTAINS(arrayPetPac, id)) IS NOT TRUE;   /* Implementar trigger que cancela agendamentos futuros não preparados */
 
-                            END IF;
-
+                        END IF;
                     WHEN "delete" THEN
                         DELETE FROM pacote_agend WHERE id = id_pac; /* refential action nas tabelas dias e pets garantem a exclusão delas */
                 END CASE;

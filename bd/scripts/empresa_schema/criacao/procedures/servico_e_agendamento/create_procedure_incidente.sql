@@ -69,7 +69,7 @@ CREATE PROCEDURE incidente (
                 id_servico_realizado, tipo, dt_hr_ocorrido, relato, medida_tomada)
                 VALUE (id_serv_real, tipo_inc, dt_hr_ocorr, rel, med_tom);
             SET id_inc = LAST_INSERT_ID();
-
+			SELECT id_inc AS id_incidente;
         ELSEIF acao IN ("update", "delete") THEN
             SET id_inc = JSON_EXTRACT(objInc, '$.id');
 
@@ -97,7 +97,8 @@ CREATE PROCEDURE incidente (
                                 relato = rel,
                                 medida_tomada = med_tom
                             WHERE id = id_inc;
-
+            
+						SELECT id_inc AS id_incidente;
                     WHEN "delete" THEN
                         DELETE FROM incidente WHERE id = id_inc;
                 END CASE;

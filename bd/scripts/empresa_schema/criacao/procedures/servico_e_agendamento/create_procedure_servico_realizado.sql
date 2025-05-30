@@ -109,7 +109,8 @@ CREATE PROCEDURE servico_realizado
 
             -- Inserção do serviço realizado
             INSERT INTO servico_realizado (id_info_servico, dt_hr_inicio, dt_hr_fim) VALUE (id_info_serv, dt_hr_ini, dt_hr_fin);
-
+            
+			SELECT id_serv_real AS id_servico_realizado;
         ELSEIF acao = "update" THEN
             SET id_serv_real = JSON_EXTRACT(objServ, '$.id');
 
@@ -137,6 +138,8 @@ CREATE PROCEDURE servico_realizado
 
             -- Altera registro do servico_realizad
             UPDATE servico_realizado SET dt_hr_inicio = dt_hr_ini, dt_hr_fim = dt_hr_fin WHERE id = id_serv_real;
+            
+            SELECT id_serv_real AS id_servico_realizado;
         END IF;
     END;$$
 DELIMITER ;

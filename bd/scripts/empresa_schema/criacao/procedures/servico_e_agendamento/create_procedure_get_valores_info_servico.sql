@@ -1,8 +1,8 @@
 DELIMITER $$
 CREATE PROCEDURE get_valores_info_servico(
         IN NEW_id_info_serv INT,
-        INOUT NEW_valor_servico INT,
-        INOUT NEW_valor_total INT
+        INOUT NEW_valor_servico DECIMAL(8,2),
+        INOUT NEW_valor_total DECIMAL(8,2)
     )
     BEGIN
         DECLARE tipo_p VARCHAR(16); /* Valor da coluna "tipo_preco" */
