@@ -414,15 +414,18 @@ CREATE OR REPLACE VIEW vw_servico_exercido AS
 
 
 CREATE OR REPLACE VIEW vw_servico_realizado AS
-    SELECT
+    SELECT 
         s_r.id AS id_servico_realizado,
         s_r.dt_hr_inicio AS dt_hr_inicio,
         s_r.dt_hr_fim AS dt_hr_fim,
+        s_r.valor_servico AS valor_servico,
+        s_r.valor_total AS valor_total,
         i_s.*
     FROM servico_realizado AS s_r
-        INNER JOIN vw_info_servico AS i_s ON (i_s.id_info_servico = s_r.id_info_servico)
-    ORDER BY
+        INNER JOIN vw_info_servico AS i_s ON (i_s.id = s_r.id_info_servico)
+    ORDER BY 
         dt_hr_fim DESC;
+
 
 
 CREATE OR REPLACE VIEW vw_pet_servico AS
@@ -457,11 +460,15 @@ CREATE OR REPLACE VIEW vw_agendamento AS
         a.id AS id_agendamento,
         a.dt_hr_marcada AS dt_hr_marcada,
         a.estado AS estado,
+        a.id_pacote_agend AS id_pacote_agend,
+        a.valor_servico AS valor_servico,
+		a.valor_total AS valor_total,
         i_s.*
     FROM agendamento AS a
         INNER JOIN vw_info_servico AS i_s ON (i_s.id_info_servico = a.id_info_servico)
     ORDER BY
         id_agendamento DESC;
+
 
 
 CREATE OR REPLACE VIEW vw_pacote_agend AS
@@ -649,6 +656,122 @@ CREATE TRIGGER trg_pet_pacote_insert /* Validação semelhante à aplicada à ta
             IF id_cli_este <> id_cli_outro THEN
                 SIGNAL err_dono_diferente
                     SET MESSAGE_TEXT = "Pet nao pode ser inserido, pois pertence a um dono diferente dos que já existem para este pacote_agend";
+            END IF;
+
+            IF restr_partic = "individual" THEN
+                SIGNAL err_qtd_partic_excedido
+                    SET MESSAGE_TEXT = "Nao e permitido adicionar pet, pois o servico_oferecido possui restricao individual";
+            END IF;
+        END IF;
+
+
+        -- Validação da espécie do pet
+        OPEN cur_especie;
+        especie_loop: LOOP
+            FETCH cur_especie INTO id_esp_cur;
+
+            IF cur_done THEN
+                LEAVE especie_loop;
+            END IF;
+
+            IF id_esp_cur <> id_esp_este THEN
+                SIGNAL err_esp_incompativel
+                    SET MESSAGE_TEXT = "Especie do pet inserido e incompativel com restricoes de especie do servico_oferecido";
+            END IF;
+        END LOOP;
+        CLOSE cur_especie;
+    END;$$
+DELIMITER ;
+
+
+DELIMITER $$
+CREATE TRIGGER trg_pet_servico_insert
+    BEFORE INSERT
+    ON pet_servico
+    FOR EACH ROW
+    BEGIN
+        -- Variáveis de definição do valor_pet
+        DECLARE tipo_p VARCHAR(16); /*Tipo da cobrança do serviço*/
+        DECLARE p DECIMAL(8,2); /* Preço cobrado pelo serviço */
+
+        -- Variáveis de validação do dono
+        DECLARE id_cli_este INT; /* cliente associado a este pet */
+        DECLARE id_pet_outro INT; /* id de outro pet associado a este info_servico */
+        DECLARE id_cli_outro INT; /* cliente associado a outro pet do info_servico*/
+
+        -- Variáveis de validação da espécie
+        DECLARE id_ser_ofer INT;
+        DECLARE id_esp_este INT;
+        DECLARE id_esp_cur INT;
+        DECLARE cur_done INT DEFAULT FALSE;
+        -- Variáveis de validação de participantes
+        DECLARE restr_partic ENUM("individual", "coletivo");
+
+        -- Condições de erro
+        DECLARE err_dono_diferente CONDITION FOR SQLSTATE '45000'; /* pet inserido pertence a outro dono */
+        DECLARE err_esp_incompativel CONDITION FOR SQLSTATE '45001'; /* espécie do pet é incompatível com as das restrições de espécie aplicadas */
+        DECLARE err_qtd_partic_excedido CONDITION FOR SQLSTATE '45002'; /* não é possível adicionar outro pet, devido à restriçao de participantes aplicada  */
+
+         -- Cursores
+        DECLARE cur_especie CURSOR FOR
+            SELECT
+                id_especie
+                FROM restricao_especie
+                WHERE id_servico_oferecido = (
+                    SELECT id_servico_oferecido
+                        FROM info_servico
+                        WHERE id = NEW.id_info_servico
+                );
+
+        -- Handlers
+        DECLARE CONTINUE HANDLER FOR NOT FOUND SET cur_done = TRUE;
+
+        -- Obtendo informação sobre a forma de cobrança do serviço
+        SELECT
+            preco, tipo_preco
+        INTO
+            p, tipo_p
+        FROM
+            servico_oferecido
+        WHERE
+            id = (
+                SELECT id_servico_oferecido
+                FROM info_servico
+                WHERE id = NEW.id_info_servico 
+        LIMIT 1);
+
+        SET @rodei = FALSE;
+    	SET @serv = NEW.id_info_servico;
+        
+        IF tipo_p = 'pet' THEN
+        	SET @rodei = TRUE;
+            SET NEW.valor_pet = p;
+        ELSE
+            SET NEW.valor_pet = NULL;
+        END IF;
+		SET @valor_pet = p;
+        -- Buscando o id de outro pet existe para o mesmo info_servico
+        SELECT id_pet
+            INTO id_pet_outro
+            FROM pet_servico
+            WHERE
+                id_info_servico = NEW.id_info_servico
+            LIMIT 1;
+
+        -- Validação dos participantes do info_servico
+        SELECT restricao_participante INTO restr_partic FROM servico_oferecido WHERE id = (
+            SELECT id_servico_oferecido FROM info_servico WHERE id = NEW.id_info_servico
+        );
+
+        IF id_pet_outro IS NOT NULL THEN /* Já existe outro pet para o info_servico */
+
+            -- Validação se o pet pertence ao mesmo dono
+            SELECT id_cliente, id_especie INTO id_cli_este, id_esp_este FROM pet WHERE id = NEW.id_pet;
+            SELECT id_cliente INTO id_cli_outro FROM pet WHERE id = id_pet_outro;
+
+            IF id_cli_este <> id_cli_outro THEN
+                SIGNAL err_dono_diferente
+                    SET MESSAGE_TEXT = "Pet nao pode ser inserido, pois pertence a um dono diferente dos que já existem para este info_servico";
             END IF;
 
             IF restr_partic = "individual" THEN
@@ -1771,7 +1894,7 @@ CREATE PROCEDURE agendamento
         DECLARE id_info_serv INT; /* PK da tabela info_servico*/
         DECLARE dt_hr_marc DATETIME;
         DECLARE objInfo JSON;
-
+		DECLARE cadastrarPacote INT;
         -- Condições
         DECLARE err_not_object CONDITION FOR SQLSTATE '45000';
         DECLARE err_no_info_object CONDITION FOR SQLSTATE '45001';
@@ -1784,7 +1907,7 @@ CREATE PROCEDURE agendamento
 
         SET dt_hr_marc = CAST(JSON_UNQUOTE(JSON_EXTRACT(objAgend, '$.dtHrMarcada')) AS DATETIME);
         SET objInfo = JSON_EXTRACT(objAgend, '$.info');
-
+		
         -- Processos para inserção de agendamento
         IF acao = "insert" THEN
             IF ISNULL(objInfo) THEN
@@ -1797,7 +1920,8 @@ CREATE PROCEDURE agendamento
 
             -- Inserção do agendamento
             INSERT INTO agendamento (id_info_servico, dt_hr_marcada) VALUE (id_info_serv, dt_hr_marc);
-
+            
+			SET @id_agendamento = LAST_INSERT_ID();            
         ELSEIF acao = "update" THEN
             -- Obtendo o id do agendamento a ser atualizado
             SET id_agend = JSON_EXTRACT(objAgend, '$.id');
@@ -1826,10 +1950,11 @@ CREATE PROCEDURE agendamento
 
             -- Altera registro do servico_realizad
             UPDATE agendamento SET dt_hr_marcada = dt_hr_marc WHERE id = id_agend;
+            
+			SET @id_agendamento = id_agend;            
         END IF;
     END;$$
 DELIMITER ;
-
 
 
 
@@ -1889,7 +2014,8 @@ CREATE PROCEDURE servico_realizado
 
             -- Inserção do serviço realizado
             INSERT INTO servico_realizado (id_info_servico, dt_hr_inicio, dt_hr_fim) VALUE (id_info_serv, dt_hr_ini, dt_hr_fin);
-
+            
+			SELECT id_serv_real AS id_servico_realizado;
         ELSEIF acao = "update" THEN
             SET id_serv_real = JSON_EXTRACT(objServ, '$.id');
 
@@ -1917,6 +2043,8 @@ CREATE PROCEDURE servico_realizado
 
             -- Altera registro do servico_realizad
             UPDATE servico_realizado SET dt_hr_inicio = dt_hr_ini, dt_hr_fim = dt_hr_fin WHERE id = id_serv_real;
+            
+            SELECT id_serv_real AS id_servico_realizado;
         END IF;
     END;$$
 DELIMITER ;
@@ -1952,7 +2080,7 @@ CREATE PROCEDURE incidente (
 
         SET id_serv_real = JSON_EXTRACT(objInc, '$.servicoRealizado');
         SET tipo_inc = JSON_UNQUOTE(JSON_EXTRACT(objInc, '$.tipo'));
-        SET dt_hr_ocorr = CAST(JSON_UNQUOTE(JSON_EXTRACT(objInc, '$.dtHrOcorrido')) AS DATETIME);
+        SET dt_hr_ocorr = CAST(JSON_UNQUOTE(JSON_EXTRACT(objInc, '$.dtHrOcorrido')) AS DATETIME); /* Validação é feita por trigger na tabela "incidente" */
         SET rel = JSON_UNQUOTE(JSON_EXTRACT(objInc, '$.relato'));
         SET med_tom = JSON_UNQUOTE(JSON_EXTRACT(objInc, '$.medidaTomada'));
 
@@ -1963,7 +2091,7 @@ CREATE PROCEDURE incidente (
                 id_servico_realizado, tipo, dt_hr_ocorrido, relato, medida_tomada)
                 VALUE (id_serv_real, tipo_inc, dt_hr_ocorr, rel, med_tom);
             SET id_inc = LAST_INSERT_ID();
-
+			SELECT id_inc AS id_incidente;
         ELSEIF acao IN ("update", "delete") THEN
             SET id_inc = JSON_EXTRACT(objInc, '$.id');
 
@@ -1991,7 +2119,8 @@ CREATE PROCEDURE incidente (
                                 relato = rel,
                                 medida_tomada = med_tom
                             WHERE id = id_inc;
-
+            
+						SELECT id_inc AS id_incidente;
                     WHEN "delete" THEN
                         DELETE FROM incidente WHERE id = id_inc;
                 END CASE;
@@ -1999,6 +2128,7 @@ CREATE PROCEDURE incidente (
         END IF;
     END;$$
 DELIMITER ;
+
 
 DELIMITER $$
 CREATE PROCEDURE pacote_agend (
@@ -2096,7 +2226,7 @@ CREATE PROCEDURE pacote_agend (
 
                 SET p_count = p_count + 1;
             END WHILE;
-
+			SELECT id_pac AS id_pacote_agendamento;
         ELSEIF acao IN ("update", "delete") THEN
             SET id_pac = JSON_EXTRACT(objPac, '$.id');
 
@@ -2124,70 +2254,69 @@ CREATE PROCEDURE pacote_agend (
                                 qtd_recorrencia = qtd_rec  /* Implementar trigger para cancelar ou excluir agendamentos que sobrarem ao diminuir ou adicionar agendamentos ao aumentar */
                             WHERE id = id_pac;
 
-                            -- Loop de atualização de dia_pac
-                            SET d_count = 0;
-                            SET d_length = JSON_LENGTH(arrayObjDiaPac);
-                            IF (arrayObjDiaPac IS NOT NULL) THEN /* Se dias de recorrência deverão ser atualizadas */
-                                SET arrayDiaPac = JSON_ARRAY();
+                        -- Loop de atualização de dia_pac
+                        SET d_count = 0;
+                        SET d_length = JSON_LENGTH(arrayObjDiaPac);
+                        IF (arrayObjDiaPac IS NOT NULL) THEN /* Se dias de recorrência deverão ser atualizadas */
+                            SET arrayDiaPac = JSON_ARRAY();
 
-                                -- Cria array json com inteiros representando os dias e atualiza os registros dos dias do pacote
-                                WHILE d_count < d_length DO
-                                    -- Obtem objeto da array
-                                    SET id_dia_pac = JSON_EXTRACT(arrayObjDiaPac, CONCAT('$[', d_count, '].id'));
-                                    SET dia_pac = JSON_EXTRACT(arrayObjDiaPac, CONCAT('$[', d_count, '].dia'));
+                            -- Cria array json com inteiros representando os dias e atualiza os registros dos dias do pacote
+                            WHILE d_count < d_length DO
+                                -- Obtem objeto da array
+                                SET id_dia_pac = JSON_EXTRACT(arrayObjDiaPac, CONCAT('$[', d_count, '].id'));
+                                SET dia_pac = JSON_EXTRACT(arrayObjDiaPac, CONCAT('$[', d_count, '].dia'));
 
-                                    IF id_dia_pac IS NULL THEN
-                                        INSERT INTO dia_pacote (id_pacote_agend, dia) VALUE (id_pac, dia_pac);
-                                        SET id_dia_pac = LAST_INSERT_ID();
-                                    END IF;
+                                IF id_dia_pac IS NULL THEN
+                                    INSERT INTO dia_pacote (id_pacote_agend, dia) VALUE (id_pac, dia_pac);
+                                    SET id_dia_pac = LAST_INSERT_ID();
+                                END IF;
 
-                                    UPDATE dia_pacote SET dia = dia_pac WHERE id = id_dia_pac;
+                                UPDATE dia_pacote SET dia = dia_pac WHERE id = id_dia_pac;
 
-                                    SET arrayDiaPac = JSON_ARRAY_INSERT(arrayDiaPac, '$[0]', id_dia_pac);
+                                SET arrayDiaPac = JSON_ARRAY_INSERT(arrayDiaPac, '$[0]', id_dia_pac);
 
-                                    SET d_count = d_count + 1;
-                                END WHILE;
+                                SET d_count = d_count + 1;
+                            END WHILE;
 
-                                -- Apagando dias omitidos da array
-                                DELETE FROM dia_pacote
-                                    WHERE
-                                        id_pacote_agend = id_pac
-                                        AND (JSON_CONTAINS(arrayDiaPac, id)) IS NOT TRUE;   /* Implementar trigger que cancela agendamentos futuros não preparados */
+                            -- Apagando dias omitidos da array
+                            DELETE FROM dia_pacote
+                                WHERE
+                                    id_pacote_agend = id_pac
+                                    AND (JSON_CONTAINS(arrayDiaPac, id)) IS NOT TRUE;   /* Implementar trigger que cancela agendamentos futuros não preparados */
 
-                            END IF;
+                        END IF;
 
-                            -- Loop de atualizacao de pet_pacote
-                            SET p_count = 0;
-                            SET p_length = JSON_LENGTH(arrayObjPetPac);
-                            IF (arrayObjPetPac IS NOT NULL) THEN /* Se pets deverão ser atualizadas */
-                                SET arrayPetPac = JSON_ARRAY();
+                        -- Loop de atualizacao de pet_pacote
+                        SET p_count = 0;
+                        SET p_length = JSON_LENGTH(arrayObjPetPac);
+                        IF (arrayObjPetPac IS NOT NULL) THEN /* Se pets deverão ser atualizadas */
+                            SET arrayPetPac = JSON_ARRAY();
 
-                                -- Cria array json com inteiros representando os IDs de tabela "pet_pacote" e atualiza os registros dos pets do pacote
-                                WHILE p_count < p_length DO
-                                    -- Obtem objeto da array
-                                    SET id_pet_pac = JSON_EXTRACT(arrayObjPetPac, CONCAT('$[', p_count, '].id'));
-                                    SET id_pet_cliente = JSON_EXTRACT(arrayObjPetPac, CONCAT('$[', p_count, '].pet'));
+                            -- Cria array json com inteiros representando os IDs de tabela "pet_pacote" e atualiza os registros dos pets do pacote
+                            WHILE p_count < p_length DO
+                                -- Obtem objeto da array
+                                SET id_pet_pac = JSON_EXTRACT(arrayObjPetPac, CONCAT('$[', p_count, '].id'));
+                                SET id_pet_cliente = JSON_EXTRACT(arrayObjPetPac, CONCAT('$[', p_count, '].pet'));
 
-                                    IF id_pet_pac IS NULL THEN
-                                        INSERT INTO pet_pacote (id_pacote_agend, id_pet) VALUE (id_pac, id_pet_cliente);
-                                        SET id_pet_pac = LAST_INSERT_ID();
-                                    END IF;
+                                IF id_pet_pac IS NULL THEN
+                                    INSERT INTO pet_pacote (id_pacote_agend, id_pet) VALUE (id_pac, id_pet_cliente);
+                                    SET id_pet_pac = LAST_INSERT_ID();
+                                END IF;
 
-                                    UPDATE pet_pacote SET id_pet = id_pet_cliente WHERE id = id_pet_pac;
+                                UPDATE pet_pacote SET id_pet = id_pet_cliente WHERE id = id_pet_pac;
 
-                                    SET arrayPetPac = JSON_ARRAY_INSERT(arrayPetPac, '$[0]', id_pet_pac);
+                                SET arrayPetPac = JSON_ARRAY_INSERT(arrayPetPac, '$[0]', id_pet_pac);
 
-                                    SET p_count = p_count + 1;
-                                END WHILE;
+                                SET p_count = p_count + 1;
+                            END WHILE;
 
-                                -- Apagando pets omitidos da array
-                                DELETE FROM pet_pacote
-                                    WHERE
-                                        id_pacote_agend = id_pac
-                                        AND (JSON_CONTAINS(arrayPetPac, id)) IS NOT TRUE;   /* Implementar trigger que cancela agendamentos futuros não preparados */
+                            -- Apagando pets omitidos da array
+                            DELETE FROM pet_pacote
+                                WHERE
+                                    id_pacote_agend = id_pac
+                                    AND (JSON_CONTAINS(arrayPetPac, id)) IS NOT TRUE;   /* Implementar trigger que cancela agendamentos futuros não preparados */
 
-                            END IF;
-
+                        END IF;
                     WHEN "delete" THEN
                         DELETE FROM pacote_agend WHERE id = id_pac; /* refential action nas tabelas dias e pets garantem a exclusão delas */
                 END CASE;
@@ -2213,8 +2342,8 @@ DELIMITER ;
 DELIMITER $$
 CREATE PROCEDURE get_valores_info_servico(
         IN NEW_id_info_serv INT,
-        INOUT NEW_valor_servico INT,
-        INOUT NEW_valor_total INT
+        INOUT NEW_valor_servico DECIMAL(8,2),
+        INOUT NEW_valor_total DECIMAL(8,2)
     )
     BEGIN
         DECLARE tipo_p VARCHAR(16); /* Valor da coluna "tipo_preco" */

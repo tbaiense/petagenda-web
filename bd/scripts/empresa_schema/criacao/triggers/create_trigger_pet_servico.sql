@@ -13,6 +13,7 @@
         - Validar se o pet pode ser inserido, verificando a quantidade de pets
         já presentes (restrição de participantes);
  * */
+
 DELIMITER $$
 CREATE TRIGGER trg_pet_servico_insert
     BEFORE INSERT
@@ -66,15 +67,19 @@ CREATE TRIGGER trg_pet_servico_insert
             id = (
                 SELECT id_servico_oferecido
                 FROM info_servico
-                WHERE
-                    id = NEW.id_info_servico LIMIT 1);
+                WHERE id = NEW.id_info_servico 
+        LIMIT 1);
 
+        SET @rodei = FALSE;
+    	SET @serv = NEW.id_info_servico;
+        
         IF tipo_p = 'pet' THEN
+        	SET @rodei = TRUE;
             SET NEW.valor_pet = p;
         ELSE
             SET NEW.valor_pet = NULL;
         END IF;
-
+		SET @valor_pet = p;
         -- Buscando o id de outro pet existe para o mesmo info_servico
         SELECT id_pet
             INTO id_pet_outro

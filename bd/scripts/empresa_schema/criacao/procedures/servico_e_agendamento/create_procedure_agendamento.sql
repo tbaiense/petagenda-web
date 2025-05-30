@@ -81,7 +81,7 @@ CREATE PROCEDURE agendamento
         DECLARE id_info_serv INT; /* PK da tabela info_servico*/
         DECLARE dt_hr_marc DATETIME;
         DECLARE objInfo JSON;
-
+		DECLARE cadastrarPacote INT;
         -- Condições
         DECLARE err_not_object CONDITION FOR SQLSTATE '45000';
         DECLARE err_no_info_object CONDITION FOR SQLSTATE '45001';
@@ -107,7 +107,8 @@ CREATE PROCEDURE agendamento
 
             -- Inserção do agendamento
             INSERT INTO agendamento (id_info_servico, dt_hr_marcada) VALUE (id_info_serv, dt_hr_marc);
-
+            
+			SET @id_agendamento = LAST_INSERT_ID();            
         ELSEIF acao = "update" THEN
             -- Obtendo o id do agendamento a ser atualizado
             SET id_agend = JSON_EXTRACT(objAgend, '$.id');
@@ -136,6 +137,8 @@ CREATE PROCEDURE agendamento
 
             -- Altera registro do servico_realizad
             UPDATE agendamento SET dt_hr_marcada = dt_hr_marc WHERE id = id_agend;
+            
+			SET @id_agendamento = id_agend;            
         END IF;
     END;$$
 DELIMITER ;

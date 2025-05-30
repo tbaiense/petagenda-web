@@ -69,7 +69,7 @@ CREATE TRIGGER trg_pacote_agend_update
             SET objAgend = JSON_INSERT(objAgend, '$.info', JSON_OBJECT());
             SET objAgend = JSON_INSERT(objAgend, '$.info.servico', OLD.id_servico_oferecido);
             SET objAgend = JSON_INSERT(objAgend, '$.info.pets', JSON_ARRAY());
-
+            
             -- Preenchendo array de pets
             OPEN cur_pets;
             pets_loop: LOOP
