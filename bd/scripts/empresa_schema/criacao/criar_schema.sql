@@ -422,7 +422,7 @@ CREATE OR REPLACE VIEW vw_servico_realizado AS
         s_r.valor_total AS valor_total,
         i_s.*
     FROM servico_realizado AS s_r
-        INNER JOIN vw_info_servico AS i_s ON (i_s.id = s_r.id_info_servico)
+        INNER JOIN vw_info_servico AS i_s ON (i_s.id_info_servico = s_r.id_info_servico)
     ORDER BY 
         dt_hr_fim DESC;
 
