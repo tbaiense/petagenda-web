@@ -120,6 +120,7 @@ const CadastrarPets = () => {
 
           <div className={styles.linhaDoisCampos}>
 
+            {/* Colocar um select em vez de input */}
             <div className={styles.estiloCampos}>
               <label>Espécie</label>
               <input type="text" placeholder="Digite a espécie" {...register("especie", { required: true })} />
@@ -131,6 +132,23 @@ const CadastrarPets = () => {
             </div>
 
           </div>
+
+          <div className={styles.linhaDoisCampos}>
+            <div className={styles.estiloCampos}>
+                <label htmlFor="">Cor</label>
+                <input type="text" name="" id="" placeholder="Digite a cor" {...register("raca", { required: true })}/>
+            </div>
+            <div className={styles.estiloCampos}>
+                <label htmlFor="">Porte</label>
+                <select name="" id="" {...register("raca", { required: true })}>
+                  <option value="">Selecione</option>
+                  <option value="">Grande Porte</option>
+                  <option value="">Médio Porte</option>
+                  <option value="">Pequeno Porte</option>
+                </select>
+            </div>
+          </div>
+
 
           <div className={styles.linhaComCheckbox}>
 
@@ -146,6 +164,11 @@ const CadastrarPets = () => {
                 <option value="M">Masculino</option>
                 <option value="F">Feminino</option>
               </select>
+            </div>
+
+            <div className={styles.estiloCampos}>
+              <label htmlFor="">Data de Nascimento</label>
+              <input type="date" />
             </div>
 
           </div>
