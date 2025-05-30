@@ -31,11 +31,11 @@ const CadastrarClientes = () => {
       setServicosSelecionados(prev => [...prev, servico]);
     }
   };
-
+  // Aqui é somente para teste
   const servicos = [
-    { id: 1, nome: "Corte de Cabelo", categoria: "Beleza" },
-    { id: 2, nome: "Limpeza de Pele", categoria: "Estética" },
-    { id: 3, nome: "Consulta Jurídica", categoria: "Consultoria" },
+    { id: 1, nome: "Banho & Tosa", categoria: "Higiene e Estéticaa" },
+    { id: 2, nome: "Check-up Veterinário ", categoria: "Saúde" },
+    { id: 3, nome: "Creche Pet Social", categoria: "Bem-estar e Entretenimento" },
   ];
 
   // useEffect(() => {
