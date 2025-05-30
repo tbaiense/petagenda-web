@@ -9,9 +9,10 @@ import { useNavigate } from "react-router-dom";
 
 const CadastrarClientes = () => {
   const { token } = useAuth();
-  const [servicos, setServicos] = useState([]);
+  // const [servicos, setServicos] = useState([]);
   const [enderecosExtras, setEnderecosExtras] = useState([]);
   const navigate = useNavigate()
+  const [servicosSelecionados, setServicosSelecionados] = useState([]);
 
   const {
       register,
@@ -21,29 +22,51 @@ const CadastrarClientes = () => {
       watch
   } = useForm();
 
-  useEffect(() => {
-    // Pego os Serviços oferecidos do banco de dados
-    fetch(`${api.URL}/empresa/:id/servicos-oferecido`, {
-        method: "GET",
-        headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json",
-        },
-    })
-        // Converto os Serviços em JSON 
-        .then(res => res.json())
-        .then(data => {
-            setServicos(data);
-        })
-        .catch(error => {
-            console.error("Erro ao buscar Serviços:", error);
-        });
-  }, []);
+  // Aqui esta pegando o serviço pelo id 
+  const handleSelectChange = (e) => {
+    const selectedId = e.target.value;
+    const servico = servicos.find((s) => s.id.toString() === selectedId);
+
+    if (servico && !servicosSelecionados.some(s => s.id === servico.id)) {
+      setServicosSelecionados(prev => [...prev, servico]);
+    }
+  };
+
+  const servicos = [
+    { id: 1, nome: "Corte de Cabelo", categoria: "Beleza" },
+    { id: 2, nome: "Limpeza de Pele", categoria: "Estética" },
+    { id: 3, nome: "Consulta Jurídica", categoria: "Consultoria" },
+  ];
+
+  // useEffect(() => {
+  //   // Pego os Serviços oferecidos do banco de dados
+  //   fetch(`${api.URL}/empresa/:id/servicos-oferecido`, {
+  //       method: "GET",
+  //       headers: {
+  //           "Authorization": `Bearer ${token}`,
+  //           "Content-Type": "application/json",
+  //       },
+  //   })
+  //       // Converto os Serviços em JSON 
+  //       .then(res => res.json())
+  //       .then(data => {
+  //           setServicos(data);
+  //       })
+  //       .catch(error => {
+  //           console.error("Erro ao buscar Serviços:", error);
+  //       });
+  // }, []);
 
   const onSubmit = (data) => {
+
+    const allDados = {
+      ...data,
+      servicosRequeridos: servicosSelecionados,
+    }
+
     navigate('/dashboard/pets', {
       state:{
-        all: data
+        all: allDados,
       }
     })
   }
@@ -51,13 +74,17 @@ const CadastrarClientes = () => {
   const onError = (data) => {
     console.log(data)
   }
+
   const adicionarEndereco = () => {
     console.log("Adicionando endereço extra");
     setEnderecosExtras(prev => [...prev,{}]);
   }
+
   const removerEndereco = (indexToRemove) => {
     setEnderecosExtras(prev => prev.filter((_, index) => index !== indexToRemove));
   }
+
+
   return (
     <div>
       <div className={styles.tituloPage}>
@@ -128,9 +155,13 @@ const CadastrarClientes = () => {
               </button>
             </div>
             <hr />
-            <CamposEndereco register={register}/>
-            {enderecosExtras.map((_,index) => (
-              <CamposEndereco key={index} register={register} index={index} onRemove={() => removerEndereco(index)}/>
+            <h5>Endereço de busca</h5>
+            <CamposEndereco register={register} index={null}/>
+            {enderecosExtras.map((_, index) => (
+              <>
+                <h5 key={`title-${index}`}>Endereço de entrega</h5>
+                <CamposEndereco key={index} register={register} index={index} onRemove={() => removerEndereco(index)} />
+              </>
             ))}
       
           </div>
@@ -142,12 +173,10 @@ const CadastrarClientes = () => {
               <div>
                 <div className={styles.estiloCampos}>
                   <label htmlFor="">Serviços</label>
-                  <select>
-                    <option value="">Selecione o serviço</option>
 
                     {/* VAi FUNIONAR DEPOIS*/}
                     
-                    {/* <select {...register("servico", { required: "Selecione um serviço" })}>
+                    <select {...register("servico", { required: "Selecione um serviço" })} id="servico" onChange={handleSelectChange}>
 
                         <option value="">Selecione um serviço</option>
 
@@ -155,8 +184,8 @@ const CadastrarClientes = () => {
                             <option key={servico.id} value={servico.id}>{servico.nome}</option>
                         ))}
 
-                    </select> */}
-                  </select>
+                    </select>
+
                 </div>
 
                 {/* Aqui vai ficar a logica de preencher a tabela com o nome e categoria do serviço */}
@@ -170,10 +199,10 @@ const CadastrarClientes = () => {
                     </thead>
                     <tbody>
                       {/* No lugar de clientes, eu coloco o objeto serviços que irá ser retornado do banco */}
-                      {clientes.map((cliente,index) => (
-                        <tr key={index}>
-                          <td>{cliente.nome}</td>
-                          <td>{cliente.telefone}</td>
+                      {servicosSelecionados.map((servico) => (
+                        <tr key={servico.id}>
+                          <td>{servico.nome}</td>
+                          <td>{servico.categoria}</td>
                         </tr>
                       ))}
                     </tbody>

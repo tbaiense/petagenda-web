@@ -1,3 +1,148 @@
-.inputTextArea{
-    resize: none;
+/* ======================================== Geral =========================================== */
+
+.layoutCadastro {
+  display: flex;
+  justify-content: center;
+  padding: 1rem;
+}
+
+form {
+  width: 100%;
+  max-width: 550px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* ===================================== Geral Input ========================================= */
+
+form input{
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    padding: 5px 1rem;
+    border-radius: 7px;
+    transition: all 0.3s ease-in-out;
+    outline: none; 
+}
+form input:focus{
+    border-color: #1FAF30;
+    box-shadow: 0 0 10px rgba(31, 175, 48, 0.6); 
+}
+
+/* ===================================== Geral Select ======================================== */
+
+form select{
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    padding: 5px 1rem;
+    border-radius: 7px;
+    transition: all 0.3s ease-in-out;
+    outline: none;
+}
+form select:focus{
+    border-color: #1FAF30;
+    box-shadow: 0 0 10px rgba(31, 175, 48, 0.6);     
+}
+
+/* ===================================== Geral TextArea ====================================== */
+
+form textarea{
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    padding: 5px 1rem;
+    border-radius: 7px;
+    transition: all 0.3s ease-in-out;
+    outline: none;
+}
+form textarea:focus{
+    border-color: #1FAF30;
+    box-shadow: 0 0 10px rgba(31, 175, 48, 0.6);  
+}
+
+/* ======================================== Titulo =========================================== */
+
+.titulo{
+    text-align: center;
+    padding-top: 0.5rem;
+}
+
+/* ==================================== Campos comuns ======================================== */
+
+
+.estiloCampos {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* ==================================== Área do textArea ===================================== */
+
+
+.inputTextArea {
+  resize: none;
+  min-height: 80px;
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+/* ================================== Checkbox alinhado ====================================== */
+
+
+.checkboxGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ================================== Grid com duas colunas ================================== */
+
+
+.linhaDoisCampos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+/* ================================= Campo checkbox + select ================================= */
+
+
+.linhaComCheckbox {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+/* =============================== Layout da seção de vacina ================================= */
+
+.cartaoVacina {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.inputFile{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* ========================================= Botão =========================================== */
+
+.botton{
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    padding-bottom: 1rem;
+}
+
+.botton button{
+  padding: 5px 10px;
+  border: none;
+  border-radius: 12px;
+  transition: background-color 0.3s ease;
+  background-color: #1FAF30;
+  color: white;
+}
+
+.botton button:hover {
+  background-color: #0e811c;
+  cursor: pointer;
 }
