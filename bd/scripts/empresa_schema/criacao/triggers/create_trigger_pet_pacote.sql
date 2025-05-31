@@ -1,5 +1,5 @@
 DELIMITER $$
-CREATE TRIGGER trg_pet_pacote_insert /* Validação semelhante à aplicada à tabela pet_pacote */
+CREATE TRIGGER trg_pet_pacote_insert /* Validação semelhante à aplicada à tabela pet_servico */
     BEFORE INSERT
     ON pet_pacote
     FOR EACH ROW
