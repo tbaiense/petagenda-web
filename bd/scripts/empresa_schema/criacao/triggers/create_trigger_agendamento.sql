@@ -47,7 +47,29 @@ CREATE TRIGGER trg_agendamento_update
     BEGIN
         DECLARE dt_hr_ini DATETIME DEFAULT NEW.dt_hr_marcada;
         DECLARE dt_hr_fin DATETIME DEFAULT CURRENT_TIMESTAMP();
+		DECLARE id_func INT;
 
+		DECLARE err_alt_est CONDITION FOR SQLSTATE '45001';
+
+		IF OLD.estado = "criado" AND NEW.estado IN ("pendente", "concluido") THEN
+			SIGNAL err_alt_est SET MESSAGE_TEXT = 'Não é possível alterar estado do agendamento pois o funcionário ainda não foi atribuído';
+		END IF;
+
+		IF NEW.estado IN ("criado", "preparado", "pendente") AND OLD.estado IN ("concluido", "cancelado") THEN 
+			SIGNAL err_alt_est SET MESSAGE_TEXT = 'Não é possível atribuir um estado anterior a um agendamento concluído ou cancelado';
+		END IF;
+		
+		-- Buscando funcionário
+        SELECT id_funcionario INTO id_func FROM info_servico WHERE id = NEW.id_info_servico;
+		
+		IF id_func IS NULL AND OLD.estado = "criado" AND NEW.estado = "preparado" THEN 
+			SIGNAL err_alt_est SET MESSAGE_TEXT = "Não é possível atribuír estado de preparado pois não foi definido o funcionário atribuído";
+		END IF;
+		
+		IF NEW.estado IN ("criado", "preparado") AND OLD.estado IN ("preparado", "pendente") THEN 
+			SIGNAL err_alt_est SET MESSAGE_TEXT = "Não é possível atribuír estado de anterior ou igual ao atual ao agendamento";
+		END IF;
+		
         IF NEW.estado = "concluido" AND NEW.id_servico_realizado IS NULL AND OLD.estado IN ("preparado", "pendente") THEN
             IF dt_hr_ini > dt_hr_fin OR DATEDIFF(dt_hr_fin, dt_hr_ini) <> 0 THEN
                 SET dt_hr_ini = NULL;
