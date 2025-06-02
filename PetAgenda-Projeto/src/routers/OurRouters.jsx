@@ -51,74 +51,55 @@ const router = createBrowserRouter([
       {
         path: "/dashboard",
         element: (
-          //<PrivateRoute>
             <CadastroEmpresa />
-          //</PrivateRoute>
         ),
       },
       {
         path: "empresa",
         element: (
-
-          //<PrivateRoute>
             <ViewEmpresa/>
-          //</PrivateRoute>
         ),
       },
       {
         path: "Planos",
         element: (
-          //<PrivateRoute>
             <PlanosEmpresa />
-          //</PrivateRoute>
         ),
       },
       {
         path:"servicos",
         element:(
-          //<PrivateRoute>
             <CadastrarServico/>
-          //</PrivateRoute>
         )
       },
       {
         path:"funcionarios",
         element:(
-          //<PrivateRoute>
             <CadastroFuncionario/>
-          //</PrivateRoute>
         )
       },
       {
         path:"clientes",
         element:(
-          //<PrivateRoute>
             <CadastrarClientes/>
-          //</PrivateRoute>
         )
       },
       {
         path:"pets",
         element:(
-          //<PrivateRoute>
             <CadastrarPets/>
-          //</PrivateRoute>
         )
       },
       {
         path:"agendamentos",
         element:(
-          //<PrivateRoute>
             <Agendamento/>
-          //</PrivateRoute>
         )
       },
       {
         path:"relatorios",
         element:(
-          //<PrivateRoute>
             <Relatorios/>
-          //</PrivateRoute>
         )
       }
     ]

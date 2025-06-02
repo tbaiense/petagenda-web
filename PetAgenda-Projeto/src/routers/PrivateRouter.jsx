@@ -5,14 +5,14 @@ import { useEffect } from 'react';
 import api from "../api";
 
 function PrivateRoute({ children }) { 
-  const { token } = useAuth();
+  const { getToken } = useAuth();
   const navigate = useNavigate();
   
   useEffect(() => {
-    console.log('valor do token: ', token);
+    console.log('valor do token: ', getToken());
 
     // Verifica se existe token ou não
-    if (!token) {
+    if (!getToken()) {
       console.error('token inexistente');
       navigate('/login');
       return;
@@ -34,7 +34,7 @@ function PrivateRoute({ children }) {
         });
     };
 
-    verifyToken(token);
+    verifyToken(getToken());
   },[]);
 
   return children;

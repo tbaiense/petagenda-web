@@ -16,7 +16,7 @@ import {
 import "./Login.css";
 function Login() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { setToken } = useAuth();
 
   const checkCredentials = async (userCredentials) => {
     console.log('checando credenciais...');
@@ -32,10 +32,9 @@ function Login() {
         switch (response.status) {
           case 200: {
             const jsonResponse = await response.json();
-            const jwt = jsonResponse.token;
 
-            if (jwt) {
-              login(jwt);
+            if (jsonResponse.token) {
+              setToken(jsonResponse.token); // Armazena no local storage
             }
 
             navigate('/dashboard');
