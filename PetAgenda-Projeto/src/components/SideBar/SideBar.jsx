@@ -16,12 +16,12 @@ import {
 import { PiBuildingOfficeBold } from "react-icons/pi";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const SideBar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
   const toggleSidebar = () => setIsOpen(!isOpen);
-
   const toggleDropdown = (name) => {
     setOpenDropdown(openDropdown === name ? null : name);
   };
@@ -29,19 +29,19 @@ const SideBar = () => {
   return (
     <nav className={`${styles.sidebar} ${isOpen ? styles.openSidebar : ""}`}>
       <div className={styles.sidebar_content}>
-        <div className={styles.user}>
+        <Link to="/empresa/informacoes" className={styles.user}>
           <img className={styles.user_avatar} src={iconPerfil} alt="Perfil" />
           <div className={styles.user_infos}>
             <span className={styles.itemDescription}>Fulano de Tal</span>
             <span className={styles.itemDescription}>Administrador</span>
           </div>
-        </div>
+        </Link>
 
         <ul className={styles.side_items}>
           <li className={styles.sideItem}>
             <Link to="/dashboard">
               <FaHome className={styles.branco} />
-              <span className={styles.itemDescription}>Dashboard</span>
+              <span className={styles.itemDescription}>Home</span>
             </Link>
           </li>
 
@@ -70,12 +70,12 @@ const SideBar = () => {
             {isOpen && openDropdown === "agendamentos" && (
               <ul className={styles.dropdownMenu}>
                 <li className={styles.dropdownItem}>
-                  <Link to="/dashboard/agendamentos/novo">
+                  <Link to="/empresa/agendamentos/cadastrar">
                     Novo Agendamento
                   </Link>
                 </li>
                 <li className={styles.dropdownItem}>
-                  <Link to="/dashboard/agendamentos/lista">
+                  <Link to="/empresa/agendamentos">
                     Lista de Agendamentos
                   </Link>
                 </li>
@@ -85,10 +85,10 @@ const SideBar = () => {
               <ul className={styles.floatingDropdown}>
                 <p className={styles.tituloDropdow}>Agendamento</p>
                 <li>
-                  <Link to="/dashboard/relatorios/mensal">Novo</Link>
+                  <Link to="/empresa/agendamentos/cadastrar">Novo</Link>
                 </li>
                 <li>
-                  <Link to="/dashboard/relatorios/anual">Lista</Link>
+                  <Link to="/empresa/agendamentos">Lista</Link>
                 </li>
               </ul>
             )}
@@ -116,10 +116,10 @@ const SideBar = () => {
             {isOpen && openDropdown === "pets" && (
               <ul className={styles.dropdownMenu}>
                 <li className={styles.dropdownItem}>
-                  <Link to="/dashboard/pets/cadastrar">Cadastrar Pet</Link>
+                  <Link to="/empresa/pets/cadastrar">Cadastrar Pet</Link>
                 </li>
                 <li className={styles.dropdownItem}>
-                  <Link to="/dashboard/pets/lista">Lista de Pets</Link>
+                  <Link to="/empresa/pets">Lista de Pets</Link>
                 </li>
               </ul>
             )}
@@ -127,10 +127,10 @@ const SideBar = () => {
               <ul className={styles.floatingDropdown}>
                 <p className={styles.tituloDropdow}>Pet</p>
                 <li>
-                  <Link to="/dashboard/relatorios/mensal">Cadastrar</Link>
+                  <Link to="/empresa/pets/cadastrar">Cadastrar</Link>
                 </li>
                 <li>
-                  <Link to="/dashboard/relatorios/anual">Lista</Link>
+                  <Link to="/empresa/pets">Lista</Link>
                 </li>
               </ul>
             )}
@@ -158,10 +158,10 @@ const SideBar = () => {
             {isOpen && openDropdown === "clients" && (
               <ul className={styles.dropdownMenu}>
                 <li className={styles.dropdownItem}>
-                  <Link to="/dashboard/clients/novo">Novo Cliente</Link>
+                  <Link to="/empresa/clients/cadastrar">Novo Cliente</Link>
                 </li>
                 <li className={styles.dropdownItem}>
-                  <Link to="/dashboard/clients/lista">Lista de Clientes</Link>
+                  <Link to="/empresa/clients">Lista de Clientes</Link>
                 </li>
               </ul>
             )}
@@ -169,10 +169,10 @@ const SideBar = () => {
               <ul className={styles.floatingDropdown}>
                 <p className={styles.tituloDropdow}>Cliente</p>
                 <li>
-                  <Link to="/dashboard/relatorios/mensal">Novo</Link>
+                  <Link to="/empresa/clientes/cadastrar">Novo</Link>
                 </li>
                 <li>
-                  <Link to="/dashboard/relatorios/anual">Lista</Link>
+                  <Link to="/empresa/clientes">Lista</Link>
                 </li>
               </ul>
             )}
@@ -200,13 +200,8 @@ const SideBar = () => {
             {isOpen && openDropdown === "funcionarios" && (
               <ul className={styles.dropdownMenu}>
                 <li className={styles.dropdownItem}>
-                  <Link to="/dashboard/funcionarios/novo">
-                    Novo Funcionário
-                  </Link>
-                </li>
-                <li className={styles.dropdownItem}>
-                  <Link to="/dashboard/funcionarios/lista">
-                    Lista de Funcionários
+                  <Link to="/empresa/funcionarios">
+                    Novo Funcionario
                   </Link>
                 </li>
               </ul>
@@ -215,10 +210,7 @@ const SideBar = () => {
               <ul className={styles.floatingDropdown}>
                 <p className={styles.tituloDropdow}>Funcionário</p>
                 <li>
-                  <Link to="/dashboard/relatorios/mensal">Novo</Link>
-                </li>
-                <li>
-                  <Link to="/dashboard/relatorios/anual">Lista</Link>
+                  <Link to="/empresa/funcionarios">Novo</Link>
                 </li>
               </ul>
             )}
@@ -246,13 +238,13 @@ const SideBar = () => {
             {isOpen && openDropdown === "servicos" && (
               <ul className={styles.dropdownMenu}>
                 <li className={styles.dropdownItem}>
-                  <Link to="/dashboard/servicos/novo">Novo Serviço</Link>
+                  <Link to="/empresa/servicos/cadastrar">Novo Serviço</Link>
                 </li>
                 <li className={styles.dropdownItem}>
-                  <Link to="/dashboard/servicos/lista">Lista de Serviços</Link>
+                  <Link to="/empresa/servicos">Lista de Serviços</Link>
                 </li>
                 <li className={styles.dropdownItem}>
-                  <Link to="/dashboard/servicos/novo">Serviço Realizado</Link>
+                  <Link to="/empresa/servicos/realizados">Serviço Realizado</Link>
                 </li>
               </ul>
             )}
@@ -260,10 +252,13 @@ const SideBar = () => {
               <ul className={styles.floatingDropdown}>
                 <p className={styles.tituloDropdow}>Serviço</p>
                 <li>
-                  <Link to="/dashboard/relatorios/mensal">Novo</Link>
+                  <Link to="/empresa/servicos/cadastrar">Novo</Link>
                 </li>
                 <li>
-                  <Link to="/dashboard/relatorios/anual">Lista</Link>
+                  <Link to="/empresa/servicos">Lista</Link>
+                </li>
+                <li>
+                  <Link to="/empresa/servicos/realizados">Realizado</Link>
                 </li>
               </ul>
             )}
@@ -291,10 +286,10 @@ const SideBar = () => {
             {isOpen && openDropdown === "historico" && (
               <ul className={styles.dropdownMenu}>
                 <li className={styles.dropdownItem}>
-                  <Link to="/dashboard/historico/mensal">Agendamentos</Link>
+                  <Link to="/empresa/historico/mensal">Agendamentos</Link>
                 </li>
                 <li className={styles.dropdownItem}>
-                  <Link to="/dashboard/historico/anual">Incidentes</Link>
+                  <Link to="/empresa/historico/anual">Incidentes</Link>
                 </li>
               </ul>
             )}
@@ -302,10 +297,10 @@ const SideBar = () => {
               <ul className={styles.floatingDropdown}>
                 <p className={styles.tituloDropdow}>Histórico</p>
                 <li>
-                  <Link to="/dashboard/relatorios/mensal">Agendamentos</Link>
+                  <Link to="/empresa/historico/agendamentos">Agendamentos</Link>
                 </li>
                 <li>
-                  <Link to="/dashboard/relatorios/anual">Incidentes</Link>
+                  <Link to="/empresa/relatorios/incidentes">Incidentes</Link>
                 </li>
               </ul>
             )}
@@ -332,10 +327,10 @@ const SideBar = () => {
             {isOpen && openDropdown === "relatorio" && (
               <ul className={styles.dropdownMenu}>
                 <li className={styles.dropdownItem}>
-                  <Link to="/dashboard/relatorios/mensal">Simples</Link>
+                  <Link to="/empresa/relatorios/simples">Simples</Link>
                 </li>
                 <li className={styles.dropdownItem}>
-                  <Link to="/dashboard/relatorios/anual">Detalhado</Link>
+                  <Link to="/empresa/relatorios/detalhado">Detalhado</Link>
                 </li>
               </ul>
             )}
@@ -343,10 +338,10 @@ const SideBar = () => {
               <ul className={styles.floatingDropdown}>
                 <p className={styles.tituloDropdow}>Relatorio</p>
                 <li>
-                  <Link to="/dashboard/relatorios/mensal">Simples</Link>
+                  <Link to="/empresa/relatorios/simples">Simples</Link>
                 </li>
                 <li>
-                  <Link to="/dashboard/relatorios/anual">Detalhado</Link>
+                  <Link to="/empresa/relatorios/detalhado">Detalhado</Link>
                 </li>
               </ul>
             )}

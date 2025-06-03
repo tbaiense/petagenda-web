@@ -6,9 +6,9 @@ const NavEmpresa = () => {
     return(
         <div className={styles.navBarEmpresa}>
             {/* Não vamos usar o LINK para navergar entre as paginas, vamos usar o onClick para fazer verificação e depois navegar pelas páginas */}
-            <button><Link to="/dashboard">CADASTRO</Link></button>
-            <button><Link to="/dashboard/empresa">EMPRESA</Link></button>
-            <button><Link to="/dashboard/Planos">LICENÇA</Link></button>
+            <button><Link to="/empresa/cadastrar">CADASTRO</Link></button>
+            <button><Link to="/empresa/informacoes">EMPRESA</Link></button>
+            <button><Link to="/empresa/planos">LICENÇA</Link></button>
             <button>ALTERAR DADOS</button>
         </div>
     )

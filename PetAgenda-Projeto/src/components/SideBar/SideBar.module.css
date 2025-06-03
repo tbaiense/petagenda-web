@@ -36,6 +36,7 @@ ul {
   align-items: center;
   margin-bottom: 24px;
   justify-content: center;
+  text-decoration: none;
 }
 
 .user_avatar {

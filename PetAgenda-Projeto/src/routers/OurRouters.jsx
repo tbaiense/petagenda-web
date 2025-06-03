@@ -41,7 +41,7 @@ const router = createBrowserRouter([
   },
   // Esse elemento pai não vai ser o dashboard porque ele é para cadastrar a empresa
   {
-    path: "/dashboard",
+    path: "/empresa",
     element: (
       //<PrivateRoute>
         <MenuDashBoard />
@@ -49,25 +49,25 @@ const router = createBrowserRouter([
     ),
     children: [
       {
-        path: "/dashboard",
+        path: "cadastrar",
         element: (
             <CadastroEmpresa />
         ),
       },
       {
-        path: "empresa",
+        path: "informacoes",
         element: (
             <ViewEmpresa/>
         ),
       },
       {
-        path: "Planos",
+        path: "planos",
         element: (
             <PlanosEmpresa />
         ),
       },
       {
-        path:"servicos",
+        path:"servicos/cadastrar",
         element:(
             <CadastrarServico/>
         )
@@ -79,13 +79,13 @@ const router = createBrowserRouter([
         )
       },
       {
-        path:"clientes",
+        path:"clientes/cadastrar",
         element:(
             <CadastrarClientes/>
         )
       },
       {
-        path:"pets",
+        path:"pets/cadastrar",
         element:(
             <CadastrarPets/>
         )
