@@ -13,7 +13,6 @@
         - Validar se o pet pode ser inserido, verificando a quantidade de pets
         já presentes (restrição de participantes);
  * */
-
 DELIMITER $$
 CREATE TRIGGER trg_pet_servico_insert
     BEFORE INSERT
@@ -43,10 +42,11 @@ CREATE TRIGGER trg_pet_servico_insert
         DECLARE restr_partic ENUM("individual", "coletivo");
 
         -- Condições de erro
+        DECLARE err_pet_inexistente CONDITION FOR SQLSTATE '45003';
         DECLARE err_dono_diferente CONDITION FOR SQLSTATE '45000'; /* pet inserido pertence a outro dono */
         DECLARE err_esp_incompativel CONDITION FOR SQLSTATE '45001'; /* espécie do pet é incompatível com as das restrições de espécie aplicadas */
         DECLARE err_qtd_partic_excedido CONDITION FOR SQLSTATE '45002'; /* não é possível adicionar outro pet, devido à restriçao de participantes aplicada  */
-
+        
          -- Cursores
         DECLARE cur_especie CURSOR FOR
             SELECT
@@ -60,7 +60,7 @@ CREATE TRIGGER trg_pet_servico_insert
 
         -- Handlers
         DECLARE CONTINUE HANDLER FOR NOT FOUND SET cur_done = TRUE;
-
+    
         -- Obtendo informação sobre a forma de cobrança do serviço
         SELECT
             preco, tipo_preco
@@ -97,6 +97,10 @@ CREATE TRIGGER trg_pet_servico_insert
         -- Obtém as informações do PET sendo inserido
         SELECT id_cliente, id_especie INTO id_cli_este, id_esp_este FROM pet WHERE id = NEW.id_pet;
         
+        IF id_esp_este IS NULL THEN
+            SIGNAL err_pet_inexistente SET MESSAGE_TEXT = "Não foi possível verificar a espécie de um dos pets inserido";
+        END IF;
+    
         IF id_pet_outro IS NOT NULL THEN /* Já existe outro pet para o info_servico */
 
             IF restr_partic = "individual" THEN
@@ -112,42 +116,43 @@ CREATE TRIGGER trg_pet_servico_insert
                     SET MESSAGE_TEXT = "Pet nao pode ser inserido, pois pertence a um dono diferente dos que já existem para este info_servico";
             END IF;
 
-        	SELECT id_especie INTO id_esp_outro FROM pet WHERE id = id_pet_outro LIMIT 1;
+            SELECT id_especie INTO id_esp_outro FROM pet WHERE id = id_pet_outro LIMIT 1;
             
             IF id_esp_este = id_esp_outro THEN
-            	SET validar_esp = FALSE;
+                SET validar_esp = FALSE;
             END IF;
         END IF;
 
         -- Validação da espécie do pet
         IF validar_esp IS TRUE THEN
-	        OPEN cur_especie;
-	        especie_loop: LOOP
-	            FETCH cur_especie INTO id_esp_cur;
-        		
-        		IF id_esp_cur IS NOT NULL THEN
-		            SET serv_tem_restr_esp = TRUE;
-        		
-		            IF id_esp_cur = id_esp_este THEN
-		            	SET esp_valida = TRUE;
-		            	LEAVE especie_loop;
-		            END IF;
-        		END IF;
-        		
-	            IF cur_done THEN
-	                LEAVE especie_loop;
-	            END IF;
-				
-	        END LOOP;
-	        CLOSE cur_especie;
-	        
-	        IF serv_tem_restr_esp IS TRUE AND esp_valida IS FALSE THEN
-		        SIGNAL err_esp_incompativel
-		            SET MESSAGE_TEXT = "Especie do pet inserido e incompativel com restricoes de especie do servico_oferecido";
-	        END IF;
+            OPEN cur_especie;
+            especie_loop: LOOP
+                FETCH cur_especie INTO id_esp_cur;
+                
+                IF id_esp_cur IS NOT NULL THEN
+                    SET serv_tem_restr_esp = TRUE;
+                
+                    IF id_esp_cur = id_esp_este THEN
+                        SET esp_valida = TRUE;
+                        LEAVE especie_loop;
+                    END IF;
+                END IF;
+                
+                IF cur_done THEN
+                    LEAVE especie_loop;
+                END IF;
+                
+            END LOOP;
+            CLOSE cur_especie;
+            
+            IF serv_tem_restr_esp IS TRUE AND esp_valida IS FALSE THEN
+                SIGNAL err_esp_incompativel
+                    SET MESSAGE_TEXT = "Especie do pet inserido e incompativel com restricoes de especie do servico_oferecido";
+            END IF;
         END IF;
     END;$$
 DELIMITER ;
+
 
 
 DELIMITER $$
