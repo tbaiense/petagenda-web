@@ -1,26 +1,42 @@
-//Importando o elemento pai
+// Importando o componente principal
 import App from "../App";
 
-//Importando as paginas que vamos usar
+// Páginas públicas
 import Home from "../pages/Home/Home";
 import Login from "../pages/Login/Login";
 import Registrar from "../pages/Registrar/Registrar";
-import CadastroEmpresa from "../pages/Empresa/Cadastro_Empresa/CadastroEmpresa";
-import PlanosEmpresa from "../pages/Planos/PlanosEmpresa";
-import MenuDashBoard from "../MenuDashboard";
-import ViewEmpresa from "../pages/Empresa/Visualizar_Dados/ViewEmpresa"
-import CadastroFuncionario from "../pages/CadastroFuncionario/CadastroFuncionario";
-import CadastrarServico from "../pages/CadastrarServico/CadastrarServico";
-import CadastrarClientes from "../pages/Clientes/CadastrarClientes";
-import CadastrarPets from "../pages/Pets/CadastrarPets"
-import Relatorios from "../pages/Relatorios/Relatorios";
 
-//Importando os metodos de navegações
+// Empresa
+import CadastroEmpresa from "../pages/Empresa/Cadastro_Empresa/CadastroEmpresa";
+import PlanosEmpresa from "../pages/Empresa/Planos/PlanosEmpresa";
+import ViewEmpresa from "../pages/Empresa/Visualizar_Dados/ViewEmpresa";
+
+// Funcionários, Clientes, Pets, Serviços
+import CadastroFuncionario from "../pages/Funcionario/CadastroFuncionario/Cadastro_Funcionario";
+import CadastrarClientes from "../pages/Clientes/Cadastrar_Clientes";
+import CadastrarPets from "../pages/Pets/Cadastrar_Pets";
+import CadastrarServico from "../pages/Servico/CadastrarServico/Cadastrar_Servico";
+
+// Agendamento
+import Agendamento from "../pages/Agendamentos/Cadastrar/Cadastrar_Agendamento";
+
+// Relatórios
+import RelatorioSimples from "../pages/Relatorios/Simples/Relatorio_Simples";
+import RelatorioDetalhado from "../pages/Relatorios/Detalhado/Relatorio_Detalhado";
+import Gastos from "../pages/Relatorios/Gastos/Gastos";
+
+// Dashboard
+import Dashboard from "../pages/Dashboard/Dashboard.jsx";
+
+// Layout logado
+import MenuDashBoard from "../MenuDashboard";
+
+// React Router
 import { createBrowserRouter } from "react-router-dom";
 import PrivateRoute from "./PrivateRouter";
-import Agendamento from "../pages/Agendamentos/Agendamento";
 
 const router = createBrowserRouter([
+  // Rotas públicas
   {
     path: "/",
     element: <App />,
@@ -39,70 +55,124 @@ const router = createBrowserRouter([
       },
     ],
   },
-  // Esse elemento pai não vai ser o dashboard porque ele é para cadastrar a empresa
+
+  // Área logada da empresa
   {
     path: "/empresa",
     element: (
-      //<PrivateRoute>
-        <MenuDashBoard />
-      //</PrivateRoute>
+      // <PrivateRoute>
+      <MenuDashBoard />
+      // </PrivateRoute>
     ),
     children: [
+      // Empresa
       {
         path: "cadastrar",
         element: (
-            <CadastroEmpresa />
+          // <PrivateRoute>
+          <CadastroEmpresa />
+          // </PrivateRoute>
         ),
       },
       {
         path: "informacoes",
         element: (
-            <ViewEmpresa/>
+          // <PrivateRoute>
+          <ViewEmpresa />
+          // </PrivateRoute>
         ),
       },
       {
         path: "planos",
         element: (
-            <PlanosEmpresa />
+          // <PrivateRoute>
+          <PlanosEmpresa />
+          // </PrivateRoute>
+        ),
+      },
+
+      // Funcionários, clientes, pets
+      {
+        path: "funcionarios",
+        element: (
+          // <PrivateRoute>
+          <CadastroFuncionario />
+          // </PrivateRoute>
         ),
       },
       {
-        path:"servicos/cadastrar",
-        element:(
-            <CadastrarServico/>
-        )
+        path: "clientes/cadastrar",
+        element: (
+          // <PrivateRoute>
+          <CadastrarClientes />
+          // </PrivateRoute>
+        ),
       },
       {
-        path:"funcionarios",
-        element:(
-            <CadastroFuncionario/>
-        )
+        path: "pets/cadastrar",
+        element: (
+          // <PrivateRoute>
+          <CadastrarPets />
+          // </PrivateRoute>
+        ),
+      },
+
+      // Serviços
+      {
+        path: "servicos/cadastrar",
+        element: (
+          // <PrivateRoute>
+          <CadastrarServico />
+          // </PrivateRoute>
+        ),
+      },
+
+      // Agendamentos
+      {
+        path: "agendamentos",
+        element: (
+          // <PrivateRoute>
+          <Agendamento />
+          // </PrivateRoute>
+        ),
+      },
+
+      // Relatórios
+      {
+        path: "relatorio/simples",
+        element: (
+          // <PrivateRoute>
+          <RelatorioSimples />
+          // </PrivateRoute>
+        ),
       },
       {
-        path:"clientes/cadastrar",
-        element:(
-            <CadastrarClientes/>
-        )
+        path: "relatorio/detalhado",
+        element: (
+          // <PrivateRoute>
+          <RelatorioDetalhado />
+          // </PrivateRoute>
+        ),
       },
       {
-        path:"pets/cadastrar",
-        element:(
-            <CadastrarPets/>
-        )
+        path: "relatorio/gastos",
+        element: (
+          // <PrivateRoute>
+          <Gastos />
+          // </PrivateRoute>
+        ),
       },
+
+      // Dashboard
       {
-        path:"agendamentos",
-        element:(
-            <Agendamento/>
-        )
+        path: "dashboard",
+        element: (
+          // <PrivateRoute>
+          <Dashboard />
+          // </PrivateRoute>
+        ),
       },
-      {
-        path:"relatorios",
-        element:(
-            <Relatorios/>
-        )
-      }
-    ]
+    ],
   },
 ]);
 

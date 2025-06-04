@@ -1,7 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { Button, Col, Form, InputGroup, Row } from "react-bootstrap";
-import "./CadastrarServico.css";
+import "./Cadastrar_Servico.css";
 
 function CadastrarServico() {
   const { register, handleSubmit, reset, watch } = useForm();

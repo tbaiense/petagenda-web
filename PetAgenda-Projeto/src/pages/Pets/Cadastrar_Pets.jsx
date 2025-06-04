@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import styles from "./CadastrarPets.module.css"
+import styles from "./Cadastrar_Pets.module.css"
 import { useLocation } from "react-router-dom"
 import api from  '../../api';
 import { useAuth } from '../../contexts/UserContext';

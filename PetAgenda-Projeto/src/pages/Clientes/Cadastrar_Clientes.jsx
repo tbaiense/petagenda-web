@@ -1,4 +1,4 @@
-import styles from "./CadastrarClientes.module.css"
+import styles from "./Cadastrar_Clientes.module.css"
 import { useForm } from "react-hook-form"
 import { useEffect,useState } from "react";
 import { clientes } from "../../data/testeDeTabela";

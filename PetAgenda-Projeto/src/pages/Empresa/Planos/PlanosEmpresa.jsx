@@ -1,9 +1,9 @@
 import React from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import "./PlanosEmpresa.css";
-import MenuDashBoard from "../../components/SideBar/SideBar";
+import MenuDashBoard from "../../../components/SideBar/SideBar";
 import { useState } from "react";
-import NavEmpresa from "../../components/navegacaoEmpresa/NavEmpresa.jsx";
+import NavEmpresa from "../../../components/navegacaoEmpresa/NavEmpresa.jsx";
 
 function PlanosEmpresa() {
   const [selected, setSelected] = useState("Mensal");

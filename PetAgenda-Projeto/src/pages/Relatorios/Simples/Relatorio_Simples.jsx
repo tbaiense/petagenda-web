@@ -1,4 +1,4 @@
-import styles from "./Relatorios.module.css"
+import"./Relatorio_Simples.css"
 
 const Relatorios = () => {
   return (

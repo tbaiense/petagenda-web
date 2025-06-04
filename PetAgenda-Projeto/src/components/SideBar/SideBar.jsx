@@ -38,7 +38,7 @@ const SideBar = () => {
 
         <ul className={styles.side_items}>
           <li className={styles.sideItem}>
-            <Link to="/dashboard">
+            <Link to="dashboard">
               <FaHome className={styles.branco} />
               <span className={styles.itemDescription}>Home</span>
             </Link>
@@ -326,10 +326,13 @@ const SideBar = () => {
             {isOpen && openDropdown === "relatorio" && (
               <ul className={styles.dropdownMenu}>
                 <li className={styles.dropdownItem}>
-                  <Link to="/empresa/relatorios/simples">Simples</Link>
+                  <Link to="/empresa/relatorios/gastos">Gastos</Link>
                 </li>
                 <li className={styles.dropdownItem}>
                   <Link to="/empresa/relatorios/detalhado">Detalhado</Link>
+                </li>
+                <li className={styles.dropdownItem}>
+                  <Link to="/empresa/relatorios/simples">Simples</Link>
                 </li>
               </ul>
             )}

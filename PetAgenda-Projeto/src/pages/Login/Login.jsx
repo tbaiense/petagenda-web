@@ -37,7 +37,7 @@ function Login() {
               setToken(jsonResponse.token); // Armazena no local storage
             }
 
-            navigate('/dashboard');
+            navigate('/empresa');
             break;
           };
 
