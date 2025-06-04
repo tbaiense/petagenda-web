@@ -16,7 +16,7 @@ import {
 import "./Login.css";
 function Login() {
   const navigate = useNavigate();
-  const { setToken } = useAuth();
+  const { setToken, setUsuario, setEmpresa } = useAuth();
 
   const checkCredentials = async (userCredentials) => {
     console.log('checando credenciais...');
@@ -33,11 +33,19 @@ function Login() {
           case 200: {
             const jsonResponse = await response.json();
 
-            if (jsonResponse.token) {
-              setToken(jsonResponse.token); // Armazena no local storage
+            const { token, usuario, empresas } = jsonResponse;
+
+            if (!token|| !usuario.id) {
+              const msg = 'Falha ao obter informações do usuário!'
+              alert(msg);
+              throw new Error(msg);
             }
 
-            navigate('/empresa');
+            setToken(token); // Armazena no local storage
+            setUsuario(usuario);
+            setEmpresa(empresas[0]);
+
+            navigate('/empresa/informacoes');
             break;
           };
 
@@ -51,7 +59,9 @@ function Login() {
         }
       })
       .catch( err => {
-        alert('Erro ao realizar autenticação: ', err.message);
+        err.message = 'Erro ao realizar autenticação: ', err.message;
+        alert(err.message);
+        console.log(err);
       });
   };
 

@@ -13,8 +13,6 @@ const CadastroFuncionario = () => {
     const [funcionarios, setFuncionarios] = useState([]);
     const [servicos, setServicos] = useState([]);
     
-
-
     const {
         register,
         handleSubmit,

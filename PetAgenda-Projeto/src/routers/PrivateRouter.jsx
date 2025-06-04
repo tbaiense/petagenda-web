@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../contexts/UserContext";
+import { useAuth, AuthProvider } from "../contexts/UserContext";
 import { useEffect } from 'react';
 
 import api from "../api";
@@ -19,7 +19,7 @@ function PrivateRoute({ children }) {
     }
   
     const verifyToken = (token) => {
-      console.log('verificando token');
+      console.log('verificando token: ', token);
       const authHeader = `Bearer ${token}`;
       fetch(`${api.URL}/auth/verify-token`, {
           method: "POST",
@@ -37,7 +37,13 @@ function PrivateRoute({ children }) {
     verifyToken(getToken());
   },[]);
 
-  return children;
+  return (
+    <>
+    <AuthProvider>
+      children
+    </AuthProvider>
+    </>
+  );
 }
 
 export default PrivateRoute;

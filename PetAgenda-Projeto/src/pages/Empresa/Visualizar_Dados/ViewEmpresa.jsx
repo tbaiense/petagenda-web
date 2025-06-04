@@ -1,7 +1,24 @@
 import ftTemp from "../../../assets/LogoNav.png";
 import NavEmpresa from "../../../components/navegacaoEmpresa/NavEmpresa.jsx";
+import { useEffect } from 'react';
+import { useAuth } from '../../../contexts/UserContext';
+import { useNavigate } from "react-router-dom";
 
 const ViewEmpresa = () => {
+  const { getEmpresa } = useAuth();
+  const navigate = useNavigate();
+  const empresa = getEmpresa();
+
+  useEffect(() => {
+    console.log(empresa);
+
+    if (!empresa) {
+      navigate('/empresa/cadastrar');
+    } else if (!empresa.licenca) {
+      navigate('/empresa/planos');
+    }
+  }, []);
+
   // Faço a conexão com o banco
 
   // Pego os Dados da empresa baseado no plano adquirido e no ID

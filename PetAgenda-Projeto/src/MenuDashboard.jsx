@@ -2,7 +2,6 @@ import SideBar from "./components/SideBar/SideBar"
 import LogoPetAgenda from "./components/LogoPet/LogoPetAgenda"
 import { Outlet } from "react-router-dom"
 import styles from "./styles/MenuDashboard.module.css"
-import { AuthProvider } from "./contexts/UserContext.jsx";
 import { Link } from "react-router-dom";
 
 
@@ -17,17 +16,15 @@ const MenuDashBoard = () => {
     }
     return(
         <>
-            <AuthProvider>
-                <div className={styles.layoutDashboard}>
-                    <SideBar/>
-                    <div>
-                        <LogoPetAgenda/>
-                        <div className={styles.navBarEmpresa}>
-                            <Outlet/>
-                        </div>
+            <div className={styles.layoutDashboard}>
+                <SideBar/>
+                <div>
+                    <LogoPetAgenda/>
+                    <div className={styles.navBarEmpresa}>
+                        <Outlet/>
                     </div>
                 </div>
-            </AuthProvider>  
+            </div> 
         </>
     )
 }
