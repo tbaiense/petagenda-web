@@ -16,7 +16,6 @@ import {
 import { PiBuildingOfficeBold } from "react-icons/pi";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
 
 const SideBar = () => {
   const [isOpen, setIsOpen] = useState(false);

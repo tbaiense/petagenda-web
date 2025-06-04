@@ -4,7 +4,7 @@ import api from  '../../../api';
 import { useAuth } from "../../../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import NavEmpresa from "../../../components/navegacao empresa/navEmpresa";
+import NavEmpresa from "../../../components/navegacaoEmpresa/NavEmpresa.jsx";
 
 
 const CadastroEmpresa = () => {

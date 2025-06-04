@@ -2,7 +2,7 @@ import { useEffect,useState } from "react"
 import { useForm } from "react-hook-form";
 import api from  '../../api';
 import { useAuth } from '../../contexts/UserContext';
-import ModalCadastroFuncionario from "../../components/Modal Funcionario/ModalCadastroFuncionario";
+import ModalCadastroFuncionario from "../../components/ModalFuncionario/ModalCadastroFuncionario";
 import CardFuncionario from "../../components/CardFuncionario/CardFuncionario"
 import styles from "./CadastroFuncionario.module.css"
 import { tempFuncionarios } from "../../data/Tempdata";
