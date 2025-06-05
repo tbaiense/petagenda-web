@@ -40,7 +40,7 @@ function PrivateRoute({ children }) {
   return (
     <>
     <AuthProvider>
-      children
+      {children}
     </AuthProvider>
     </>
   );

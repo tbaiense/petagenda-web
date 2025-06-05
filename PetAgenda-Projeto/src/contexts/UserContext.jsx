@@ -42,8 +42,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   const removeUsuario = () => {
-    localStorage.setItem(usuario_idKey, "");
-    localStorage.setItem(usuario_adminKey, "");
+    localStorage.removeItem(usuario_idKey);
+    localStorage.removeItem(usuario_adminKey);
   }
 
   // Definições da empresa atual
@@ -69,8 +69,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   const removeEmpresa = () => {
-    localStorage.setItem(empresa_idKey, "");
-    localStorage.setItem(empresa_licencaKey, "");
+    localStorage.removeItem(empresa_idKey);
+    localStorage.removeItem(empresa_licencaKey);
   };
 
   return (

@@ -8,7 +8,7 @@ import NavEmpresa from "../../../components/navegacaoEmpresa/NavEmpresa.jsx";
 
 
 const CadastroEmpresa = () => {
-    const { token } = useAuth();
+    const { getToken } = useAuth();
 
     const navigate = useNavigate()
     const {
@@ -42,7 +42,7 @@ const CadastroEmpresa = () => {
         fetch(`${api.URL}/empresa`, {
             method: "POST",
             headers: {
-                "Authorization": `Bearer ${token}`,
+                "Authorization": `Bearer ${getToken()}`,
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(objEmp)

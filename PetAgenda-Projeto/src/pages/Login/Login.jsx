@@ -16,7 +16,7 @@ import {
 import "./Login.css";
 function Login() {
   const navigate = useNavigate();
-  const { setToken, setUsuario, setEmpresa } = useAuth();
+  const { setToken, removeToken, setUsuario, removeUsuario, setEmpresa, removeEmpresa } = useAuth();
 
   const checkCredentials = async (userCredentials) => {
     console.log('checando credenciais...');
@@ -41,9 +41,20 @@ function Login() {
               throw new Error(msg);
             }
 
-            setToken(token); // Armazena no local storage
-            setUsuario(usuario);
-            setEmpresa(empresas[0]);
+            removeToken();
+            removeUsuario();
+            removeEmpresa();
+
+            if (token) {
+              setToken(token); // Armazena no local storage
+            }
+            if (usuario) {
+              setUsuario(usuario);
+            }
+
+            if (empresas && empresas[0]) {
+              setEmpresa(empresas[0]);
+            }
 
             navigate('/empresa/informacoes');
             break;
