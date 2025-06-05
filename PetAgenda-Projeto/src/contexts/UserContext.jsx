@@ -5,6 +5,8 @@ export const AuthContext = createContext()
 export const AuthProvider = ({ children }) => {
   const tokenKey = 'access_token';
 
+  const [ validar, setValidar ] = useState(false);
+
   //Aqui salva o token no estado e no localStorage ao fazer login
   const setToken = (jwt) => {
     localStorage.setItem(tokenKey, jwt)
@@ -103,7 +105,8 @@ export const AuthProvider = ({ children }) => {
       getToken, setToken, removeToken, 
       setUsuario, getUsuario, removeUsuario,
       setEmpresa, getEmpresa, removeEmpresa,
-      setLicenca, getLicenca, removeLicenca
+      setLicenca, getLicenca, removeLicenca,
+      validar, setValidar
      }}>
       {children}
     </AuthContext.Provider>

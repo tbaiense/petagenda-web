@@ -5,9 +5,7 @@ import { AuthProvider } from "./contexts/UserContext.jsx";
 function App() {
   return (
     <>
-      <AuthProvider>
-          <Outlet/>
-      </AuthProvider>
+        <Outlet/>
     </>
   );
 }

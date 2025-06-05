@@ -5,11 +5,13 @@ import { useEffect } from 'react';
 import api from "../api";
 
 function PrivateRoute({ children }) { 
-  const { getToken } = useAuth();
+  const { getToken, validar, setValidar } = useAuth();
   const navigate = useNavigate();
   
   useEffect(() => {
     console.log('valor do token: ', getToken());
+      console.log(setValidar);
+    // setValidar(true);
 
     // Verifica se existe token ou não
     if (!getToken()) {

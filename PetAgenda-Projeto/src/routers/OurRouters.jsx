@@ -61,7 +61,7 @@ const router = createBrowserRouter([
     path: "/empresa",
     element: (
       // <PrivateRoute>
-      <MenuDashBoard />
+        <MenuDashBoard />
       // </PrivateRoute>
     ),
     children: [
@@ -69,25 +69,19 @@ const router = createBrowserRouter([
       {
         path: "cadastrar",
         element: (
-          // <PrivateRoute>
           <CadastroEmpresa />
-          // </PrivateRoute>
         ),
       },
       {
         path: "informacoes",
         element: (
-          // <PrivateRoute>
           <ViewEmpresa />
-          // </PrivateRoute>
         ),
       },
       {
         path: "planos",
         element: (
-          // <PrivateRoute>
           <PlanosEmpresa />
-          // </PrivateRoute>
         ),
       },
 
@@ -95,25 +89,19 @@ const router = createBrowserRouter([
       {
         path: "funcionarios",
         element: (
-          // <PrivateRoute>
           <CadastroFuncionario />
-          // </PrivateRoute>
         ),
       },
       {
         path: "clientes/cadastrar",
         element: (
-          // <PrivateRoute>
           <CadastrarClientes />
-          // </PrivateRoute>
         ),
       },
       {
         path: "pets/cadastrar",
         element: (
-          // <PrivateRoute>
           <CadastrarPets />
-          // </PrivateRoute>
         ),
       },
 
@@ -121,9 +109,7 @@ const router = createBrowserRouter([
       {
         path: "servicos/cadastrar",
         element: (
-          // <PrivateRoute>
           <CadastrarServico />
-          // </PrivateRoute>
         ),
       },
 
@@ -131,17 +117,13 @@ const router = createBrowserRouter([
       {
         path: "agendamentos/cadastrar",
         element: (
-          // <PrivateRoute>
           <CadastrarAgendamento />
-          // </PrivateRoute>
         ),
       },
       {
         path: "agendamentos/lista",
         element: (
-          // <PrivateRoute>
           <CadastrarAgendamento />
-          // </PrivateRoute>
         ),
       },
 
@@ -149,25 +131,19 @@ const router = createBrowserRouter([
       {
         path: "relatorio/simples",
         element: (
-          // <PrivateRoute>
           <RelatorioSimples />
-          // </PrivateRoute>
         ),
       },
       {
         path: "relatorio/detalhado",
         element: (
-          // <PrivateRoute>
           <RelatorioDetalhado />
-          // </PrivateRoute>
         ),
       },
       {
         path: "relatorio/gastos",
         element: (
-          // <PrivateRoute>
           <Gastos />
-          // </PrivateRoute>
         ),
       },
 
@@ -175,9 +151,7 @@ const router = createBrowserRouter([
       {
         path: "dashboard",
         element: (
-          // <PrivateRoute>
           <Dashboard />
-          // </PrivateRoute>
         ),
       },
     ],

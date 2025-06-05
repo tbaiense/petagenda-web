@@ -3,9 +3,15 @@ import LogoPetAgenda from "./components/LogoPet/LogoPetAgenda"
 import { Outlet } from "react-router-dom"
 import styles from "./styles/MenuDashboard.module.css"
 import { Link } from "react-router-dom";
-
+import { AuthContext, useAuth } from "./contexts/UserContext";
 
 const MenuDashBoard = () => {
+    const { setUsuario, setEmpresa, validar, setValidar } = useAuth();
+    if (!validar) {
+        console.log('EM MODO DE DESENVOLVIMENTO: SEM VALIDAÇÃO DE CREDENCIAIS!')
+        setUsuario({id: 0, admin: false});
+        setEmpresa({id: 0, licenca: 'corporativo'});
+    }
 
     const verificaCadastroEmpresa = () => {
         alert("teste")
