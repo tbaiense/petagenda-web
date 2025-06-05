@@ -24,6 +24,8 @@ export const AuthProvider = ({ children }) => {
   const usuario_adminKey = 'usuario_admin';
 
   const setUsuario = (usr) => {
+    console.log('usuario atualizado: ', usr?.id);
+
     const {
       id, admin
     } = usr;
@@ -48,15 +50,20 @@ export const AuthProvider = ({ children }) => {
 
   // Definições da empresa atual
   const empresa_idKey = 'empresa_id';
-  const empresa_licencaKey = 'empresa_licenca';
 
   const setEmpresa = (emp) => {
+    console.log('empresa atualizada: ', emp);
+
     const {
       id, licenca
     } = emp;
 
     localStorage.setItem(empresa_idKey, id);
-    localStorage.setItem(empresa_licencaKey, licenca);
+    if (licenca) {
+      setLicenca(licenca);
+    } else {
+      removeLicenca();
+    }
   };
 
   const getEmpresa = () => {
@@ -64,12 +71,29 @@ export const AuthProvider = ({ children }) => {
 
     return (id) ? {
       id: id,
-      licenca: localStorage.getItem(empresa_licencaKey)
+      licenca: getLicenca()
     } : undefined;
   };
 
   const removeEmpresa = () => {
     localStorage.removeItem(empresa_idKey);
+    removeLicenca();
+  };
+
+  // Licenca da empresa
+  const empresa_licencaKey = 'empresa_licenca';
+
+  const setLicenca = (licenca) => {
+    console.log('licenca atualizada: ', licenca);
+    localStorage.setItem(empresa_licencaKey, licenca);
+  };
+
+  const getLicenca = () => {
+    const licenca = localStorage.getItem(empresa_licencaKey);
+    return (licenca?.length) ? licenca : undefined;
+  };
+
+  const removeLicenca = () => {
     localStorage.removeItem(empresa_licencaKey);
   };
 
@@ -78,7 +102,8 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider value={{ 
       getToken, setToken, removeToken, 
       setUsuario, getUsuario, removeUsuario,
-      setEmpresa, getEmpresa, removeEmpresa
+      setEmpresa, getEmpresa, removeEmpresa,
+      setLicenca, getLicenca, removeLicenca
      }}>
       {children}
     </AuthContext.Provider>

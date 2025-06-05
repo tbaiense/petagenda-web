@@ -8,7 +8,7 @@ import NavEmpresa from "../../../components/navegacaoEmpresa/NavEmpresa.jsx";
 
 
 const CadastroEmpresa = () => {
-    const { getToken } = useAuth();
+    const { getToken, setEmpresa } = useAuth();
 
     const navigate = useNavigate()
     const {
@@ -39,21 +39,24 @@ const CadastroEmpresa = () => {
             // }
         };
 
-        fetch(`${api.URL}/empresa`, {
+        const res = await fetch(`${api.URL}/empresa`, {
             method: "POST",
             headers: {
                 "Authorization": `Bearer ${getToken()}`,
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(objEmp)
-        }).then( res => { 
-            if (res.status == 200) {
-                alert('cadastrado');
-                navigate("/dashboard/Planos")
-            } else {
-                alert('erro ao cadastrar empresa');
-            }
         });
+
+        const jsonBody = await res.json();
+
+        if (res.status == 200) {
+            setEmpresa(jsonBody.empresa);
+            alert('cadastrado');
+            navigate("/empresa/planos")
+        } else {
+            alert('erro ao cadastrar empresa');
+        }
     }
 
     const onError = (errors) => {

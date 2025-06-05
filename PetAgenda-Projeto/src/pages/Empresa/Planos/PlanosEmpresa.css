@@ -9,7 +9,7 @@ body {
 }
 .plano__item {
   padding: 1rem;
-  height: 685px;
+  height: max-content;
 }
 .plano__imagem {
   max-width: 100%;
@@ -26,9 +26,10 @@ body {
   color: rgba(0, 0, 0, 0.2);
 }
 .plano__lista {
-  padding-left: 1rem;
+  padding: 1rem 2rem 0.2em;
   text-align: start;
   list-style: none;
+  min-height: 15em;
 }
 
 .plano__botao {

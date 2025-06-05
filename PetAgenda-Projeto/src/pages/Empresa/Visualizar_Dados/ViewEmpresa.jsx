@@ -29,7 +29,7 @@ const ViewEmpresa = () => {
 
   return (
     <div>
-      <NavEmpresa />
+      <NavEmpresa infoEmpresa={getEmpresa()}/>
       <div>
         <img src={ftTemp} alt="Foto_da_sua_empresa" />
         <div>

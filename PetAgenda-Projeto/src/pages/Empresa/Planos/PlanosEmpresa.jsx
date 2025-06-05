@@ -4,9 +4,21 @@ import "./PlanosEmpresa.css";
 import MenuDashBoard from "../../../components/SideBar/SideBar";
 import { useState } from "react";
 import NavEmpresa from "../../../components/navegacaoEmpresa/NavEmpresa.jsx";
+import { useAuth } from "../../../contexts/UserContext";
+import api from  '../../../api';
+import { useEffect } from 'react';
+
 
 function PlanosEmpresa() {
-  const [selected, setSelected] = useState("Mensal");
+  const { getToken, getEmpresa, getLicenca, setLicenca, removeLicenca } = useAuth();
+
+  useEffect(() => {
+    const licenca = getLicenca();
+
+    console.log((licenca) ? ` licença atual: ${licenca}` : 'empresa sem licença!');
+  }, []);
+
+  const [selected, setSelected] = useState("mensal");
   const [precoBasico, setPrecoBasico] = useState("R$ 29,90");
   const [precoProfissional, setPrecoProfissional] = useState("R$ 29,90");
   const [precoCorporativo, setPrecoCorporativo] = useState("R$ 29,90");
@@ -15,17 +27,17 @@ function PlanosEmpresa() {
     setSelected(plano);
 
     switch (plano) {
-      case "Mensal":
+      case "mensal":
         setPrecoBasico("29,90");
         setPrecoProfissional("60,90");
         setPrecoCorporativo("100,90");
         break;
-      case "Trimestral":
+      case "trimestral":
         setPrecoBasico("79,90");
         setPrecoProfissional("159,90");
         setPrecoCorporativo("249,90");
         break;
-      case "Anual":
+      case "anual":
         setPrecoBasico("299,90");
         setPrecoProfissional("599,90");
         setPrecoCorporativo("999,90");
@@ -37,13 +49,37 @@ function PlanosEmpresa() {
     }
   };
 
-  const Assinar = (plano) => {
+  const assinarPlano = async (plano) => {
     const dadoPlano = {
       tipo: plano,
       periodo: selected
     }
 
-    console.log(dadoPlano)
+    try {
+      const fetchOpts = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${getToken()}`
+        },
+        body: JSON.stringify(dadoPlano)
+      }
+      const response = await fetch(
+        `${api.URL}/empresa/${getEmpresa().id}/licenca`,
+        fetchOpts
+      );
+  
+      const jsonBody = await response.json();
+      if (response.status == 200 && jsonBody?.success) {
+        setLicenca(dadoPlano.tipo);
+        alert(jsonBody.message);
+        return;
+      } else {
+        throw new Error(jsonBody.errors.join('\n'));
+      }
+    } catch (err) {
+      alert("Falha ao obter licença:\n" + err.message);
+    }
   };
 
   return (
@@ -58,9 +94,9 @@ function PlanosEmpresa() {
                   <input
                     type="radio"
                     name="radio"
-                    value="Mensal"
-                    checked={selected === "Mensal"}
-                    onChange={() => handleChange("Mensal")}
+                    value="mensal"
+                    checked={selected === "mensal"}
+                    onChange={() => handleChange("mensal")}
                   />
                   <span className="name">Mensal</span>
                 </label>
@@ -69,9 +105,9 @@ function PlanosEmpresa() {
                   <input
                     type="radio"
                     name="radio"
-                    value="Trimestral"
-                    checked={selected === "Trimestral"}
-                    onChange={() => handleChange("Trimestral")}
+                    value="trimestral"
+                    checked={selected === "trimestral"}
+                    onChange={() => handleChange("trimestral")}
                   />
                   <span className="name">Trimestral</span>
                 </label>
@@ -80,9 +116,9 @@ function PlanosEmpresa() {
                   <input
                     type="radio"
                     name="radio"
-                    value="Anual"
-                    checked={selected === "Anual"}
-                    onChange={() => handleChange("Anual")}
+                    value="anual"
+                    checked={selected === "anual"}
+                    onChange={() => handleChange("anual")}
                   />
                   <span className="name">Anual</span>
                 </label>
@@ -90,6 +126,7 @@ function PlanosEmpresa() {
             </Col>
           </Row>
           <Row className="justify-content-center plano__linha gap-5">
+            <h1>Atual: {(getLicenca()) ? getLicenca() : "não possui"}</h1>
             <Col md={3} className="plano__coluna text-center">
               <div className="plano__item">
                 <img
@@ -103,24 +140,15 @@ function PlanosEmpresa() {
                 </h5>
                 <ul className="plano__lista">
                   <li className="plano__item__caracteristica">
-                    XX Agendamentos
+                    75 Agendamentos
                   </li>
                   <li className="plano__item__caracteristica">
-                    XX Relatórios Simples
-                  </li>
-                  <li className="plano__item__caracteristica">
-                    XX Relatórios Detalhados
-                  </li>
-                  <li className="plano__item__caracteristica">
-                    XX Relatórios Simples Financeiro
-                  </li>
-                  <li className="plano__item__caracteristica">
-                    XX Pacotes de Agendamentos
+                    2 Relatórios Simples
                   </li>
                 </ul>
                 <Button
                   variant="primary"
-                  onClick={() => Assinar("Basico")}
+                  onClick={() => assinarPlano("basico")}
                   className="plano__botao"
                 >
                   Assinar
@@ -141,24 +169,18 @@ function PlanosEmpresa() {
                 </h5>
                 <ul className="plano__lista">
                   <li className="plano__item__caracteristica">
-                    XX Agendamentos
+                    Agendamentos <strong>ilimitados</strong>
                   </li>
                   <li className="plano__item__caracteristica">
-                    XX Relatórios Simples
+                    12 Relatórios Simples
                   </li>
                   <li className="plano__item__caracteristica">
-                    XX Relatórios Detalhados
-                  </li>
-                  <li className="plano__item__caracteristica">
-                    XX Relatórios Simples Financeiro
-                  </li>
-                  <li className="plano__item__caracteristica">
-                    XX Pacotes de Agendamentos
+                    8 Relatórios Detalhados
                   </li>
                 </ul>
                 <Button
                   variant="primary"
-                  onClick={() => Assinar("Profissional")}
+                  onClick={() => assinarPlano("profissional")}
                   className="plano__botao"
                 >
                   Assinar
@@ -179,22 +201,16 @@ function PlanosEmpresa() {
                 </h5>
                 <ul className="plano__lista">
                   <li className="plano__item__caracteristica">
-                    XX Agendamentos
+                    Agendamentos <strong>ilimitados</strong>
                   </li>
                   <li className="plano__item__caracteristica">
-                    XX Relatórios Simples
+                    Relatórios Simples <strong>ilimitados</strong>
                   </li>
                   <li className="plano__item__caracteristica">
-                    XX Relatórios Detalhados
-                  </li>
-                  <li className="plano__item__caracteristica">
-                    XX Relatórios Simples Financeiro
-                  </li>
-                  <li className="plano__item__caracteristica">
-                    XX Pacotes de Agendamentos
+                    Relatórios Detalhados <strong>ilimitados</strong>
                   </li>
                 </ul>
-                <Button variant="primary" onClick={() => Assinar("Corporativo")} className="plano__botao">
+                <Button variant="primary" onClick={() => assinarPlano("corporativo")} className="plano__botao">
                   Assinar
                 </Button>
               </div>
