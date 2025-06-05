@@ -6,7 +6,10 @@ import { Link } from "react-router-dom";
 import { AuthContext, useAuth } from "./contexts/UserContext";
 
 const MenuDashBoard = () => {
-    const { setUsuario, setEmpresa, validar, setValidar } = useAuth();
+    console.log("[MenuDashborad] Carregando...")
+
+
+    const { setUsuario, setEmpresa, validar } = useAuth();
     if (!validar) {
         console.log('EM MODO DE DESENVOLVIMENTO: SEM VALIDAÇÃO DE CREDENCIAIS!')
         setUsuario({id: 0, admin: false});

@@ -1,17 +1,31 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth, AuthProvider } from "../contexts/UserContext";
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import api from "../api";
 
 function PrivateRoute({ children }) { 
   const { getToken, validar, setValidar } = useAuth();
   const navigate = useNavigate();
-  
+
+  const [ done, setDone ] = useState(false);
+
+  console.log("[PrivateRoute] Carregando...")
+  let content;
+  console.log('valor do token: ', getToken());
+  console.log('valor validar atual: ', validar);
+
+  if (!validar) {
+    navigate('/login');
+  }
+
+  console.log('valor validar depois: ', validar);
+
+
   useEffect(() => {
-    console.log('valor do token: ', getToken());
-      console.log(setValidar);
-    // setValidar(true);
+    setValidar(true);
+
+    console.log("[PrivateRoute] Executando useEffect...")
 
     // Verifica se existe token ou não
     if (!getToken()) {
@@ -21,6 +35,8 @@ function PrivateRoute({ children }) {
     }
   
     const verifyToken = (token) => {
+      let done = false;
+
       console.log('verificando token: ', token);
       const authHeader = `Bearer ${token}`;
       fetch(`${api.URL}/auth/verify-token`, {
@@ -30,8 +46,11 @@ function PrivateRoute({ children }) {
         }})
         .then( response => {
           if (response.status != 200) {
+            setDone(false);
             console.error('token inválido');
             navigate('/login');
+          } else {
+            setDone(true);
           };
         });
     };
@@ -41,9 +60,7 @@ function PrivateRoute({ children }) {
 
   return (
     <>
-    <AuthProvider>
-      {children}
-    </AuthProvider>
+      {done && children}
     </>
   );
 }
