@@ -18,7 +18,7 @@ import CadastrarPets from "../pages/Pets/Cadastrar_Pets";
 import CadastrarServico from "../pages/Servico/CadastrarServico/Cadastrar_Servico";
 
 // Agendamento
-import Agendamento from "../pages/Agendamentos/Cadastrar/Cadastrar_Agendamento";
+import CadastrarAgendamento from "../pages/Agendamentos/Cadastrar/Cadastrar_Agendamento";
 
 // Relatórios
 import RelatorioSimples from "../pages/Relatorios/Simples/Relatorio_Simples";
@@ -129,10 +129,18 @@ const router = createBrowserRouter([
 
       // Agendamentos
       {
-        path: "agendamentos",
+        path: "agendamentos/cadastrar",
         element: (
           // <PrivateRoute>
-          <Agendamento />
+          <CadastrarAgendamento />
+          // </PrivateRoute>
+        ),
+      },
+      {
+        path: "agendamentos/lista",
+        element: (
+          // <PrivateRoute>
+          <CadastrarAgendamento />
           // </PrivateRoute>
         ),
       },
