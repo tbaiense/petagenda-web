@@ -15,14 +15,13 @@ function PrivateRoute({ children }) {
   console.log('valor do token: ', getToken());
   console.log('valor validar atual: ', validar);
 
-  if (!validar) {
-    navigate('/login');
-  }
-
-  console.log('valor validar depois: ', validar);
-
-
   useEffect(() => {
+    if (!validar) {
+      navigate('/login');
+    }
+  
+    console.log('valor validar depois: ', validar);
+
     setValidar(true);
 
     console.log("[PrivateRoute] Executando useEffect...")

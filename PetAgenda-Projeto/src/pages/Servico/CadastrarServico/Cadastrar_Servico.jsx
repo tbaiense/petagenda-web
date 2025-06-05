@@ -1,9 +1,58 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button, Col, Form, InputGroup, Row } from "react-bootstrap";
 import "./Cadastrar_Servico.css";
+import api from "../../../api";
+import { useAuth } from "../../../contexts/UserContext";
 
 function CadastrarServico() {
+  const [ categorias, setCategorias ] = useState([]);
+  const { getToken, getEmpresa, validar } = useAuth();
+
+  useEffect(() => {
+    // Obtendo categorias de serviços
+    async function getServicosOferecidos() {
+      let errMsg;
+      try {
+        const fetchOpts = {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${getToken()}`
+          }        }
+        const response = await fetch(
+          `${api.URL}/empresa/${getEmpresa().id}/servico-oferecido/categoria`,
+          fetchOpts
+        );
+    
+        const jsonBody = await response.json();
+        
+        if (response.status == 200) {
+          console.log(jsonBody);
+          
+          if (jsonBody.categoriasServicoOferecido?.length > 0) {
+            setCategorias(jsonBody.categoriasServicoOferecido);
+          }
+          return;
+        } else {
+          if (jsonBody?.errors) {
+            errMsg = jsonBody.errors.join('\n');
+          } else {
+            errMsg = "Erro ao obter categorias";
+          }
+          throw new Error(errMsg);
+        }
+      } catch (err) {
+        alert("Falha ao obter serviços oferecidos:\n" + err.message);
+      }
+    }
+
+    if (validar) {
+      getServicosOferecidos();
+    }
+    
+  }, []);
+
   const { register, handleSubmit, reset, watch } = useForm();
 
     const imagemEmpresa = watch("pathImgFile")
@@ -45,10 +94,9 @@ function CadastrarServico() {
               <Form.Label>Categoria</Form.Label>
               <Form.Select {...register("categoria")}>
                 <option value="">Selecione...</option>
-                <option value="banho">Banho</option>
-                <option value="tosa">Tosa</option>
-                <option value="consulta">Consulta</option>
-                <option value="outros">Outros</option>
+                { categorias && categorias.map( cat => {
+                  return <option key={cat.id} value={cat.id}>{cat.nome}</option>
+                })}
               </Form.Select>
             </Form.Group>
           </Col>
@@ -85,7 +133,7 @@ function CadastrarServico() {
               <Form.Label>Restrição de participantes</Form.Label>
               <Form.Select {...register("restricaoParticipantes")}>
                 <option value="">Selecione...</option>
-                <option value="individua">Indivídua</option>
+                <option value="individual">Indivídual</option>
                 <option value="coletivo">Coletivo</option>
               </Form.Select>
             </Form.Group>
