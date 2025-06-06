@@ -1,5 +1,0 @@
-CREATE TABLE cliente (
-    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    nome VARCHAR(128) NOT NULL,
-    telefone CHAR(15) NOT NULL
-);
