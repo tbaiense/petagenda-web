@@ -8,14 +8,17 @@ import { useNavigate } from "react-router-dom";
 
 const CadastrarClientes = () => {
   const { empresaFetch, validar } = useAuth();
-  const [servicos, setServicos] = useState([]);
+  const [ servicos, setServicos] = useState([]);
   const [ endereco, setEndereco ] = useState({});
+  const [ cep, setCep ] = useState("");
 
   const navigate = useNavigate()
   const [servicosSelecionados, setServicosSelecionados] = useState([]);
 
   const {
     register,
+    setValue,
+    getValues,
     handleSubmit,
     formState:{errors},
     subscribe,
@@ -24,8 +27,48 @@ const CadastrarClientes = () => {
 } = useForm();
 
   async function preencherEnderecosCEP(cep) {
-    const end = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+    try {
+      const endRes = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+      /*
+      {
+        "cep": "29149-999",
+        "logradouro": "Rua...",
+        "complemento": "",
+        "unidade": "",
+        "bairro": "",
+        "localidade": "",
+        "uf": "ES",
+        "estado": "Espírito Santo",
+        "regiao": "Sudeste",
+        "ibge": "3201308",
+        "gia": "",
+        "ddd": "27",
+        "siafi": "5625"
+      }
+      */
+  
+      if (endRes.status == 200) {
+        console.log('fetch cep');
 
+        const jsonBody = await endRes.json();
+        const endFound = {
+          logradouro: jsonBody.logradouro,
+          bairro: jsonBody.bairro,
+          cidade: jsonBody.localidade,
+          estado: jsonBody.uf,
+        }
+
+        const entries = Object.entries(endFound);
+
+        for (const [key, value] of entries) {
+          setValue(`endereco.${key}`, value, { shouldTouch: true });
+        }
+      } else {
+        throw new Error("Falha ao obter informaçoes de endereço a partir de CEP");
+      }
+    } catch (err) {
+      console.error(err.message);
+    }
   }
 
   // Verificação de CEP
@@ -38,9 +81,9 @@ const CadastrarClientes = () => {
         isValid: true
       },
       callback: ({values}) => {
-        if (values.endereco && values.endereco.cep?.length == 9) {
+        if (values.endereco && values.endereco.cep?.length == 8 && values.endereco.cep.match(/^\d{5,5}\d{3,3}$/)) {
           const { cep } = values.endereco;
-          console.log('cep: ', cep);
+          preencherEnderecosCEP(cep);
         }
       }
     });
@@ -68,7 +111,7 @@ const CadastrarClientes = () => {
     newEnd[e.target.name.split('.')[1]] = e.target.value;
     
     setEndereco(newEnd);
-    console.log('rodei: ', newEnd);
+    setValue(e.target.name.split('.')[1], e.target.value);
   }
   // Aqui esta pegando o serviço pelo id 
   const handleSelectChange = (e) => {
@@ -83,18 +126,37 @@ const CadastrarClientes = () => {
     }
   };
 
+  async function cadastrarCliente(objCli) {
+    empresaFetch('/cliente', { method: "POST", body: JSON.stringify(objCli) })
+    .then( async res => { 
+        if (res.status == 200) {
+            const json = await res.json()
+            alert(json.message);
+            reset();
+            setServicosSelecionados([]);
+        } else {
+            alert('erro ao cadastrar cliente');
+        }
+    });
+  }
+
   const onSubmit = (data) => {
     console.log('submit: ', data)
-    const allDados = {
+    const objCli = {
       ...data,
-      servicosRequeridos: servicosSelecionados,
+      servico: undefined,
+      servicoRequerido: servicosSelecionados.map( s => ({ servico: s.id })),
     }
 
-    navigate('/dashboard/pets', {
-      state:{
-        all: allDados,
-      }
-    })
+    if (validar) {
+      cadastrarCliente(objCli);
+    }
+
+    // navigate('/dashboard/pets', {
+    //   state:{
+    //     all: allDados,
+    //   }
+    // })
   }
 
   const onError = (errors) => {
@@ -122,6 +184,16 @@ const CadastrarClientes = () => {
                 type="text" 
                 {...register("nome", {
                 required:"O nome é obrigatorio",
+                onChange: (e) => {
+                  let value = e.target.value;
+
+                  if (value && value.length > 0) {
+                    let values = value.split(' ');
+                    values = values.map( v => `${v.charAt(0).toUpperCase()}${v.substring(1)}` );
+                    value = values.join(' ');
+                  }
+                  setValue(e.target.name, value);
+                },
                 minLength:{
                     value:10,
                     message:"O nome deve ter pelo menos 15 caracteres"
@@ -136,11 +208,21 @@ const CadastrarClientes = () => {
 
             <div className={styles.estiloCampos}>
               <label htmlFor="">Telefone</label>
-              <input type="text" placeholder="Digite o telefone" {...register("telefone", {
+              <input type="text" placeholder="27 99988-7766" {...register("telefone", {
                 required:"O telefone é obrigatorio",
                 pattern: {
                   value: /^\d{2,2} \d{5,5}-\d{4,4}$/,
-                  message: "Formato esperado: 27 99888-7766"
+                  message: "Formato esperado: 27 99888-7766",
+                },
+                onChange: (e) => {
+                  let value = e.target.value;
+
+                  if (value && value.length > 0) {
+                    value = value.replaceAll(/[^0-9]/g, '');
+                    value = `${value.substring(0,2)}${(value.length > 2) ? " " : "" }${value.substring(2,7)}${(value.length > 7) ? "-" : "" }${value.substring(7,11)}`;
+                    console.log('limpei')
+                  }
+                  setValue(e.target.name, value);
                 }
               })}/>
               {errors.telefone && <p style={{color: 'red'}}>{errors.telefone.message}</p>}
@@ -155,6 +237,9 @@ const CadastrarClientes = () => {
             </div>
             <hr />
             <CamposEndereco 
+              setValue={setValue}
+              cep={cep}
+              setCep={setCep}
               endereco={endereco}
               handleChange={handleEnderecoChange}
               register={register} 
