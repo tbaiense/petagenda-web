@@ -3,9 +3,13 @@ import { useForm } from "react-hook-form";
 import { Button, Col, Form, InputGroup, Row } from "react-bootstrap";
 import "./Cadastrar_Servico.css";
 import { useAuth } from "../../../contexts/UserContext";
+import { useNavigate } from 'react-router-dom';
 
 function CadastrarServico() {
   const [ categorias, setCategorias ] = useState([]);
+  const [ especies, setEspecies ] = useState([]);
+  const navigate = useNavigate();
+
   const { 
     getToken, getEmpresa, 
     validar, empresaFetch 
@@ -25,9 +29,7 @@ function CadastrarServico() {
     
         const jsonBody = await response.json();
         
-        if (response.status == 200) {
-          console.log(jsonBody);
-          
+        if (response.status == 200) {         
           if (jsonBody.categoriasServicoOferecido?.length > 0) {
             setCategorias(jsonBody.categoriasServicoOferecido);
           }
@@ -45,31 +47,79 @@ function CadastrarServico() {
       }
     }
 
+    // Obter espécies
+    async function getEspeciesPet() {
+      let errMsg;
+      try {
+        const fetchOpts = { method: "GET" };
+
+        const response = await empresaFetch(
+          '/pet/especie',
+          fetchOpts
+        );
+    
+        const jsonBody = await response.json();
+        
+        if (response.status == 200) {
+        
+          if (jsonBody.especiesPet?.length > 0) {
+            setEspecies(jsonBody.especiesPet);
+          }
+          return;
+        } else {
+          if (jsonBody?.errors) {
+            errMsg = jsonBody.errors.join('\n');
+          } else {
+            errMsg = "Erro desconhecido";
+          }
+          throw new Error(errMsg);
+        }
+      } catch (err) {
+        alert("Falha ao obter espécies de pet:\n" + err.message);
+      }
+    }
+
     if (validar) {
       getServicosOferecidos();
+      getEspeciesPet();
     }
     
   }, []);
 
   const { register, handleSubmit, reset, watch } = useForm();
 
-    const imagemEmpresa = watch("pathImgFile")
-    const imagemURL = imagemEmpresa && imagemEmpresa[0] ? URL.createObjectURL(imagemEmpresa[0]) : null
+  const imagemServ = watch("pathImgFile")
+  const imagemServURL = imagemServ && imagemServ[0] ? URL.createObjectURL(imagemServ[0]) : null
 
   const onSubmit = (data) => {
-    console.log(data);
+    const objServ = {
+      nome: data.nome.trim(),
+      categoria: +data.categoria,
+      tipoPreco: data.tipoPreco,
+      preco: +data.preco,
+      descricao: data.descricao.trim(),
+      restricaoParticipante: data.restricaoParticipante,
+      restricaoEspecie: (data.restricaoEspecie.length > 0) 
+        ? data.restricaoEspecie.map( rest => ({ especie: +rest })) 
+        : undefined
+    };
+
+    empresaFetch('/servico-oferecido', { method: "POST", body: JSON.stringify(objServ) })
+        .then( async res => { 
+        if (res.status == 200) {
+            const json = await res.json()
+            const idServ = json.servicoOferecido?.id;
+            if (idServ) {
+              alert(json.message);
+              navigate(`/servicos-oferecidos/${idServ}`);
+            }
+        } else {
+            alert('Erro ao cadastrar Serviço Oferecido');
+        }
+    });
+
     reset();
   };
-
-  const especies = [
-    "Cachorro",
-    "Gato",
-    "Periquito",
-    "Hamster",
-    "Coelho",
-    "Porquinho-da-Índia",
-    "Papagaio",
-  ];
 
   return (
     <div className="cadastrarServico__container mt-4">
@@ -92,7 +142,7 @@ function CadastrarServico() {
               <Form.Label>Categoria</Form.Label>
               <Form.Select {...register("categoria")}>
                 <option value="">Selecione...</option>
-                { categorias && categorias.map( cat => {
+                { categorias?.length > 0 && categorias.map( cat => {
                   return <option key={cat.id} value={cat.id}>{cat.nome}</option>
                 })}
               </Form.Select>
@@ -107,7 +157,7 @@ function CadastrarServico() {
                 <Form.Control
                   type="text"
                   placeholder="Valor do serviço"
-                  {...register("valor")}
+                  {...register("preco")}
                 />
                 <InputGroup.Text>R$</InputGroup.Text>
               </InputGroup>
@@ -117,10 +167,10 @@ function CadastrarServico() {
           <Col md={5}>
             <Form.Group controlId="formTipo">
               <Form.Label>Tipo de cobrança</Form.Label>
-              <Form.Select {...register("tipo")}>
+              <Form.Select {...register("tipoPreco")}>
                 <option value="">Selecione...</option>
-                <option value="por__pet">Por cada pet</option>
-                <option value="por__servico">Por serviço</option>
+                <option value="pet">Por cada pet</option>
+                <option value="servico">Por serviço</option>
               </Form.Select>
             </Form.Group>
           </Col>
@@ -129,9 +179,9 @@ function CadastrarServico() {
           <Col md={5} className="oi">
             <Form.Group className="" controlId="formRestricaoParticipantes">
               <Form.Label>Restrição de participantes</Form.Label>
-              <Form.Select {...register("restricaoParticipantes")}>
+              <Form.Select {...register("restricaoParticipante")}>
                 <option value="">Selecione...</option>
-                <option value="individual">Indivídual</option>
+                <option value="individual">Individual</option>
                 <option value="coletivo">Coletivo</option>
               </Form.Select>
             </Form.Group>
@@ -151,13 +201,14 @@ function CadastrarServico() {
             <Form.Group controlId="formRestricaoEspecies">
               <Form.Label>Restrição de espécies</Form.Label>
               <div className="check_box_especies">
-                {especies.map((especie) => (
+                {especies?.length > 0 && especies.map((especie) => (
                   <Form.Check
-                    key={especie}
+                    key={especie.id}
                     type="checkbox"
-                    label={especie}
-                    value={especie}
-                    {...register("restricaoEspecies[]")}
+                    label={especie.nome}
+                    value={especie.id}
+                    name="especie"
+                    {...register("restricaoEspecie[]")}
                   />
                 ))}
               </div>
@@ -170,7 +221,7 @@ function CadastrarServico() {
         
         <div>
             <h4>Foto de Perfil</h4>
-            {imagemURL && <img src={imagemURL} alt="Pre-Visualização" width={200} height={210}/>}
+            {imagemServURL && <img src={imagemServURL} alt="Pre-Visualização" width={200} height={210}/>}
             <input type="file" {...register("pathImgFile")}/>
         </div>
 
