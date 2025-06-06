@@ -2,3 +2,30 @@ form label,
 form .form-label {
   display: block;
 }
+
+.cadatrar_agendamento {
+  max-width: 850px;
+  margin: auto;
+  padding: 0 15px;
+}
+
+.cadastrar_agendamento__title {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.datepicker-grande {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.rs-input-group-md.rs-input-group>.rs-input, .rs-input-group-md.rs-input-group>.rs-input-group-addon {
+    height: 38px;
+    font-size: 1.03rem;
+}
+
+.estiloTitulos{
+    font-size: x-large;
+    background-color: #fff;
+}
+
