@@ -74,7 +74,7 @@ const SideBar = () => {
                   </Link>
                 </li>
                 <li className={styles.dropdownItem}>
-                  <Link to="/empresa/agendamentos">
+                  <Link to="/empresa/agendamentos/lista">
                     Lista de Agendamentos
                   </Link>
                 </li>
@@ -87,7 +87,7 @@ const SideBar = () => {
                   <Link to="/empresa/agendamentos/cadastrar">Novo</Link>
                 </li>
                 <li>
-                  <Link to="/empresa/agendamentos">Lista</Link>
+                  <Link to="/empresa/agendamentos/lista">Lista</Link>
                 </li>
               </ul>
             )}
@@ -118,7 +118,7 @@ const SideBar = () => {
                   <Link to="/empresa/pets/cadastrar">Cadastrar Pet</Link>
                 </li>
                 <li className={styles.dropdownItem}>
-                  <Link to="/empresa/pets">Lista de Pets</Link>
+                  <Link to="/empresa/pets/lista">Lista de Pets</Link>
                 </li>
               </ul>
             )}
@@ -129,7 +129,7 @@ const SideBar = () => {
                   <Link to="/empresa/pets/cadastrar">Cadastrar</Link>
                 </li>
                 <li>
-                  <Link to="/empresa/pets">Lista</Link>
+                  <Link to="/empresa/pets/lista">Lista</Link>
                 </li>
               </ul>
             )}
@@ -160,7 +160,7 @@ const SideBar = () => {
                   <Link to="/empresa/clients/cadastrar">Novo Cliente</Link>
                 </li>
                 <li className={styles.dropdownItem}>
-                  <Link to="/empresa/clients">Lista de Clientes</Link>
+                  <Link to="/empresa/clients/lista">Lista de Clientes</Link>
                 </li>
               </ul>
             )}
@@ -171,7 +171,7 @@ const SideBar = () => {
                   <Link to="/empresa/clientes/cadastrar">Novo</Link>
                 </li>
                 <li>
-                  <Link to="/empresa/clientes">Lista</Link>
+                  <Link to="/empresa/clientes/lista">Lista</Link>
                 </li>
               </ul>
             )}

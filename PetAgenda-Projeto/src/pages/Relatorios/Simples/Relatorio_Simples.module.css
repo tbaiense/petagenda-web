@@ -1,0 +1,46 @@
+/* ------------------------------ Fundo do Formulario ------------------------ */
+.backgroudFormulario{
+    display: flex;
+    justify-content: center;
+    padding-top: 1rem;
+
+}
+/* ---------------------------------- Formulario ----------------------------- */
+.estiloFormulario{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    border-radius: 12px;
+    border: 1px solid rgb(0, 0, 0);
+    width: 40%;    
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+/* ------------------------------- Estilo dos campos -------------------------- */
+.estiloCampos{
+    display: flex;
+    gap: 5px;
+}
+.espacamento{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+/* ------------------------------------ Botão --------------------------------- */
+.bttn{
+    display: flex;
+    justify-content: center;
+}
+.bttn button{
+  padding: 5px 10px;
+  border: none;
+  border-radius: 12px;
+  transition: background-color 0.3s ease;
+  background-color: #1FAF30;
+  color: white;
+}
+.bttn button:hover{
+  background-color: #0e811c;
+  cursor: pointer;  
+}

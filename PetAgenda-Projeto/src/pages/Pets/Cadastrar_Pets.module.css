@@ -22,6 +22,7 @@
     border-radius: 7px;
     transition: all 0.3s ease-in-out;
     outline: none; 
+    width: 100%;
 }
 .previnindoVazamento input:focus{
     border-color: #1FAF30;
