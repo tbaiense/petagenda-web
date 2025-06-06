@@ -11,18 +11,27 @@ import CadastroEmpresa from "../pages/Empresa/Cadastro_Empresa/CadastroEmpresa";
 import PlanosEmpresa from "../pages/Empresa/Planos/PlanosEmpresa";
 import ViewEmpresa from "../pages/Empresa/Visualizar_Dados/ViewEmpresa";
 
-// Funcionários, Clientes, Pets, Serviços
+// Funcionários
 import CadastroFuncionario from "../pages/Funcionario/CadastroFuncionario/Cadastro_Funcionario";
+
+//Clientes
 import CadastrarClientes from "../pages/Clientes/Cadastrar_Clientes";
+import ListarClientes from "../pages/Clientes/ListarClientes.jsx";
+
+//Pets
 import CadastrarPets from "../pages/Pets/Cadastrar_Pets";
+import ListarPets from "../pages/Pets/ListarPets.jsx"
+
+//Serviços
 import CadastrarServico from "../pages/Servico/CadastrarServico/Cadastrar_Servico";
 
 // Agendamento
 import CadastrarAgendamento from "../pages/Agendamentos/Cadastrar/Cadastrar_Agendamento";
+import Lista_Agendamento from "../pages/Agendamentos/Lista/Lista_Agendamento.jsx"
 
 // Relatórios
-import RelatorioSimples from "../pages/Relatorios/Simples/Relatorio_Simples";
-import RelatorioDetalhado from "../pages/Relatorios/Detalhado/Relatorio_Detalhado";
+import Relatorio_Simples from "../pages/Relatorios/Simples/Relatorio_Simples";
+import Relatorio_Detalhado from "../pages/Relatorios/Detalhado/Relatorio_Detalhado";
 import Gastos from "../pages/Relatorios/Gastos/Gastos";
 
 // Dashboard
@@ -85,13 +94,14 @@ const router = createBrowserRouter([
         ),
       },
 
-      // Funcionários, clientes, pets
+      // Funcionários
       {
         path: "funcionarios",
         element: (
           <CadastroFuncionario />
         ),
       },
+      // Clientes
       {
         path: "clientes/cadastrar",
         element: (
@@ -99,10 +109,23 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "clientes/lista",
+        element: (
+          <ListarClientes/>
+        )
+      },
+      // Pets
+      {
         path: "pets/cadastrar",
         element: (
           <CadastrarPets />
         ),
+      },
+      {
+        path: "pets/lista",
+        element: (
+          <ListarPets/>
+        )
       },
 
       // Serviços
@@ -123,25 +146,25 @@ const router = createBrowserRouter([
       {
         path: "agendamentos/lista",
         element: (
-          <CadastrarAgendamento />
+          <Lista_Agendamento />
         ),
       },
 
       // Relatórios
       {
-        path: "relatorio/simples",
+        path: "relatorios/simples",
         element: (
-          <RelatorioSimples />
+          <Relatorio_Simples />
         ),
       },
       {
-        path: "relatorio/detalhado",
+        path: "relatorios/detalhado",
         element: (
-          <RelatorioDetalhado />
+          <Relatorio_Detalhado />
         ),
       },
       {
-        path: "relatorio/gastos",
+        path: "relatorios/gastos",
         element: (
           <Gastos />
         ),

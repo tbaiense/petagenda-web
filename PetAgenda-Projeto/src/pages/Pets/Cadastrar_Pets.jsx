@@ -88,7 +88,7 @@ const CadastrarPets = () => {
             <div className={styles.estiloCampos}>
               <label>Dono</label>
               <select {...register("clienteId", { required: true })}>
-                {infoCliente ? (
+                {/* {infoCliente ? (
                   <option value={infoCliente.id}>{infoCliente.nome}</option>
                 ) : (
                   <>
@@ -97,7 +97,7 @@ const CadastrarPets = () => {
                       <option value={cliente.id} key={index}>{cliente.nome}</option>
                     ))}
                   </>
-                )}
+                )} */}
               </select>
             </div>
 
@@ -124,7 +124,7 @@ const CadastrarPets = () => {
 
           <div className={styles.linhaComCheckbox}>
 
-            <div>
+            <div className={styles.estiloCampos}>
               <input type="checkbox" checked={aceito} onChange={(e) => setAceito(e.target.checked)} />
               <label style={{ marginLeft: "0.5rem" }}>Castrado?</label>
             </div>
