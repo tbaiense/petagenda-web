@@ -8,10 +8,22 @@ import { useNavigate } from "react-router-dom";
 
 const CadastrarClientes = () => {
   const { empresaFetch } = useAuth();
-  // const [servicos, setServicos] = useState([]);
+  const [servicos, setServicos] = useState([]);
   const [enderecosExtras, setEnderecosExtras] = useState([]);
   const navigate = useNavigate()
   const [servicosSelecionados, setServicosSelecionados] = useState([]);
+
+  useEffect(() => {
+    // Pego os funcionarios do banco da empresa
+    empresaFetch('/servico-oferecido')
+    .then(res => res.json())
+    .then(data => {
+        setServicos(data.servicosOferecidos);
+    })
+    .catch(error => {
+        console.error("Erro ao buscar serviçoes oferecidos:", error);
+    });
+  }, []);
 
   const {
       register,
@@ -23,21 +35,16 @@ const CadastrarClientes = () => {
 
   // Aqui esta pegando o serviço pelo id 
   const handleSelectChange = (e) => {
-    const selectedId = e.target.value;
-    const servico = servicos.find((s) => s.id.toString() === selectedId);
+    if (servicos?.length > 0) {
+      const selectedId = e.target.value;
+      const servico = servicos.find((s) => s.id.toString() === selectedId);
+  
+      if (!servicosSelecionados.some(s => s.id === servico.id)) {
+        setServicosSelecionados(prev => [...prev, servico]);
+      }
 
-    if (servico && !servicosSelecionados.some(s => s.id === servico.id)) {
-      setServicosSelecionados(prev => [...prev, servico]);
     }
   };
-
-  // Aqui é somente para teste
-  const servicos = [
-    { id: 1, nome: "Banho & Tosa", categoria: "Higiene e Estéticaa" },
-    { id: 2, nome: "Check-up Veterinário ", categoria: "Saúde" },
-    { id: 3, nome: "Creche Pet Social", categoria: "Bem-estar e Entretenimento" },
-
-  ];
 
   const onSubmit = (data) => {
 
@@ -183,7 +190,7 @@ const CadastrarClientes = () => {
                       {servicosSelecionados.map((servico) => (
                         <tr key={servico.id}>
                           <td>{servico.nome}</td>
-                          <td>{servico.categoria}</td>
+                          <td>{servico.nomeCategoria}</td>
                         </tr>
                       ))}
                     </tbody>

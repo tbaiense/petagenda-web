@@ -37,7 +37,7 @@ const CadastroFuncionario = () => {
             setServicos(data.servicosOferecidos);
         })
         .catch(error => {
-            console.error("Erro ao buscar Funcionarios:", error);
+            console.error("Erro ao buscar serviços oferecidos:", error);
         });
     }
 
