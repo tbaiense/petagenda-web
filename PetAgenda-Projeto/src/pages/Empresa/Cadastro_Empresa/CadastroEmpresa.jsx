@@ -1,6 +1,6 @@
 import styles from "./CadastroEmpresa.module.css"
 import { useForm } from "react-hook-form"
-import api from  '../../../api';
+import { apiFetch } from  '../../../api';
 import { useAuth } from "../../../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
@@ -8,7 +8,7 @@ import NavEmpresa from "../../../components/navegacaoEmpresa/NavEmpresa.jsx";
 
 
 const CadastroEmpresa = () => {
-    const { getToken, setEmpresa } = useAuth();
+    const { setEmpresa } = useAuth();
 
     const navigate = useNavigate()
     const {
@@ -39,12 +39,8 @@ const CadastroEmpresa = () => {
             // }
         };
 
-        const res = await fetch(`${api.URL}/empresa`, {
+        const res = await apiFetch('/empresa', {
             method: "POST",
-            headers: {
-                "Authorization": `Bearer ${getToken()}`,
-                "Content-Type": "application/json",
-            },
             body: JSON.stringify(objEmp)
         });
 

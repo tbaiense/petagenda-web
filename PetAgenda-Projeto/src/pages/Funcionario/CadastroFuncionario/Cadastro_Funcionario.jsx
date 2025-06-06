@@ -1,6 +1,6 @@
 import { useEffect,useState } from "react"
 import { useForm } from "react-hook-form";
-import api from  '../../../api';
+import { empresaFetch } from  '../../../api';
 import { useAuth } from '../../../contexts/UserContext';
 import ModalCadastroFuncionario from "../../../components/ModalFuncionario/ModalCadastroFuncionario";
 import CardFuncionario from "../../../components/CardFuncionario/CardFuncionario"
@@ -27,13 +27,7 @@ const CadastroFuncionario = () => {
 
     useEffect(() => {
         // Pego os funcionarios do banco da empresa
-        fetch(`${api.URL}/empresa/5/funcionario`, {
-            method: "GET",
-            headers: {
-                "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json",
-            },
-        })
+        empresaFetch('/funcionario')
             // Converto os Serviços em JSON 
             .then(res => res.json())
             .then(data => {
@@ -45,13 +39,7 @@ const CadastroFuncionario = () => {
             });
 
         // Pego os Serviços oferecidos do banco de dados
-        fetch(`${api.URL}/empresa/:id/servicos-oferecido`, {
-            method: "GET",
-            headers: {
-                "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json",
-            },
-        })
+        empresaFetch('/servicos-oferecido')
             // Converto os Serviços em JSON 
             .then(res => res.json())
             .then(data => {
@@ -73,14 +61,8 @@ const CadastroFuncionario = () => {
             // sexo: data.sexo,
         }
 
-        fetch(`${api.URL}/empresa/5/funcionario`, {
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(objFun)
-        }).then( async res => { 
+        empresaFetch('/funcionario', { method: "POST", body: JSON.stringify(objFun) })
+            .then( async res => { 
             if (res.status == 200) {
                 alert('cadastrado');
                 const json = await res.json()

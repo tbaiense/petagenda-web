@@ -2,7 +2,7 @@ import styles from "./Cadastrar_Clientes.module.css"
 import { useForm } from "react-hook-form"
 import { useEffect,useState } from "react";
 import { clientes } from "../../data/testeDeTabela";
-import api from  '../../api';
+import { empresaFetch } from  '../../api';
 import { useAuth } from '../../contexts/UserContext';
 import CamposEndereco from "../../components/Endereco/CamposEndereco";
 import { useNavigate } from "react-router-dom";
@@ -40,25 +40,6 @@ const CadastrarClientes = () => {
 
   ];
 
-  // useEffect(() => {
-  //   // Pego os Serviços oferecidos do banco de dados
-  //   fetch(`${api.URL}/empresa/:id/servicos-oferecido`, {
-  //       method: "GET",
-  //       headers: {
-  //           "Authorization": `Bearer ${token}`,
-  //           "Content-Type": "application/json",
-  //       },
-  //   })
-  //       // Converto os Serviços em JSON 
-  //       .then(res => res.json())
-  //       .then(data => {
-  //           setServicos(data);
-  //       })
-  //       .catch(error => {
-  //           console.error("Erro ao buscar Serviços:", error);
-  //       });
-  // }, []);
-
   const onSubmit = (data) => {
 
     const allDados = {
@@ -85,7 +66,6 @@ const CadastrarClientes = () => {
   const removerEndereco = (indexToRemove) => {
     setEnderecosExtras(prev => prev.filter((_, index) => index !== indexToRemove));
   }
-
 
   return (
     <div>

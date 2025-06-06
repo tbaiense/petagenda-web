@@ -1,14 +1,18 @@
 import { useEffect, useState } from "react"
 import styles from "./Cadastrar_Pets.module.css"
-import { useLocation } from "react-router-dom"
-import api from  '../../api';
+import { useNavigate } from "react-router-dom"
+import { empresaFetch } from  '../../api';
 import { useAuth } from '../../contexts/UserContext';
 import { useForm } from "react-hook-form";
 
 const CadastrarPets = () => {
-  const locate = useLocation()
-  const infoCliente = locate.state
+  const navigate = useNavigate();
+
+  // const locate = useLocation()
+  // const infoCliente = locate.state
   const [clientes, setClientes] = useState([])
+  const [ clienteEscolhido, setClienteEscolhido ] = useState({});
+  const [ pet, setPet ] = useState();
   const { token } = useAuth();
   const [aceito, setAceito] = useState(false);
 
@@ -22,59 +26,46 @@ const CadastrarPets = () => {
 
 
   // Verifica se há dados da pagina de cliente
-  if (!infoCliente) {
-    // Se chegou até aqui e porque o usuario não cadastrou um cliente 
-    // Logo, a API vai pegar todos os clientes para carregar a comboBox
-    fetch(`${api.URL}/empresa/:id/cliente`, {
-        method: "GET",
-        headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json",
-        },
-    })
-    // Converto os clientes em JSON 
-    .then(res => res.json())
-    .then(data => {
-        setServicos(data);
-    })
-    .catch(error => {
-        console.error("Erro ao buscar Clientes:", error);
-    });
-  }
+  // if (!infoCliente) {
+  //   // Se chegou até aqui e porque o usuario não cadastrou um cliente 
+  //   // Logo, a API vai pegar todos os clientes para carregar a comboBox
+  //   empresaFetch('/cliente')
+  //   // Converto os clientes em JSON 
+  //   .then(res => res.json())
+  //   .then(data => {
+  //       setServicos(data);
+  //   })
+  //   .catch(error => {
+  //       console.error("Erro ao buscar Clientes:", error);
+  //   });
+  // }
 
+  const cadastrarPet = async (pet) => {
+    try {
+      const res = await empresaFetch('/pet', {
+          method: "POST",
+          body: JSON.stringify(pet)
+      });
+
+      const jsonBody = await res.json();
+
+      if (res.status == 200) {
+        const idPet = jsonBody.id;
+
+        alert('cadastrado');
+        navigate(`/empresa/pets/${idPet}`);
+      } else {
+          alert('erro ao cadastrar pet');
+      }
+    } catch (err) {
+      alert('Falha ao cadastrar pet: ' + err.message);
+    }
+  };
 
   const onSubmit = (data) => {
+    setPet(data); // TODO: criar objeto certo para cadastro de pet
 
-    fetch(`${api.URL}/empresa/:id/cliente`, {
-        method: "POST",
-        headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(infoCliente)
-    }).then( res => { 
-        if (res.status == 200) {
-            alert('cadastrado');
-        } else {
-            alert('erro ao cadastrar cliente');
-        }
-    });
-
-    fetch(`${api.URL}/empresa/:id/cliente/:id/pet`, {
-        method: "POST",
-        headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data)
-    }).then( res => { 
-        if (res.status == 200) {
-            alert('cadastrado');
-        } else {
-            alert('erro ao cadastrar pet');
-        }
-    });
-
+    cadastrarPet(pet);
   }
 
   const onErrors = (errors) => {

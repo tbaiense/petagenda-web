@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import { Container, Button, Form, Row, Col } from "react-bootstrap";
 import "./Registrar.css";
-import api from "../../api";
+import { apiFetch } from "../../api";
 
 function Registrar() {
   const navigate = useNavigate();
@@ -34,14 +34,9 @@ function Registrar() {
   };
 
   const cadastrarUsuario = async (usr) => {
-    const response = await fetch(`${api.URL}/usuario`, 
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(usr)
-      }
+    const response = await apiFetch(
+      '/usuario', 
+      {method: "POST",body: JSON.stringify(usr)}
     );
 
     const body = await response.json();

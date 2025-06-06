@@ -5,7 +5,7 @@ import MenuDashBoard from "../../../components/SideBar/SideBar";
 import { useState } from "react";
 import NavEmpresa from "../../../components/navegacaoEmpresa/NavEmpresa.jsx";
 import { useAuth } from "../../../contexts/UserContext";
-import api from  '../../../api';
+import { empresaFetch } from  '../../../api';
 import { useEffect } from 'react';
 
 
@@ -58,14 +58,10 @@ function PlanosEmpresa() {
     try {
       const fetchOpts = {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${getToken()}`
-        },
         body: JSON.stringify(dadoPlano)
       }
-      const response = await fetch(
-        `${api.URL}/empresa/${getEmpresa().id}/licenca`,
+      const response = await empresaFetch(
+        '/licenca',
         fetchOpts
       );
   

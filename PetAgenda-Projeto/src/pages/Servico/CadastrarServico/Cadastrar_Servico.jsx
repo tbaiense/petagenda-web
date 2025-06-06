@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button, Col, Form, InputGroup, Row } from "react-bootstrap";
 import "./Cadastrar_Servico.css";
-import api from "../../../api";
+import { empresaFetch } from "../../../api";
 import { useAuth } from "../../../contexts/UserContext";
 
 function CadastrarServico() {
@@ -14,14 +14,10 @@ function CadastrarServico() {
     async function getServicosOferecidos() {
       let errMsg;
       try {
-        const fetchOpts = {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${getToken()}`
-          }        }
-        const response = await fetch(
-          `${api.URL}/empresa/${getEmpresa().id}/servico-oferecido/categoria`,
+        const fetchOpts = { method: "GET" };
+
+        const response = await empresaFetch(
+          '/servico-oferecido/categoria',
           fetchOpts
         );
     

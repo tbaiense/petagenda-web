@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../../contexts/UserContext";
 import NavBarPetAgenda from "../../components/NavBar/NavBarPetAgenda";
-import api from '../../api';
+import { apiFetch } from '../../api';
 
 import {
   Container,
@@ -21,13 +21,7 @@ function Login() {
   const checkCredentials = async (userCredentials) => {
     console.log('checando credenciais...');
 
-    fetch(`${api.URL}/usuario/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(userCredentials)
-    })
+    apiFetch('/usuario/login', {method: "POST", body: JSON.stringify(userCredentials)})
       .then( async (response) => {
         switch (response.status) {
           case 200: {

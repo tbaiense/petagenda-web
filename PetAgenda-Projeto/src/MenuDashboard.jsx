@@ -9,9 +9,10 @@ const MenuDashBoard = () => {
     console.log("[MenuDashborad] Carregando...")
 
 
-    const { setUsuario, setEmpresa, validar } = useAuth();
+    const { removeToken, setUsuario, setEmpresa, validar } = useAuth();
     if (!validar) {
         console.log('EM MODO DE DESENVOLVIMENTO: SEM VALIDAÇÃO DE CREDENCIAIS!')
+        removeToken();
         setUsuario({id: 0, admin: false});
         setEmpresa({id: 0, licenca: 'corporativo'});
     }
