@@ -9,12 +9,41 @@ import { useNavigate } from "react-router-dom";
 const CadastrarClientes = () => {
   const { empresaFetch } = useAuth();
   const [servicos, setServicos] = useState([]);
-  const [enderecosExtras, setEnderecosExtras] = useState([]);
   const navigate = useNavigate()
   const [servicosSelecionados, setServicosSelecionados] = useState([]);
 
+  const {
+    register,
+    handleSubmit,
+    formState:{errors},
+    subscribe,
+    reset,
+    watch
+} = useForm();
+
+  // Verificação de CEP
   useEffect(() => {
-    // Pego os funcionarios do banco da empresa
+    const callback = subscribe({
+      name: [ "endereco.cep" ],
+      formState: {
+        values: true,
+        touchedFields: true,
+        isValid: true
+      },
+      callback: ({values}) => {
+        if (values.endereco && values.endereco.cep?.length == 9) {
+          const { cep } = values.endereco;
+          console.log('cep: ', cep);
+        }
+      }
+    });
+
+    return () => callback();
+
+  }, [subscribe]);
+
+  // Pego os funcionarios do banco da empresa
+  useEffect(() => {
     empresaFetch('/servico-oferecido')
     .then(res => res.json())
     .then(data => {
@@ -25,13 +54,7 @@ const CadastrarClientes = () => {
     });
   }, []);
 
-  const {
-      register,
-      handleSubmit,
-      formState:{errors},
-      reset,
-      watch
-  } = useForm();
+  
 
   // Aqui esta pegando o serviço pelo id 
   const handleSelectChange = (e) => {
@@ -47,7 +70,7 @@ const CadastrarClientes = () => {
   };
 
   const onSubmit = (data) => {
-
+    console.log('submit: ', data)
     const allDados = {
       ...data,
       servicosRequeridos: servicosSelecionados,
@@ -60,17 +83,8 @@ const CadastrarClientes = () => {
     })
   }
 
-  const onError = (data) => {
-    console.log(data)
-  }
-
-  const adicionarEndereco = () => {
-    console.log("Adicionando endereço extra");
-    setEnderecosExtras(prev => [...prev,{}]);
-  }
-
-  const removerEndereco = (indexToRemove) => {
-    setEnderecosExtras(prev => prev.filter((_, index) => index !== indexToRemove));
+  const onError = (errors) => {
+    console.log('error ao enviar: ', errors)
   }
 
   return (
@@ -99,21 +113,19 @@ const CadastrarClientes = () => {
                     message:"O nome dever ter no maximo 100 caracteres"
                 }
               })}/>
+              {errors.nome && <p style={{color: 'red'}}>{errors.nome.message}</p>}
             </div>
 
             <div className={styles.estiloCampos}>
               <label htmlFor="">Telefone</label>
               <input type="text" placeholder="Digite o telefone" {...register("telefone", {
                 required:"O telefone é obrigatorio",
-                minLength:{
-                    value:14,
-                    message:"O telefone deve ter pelo menos 14 caracteres"
-                },
-                maxLength:{
-                    value:14,
-                    message:"O telefone dever ter no maximo 14 caracteres"
+                pattern: {
+                  value: /^\d{2,2} \d{5,5}-\d{4,4}$/,
+                  message: "Formato esperado: 27 99888-7766"
                 }
               })}/>
+              {errors.telefone && <p style={{color: 'red'}}>{errors.telefone.message}</p>}
             </div>
 
           </div>
@@ -122,36 +134,9 @@ const CadastrarClientes = () => {
           <div>
             <div className={styles.estiloTitulos}>
               <h3>Endereço</h3>
-              <button
-                type="button"
-                onClick={adicionarEndereco}
-                disabled={enderecosExtras.length >= 1}
-              >
-                +
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  if (enderecosExtras.length > 0) {
-                    removerEndereco(enderecosExtras.length - 1);
-                  }
-                }}
-                disabled={enderecosExtras.length === 0} // desabilita se não tiver extras
-              >
-                -
-              </button>
             </div>
             <hr />
-            <h5>Endereço de busca</h5>
-            <CamposEndereco register={register} index={null}/>
-            {enderecosExtras.map((_, index) => (
-              <>
-                <h5 key={`title-${index}`}>Endereço de entrega</h5>
-                <CamposEndereco key={index} register={register} index={index} onRemove={() => removerEndereco(index)} />
-              </>
-            ))}
-      
+            <CamposEndereco register={register} errors={errors}/>
           </div>
           
           {/* Aqui é a área de adicionar serviço requeridos */}
@@ -162,13 +147,11 @@ const CadastrarClientes = () => {
                 <div className={styles.estiloCampos}>
                   <label htmlFor="">Serviços</label>
 
-                    {/* VAi FUNIONAR DEPOIS*/}
-                    
-                    <select {...register("servico", { required: "Selecione um serviço" })} id="servico" onChange={handleSelectChange}>
+                    <select {...register("servico", { required: false })} id="servico" onChange={handleSelectChange}>
 
                         <option value="">Selecione um serviço</option>
 
-                        {servicos.map((servico) => (
+                        {servicos?.length > 0 && servicos.map((servico) => (
                             <option key={servico.id} value={servico.id}>{servico.nome}</option>
                         ))}
 
