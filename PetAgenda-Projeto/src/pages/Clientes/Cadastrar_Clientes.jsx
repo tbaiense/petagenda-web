@@ -7,8 +7,10 @@ import CamposEndereco from "../../components/Endereco/CamposEndereco";
 import { useNavigate } from "react-router-dom";
 
 const CadastrarClientes = () => {
-  const { empresaFetch } = useAuth();
+  const { empresaFetch, validar } = useAuth();
   const [servicos, setServicos] = useState([]);
+  const [ endereco, setEndereco ] = useState({});
+
   const navigate = useNavigate()
   const [servicosSelecionados, setServicosSelecionados] = useState([]);
 
@@ -20,6 +22,11 @@ const CadastrarClientes = () => {
     reset,
     watch
 } = useForm();
+
+  async function preencherEnderecosCEP(cep) {
+    const end = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+
+  }
 
   // Verificação de CEP
   useEffect(() => {
@@ -42,20 +49,27 @@ const CadastrarClientes = () => {
 
   }, [subscribe]);
 
-  // Pego os funcionarios do banco da empresa
+  // Pego os serviços oferecidos do banco da empresa
   useEffect(() => {
-    empresaFetch('/servico-oferecido')
-    .then(res => res.json())
-    .then(data => {
-        setServicos(data.servicosOferecidos);
-    })
-    .catch(error => {
-        console.error("Erro ao buscar serviçoes oferecidos:", error);
-    });
+    if (validar) {
+      empresaFetch('/servico-oferecido')
+      .then(res => res.json())
+      .then(data => {
+          setServicos(data.servicosOferecidos);
+      })
+      .catch(error => {
+          console.error("Erro ao buscar serviçoes oferecidos:", error);
+      });
+    }
   }, []);
 
-  
-
+  function handleEnderecoChange(e) {
+    const newEnd = {...endereco };
+    newEnd[e.target.name.split('.')[1]] = e.target.value;
+    
+    setEndereco(newEnd);
+    console.log('rodei: ', newEnd);
+  }
   // Aqui esta pegando o serviço pelo id 
   const handleSelectChange = (e) => {
     if (servicos?.length > 0) {
@@ -102,7 +116,11 @@ const CadastrarClientes = () => {
 
             <div className={styles.estiloCampos}>
               <label htmlFor="">Nome</label>
-              <input className={styles.nome} placeholder="Digite o nome" type="text" {...register("nome", {
+              <input 
+                className={styles.nome} 
+                placeholder="Digite o nome" 
+                type="text" 
+                {...register("nome", {
                 required:"O nome é obrigatorio",
                 minLength:{
                     value:10,
@@ -136,7 +154,11 @@ const CadastrarClientes = () => {
               <h3>Endereço</h3>
             </div>
             <hr />
-            <CamposEndereco register={register} errors={errors}/>
+            <CamposEndereco 
+              endereco={endereco}
+              handleChange={handleEnderecoChange}
+              register={register} 
+              errors={errors}/>
           </div>
           
           {/* Aqui é a área de adicionar serviço requeridos */}

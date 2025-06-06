@@ -10,7 +10,6 @@ const CadastroFuncionario = () => {
     const [showModal, setShowModal] = useState(false);
     const [funcionarios, setFuncionarios] = useState([]);
     const [servicos, setServicos] = useState([]);
-    
     const {
         register,
         handleSubmit,
@@ -18,7 +17,7 @@ const CadastroFuncionario = () => {
         reset,
         watch
     } = useForm();
-
+    
     function popularListaFuncionarios() {
         // Pego os funcionarios do banco da empresa
         empresaFetch('/funcionario')
@@ -41,14 +40,26 @@ const CadastroFuncionario = () => {
         });
     }
 
-    // Thiago eu não sei qual verificação fazer para conseguir retornar todos os funcionarios
-    // Se eu tiver feito errado, por favor corriga e me informa para eu saber o que eu errei
-
     useEffect(() => {
         if (validar) {
             popularListaFuncionarios();
         }
     }, []);
+
+    function cadastrarFuncionario(objFun) {
+        empresaFetch('/funcionario', { method: "POST", body: JSON.stringify(objFun) })
+            .then( async res => { 
+                if (res.status == 200) {
+                    const json = await res.json()
+                    popularListaFuncionarios();
+                    alert(json.message);
+                } else {
+                    alert('erro ao cadastrar funcionario');
+                }
+                reset();
+                setShowModal(false);
+            });
+    }
 
     // Ao Finalizar o Cadastro, a pagina recarrega e adiciona o novo funcionario a lista
     const onSubmit = async (data) => {
@@ -60,24 +71,13 @@ const CadastroFuncionario = () => {
             }],
         }
 
-        empresaFetch('/funcionario', { method: "POST", body: JSON.stringify(objFun) })
-            .then( async res => { 
-            if (res.status == 200) {
-                const json = await res.json()
-                popularListaFuncionarios();
-                alert(json.message);
-            } else {
-                alert('erro ao cadastrar funcionario');
-            }
-            reset();
-            setShowModal(false);
-        });
-
+        if (validar) {
+            cadastrarFuncionario(objFun);
+        }
     }
     const onError = (errors) => {
         console.log("Erro ao Enviar",errors)
     }
-
 
     return(
         <div className={styles.viewConteudo}>

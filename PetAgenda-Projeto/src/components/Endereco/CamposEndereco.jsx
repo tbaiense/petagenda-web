@@ -1,7 +1,7 @@
 import { UFS } from "../../data/info";
 import styles from "./CamposEndereco.module.css";
 
-const CamposEndereco = ({ prefix, register, errors }) => {
+const CamposEndereco = ({ endereco, handleChange, prefix, register, errors }) => {
   /* Thiago >>> Castro, modifiquei o componente para ficar um pouco mais fácil
                 de usar quando tem apenas um endereço, como no caso do cadastro
                 de cliente: o 'prefix' é definido fora do componente e ele apenas
@@ -11,6 +11,17 @@ const CamposEndereco = ({ prefix, register, errors }) => {
     prefix = 'endereco';
   }
 
+  if (!endereco) {
+    endereco = {
+      cep: "",
+      logradouro: "",
+      numero: "",
+      bairro: "",
+      cidade: "",
+      uf: ""
+    };
+  }
+
   return (
     <div className={styles.enderecoContainer}>
       <div className={styles.linhaEndereco}>
@@ -18,6 +29,8 @@ const CamposEndereco = ({ prefix, register, errors }) => {
           <label>CEP</label>
           <input
             type="text"
+            value={endereco.cep}
+            onInput={handleChange}
             placeholder="12345-678"
             {...register(`${prefix}.cep`, 
               { required: true, 
@@ -41,6 +54,8 @@ const CamposEndereco = ({ prefix, register, errors }) => {
         <div className={`${styles.labelInput} ${styles.flex5}`}>
           <label>Logradouro</label>
           <input
+            value={endereco.logradouro}
+            onInput={handleChange}
             type="text"
             placeholder="Digite o logradouro"
             {...register(`${prefix}.logradouro`, { required: "Logradouro é obrigatório" })}
@@ -52,6 +67,8 @@ const CamposEndereco = ({ prefix, register, errors }) => {
           <label>Número</label>
           <input
             type="text"
+            value={endereco.numero}
+            onInput={handleChange}
             placeholder="Número"
             {...register(`${prefix}.numero`, { required: "Número é obrigatório" })}
           />
@@ -63,6 +80,8 @@ const CamposEndereco = ({ prefix, register, errors }) => {
           <label>Bairro</label>
           <input
             type="text"
+            value={endereco.bairro}
+            onInput={handleChange}
             placeholder="Digite o bairro"
             {...register(`${prefix}.bairro`, { required: "Bairro é obrigatório" })}
           />
@@ -72,6 +91,8 @@ const CamposEndereco = ({ prefix, register, errors }) => {
           <label>Cidade</label>
           <input
             type="text"
+            value={endereco.cidade}
+            onInput={handleChange}
             placeholder="Digite a cidade"
             {...register(`${prefix}.cidade`, { required: "Cidade é obrigatória" })}
           />
@@ -79,7 +100,9 @@ const CamposEndereco = ({ prefix, register, errors }) => {
         </div>
         <div className={`${styles.labelInput} ${styles.flex1}`}>
           <label>UF</label>
-          <select {...register(`${prefix}.uf`, { required: "Unidade Federativa é obrigatória" })}>
+          <select value={endereco.uf} 
+              onInput={handleChange}
+          {...register(`${prefix}.uf`, { required: "Unidade Federativa é obrigatória" })}>
             <option value="">UF</option>
             {UFS.map((uf, i) => (
               <option key={i} value={uf}>
