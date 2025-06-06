@@ -2,13 +2,12 @@ import styles from "./Cadastrar_Clientes.module.css"
 import { useForm } from "react-hook-form"
 import { useEffect,useState } from "react";
 import { clientes } from "../../data/testeDeTabela";
-import { empresaFetch } from  '../../api';
 import { useAuth } from '../../contexts/UserContext';
 import CamposEndereco from "../../components/Endereco/CamposEndereco";
 import { useNavigate } from "react-router-dom";
 
 const CadastrarClientes = () => {
-  const { token } = useAuth();
+  const { empresaFetch } = useAuth();
   // const [servicos, setServicos] = useState([]);
   const [enderecosExtras, setEnderecosExtras] = useState([]);
   const navigate = useNavigate()

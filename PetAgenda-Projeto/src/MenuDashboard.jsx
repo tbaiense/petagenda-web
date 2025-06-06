@@ -6,9 +6,6 @@ import { Link } from "react-router-dom";
 import { AuthContext, useAuth } from "./contexts/UserContext";
 
 const MenuDashBoard = () => {
-    console.log("[MenuDashborad] Carregando...")
-
-
     const { removeToken, setUsuario, setEmpresa, validar } = useAuth();
     if (!validar) {
         console.log('EM MODO DE DESENVOLVIMENTO: SEM VALIDAÇÃO DE CREDENCIAIS!')
@@ -17,13 +14,6 @@ const MenuDashBoard = () => {
         setEmpresa({id: 0, licenca: 'corporativo'});
     }
 
-    const verificaCadastroEmpresa = () => {
-        alert("teste")
-        
-    }
-    const verifica = () => {
-        alert("Ainda em desenvolvimento")
-    }
     return(
         <>
             <div className={styles.layoutDashboard}>

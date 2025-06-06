@@ -3,10 +3,11 @@ import { useNavigate } from "react-router-dom";
 
 import { Container, Button, Form, Row, Col } from "react-bootstrap";
 import "./Registrar.css";
-import { apiFetch } from "../../api";
+import { useAuth  } from "../../contexts/UserContext";
 
 function Registrar() {
   const navigate = useNavigate();
+  const { apiFetch } = useAuth();
 
   const [etapaAtual, setEtapaAtual] = useState(1);
   const [email, setEmail] = useState("");

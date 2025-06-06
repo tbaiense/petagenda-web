@@ -1,14 +1,12 @@
 import { useEffect,useState } from "react"
 import { useForm } from "react-hook-form";
-import { empresaFetch } from  '../../../api';
 import { useAuth } from '../../../contexts/UserContext';
 import ModalCadastroFuncionario from "../../../components/ModalFuncionario/ModalCadastroFuncionario";
 import CardFuncionario from "../../../components/CardFuncionario/CardFuncionario"
 import styles from "./Cadastro_Funcionario.module.css"
-import { tempFuncionarios } from "../../../data/Tempdata";
 
 const CadastroFuncionario = () => {
-    const { token } = useAuth();
+    const { empresaFetch, validar } = useAuth();
     const [showModal, setShowModal] = useState(false);
     const [funcionarios, setFuncionarios] = useState([]);
     const [servicos, setServicos] = useState([]);
@@ -21,33 +19,35 @@ const CadastroFuncionario = () => {
         watch
     } = useForm();
 
-
-    // Thiago eu não sei qual verificação fazer para conseguir retornar todos os funcionarios
-    // Se eu tiver feito errado, por favor corriga e me informa para eu saber o que eu errei
-
-    useEffect(() => {
+    function popularListaFuncionarios() {
         // Pego os funcionarios do banco da empresa
         empresaFetch('/funcionario')
-            // Converto os Serviços em JSON 
             .then(res => res.json())
             .then(data => {
-                console.log(data.funcionarios)
                 setFuncionarios(data.funcionarios);
             })
             .catch(error => {
                 console.error("Erro ao buscar Funcionarios:", error);
             });
 
-        // Pego os Serviços oferecidos do banco de dados
-        empresaFetch('/servicos-oferecido')
-            // Converto os Serviços em JSON 
-            .then(res => res.json())
-            .then(data => {
-                setServicos(data);
-            })
-            .catch(error => {
-                console.error("Erro ao buscar Serviços:", error);
-            });
+        // Pego os funcionarios do banco da empresa
+        empresaFetch('/servico-oferecido')
+        .then(res => res.json())
+        .then(data => {
+            setServicos(data.servicosOferecidos);
+        })
+        .catch(error => {
+            console.error("Erro ao buscar Funcionarios:", error);
+        });
+    }
+
+    // Thiago eu não sei qual verificação fazer para conseguir retornar todos os funcionarios
+    // Se eu tiver feito errado, por favor corriga e me informa para eu saber o que eu errei
+
+    useEffect(() => {
+        if (validar) {
+            popularListaFuncionarios();
+        }
     }, []);
 
     // Ao Finalizar o Cadastro, a pagina recarrega e adiciona o novo funcionario a lista
@@ -55,21 +55,22 @@ const CadastroFuncionario = () => {
         const objFun = {
             nome: data.nome,
             telefone: data.telefone,
-            // exerce:[{
-            //     servico: Number(data.servico)
-            // }],
-            // sexo: data.sexo,
+            exerce:[{
+                id: Number(data.servico)
+            }],
         }
 
         empresaFetch('/funcionario', { method: "POST", body: JSON.stringify(objFun) })
             .then( async res => { 
             if (res.status == 200) {
-                alert('cadastrado');
                 const json = await res.json()
-                console.log(json)
+                popularListaFuncionarios();
+                alert(json.message);
             } else {
                 alert('erro ao cadastrar funcionario');
             }
+            reset();
+            setShowModal(false);
         });
 
     }
@@ -93,7 +94,7 @@ const CadastroFuncionario = () => {
 
                 <h2>Cadastro de Funcionario</h2>
 
-                <form action="" className={styles.customeForm} onSubmit={handleSubmit(onSubmit, onError)}>
+                <form id="form-func"  action="" className={styles.customeForm} onSubmit={handleSubmit(onSubmit, onError)}>
 
                     <div className={styles.areaNomeSexo}>
                         <div className={styles.controlaCampos}>
@@ -111,23 +112,12 @@ const CadastroFuncionario = () => {
                                 }
                             })} />
                         </div>
-
-                        <div className={styles.controlaCampos}>
-                            <label htmlFor="">Sexo:</label>
-                            <select {...register("sexo", { required: "Selecione um sexo" })}>
-                                <option value="">Sexo</option>
-                                <option value="M">Masculino</option>
-                                <option value="F">Feminino</option>
-                            </select>
-                        </div>
-
                     </div>
                     
                     <div>
 
                         <div className={styles.controlaCampos}>
                             <label htmlFor="">Serviço Prestado:</label>
-                            {/* VAi FUNIONAR DEPOIS*/}
                             <select {...register("servico", { required: "Selecione um serviço" })}>
 
                                 <option value="">Selecione um serviço</option>
@@ -174,17 +164,23 @@ const CadastroFuncionario = () => {
                             <th>Nome</th>
                             <th>Telefone</th>
                             <th>Serviço</th>
-                            <th>Sexo</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {tempFuncionarios.map((tempFuncionario, index) => {
+                        {funcionarios && funcionarios.map((func) => {
+                            const servExerce = servicos.flatMap( serv => {
+                                if (serv.id == func.exerce[0].servico) {
+                                    return serv.nome;
+                                } else {
+                                    return [];
+                                }
+
+                            });
                             return (
-                                <tr key={index}>
-                                    <td>{tempFuncionario.nome}</td>
-                                    <td>{tempFuncionario.telefone}</td>
-                                    <td>{tempFuncionario.servico}</td>
-                                    <td>{tempFuncionario.sexo}</td>
+                                <tr key={func.id}>
+                                    <td>{func.nome}</td>
+                                    <td>{func.telefone}</td>
+                                    <td>{servExerce.length > 0 && servExerce[0]}</td>
                                 </tr>
                             )
                         })}

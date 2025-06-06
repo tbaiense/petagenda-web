@@ -1,6 +1,5 @@
 import styles from "./CadastroEmpresa.module.css"
 import { useForm } from "react-hook-form"
-import { apiFetch } from  '../../../api';
 import { useAuth } from "../../../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
@@ -8,7 +7,7 @@ import NavEmpresa from "../../../components/navegacaoEmpresa/NavEmpresa.jsx";
 
 
 const CadastroEmpresa = () => {
-    const { setEmpresa } = useAuth();
+    const { setEmpresa, apiFetch } = useAuth();
 
     const navigate = useNavigate()
     const {

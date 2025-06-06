@@ -2,7 +2,6 @@ import React from "react";
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../../contexts/UserContext";
 import NavBarPetAgenda from "../../components/NavBar/NavBarPetAgenda";
-import { apiFetch } from '../../api';
 
 import {
   Container,
@@ -16,7 +15,12 @@ import {
 import "./Login.css";
 function Login() {
   const navigate = useNavigate();
-  const { setToken, removeToken, setUsuario, removeUsuario, setEmpresa, removeEmpresa } = useAuth();
+  const { 
+    setToken, removeToken, 
+    setUsuario, removeUsuario, 
+    setEmpresa, removeEmpresa, 
+    apiFetch 
+  } = useAuth();
 
   const checkCredentials = async (userCredentials) => {
     console.log('checando credenciais...');

@@ -2,60 +2,48 @@ import { useNavigate } from "react-router-dom";
 import { useAuth, AuthProvider } from "../contexts/UserContext";
 import { useEffect, useState } from 'react';
 
-import {apiFetch} from "../api";
-
 function PrivateRoute({ children }) { 
-  const { getToken, validar, setValidar } = useAuth();
+  const { getToken, validar, setValidar, apiFetch } = useAuth();
   const navigate = useNavigate();
 
   const [ done, setDone ] = useState(false);
 
-  console.log("[PrivateRoute] Carregando...")
-  let content;
-  console.log('valor do token: ', getToken());
-  console.log('valor validar atual: ', validar);
+  const verifyToken = () => {
+    let done = false;
+  
+    const authHeader = `Bearer ${getToken()}`;
+    apiFetch(`/auth/verify-token`, {
+        method: "POST",
+        headers: {
+          "Authorization": authHeader
+      }})
+      .then( response => {
+        if (response.status != 200) {
+          setDone(false);
+          console.log('[PrivateRouter] Token inválido');
+          navigate('/login');
+        } else {
+          setDone(true);
+          console.log('[PrivateRouter] Token válido!');
+        };
+      });
+  };
 
   useEffect(() => {
-    if (!validar) {
-      navigate('/login');
-    }
-  
-    console.log('valor validar depois: ', validar);
-
     setValidar(true);
-
-    console.log("[PrivateRoute] Executando useEffect...")
-
+    
+    console.log('[PrivateRouter] Verificando token: ', getToken());
     // Verifica se existe token ou não
     if (!getToken()) {
-      console.error('token inexistente');
+      console.log('[PrivateRouter] Token inexistente...');
       navigate('/login');
       return;
     }
-  
-    const verifyToken = (token) => {
-      let done = false;
 
-      console.log('verificando token: ', token);
-      const authHeader = `Bearer ${token}`;
-      apiFetch(`/auth/verify-token`, {
-          method: "POST",
-          headers: {
-            "Authorization": authHeader
-        }})
-        .then( response => {
-          if (response.status != 200) {
-            setDone(false);
-            console.error('token inválido');
-            navigate('/login');
-          } else {
-            setDone(true);
-          };
-        });
-    };
-
-    verifyToken(getToken());
+    verifyToken();
   },[]);
+
+  
 
   return (
     <>

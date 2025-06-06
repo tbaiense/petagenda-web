@@ -5,12 +5,15 @@ import MenuDashBoard from "../../../components/SideBar/SideBar";
 import { useState } from "react";
 import NavEmpresa from "../../../components/navegacaoEmpresa/NavEmpresa.jsx";
 import { useAuth } from "../../../contexts/UserContext";
-import { empresaFetch } from  '../../../api';
 import { useEffect } from 'react';
 
 
 function PlanosEmpresa() {
-  const { getToken, getEmpresa, getLicenca, setLicenca, removeLicenca } = useAuth();
+  const { 
+    getToken, getEmpresa, 
+    getLicenca, setLicenca, removeLicenca, 
+    empresaFetch 
+  } = useAuth();
 
   useEffect(() => {
     const licenca = getLicenca();

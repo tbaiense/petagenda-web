@@ -3,10 +3,10 @@ import { useState, useEffect, createContext, useContext  } from "react";
 export const AuthContext = createContext()
 
 export const AuthProvider = ({ children }) => {
-  const tokenKey = 'access_token';
-
+  
   const [ validar, setValidar ] = useState(false);
-
+  
+  const tokenKey = 'access_token';
   //Aqui salva o token no estado e no localStorage ao fazer login
   const setToken = (jwt) => {
     localStorage.setItem(tokenKey, jwt)
@@ -99,6 +99,54 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem(empresa_licencaKey);
   };
 
+  // URL da API
+  const apiURL = 'http://192.168.15.2:3000';
+
+  function deveRodar() {
+    if (!validar) {
+        const msg = 'Operação não permitida em modo de desenvolvimento (sem back-end)';
+        alert(msg);
+
+        // throw Error(msg);
+    }
+  }
+  
+  function apiFetch(path, opts) {
+    const urlFinal = `${apiURL}${path}`;
+  
+    if (!opts) {
+      opts = {};
+    }
+
+    if (!opts.headers) {
+      opts.headers = {};
+
+    }
+    if (!opts.headers["Content-Type"]) {
+      opts.headers["Content-Type"] = "application/json";
+    }
+
+    return fetch(urlFinal, opts);
+  }
+  
+  function empresaFetch(path, opts) {
+    deveRodar();
+
+    // Sobre escrevendo opts
+    if (!opts) {
+      opts = {};
+    }
+
+    if (!opts.headers) {
+      opts.headers = {
+        "Authorization": `Bearer ${getToken()}`
+      };
+    }
+
+    const urlFinal = `/empresa/${getEmpresa().id}${path}`;
+    return apiFetch(urlFinal, opts);
+  }
+
   return (
     //Defino que todos os filhos do elemento pai pode acessar essas informações
     <AuthContext.Provider value={{ 
@@ -106,7 +154,7 @@ export const AuthProvider = ({ children }) => {
       setUsuario, getUsuario, removeUsuario,
       setEmpresa, getEmpresa, removeEmpresa,
       setLicenca, getLicenca, removeLicenca,
-      validar, setValidar
+      validar, setValidar, apiFetch, empresaFetch, apiURL
      }}>
       {children}
     </AuthContext.Provider>

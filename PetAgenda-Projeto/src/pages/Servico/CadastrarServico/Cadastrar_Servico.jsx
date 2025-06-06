@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button, Col, Form, InputGroup, Row } from "react-bootstrap";
 import "./Cadastrar_Servico.css";
-import { empresaFetch } from "../../../api";
 import { useAuth } from "../../../contexts/UserContext";
 
 function CadastrarServico() {
   const [ categorias, setCategorias ] = useState([]);
-  const { getToken, getEmpresa, validar } = useAuth();
+  const { 
+    getToken, getEmpresa, 
+    validar, empresaFetch 
+  } = useAuth();
 
   useEffect(() => {
     // Obtendo categorias de serviços

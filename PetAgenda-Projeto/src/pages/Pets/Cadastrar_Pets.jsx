@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
 import styles from "./Cadastrar_Pets.module.css"
 import { useNavigate } from "react-router-dom"
-import { empresaFetch } from  '../../api';
 import { useAuth } from '../../contexts/UserContext';
 import { useForm } from "react-hook-form";
 
@@ -13,7 +12,7 @@ const CadastrarPets = () => {
   const [clientes, setClientes] = useState([])
   const [ clienteEscolhido, setClienteEscolhido ] = useState({});
   const [ pet, setPet ] = useState();
-  const { token } = useAuth();
+  const { empresaFetch } = useAuth();
   const [aceito, setAceito] = useState(false);
 
   const {
