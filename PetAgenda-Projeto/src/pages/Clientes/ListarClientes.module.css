@@ -1,0 +1,88 @@
+.viewConteudo h1{
+    text-align: center;
+    padding-top: 7px;
+  }
+  .estiloBotao{
+    display: flex;
+    justify-content: center;
+    padding-top: 1rem;
+  }
+  .estiloBotao button{
+    padding: 5px 20px 5px 20px;
+    border-radius: 12px;
+    border: none;
+    background-color: #1FAF30;
+    transition: background-color 0.3s ease;
+    color: white;
+  }
+  .estiloBotao button:hover{
+    background-color: #0e811c;
+  }
+  .tabelaBonita {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+    background-color: #f9f9f9;
+  }
+  
+  .tabelaBonita th, .tabelaBonita td {
+    border: 1px solid #ccc;
+    padding: 12px;
+  }
+  
+  .tabelaBonita th {
+    background-color: #e2e2e2;
+    color: #333;
+    font-weight: bold;
+  }
+  
+  .tabelaBonita tr:hover {
+    transition: background-color 0.3s ease;
+    background-color: #f1f1f1;
+  }
+  
+  
+  /* ---------------------------------------------------------------------------------------------- */
+  .customeForm button{
+    padding: 5px 20px 5px 20px;
+    border-radius: 12px;
+    border: none;
+    transition: background-color 0.3s ease;
+    background-color: #1FAF30;
+    color: white;
+  }
+  .customeForm button:hover{
+    background-color: #0e811c;
+  }
+  
+  .customeForm .controlaCampos{
+    display: flex;
+    flex-direction: column;
+  }
+  .posicaoBotaoForm{
+    display: flex;
+    justify-content: center;
+    padding-top: 1rem;
+  }
+  .controlaCampos input{
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    padding: 5px 1rem;
+    border-radius: 7px;
+    transition: all 0.3s ease-in-out;
+    outline: none;   
+  }
+  .controlaCampos input:focus{
+    border-color: #1FAF30;
+    box-shadow: 0 0 10px rgba(31, 175, 48, 0.6); 
+  }
+  .controlaCampos select{
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    padding: 5px 1rem;
+    border-radius: 7px;
+    transition: all 0.3s ease-in-out;
+    outline: none;  
+  }
+  .controlaCampos select:focus{
+    border-color: #1FAF30;
+    box-shadow: 0 0 10px rgba(31, 175, 48, 0.6); 
+  }

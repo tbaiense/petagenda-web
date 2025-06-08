@@ -8,7 +8,7 @@ const CadastrarPets = () => {
   const navigate = useNavigate();
 
   // const locate = useLocation()
-  const infoCliente = locate.state
+  // const infoCliente = locate.state
   const [clientes, setClientes] = useState([])
   const [ clienteEscolhido, setClienteEscolhido ] = useState({});
   const [ pet, setPet ] = useState();

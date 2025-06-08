@@ -42,6 +42,7 @@ const CamposEndereco = ({
 
                   if (value && value.length > 0) {
                     value = value.replaceAll(/[^0-9]/g, '');
+                    value = value.substring(0, 8);
                   }
                   setValue(e.target.name, value);
                 },
@@ -106,7 +107,9 @@ const CamposEndereco = ({
           <select
             // value={endereco.uf ?? ''} 
             // onInput={handleChange}
-            {...register(`${prefix}.estado`, { required: { value: true, message: "Unidade Federativa é obrigatória" } })}>
+            {...register(`${prefix}.estado`, 
+            { required: { value: true, message: "Unidade Federativa é obrigatória" },
+            })}>
             <option value="">UF</option>
             {UFS.map((uf, i) => (
               <option key={i} value={uf}>

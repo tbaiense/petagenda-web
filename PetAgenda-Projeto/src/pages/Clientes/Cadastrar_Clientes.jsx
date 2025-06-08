@@ -51,17 +51,20 @@ const CadastrarClientes = () => {
         console.log('fetch cep');
 
         const jsonBody = await endRes.json();
-        const endFound = {
-          logradouro: jsonBody.logradouro,
-          bairro: jsonBody.bairro,
-          cidade: jsonBody.localidade,
-          estado: jsonBody.uf,
-        }
-
-        const entries = Object.entries(endFound);
-
-        for (const [key, value] of entries) {
-          setValue(`endereco.${key}`, value, { shouldTouch: true });
+        if (!jsonBody.erro) {
+          const endFound = {
+            logradouro: jsonBody.logradouro,
+            bairro: jsonBody.bairro,
+            numero: "",
+            cidade: jsonBody.localidade,
+            estado: jsonBody.uf,
+          }
+  
+          const entries = Object.entries(endFound);
+  
+          for (const [key, value] of entries) {
+            setValue(`endereco.${key}`, value, { shouldTouch: true });
+          }
         }
       } else {
         throw new Error("Falha ao obter informaçoes de endereço a partir de CEP");
@@ -127,20 +130,19 @@ const CadastrarClientes = () => {
   };
 
   async function cadastrarCliente(objCli) {
-    empresaFetch('/cliente', { method: "POST", body: JSON.stringify(objCli) })
+    return empresaFetch('/cliente', { method: "POST", body: JSON.stringify(objCli) })
     .then( async res => { 
         if (res.status == 200) {
             const json = await res.json()
-            alert(json.message);
-            reset();
-            setServicosSelecionados([]);
+
+            return json;
         } else {
             alert('erro ao cadastrar cliente');
         }
     });
   }
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     console.log('submit: ', data)
     const objCli = {
       ...data,
@@ -149,14 +151,15 @@ const CadastrarClientes = () => {
     }
 
     if (validar) {
-      cadastrarCliente(objCli);
-    }
+      const jsonResp = await cadastrarCliente(objCli);
+      if (jsonResp.success) {
+        alert(jsonResp.message);
+        reset();
+        setServicosSelecionados([]);
 
-    // navigate('/dashboard/pets', {
-    //   state:{
-    //     all: allDados,
-    //   }
-    // })
+        navigate(`/empresa/clientes/${jsonResp.cliente.id}`);
+      }
+    }
   }
 
   const onError = (errors) => {

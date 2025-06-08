@@ -54,7 +54,7 @@ function Login() {
               setEmpresa(empresas[0]);
             }
 
-            navigate('/empresa/informacoes');
+            navigate('/empresa/dashboard');
             break;
           };
 

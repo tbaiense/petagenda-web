@@ -99,7 +99,7 @@ function CadastrarServico() {
       preco: +data.preco,
       descricao: data.descricao.trim(),
       restricaoParticipante: data.restricaoParticipante,
-      restricaoEspecie: (data.restricaoEspecie.length > 0) 
+      restricaoEspecie: (data.restricaoEspecie?.length > 0) 
         ? data.restricaoEspecie.map( rest => ({ especie: +rest })) 
         : undefined
     };

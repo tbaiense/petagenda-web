@@ -2,8 +2,7 @@ import SideBar from "./components/SideBar/SideBar"
 import LogoPetAgenda from "./components/LogoPet/LogoPetAgenda"
 import { Outlet } from "react-router-dom"
 import styles from "./styles/MenuDashboard.module.css"
-import { Link } from "react-router-dom";
-import { AuthContext, useAuth } from "./contexts/UserContext";
+import { useAuth } from "./contexts/UserContext";
 
 const MenuDashBoard = () => {
     const { removeToken, setUsuario, setEmpresa, validar } = useAuth();

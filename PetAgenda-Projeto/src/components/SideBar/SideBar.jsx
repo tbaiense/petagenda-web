@@ -1,5 +1,6 @@
 import styles from "./SideBar.module.css";
 import iconPerfil from "../../assets/icon_perfil.svg";
+import { useAuth } from "../../contexts/UserContext";
 import {
   FaHome,
   FaUserFriends,
@@ -15,9 +16,11 @@ import {
 } from "react-icons/fa";
 import { PiBuildingOfficeBold } from "react-icons/pi";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const SideBar = () => {
+  const { removeEmpresa, removeToken} = useAuth();
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
   const toggleSidebar = () => setIsOpen(!isOpen);
@@ -361,6 +364,13 @@ const SideBar = () => {
 
       <div className={styles.logout}>
         <button
+          onClick={ e => {
+            if (confirm("Deseja realmente sair da conta atual?")) {
+              navigate("/login");
+              removeEmpresa();
+              removeToken();
+            }
+          }}
           className={`${styles.sideItem} ${
             isOpen ? styles.logout_btn : styles.logout_btn_close
           }`}

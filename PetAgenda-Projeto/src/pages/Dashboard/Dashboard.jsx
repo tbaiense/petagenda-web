@@ -1,4 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useAuth } from '../../contexts/UserContext';
+import { useNavigate } from "react-router-dom";
+
 import { Container, Row, Col, Card } from "react-bootstrap";
 import {
   FaCheckCircle,
@@ -24,6 +27,21 @@ import {
 } from "recharts";
 
 function Dashboard() {
+
+  const { getEmpresa } = useAuth();
+  const navigate = useNavigate();
+  const empresa = getEmpresa();
+
+  useEffect(() => {
+    console.log(empresa);
+
+    if (!empresa) {
+      navigate('/empresa/cadastrar');
+    } else if (!empresa.licenca) {
+      navigate('/empresa/planos');
+    }
+  }, []);
+
   const DataGraficoLinha = [
     { name: "Jan", vendas1: 500, vendas2: 2000 },
     { name: "Fev", vendas1: 2000, vendas2: 1000 },
