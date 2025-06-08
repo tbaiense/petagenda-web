@@ -24,6 +24,7 @@
     "react-hook-form": "^7.57.0",
     "react-icons": "^5.5.0",
     "react-router-dom": "^7.6.0",
+    "recharts": "^2.15.3",
     "rsuite": "^5.82.0"
   },
   "devDependencies": {

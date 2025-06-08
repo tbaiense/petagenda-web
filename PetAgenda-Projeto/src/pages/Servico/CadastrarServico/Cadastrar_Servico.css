@@ -8,23 +8,13 @@
   text-align: center;
   margin-bottom: 1.5rem;
 }
+
 .cadastrarServico__btnWrapper {
   text-align: center;
   margin-top: 1.5rem;
 }
-.linha__nome__categoria {
-  display: flex;
-  gap: 20px;
-  margin-bottom: 1.5rem;
-  align-items: flex-start;
-}
-.categoria {
-  flex: 1;
-}
-.nome {
-  flex: 1;
-}
 
+.linha__nome__categoria,
 .linha__valor__cobranca {
   display: flex;
   gap: 20px;
@@ -32,12 +22,40 @@
   align-items: flex-start;
 }
 
-.valor {
+.nome,
+.categoria,
+.valor,
+.tipo__cobranca {
   flex: 1;
 }
 
-.tipo__cobranca {
-  flex: 1;
+.labelInput {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.labelInput input,
+.labelInput select,
+.labelInput textarea,
+.form-control,
+.form-select {
+  padding: 8px 12px;
+  border-radius: 6px !important;
+  border: 1px solid rgba(0, 0, 0, 0.2) !important;
+  font-size: 1rem !important;
+  transition: 0.3s ease;
+  box-shadow: none !important;
+}
+
+.labelInput input:focus,
+.labelInput select:focus,
+.labelInput textarea:focus,
+.form-control:focus,
+.form-select:focus {
+  outline: none;
+  border-color: #1FAF30 !important;
+  box-shadow: 0 0 10px rgba(31, 175, 48, 0.6) !important;
 }
 
 .check_box_especies {
@@ -47,16 +65,19 @@
   font-weight: 400;
   line-height: 1.5;
   padding: .375rem .75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
-.botao__cadastrar{
+.botao__cadastrar {
   background-color: #1FAF30;
   border: 1px #1FAF30;
   width: 130px;
   font-size: 18px;
 }
 
-.botao__cadastrar:hover{
+.botao__cadastrar:hover {
   background-color: #0e811c;
   border: 1px #0e811c;
 }

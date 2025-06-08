@@ -1,0 +1,39 @@
+.container-dashboard {
+  max-width: 1600px;
+  margin: auto;
+  padding: 0 15px;
+}
+
+.row-dashboard {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7rem;
+}
+
+.card-dashboard {
+  flex: 1;
+  min-width: 250px;
+  max-width: 300px;
+  color: #ffff;
+  background-color: #bf6a04;
+  border-radius: px;
+}
+
+.card-text {
+  font-size: 36px;
+  font-weight: 600;
+}
+
+.card-title {
+  font-size: 21px;
+}
+
+.card-body-dashboard {
+  padding-left: 20px;
+}
+
+.row-dashboard-grafico {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7rem;
+}
