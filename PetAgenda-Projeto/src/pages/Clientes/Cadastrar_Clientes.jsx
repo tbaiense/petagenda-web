@@ -7,63 +7,160 @@ import CamposEndereco from "../../components/Endereco/CamposEndereco";
 import { useNavigate } from "react-router-dom";
 
 const CadastrarClientes = () => {
-  const { empresaFetch } = useAuth();
-  // const [servicos, setServicos] = useState([]);
-  const [enderecosExtras, setEnderecosExtras] = useState([]);
+  const { empresaFetch, validar } = useAuth();
+  const [ servicos, setServicos] = useState([]);
+  const [ endereco, setEndereco ] = useState({});
+  const [ cep, setCep ] = useState("");
+
   const navigate = useNavigate()
   const [servicosSelecionados, setServicosSelecionados] = useState([]);
 
   const {
-      register,
-      handleSubmit,
-      formState:{errors},
-      reset,
-      watch
-  } = useForm();
+    register,
+    setValue,
+    getValues,
+    handleSubmit,
+    formState:{errors},
+    subscribe,
+    reset,
+    watch
+} = useForm();
 
+  async function preencherEnderecosCEP(cep) {
+    try {
+      const endRes = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+      /*
+      {
+        "cep": "29149-999",
+        "logradouro": "Rua...",
+        "complemento": "",
+        "unidade": "",
+        "bairro": "",
+        "localidade": "",
+        "uf": "ES",
+        "estado": "Espírito Santo",
+        "regiao": "Sudeste",
+        "ibge": "3201308",
+        "gia": "",
+        "ddd": "27",
+        "siafi": "5625"
+      }
+      */
+  
+      if (endRes.status == 200) {
+        console.log('fetch cep');
+
+        const jsonBody = await endRes.json();
+        const endFound = {
+          logradouro: jsonBody.logradouro,
+          bairro: jsonBody.bairro,
+          cidade: jsonBody.localidade,
+          estado: jsonBody.uf,
+        }
+
+        const entries = Object.entries(endFound);
+
+        for (const [key, value] of entries) {
+          setValue(`endereco.${key}`, value, { shouldTouch: true });
+        }
+      } else {
+        throw new Error("Falha ao obter informaçoes de endereço a partir de CEP");
+      }
+    } catch (err) {
+      console.error(err.message);
+    }
+  }
+
+  // Verificação de CEP
+  useEffect(() => {
+    const callback = subscribe({
+      name: [ "endereco.cep" ],
+      formState: {
+        values: true,
+        touchedFields: true,
+        isValid: true
+      },
+      callback: ({values}) => {
+        if (values.endereco && values.endereco.cep?.length == 8 && values.endereco.cep.match(/^\d{5,5}\d{3,3}$/)) {
+          const { cep } = values.endereco;
+          preencherEnderecosCEP(cep);
+        }
+      }
+    });
+
+    return () => callback();
+
+  }, [subscribe]);
+
+  // Pego os serviços oferecidos do banco da empresa
+  useEffect(() => {
+    if (validar) {
+      empresaFetch('/servico-oferecido')
+      .then(res => res.json())
+      .then(data => {
+          setServicos(data.servicosOferecidos);
+      })
+      .catch(error => {
+          console.error("Erro ao buscar serviçoes oferecidos:", error);
+      });
+    }
+  }, []);
+
+  function handleEnderecoChange(e) {
+    const newEnd = {...endereco };
+    newEnd[e.target.name.split('.')[1]] = e.target.value;
+    
+    setEndereco(newEnd);
+    setValue(e.target.name.split('.')[1], e.target.value);
+  }
   // Aqui esta pegando o serviço pelo id 
   const handleSelectChange = (e) => {
-    const selectedId = e.target.value;
-    const servico = servicos.find((s) => s.id.toString() === selectedId);
+    if (servicos?.length > 0) {
+      const selectedId = e.target.value;
+      const servico = servicos.find((s) => s.id.toString() === selectedId);
+  
+      if (!servicosSelecionados.some(s => s.id === servico.id)) {
+        setServicosSelecionados(prev => [...prev, servico]);
+      }
 
-    if (servico && !servicosSelecionados.some(s => s.id === servico.id)) {
-      setServicosSelecionados(prev => [...prev, servico]);
     }
   };
 
-  // Aqui é somente para teste
-  const servicos = [
-    { id: 1, nome: "Banho & Tosa", categoria: "Higiene e Estéticaa" },
-    { id: 2, nome: "Check-up Veterinário ", categoria: "Saúde" },
-    { id: 3, nome: "Creche Pet Social", categoria: "Bem-estar e Entretenimento" },
-
-  ];
+  async function cadastrarCliente(objCli) {
+    empresaFetch('/cliente', { method: "POST", body: JSON.stringify(objCli) })
+    .then( async res => { 
+        if (res.status == 200) {
+            const json = await res.json()
+            alert(json.message);
+            reset();
+            setServicosSelecionados([]);
+        } else {
+            alert('erro ao cadastrar cliente');
+        }
+    });
+  }
 
   const onSubmit = (data) => {
-
-    const allDados = {
+    console.log('submit: ', data)
+    const objCli = {
       ...data,
-      servicosRequeridos: servicosSelecionados,
+      servico: undefined,
+      servicoRequerido: servicosSelecionados.map( s => ({ servico: s.id })),
     }
 
-    navigate('/dashboard/pets', {
-      state:{
-        all: allDados,
-      }
-    })
+    if (validar) {
+      cadastrarCliente(objCli);
+    }
+
+    // navigate('/dashboard/pets', {
+    //   state:{
+    //     all: allDados,
+    //   }
+    // })
   }
 
-  const onError = (data) => {
-    console.log(data)
-  }
-
-  const adicionarEndereco = () => {
-    console.log("Adicionando endereço extra");
-    setEnderecosExtras(prev => [...prev,{}]);
-  }
-
-  const removerEndereco = (indexToRemove) => {
-    setEnderecosExtras(prev => prev.filter((_, index) => index !== indexToRemove));
+  const onError = (errors) => {
+    console.log('error ao enviar: ', errors)
   }
 
   return (
@@ -81,8 +178,22 @@ const CadastrarClientes = () => {
 
             <div className={styles.estiloCampos}>
               <label htmlFor="">Nome</label>
-              <input className={styles.nome} placeholder="Digite o nome" type="text" {...register("nome", {
+              <input 
+                className={styles.nome} 
+                placeholder="Digite o nome" 
+                type="text" 
+                {...register("nome", {
                 required:"O nome é obrigatorio",
+                onChange: (e) => {
+                  let value = e.target.value;
+
+                  if (value && value.length > 0) {
+                    let values = value.split(' ');
+                    values = values.map( v => `${v.charAt(0).toUpperCase()}${v.substring(1)}` );
+                    value = values.join(' ');
+                  }
+                  setValue(e.target.name, value);
+                },
                 minLength:{
                     value:10,
                     message:"O nome deve ter pelo menos 15 caracteres"
@@ -92,21 +203,29 @@ const CadastrarClientes = () => {
                     message:"O nome dever ter no maximo 100 caracteres"
                 }
               })}/>
+              {errors.nome && <p style={{color: 'red'}}>{errors.nome.message}</p>}
             </div>
 
             <div className={styles.estiloCampos}>
               <label htmlFor="">Telefone</label>
-              <input type="text" placeholder="Digite o telefone" {...register("telefone", {
+              <input type="text" placeholder="27 99988-7766" {...register("telefone", {
                 required:"O telefone é obrigatorio",
-                minLength:{
-                    value:14,
-                    message:"O telefone deve ter pelo menos 14 caracteres"
+                pattern: {
+                  value: /^\d{2,2} \d{5,5}-\d{4,4}$/,
+                  message: "Formato esperado: 27 99888-7766",
                 },
-                maxLength:{
-                    value:14,
-                    message:"O telefone dever ter no maximo 14 caracteres"
+                onChange: (e) => {
+                  let value = e.target.value;
+
+                  if (value && value.length > 0) {
+                    value = value.replaceAll(/[^0-9]/g, '');
+                    value = `${value.substring(0,2)}${(value.length > 2) ? " " : "" }${value.substring(2,7)}${(value.length > 7) ? "-" : "" }${value.substring(7,11)}`;
+                    console.log('limpei')
+                  }
+                  setValue(e.target.name, value);
                 }
               })}/>
+              {errors.telefone && <p style={{color: 'red'}}>{errors.telefone.message}</p>}
             </div>
 
           </div>
@@ -115,36 +234,16 @@ const CadastrarClientes = () => {
           <div>
             <div className={styles.estiloTitulos}>
               <h3>Endereço</h3>
-              <button
-                type="button"
-                onClick={adicionarEndereco}
-                disabled={enderecosExtras.length >= 1}
-              >
-                +
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  if (enderecosExtras.length > 0) {
-                    removerEndereco(enderecosExtras.length - 1);
-                  }
-                }}
-                disabled={enderecosExtras.length === 0} // desabilita se não tiver extras
-              >
-                -
-              </button>
             </div>
             <hr />
-            <h5>Endereço de busca</h5>
-            <CamposEndereco register={register} index={null}/>
-            {enderecosExtras.map((_, index) => (
-              <>
-                <h5 key={`title-${index}`}>Endereço de entrega</h5>
-                <CamposEndereco key={index} register={register} index={index} onRemove={() => removerEndereco(index)} />
-              </>
-            ))}
-      
+            <CamposEndereco 
+              setValue={setValue}
+              cep={cep}
+              setCep={setCep}
+              endereco={endereco}
+              handleChange={handleEnderecoChange}
+              register={register} 
+              errors={errors}/>
           </div>
           
           {/* Aqui é a área de adicionar serviço requeridos */}
@@ -155,13 +254,11 @@ const CadastrarClientes = () => {
                 <div className={styles.estiloCampos}>
                   <label htmlFor="">Serviços</label>
 
-                    {/* VAi FUNIONAR DEPOIS*/}
-                    
-                    <select {...register("servico", { required: "Selecione um serviço" })} id="servico" onChange={handleSelectChange}>
+                    <select {...register("servico", { required: false })} id="servico" onChange={handleSelectChange}>
 
                         <option value="">Selecione um serviço</option>
 
-                        {servicos.map((servico) => (
+                        {servicos?.length > 0 && servicos.map((servico) => (
                             <option key={servico.id} value={servico.id}>{servico.nome}</option>
                         ))}
 
@@ -183,7 +280,7 @@ const CadastrarClientes = () => {
                       {servicosSelecionados.map((servico) => (
                         <tr key={servico.id}>
                           <td>{servico.nome}</td>
-                          <td>{servico.categoria}</td>
+                          <td>{servico.nomeCategoria}</td>
                         </tr>
                       ))}
                     </tbody>
