@@ -58,10 +58,10 @@ const CadastrarPets = () => {
       sexo: data.sexo,
       porte: data.porte,
       eCastrado: data.eCastrado,
-      estadoSaude: "saudável",
-      raca: "",
-      cor: "",
-      comportamento: "",
+      estadoSaude: data.estadoSaude,
+      raca: data.raca,
+      cor: data.cor,
+      comportamento: data.comportamento,
       cartaoVacina: null
     };
     console.log("novo: ", newPet);
@@ -167,12 +167,13 @@ const CadastrarPets = () => {
 
             <div className={styles.estiloCampos}>
               <label>Dono</label>
-              <select {...register("clienteId", { required: true })}>
+              <select {...register("clienteId", { required: {value: true, message: "Selecione o dono do pet"} })}>
                 <option value="">Selecione um dono</option>
                     {clientes.map((cliente) => (
                       <option value={cliente.id} key={cliente.id}>{cliente.nome}</option>
                     ))}
               </select>
+              {errors.clienteId && <p style={{color: 'red'}}>{errors.clienteId.message}</p>}
             </div>
 
             <div className={styles.estiloCampos}>
@@ -181,6 +182,8 @@ const CadastrarPets = () => {
                 required: { value: true, message: "Nome do pet é obrigatório"},
                 maxLength: { value: 64, message: "Nome deve ser de até 64 caracteres"}
                 })} />
+              {errors.nome && <p style={{color: 'red'}}>{errors.nome.message}</p>}
+
             </div>
           </div>
 
@@ -194,12 +197,14 @@ const CadastrarPets = () => {
                   message: "Espécie do Pet precisa ser definida"
                 }
               })}>
+                <option value="">Selecione</option>
                 { especies && especies.map( esp => {
                   return (
                     <option value={esp.id} key={esp.id}>{esp.nome}</option>
                   );
                 })}
               </select>
+              {errors.especie && <p style={{color: 'red'}}>{errors.especie.message}</p>}
             </div>
 
             <div className={styles.estiloCampos}>
@@ -218,16 +223,20 @@ const CadastrarPets = () => {
           <div className={styles.linhaDoisCampos}>
             <div className={styles.estiloCampos}>
                 <label htmlFor="">Cor</label>
-                <input type="text" name="" id="" placeholder="Escreva a cor" {...register("cor", { required: false, maxLength: { value: 16, message: "Cor deve ser entre 0 e 16 caracteres."} })}/>
+                <input type="text" name="" id="" placeholder="Escreva a cor" {...register("cor", { 
+                  required: false, 
+                  maxLength: { value: 16, message: "Cor deve ser entre 0 e 16 caracteres."} 
+                })}/>
             </div>
             <div className={styles.estiloCampos}>
                 <label htmlFor="">Porte</label>
-                <select name="porte" id="" {...register("porte", { required: true })}>
+                <select name="porte" id="" {...register("porte", { required: { value: true, message: "Informe o porte do pet"} })}>
                   <option value="">Selecione</option>
                   <option value="G">Grande</option>
                   <option value="M">Médio</option>
                   <option value="P">Pequeno</option>
                 </select>
+                {errors.porte && <p style={{color: 'red'}}>{errors.porte.message}</p>}
             </div>
           </div>
 
@@ -248,6 +257,7 @@ const CadastrarPets = () => {
                 <option value="M">Macho</option>
                 <option value="F">Fêmea</option>
               </select>
+              {errors.sexo && <p style={{color: 'red'}}>{errors.sexo.message}</p>}
             </div>
 
             <div className={styles.estiloCampos}>
@@ -257,6 +267,32 @@ const CadastrarPets = () => {
 
           </div>
 
+            <div className={styles.cartaoVacina}>
+  
+              <div>
+                <h2>Saúde</h2>
+                <hr /> 
+              </div>
+              <label>Estado de saúde</label>
+              <textarea className={styles.inputTextArea} placeholder="Descreva o estado de saúde do pet"
+                {...register("estadoSaude", {
+                  required: {
+                    value: true,
+                    message: "Informe o estado de saúde atual do pet"
+                  },
+                  maxLength: {
+                    value: 32,
+                    message: "O máximo de caracteres é 32."
+                  }
+                })}
+              />
+              {errors.estadoSaude && <p style={{color: 'red'}}>{errors.estadoSaude.message}</p>}
+              <div className={styles.inputFile}>
+                <label>Cartão de Vacina</label>
+                <input type="file" />
+              </div>
+  
+            </div>
           <div className={`${styles.estiloCampos}`}>
             <label>Comportamento</label>
             <textarea className={styles.inputTextArea} placeholder="Descreva o comportamento do pet"
@@ -269,30 +305,6 @@ const CadastrarPets = () => {
             />
           </div>
 
-          <div className={styles.cartaoVacina}>
-
-            <div>
-
-              <h2>Saúde</h2>
-              <hr /> 
-
-              <div className={styles.inputFile}>
-                <label>Cartão de Vacina</label>
-                <input type="file" />
-              </div>
-              
-            </div>
-
-            <label>Saúde</label>
-            <textarea className={styles.inputTextArea} placeholder="Descreva o estado de saúde do pet"
-              {...register("estadoSaude", {
-                maxLength: {
-                  value: 32,
-                  message: "O máximo de caracteres é 32."
-                }
-              })}
-            />
-          </div>
           
           <div className={styles.botton}>
             <button type="submit">Cadastrar</button>
