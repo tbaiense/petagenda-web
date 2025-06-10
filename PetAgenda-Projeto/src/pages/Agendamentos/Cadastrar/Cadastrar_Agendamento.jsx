@@ -94,6 +94,7 @@ const Agendamento = () => {
             logradouro: logradouro,
             numero: numero,
             bairro: bairro,
+            cidade: cidade,
             estado: estado
           }
         );
@@ -113,6 +114,7 @@ const Agendamento = () => {
               logradouro: logradouro,
               numero: numero,
               bairro: bairro,
+              cidade: cidade,
               estado: estado
             }
           );
@@ -133,6 +135,7 @@ const Agendamento = () => {
               logradouro: logradouro,
               numero: numero,
               bairro: bairro,
+              cidade: cidade,
               estado: estado
             }
           );
@@ -153,40 +156,7 @@ const Agendamento = () => {
       enderecos: enderecos
     };
 
-    console.log(agendamentoData);
-    return {
-      // dtHrMarcada: "",
-      // servico: { id: 0 },
-      // funcionario: { id: 0 },
-      // observacoes: "",
-      // pets : [
-      //     {
-      //         id: 0,
-      //         alimentacao: "",
-      //         remedios: [
-      //             { nome: "", instrucoes: ""}
-      //         ]
-      //     }
-      // ],
-      // enderecos: [
-      //     {
-      //         tipo: "buscar",
-      //         logradouro: "",
-      //         numero: "",
-      //         bairro: "",
-      //         cidade: "",
-      //         estado: ""
-      //     },
-      //     {
-      //       tipo: "devolver",
-      //       logradouro: "",
-      //       numero: "",
-      //       bairro: "",
-      //       cidade: "",
-      //       estado: ""
-      //   }
-      // ]
-    }
+    return agendamentoData;
   }
 
   useEffect(() => {
@@ -228,7 +198,6 @@ const Agendamento = () => {
       */
   
       if (endRes.status == 200) {
-        console.log('fetch cep');
 
         const jsonBody = await endRes.json();
         if (!jsonBody.erro) {
@@ -294,9 +263,27 @@ const Agendamento = () => {
 
   }, [subscribe]);
 
-  const onSubmit = (data) => {
-    console.log(data);
-    reset();
+  const onSubmit = async (data) => {
+    // Cadastrando agendamento
+    try {
+      const resp = await empresaFetch('/agendamento', {
+        method: "POST",
+        body: JSON.stringify(getData())
+      });
+      
+      const jsonBody = await resp.json();
+      if (jsonBody) {
+        if (resp.status == 200) {
+          alert('cadastrado!')
+          reset();
+        } else {
+          throw new Error(jsonBody.errors[0]);
+        }
+      }
+    } catch (err) {
+      alert(err.message);
+    }
+
   };
 
   return (
@@ -432,7 +419,7 @@ const Agendamento = () => {
             </Col>
           </Row>
           {/* Card de pets */}
-          <PetServicoCardList petList={petsSel} handleRemove={handleRemove}/>
+          <PetServicoCardList petList={petsSel} setPetList={setPetsSel}/>
           {/* Endereços ======================================================*/}
           <h5>Endereços</h5>
           <hr />

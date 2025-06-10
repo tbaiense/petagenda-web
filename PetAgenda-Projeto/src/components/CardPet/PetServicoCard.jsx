@@ -5,24 +5,10 @@ import { Container, Form, Row, Col, Button, Card, FormCheck, useAccordionButton,
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import { useState } from "react";
 
-const PetServicoCard = ({
-    id,
-    idPetServico,
-    nome,
-    especie,
-    sexo,
-    remedios: remediosProp,
-    alimentacao,
-    handleRemove
-}) => {
-
-    const [ remedios, setRemedios] = useState(remediosProp || []);
-
-
+const PetServicoCard = ({...props}) => {
     function CustomToggle({ children, eventKey}) {
         const decoratedOnClick = useAccordionButton(eventKey, () => {
-            console.log('totally custom!');
-            const btn = document.querySelector(`[id='accordion-item-${id}-${nome}']`);
+            const btn = document.querySelector(`[id='accordion-item-${props.pet.id}-${props.pet.nome}']`);
 
             btn.classList.toggle('collapsed');
             btn.toggleAttribute('expanded')
@@ -30,7 +16,7 @@ const PetServicoCard = ({
 
         return (
             <AccordionButton
-                id={`accordion-item-${id}-${nome}`} 
+                id={`accordion-item-${props.pet.id}-${props.pet.nome}`} 
                 type="button"
                 onClick={decoratedOnClick}
                 as="span"
@@ -41,17 +27,19 @@ const PetServicoCard = ({
     }
 
     return (
-        <Accordion.Item className='pet-servico-card-item ' eventKey={id} key={id}>
+        <Accordion.Item className='pet-servico-card-item ' eventKey={props.pet.id} key={props.pet.id}>
             {/* Título de pet */}
             <Card.Header> 
                 <Stack direction="horizontal" gap={3}>
                     <h4 className="me-auto">
-                        {nome}
+                        {props.pet.nome}
                     </h4>
                     <span style={{ fontSize: '1.0em',border: '1px solid grey', borderRadius: '2em', paddingInline: '1em', paddingBlock: '0.3em'}}>
-                        { especie.nome}
+                        { props.pet.especie.nome}
                     </span>
-                    <Button onClick={ e => {handleRemove(id)}}>✕</Button>
+                    <Button onClick={ e => {
+                        props.setPetList(props.petList.filter( p => p.id != props.pet.id ));
+                    }}>✕</Button>
                     <CustomToggle></CustomToggle>
                 </Stack>
             </Card.Header>
@@ -62,9 +50,19 @@ const PetServicoCard = ({
                         <FloatingLabel className="mt-2 mb-4" controlId="floatingTextarea2" label="Instruções de alimentação">
                         <Form.Control
                             as="textarea"
-                            value={alimentacao}
+                            value={props.pet.alimentacao}
                             placeholder="Deixe aqui uma instrução para a alimentação do pet"
                             style={{ height: '70px' }}
+                            onChange={ e=> {
+                                props.pet.alimentacao = e.target.value;
+                                props.setPetList( props.petList.map( p => {
+                                    if (p.id == props.pet.id) {
+                                        return props.pet;
+                                    } else {
+                                        return p;
+                                    }
+                                }));
+                            }}
                         />
                         </FloatingLabel>
                         </div>
@@ -93,8 +91,19 @@ const PetServicoCard = ({
                                     nome: document.getElementById("nome-remedio").value,
                                     instrucoes: document.getElementById("instrucoes-remedio").value,
                                 };
-                                setRemedios(remedios.concat([ rem ]));
-                                remediosProp = remedios;
+
+                                if (!props.pet.remedios) {
+                                    props.pet.remedios = [];
+                                }
+
+                                props.pet.remedios = props.pet.remedios.concat([ rem ]);
+                                props.setPetList( props.petList.map( p => {
+                                    if (p.id == props.pet.id) {
+                                        return props.pet;
+                                    } else {
+                                        return p;
+                                    }
+                                }));
                             }}
                         >
                             Adicionar
@@ -103,14 +112,24 @@ const PetServicoCard = ({
                     </Row>
                     {/* Remedios */}
                     {
-                        remedios && remedios.map( (r, idx) => {
+                        props.pet.remedios && props.pet.remedios.map( (r, idx) => {
                         return (
                             <div key={r.id || r.nome + idx } >
                             <Row style={{ borderTop: "1px solid grey"}} className="pt-3 mt-4">
                                 <Stack direction="horizontal" gap={3}>
                                 <h4 className="me-auto">{ r.nome}</h4>
                                 <Button onClick={ e=> {
-                                    setRemedios(remedios.flatMap( rem => (rem.id == r.id) ? [] : rem ));
+                                    if (props.pet.remedios.length != 0) {
+                                        props.pet.remedios = props.pet.remedios.flatMap( rem => (rem.id == r.id) ? [] : rem );
+                                        
+                                        props.setPetList( props.petList.map( p => {
+                                            if (p.id == props.pet.id) {
+                                                return props.pet;
+                                            } else {
+                                                return p;
+                                            }
+                                        }));
+                                    }
                                 }}>✕</Button>
                                 </Stack>
                             </Row>
