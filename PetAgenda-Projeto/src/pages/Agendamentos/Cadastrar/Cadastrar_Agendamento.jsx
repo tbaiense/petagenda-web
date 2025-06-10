@@ -6,13 +6,16 @@ import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import { Container, Form, Row, Col, Button, FormCheck } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import "./Cadastrar_Agendamento.css";
-import { useAuth } from "../../../contexts/UserContext"
+import { useAuth } from "../../../contexts/UserContext";
+import PetServicoCardList from "../../../components/CardPet/PetServicoCardList";
+import "../../../components/CardPet/PetServicoCard.css";
 
 const Agendamento = () => {
   const { register, handleSubmit, reset, watch } = useForm();
   const [ clientes, setClientes ] = useState([]);
   const [ petsCliente, setPetsCliente ] = useState([]);
   const [ servicos, setServicos ] = useState([]);
+  const [ petsSel, setPetsSel ] = useState([]);
   const [ funcionarios, setFuncionarios ] = useState([]);
   const { empresaFetch, validar } = useAuth();
 
@@ -188,80 +191,20 @@ const Agendamento = () => {
               </Button>
             </Col>
           </Row>
-    
           {/* Card de pets */}
-          <Accordion className="mt-3 mb-4" defaultActiveKey="0" flush alwaysOpen>
-            <Accordion.Item eventKey="0">
-              {/* Título de pet */}
-              <Accordion.Header>
-                  <Stack direction="horizontal" gap={3}>
-                    <h4 className="me-auto">Rika</h4>
-                    <span style={{ fontSize: '1.0em',border: '1px solid grey', borderRadius: '2em', paddingInline: '1em', paddingBlock: '0.3em'}}>Gato</span>
-                    <span>✕</span>
-                  </Stack>
-              </Accordion.Header>
-              <Accordion.Body style={{ backgroundColor: 'lightpink',paddingInline: '3em'}}>
-                <Row>
-                  <div>
-                  <FloatingLabel className="mt-2 mb-4" controlId="floatingTextarea2" label="Instruções de alimentação">
-                    <Form.Control
-                      as="textarea"
-                      placeholder="Deixe aqui uma instrução para a alimentação do pet"
-                      style={{ height: '70px' }}
-                    />
-                  </FloatingLabel>
-                  </div>
-                  <div>
-                    <h4>Remédios</h4>
-                    <hr></hr>
-                  </div>
-                  <Col>
-                    <Form.Group className="mb-3" controlId="formBasicEmail">
-                      <Form.Label>Nome do remédio:</Form.Label>
-                      <Form.Control type="email" placeholder="Dipirona monohidratada..." />
-                    </Form.Group>
-                  </Col>
-                  <Col>
-                    <Form.Group className="mb-3" controlId="formBasicEmail">
-                      <Form.Label>Instruções de administração:</Form.Label>
-                      <Form.Control type="email" placeholder="Administrar duas vezes ao dia..." />
-                    </Form.Group>
-                  </Col>
-                  <Col>
-                    <Button variant="primary" type="submit">
-                      Adicionar
-                    </Button>
-                  </Col>
-                </Row>
-                {/* Remedios */}
-                <div >
-                  <Row style={{ borderTop: "1px solid grey"}} className="pt-3 mt-4">
-                    <Stack direction="horizontal" gap={3}>
-                      <h4 className="me-auto">Dipirona monohidratada 100g</h4>
-                      <span>✕</span>
-                    </Stack>
-                  </Row>
-                  <Row>
-                    <p>Após ao almoço, duas vezes ao dia depois de refeições.</p>
-                  </Row>
-                </div>
-              </Accordion.Body>
-            </Accordion.Item>
-          </Accordion>
+          <PetServicoCardList />
           {/* Endereços ======================================================*/}
           <h5>Endereços</h5>
           <hr />
           <Accordion className="mt-3 mb-4" defaultActiveKey="0" flush alwaysOpen>
-            <Accordion.Item eventKey="0">
+            <Accordion.Item eventKey="0" className="pet-servico-card-item">
               <Accordion.Header>
                   <Stack direction="horizontal" gap={3}>
                   <span>Buscar</span>
-                      <Button variant="primary" type="submit" className="mt-4">
-                        Limpar
-                      </Button>
+                  <span className="mt-4">Limpar</span>
                   </Stack>
               </Accordion.Header>
-              <Accordion.Body style={{ backgroundColor: 'lightpink',paddingInline: '3em'}}>
+              <Accordion.Body>
                 <Row>
                 <Row>
                   <Col>
@@ -310,7 +253,7 @@ const Agendamento = () => {
                 </Row>
               </Accordion.Body>
             </Accordion.Item>
-            <Accordion.Item eventKey="1">
+            <Accordion.Item eventKey="1" className="pet-servico-card-item">
               <Accordion.Header>
                   <Stack direction="horizontal" gap={3}>
                     <span>Devolver</span>
@@ -318,12 +261,12 @@ const Agendamento = () => {
                       <FormCheck></FormCheck>
                       <Form.Label>O mesmo do anterior</Form.Label>
                     </Form.Group>  
-                    <Button variant="primary" type="submit" className="mt-4">
+                    <span className="mt-4">
                       Limpar
-                    </Button>
+                    </span>
                   </Stack>
               </Accordion.Header>
-              <Accordion.Body style={{ backgroundColor: 'lightpink',paddingInline: '3em'}}>
+              <Accordion.Body>
                 <Row>
                 <Row>
                   <Col>
