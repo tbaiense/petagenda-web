@@ -1,0 +1,40 @@
+/* ==================================== TITULO ================================= */
+.layoutLista h1{
+    padding-top: 1rem;
+    display: flex;
+    justify-content: center;
+}
+
+
+/* ==================================== TITULO ================================= */
+
+.orgContent {
+    display: flex;
+    flex-direction: column;
+    width: 42vw;
+
+}
+.alinhamento{
+    display: flex;
+    justify-content: center;
+}
+
+/* ==================================== TITULO ================================= */
+
+.pesquisa{
+    padding-bottom: 1rem;
+}
+.pesquisa input{
+    width: 100%;
+}
+
+/* ==================================== TITULO ================================= */
+
+.filtros{
+    display: flex;
+    gap: 10px;
+    padding: 1rem 1.5rem 1rem 1.5rem ;
+    background-color: rgb(61, 162, 245);
+    color: white;
+    border-radius: 12px;
+}
