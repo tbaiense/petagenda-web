@@ -6,7 +6,7 @@
 }
 
 
-/* ==================================== TITULO ================================= */
+/* ==================================== LAYOUT ================================= */
 
 .orgContent {
     display: flex;
@@ -19,22 +19,98 @@
     justify-content: center;
 }
 
-/* ==================================== TITULO ================================= */
+/* ==================================== BARRA DE PESQUISA ================================= */
 
 .pesquisa{
     padding-bottom: 1rem;
 }
 .pesquisa input{
     width: 100%;
+    padding: 7px;
+    border-radius: 20px;
 }
 
-/* ==================================== TITULO ================================= */
+/* ==================================== FILTROS ================================= */
 
 .filtros{
     display: flex;
-    gap: 10px;
+    gap: 20px;
     padding: 1rem 1.5rem 1rem 1.5rem ;
     background-color: rgb(61, 162, 245);
     color: white;
-    border-radius: 12px;
+    border-radius: 12px 12px 0px 0px;
+    justify-content: space-between;
+}
+
+/* ==================================== INFORMAÇÕES ================================= */
+
+.miniCard{
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem;
+    align-items: center;
+    border-bottom: 1px solid black;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+}
+.suporte{
+    display: flex;
+    gap: 10px;
+}
+.subInfo{
+    display: flex;
+    flex-wrap: wrap;
+    width: 55%;
+    gap: 7px;
+}
+.estiloEspecie{
+    border: 1px solid black;
+    border-radius: 10px;
+    font-size: smaller;
+    padding: 1px 3px 1px 3px;
+}
+.estiloNome{
+    font-weight: bold;
+}
+.estiloDono{
+    font-size: small;
+    color: grey;
+}
+/* ==================================== SELECTS ================================= */
+
+.slct{
+    background-color: rgb(61, 162, 245);
+    color: white;
+    border-color:1px solid black;
+    padding: 2px;
+}
+/* ==================================== SELECTS ================================= */
+
+.bttn{
+    background-color: white;
+    border: none;
+}
+
+/* ==================================== MODAL ================================= */
+
+.infoModal{
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  z-index: 5;
+}
+
+.estiloCampos{
+    display: flex;
+    flex-direction: column;
+}
+
+/* ==================================== MODAL ORGANIZAÇÃO ================================= */
+
+.orgLayoutCampos{
+    display: flex;
 }

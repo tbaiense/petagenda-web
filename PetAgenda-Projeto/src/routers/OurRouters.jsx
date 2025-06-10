@@ -73,7 +73,7 @@ const router = createBrowserRouter([
        //<PrivateRoute>
         <MenuDashBoard />
         //</PrivateRoute>
-
+    ),
     children: [
       // Empresa
       {
