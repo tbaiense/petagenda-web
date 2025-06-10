@@ -21,3 +21,7 @@
     margin: 0;
     padding-inline: 1em;
 }
+
+.me-auto {
+    min-width: max-content;
+}

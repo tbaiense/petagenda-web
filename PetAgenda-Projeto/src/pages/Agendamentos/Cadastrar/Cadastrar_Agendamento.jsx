@@ -8,16 +8,25 @@ import { useForm } from "react-hook-form";
 import "./Cadastrar_Agendamento.css";
 import { useAuth } from "../../../contexts/UserContext";
 import PetServicoCardList from "../../../components/CardPet/PetServicoCardList";
+import CamposEndereco from "../../../components/Endereco/CamposEndereco";
 import "../../../components/CardPet/PetServicoCard.css";
 
 const Agendamento = () => {
-  const { register, handleSubmit, reset, watch } = useForm();
+  const { register, handleSubmit, subscribe, reset, watch, formState: { errors }, setValue, getValues } = useForm();
   const [ clientes, setClientes ] = useState([]);
+  const [ incluirBuscar, setIncluirBuscar ] = useState(false);
+  const [ devolverMesmo, setDevolverMesmo ] = useState(false);
+  const [ incluirDevolver, setIncluirDevolver ] = useState(false);
   const [ petsCliente, setPetsCliente ] = useState([]);
   const [ servicos, setServicos ] = useState([]);
   const [ petsSel, setPetsSel ] = useState([]);
   const [ funcionarios, setFuncionarios ] = useState([]);
   const { empresaFetch, validar } = useAuth();
+
+  // Remover pet da lista
+  function handleRemove(idPet) {
+    setPetsSel(petsSel.filter( p => (p.id != idPet)));
+  }
 
   async function popularServicosOferecidos() {
     empresaFetch('/servico-oferecido')
@@ -64,6 +73,122 @@ const Agendamento = () => {
 
   }
 
+  function getData() {
+    const formData = {...getValues()};
+    const pets = petsSel;
+    let enderecos = [];
+
+    if (formData.enderecoBuscar || formData.enderecoDevolver) {
+      if (devolverMesmo) {
+        const {
+          logradouro,
+          numero,
+          bairro,
+          cidade,
+          estado,
+        } = formData.enderecoBuscar;
+
+        enderecos.push(
+          {
+            tipo: "buscar-devolver",
+            logradouro: logradouro,
+            numero: numero,
+            bairro: bairro,
+            estado: estado
+          }
+        );
+      } else {
+        if (incluirBuscar) {
+          const {
+            logradouro,
+            numero,
+            bairro,
+            cidade,
+            estado,
+          } = formData.enderecoBuscar;
+  
+          enderecos.push(
+            {
+              tipo: "buscar",
+              logradouro: logradouro,
+              numero: numero,
+              bairro: bairro,
+              estado: estado
+            }
+          );
+        }
+
+        if (incluirDevolver) {
+          const {
+            logradouro,
+            numero,
+            bairro,
+            cidade,
+            estado,
+          } = formData.enderecoBuscar;
+  
+          enderecos.push(
+            {
+              tipo: "devolver",
+              logradouro: logradouro,
+              numero: numero,
+              bairro: bairro,
+              estado: estado
+            }
+          );
+        }
+      }
+    }
+
+    if (enderecos.length == 0) {
+      enderecos = undefined;
+    }
+
+    const agendamentoData = {
+      dtHrMarcada: `${formData.data} ${formData.hora}`,
+      servico: { id: formData.servico },
+      funcionario: (formData.funcionario) ? { id: formData.funcionario } : undefined,
+      observacoes: formData.observacoes,
+      pets: pets,
+      enderecos: enderecos
+    };
+
+    console.log(agendamentoData);
+    return {
+      // dtHrMarcada: "",
+      // servico: { id: 0 },
+      // funcionario: { id: 0 },
+      // observacoes: "",
+      // pets : [
+      //     {
+      //         id: 0,
+      //         alimentacao: "",
+      //         remedios: [
+      //             { nome: "", instrucoes: ""}
+      //         ]
+      //     }
+      // ],
+      // enderecos: [
+      //     {
+      //         tipo: "buscar",
+      //         logradouro: "",
+      //         numero: "",
+      //         bairro: "",
+      //         cidade: "",
+      //         estado: ""
+      //     },
+      //     {
+      //       tipo: "devolver",
+      //       logradouro: "",
+      //       numero: "",
+      //       bairro: "",
+      //       cidade: "",
+      //       estado: ""
+      //   }
+      // ]
+    }
+  }
+
   useEffect(() => {
     if (validar) {
       popularServicosOferecidos();
@@ -72,6 +197,102 @@ const Agendamento = () => {
       popularFuncionarios();
     }
   }, []);
+
+  function handleEnderecoChange(e) {
+    const newEnd = {...endereco };
+    newEnd[e.target.name.split('.')[1]] = e.target.value;
+    
+    setEndereco(newEnd);
+    setValue(e.target.name.split('.')[1], e.target.value);
+  }
+
+  async function preencherEnderecosCEP(prefix, cep) {
+    try {
+      const endRes = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+      /*
+      {
+        "cep": "29149-999",
+        "logradouro": "Rua...",
+        "complemento": "",
+        "unidade": "",
+        "bairro": "",
+        "localidade": "",
+        "uf": "ES",
+        "estado": "Espírito Santo",
+        "regiao": "Sudeste",
+        "ibge": "3201308",
+        "gia": "",
+        "ddd": "27",
+        "siafi": "5625"
+      }
+      */
+  
+      if (endRes.status == 200) {
+        console.log('fetch cep');
+
+        const jsonBody = await endRes.json();
+        if (!jsonBody.erro) {
+          const endFound = {
+            logradouro: jsonBody.logradouro,
+            bairro: jsonBody.bairro,
+            numero: "",
+            cidade: jsonBody.localidade,
+            estado: jsonBody.uf,
+          }
+  
+          const entries = Object.entries(endFound);
+  
+          for (const [key, value] of entries) {
+            setValue(`${prefix}.${key}`, value, { shouldTouch: true });
+          }
+        }
+      } else {
+        throw new Error("Falha ao obter informaçoes de endereço a partir de CEP");
+      }
+    } catch (err) {
+      console.error(err.message);
+    }
+  }
+
+
+  // Verificação de CEP de busca
+  useEffect(() => {
+    const callback = subscribe({
+      name: [ "enderecoBuscar.cep" ],
+      formState: {
+        values: true,
+        touchedFields: true,
+        isValid: true
+      },
+      callback: ({values}) => {
+        if (values.enderecoBuscar && values.enderecoBuscar.cep?.length == 8 && values.enderecoBuscar.cep.match(/^\d{5,5}\d{3,3}$/)) {
+          const { cep } = values.enderecoBuscar;
+          preencherEnderecosCEP("enderecoBuscar", cep);
+        }
+      }
+    });
+  }, [subscribe]);
+
+  // Verificação de CEP de devolução
+  useEffect(() => {
+    const callback = subscribe({
+      name: [ "enderecoDevolver.cep" ],
+      formState: {
+        values: true,
+        touchedFields: true,
+        isValid: true
+      },
+      callback: ({values}) => {
+        if (values.enderecoDevolver && values.enderecoDevolver.cep?.length == 8 && values.enderecoDevolver.cep.match(/^\d{5,5}\d{3,3}$/)) {
+          const { cep } = values.enderecoDevolver;
+          preencherEnderecosCEP("enderecoDevolver", cep);
+        }
+      }
+    });
+
+    return () => callback();
+
+  }, [subscribe]);
 
   const onSubmit = (data) => {
     console.log(data);
@@ -125,7 +346,7 @@ const Agendamento = () => {
                 <Form.Label>Data do agendamento</Form.Label>
                 <Form.Control
                   type="date"
-                  {...register("data")}
+                  {...register("data", { required: true })}
                   defaultValue={new Date().toISOString().split("T")[0]}
                 />
               </Form.Group>
@@ -135,7 +356,7 @@ const Agendamento = () => {
                 <Form.Label>Hora do agendamento</Form.Label>
                 <Form.Control
                   type="time"
-                  {...register("hora")}
+                  {...register("hora", { required: true })}
                   defaultValue="09:00"
                 />
               </Form.Group>
@@ -162,7 +383,7 @@ const Agendamento = () => {
             <Col>
               <Form.Group controlId="formServico">
                 <Form.Label>Cliente:</Form.Label>
-                <Form.Select {...register("cliente")}>
+                <Form.Select {...register("cliente", { required: true })}>
                   <option value="">Selecione um cliente</option>
                   {clientes && clientes.map((cli) => (
                     <option key={cli.id} value={cli.id}>
@@ -175,10 +396,10 @@ const Agendamento = () => {
             <Col>
               <Form.Group controlId="formServico">
                 <Form.Label>Pet:</Form.Label>
-                <Form.Select {...register("pet")}>
+                <Form.Select id="pet-selecionar" {...register("pet")}>
                   <option value="">Selecione um pet</option>
                   {petsCliente && petsCliente.map((pet) => (
-                    <option key={pet.id} value={pet}>
+                    <option key={pet.id} value={pet.id}>
                       {pet.nome}
                     </option>
                   ))}
@@ -186,13 +407,32 @@ const Agendamento = () => {
               </Form.Group>
             </Col>
             <Col>
-              <Button variant="secondary" type="submit">
+              <Button 
+                variant="secondary" 
+                type="button"
+                onClick={
+                  e => {
+                    const petSel = petsCliente.find( p => {
+                      const pelSelecionado = document.getElementById('pet-selecionar').value;
+                      return (p.id == pelSelecionado);
+                    });
+
+                    const jaExiste = petsSel.some( p => {
+                      return p.id == petSel.id;
+                    });
+
+                    if (!jaExiste) {
+                      setPetsSel(petsSel.concat([petSel]));
+                    }
+                  }
+                }
+              >
                 Adicionar
               </Button>
             </Col>
           </Row>
           {/* Card de pets */}
-          <PetServicoCardList />
+          <PetServicoCardList petList={petsSel} handleRemove={handleRemove}/>
           {/* Endereços ======================================================*/}
           <h5>Endereços</h5>
           <hr />
@@ -200,119 +440,53 @@ const Agendamento = () => {
             <Accordion.Item eventKey="0" className="pet-servico-card-item">
               <Accordion.Header>
                   <Stack direction="horizontal" gap={3}>
+                  <Form.Group className="mb-3" controlId="formBasicEmail">
+                      <FormCheck type="switch" id="buscarChk" onChange={ e => {
+                        setIncluirBuscar(e.target.checked);
+                      }}></FormCheck>
+                    </Form.Group>  
                   <span>Buscar</span>
-                  <span className="mt-4">Limpar</span>
                   </Stack>
               </Accordion.Header>
               <Accordion.Body>
-                <Row>
-                <Row>
-                  <Col>
-                    <Form.Group className="mb-3" controlId="formBasicEmail">
-                      <Form.Label>CEP:</Form.Label>
-                      <Form.Control type="email" placeholder="Dipirona monohidratada..." />
-                    </Form.Group>
-                  </Col>
-                  <Col>
-                    <Form.Group className="mb-3" controlId="formBasicEmail">
-                      <Form.Label>Logradouro:</Form.Label>
-                      <Form.Control type="email" placeholder="Dipirona monohidratada..." />
-                    </Form.Group>
-                  </Col>
-                  <Col>
-                    <Form.Group className="mb-1" controlId="formBasicEmail">
-                      <Form.Label>Número:</Form.Label>
-                      <Form.Control type="email" placeholder="Dipirona monohidratada..." />
-                    </Form.Group>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col>
-                    <Form.Group className="mb-3" controlId="formBasicEmail">
-                      <Form.Label>Bairro:</Form.Label>
-                      <Form.Control type="email" placeholder="Dipirona monohidratada..." />
-                    </Form.Group>
-                  </Col>
-                  <Col>
-                    <Form.Group className="mb-3" controlId="formBasicEmail">
-                      <Form.Label>Cidade:</Form.Label>
-                      <Form.Control type="email" placeholder="Dipirona monohidratada..." />
-                    </Form.Group>
-                  </Col>
-                  <Col>
-                    <Form.Group className="mb-1" controlId="formBasicEmail">
-                      <Form.Label>Estado:</Form.Label>
-                      <Form.Select>
-                        <option value="">ES</option>
-                        <option value="">RJ</option>
-                        <option value="">SP</option>
-                      </Form.Select>
-                    </Form.Group>
-                  </Col>
-                </Row>
-                </Row>
+                <CamposEndereco 
+                  setValue={setValue}
+                  handleChange={handleEnderecoChange}
+                  formConfigs={{ isRequired: incluirBuscar }} 
+                  register={register} 
+                  errors={errors} 
+                  prefix={'enderecoBuscar'}
+                />
               </Accordion.Body>
             </Accordion.Item>
             <Accordion.Item eventKey="1" className="pet-servico-card-item">
               <Accordion.Header>
                   <Stack direction="horizontal" gap={3}>
-                    <span>Devolver</span>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
-                      <FormCheck></FormCheck>
-                      <Form.Label>O mesmo do anterior</Form.Label>
+                      <FormCheck type="switch" id="devolverChk" onChange={ e => {
+                        setIncluirDevolver(e.target.checked);
+                      }}></FormCheck>
                     </Form.Group>  
-                    <span className="mt-4">
-                      Limpar
-                    </span>
+                    <span>Devolver</span>
+
                   </Stack>
               </Accordion.Header>
               <Accordion.Body>
-                <Row>
-                <Row>
-                  <Col>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
-                      <Form.Label>CEP:</Form.Label>
-                      <Form.Control type="email" placeholder="Dipirona monohidratada..." />
-                    </Form.Group>
-                  </Col>
-                  <Col>
-                    <Form.Group className="mb-3" controlId="formBasicEmail">
-                      <Form.Label>Logradouro:</Form.Label>
-                      <Form.Control type="email" placeholder="Dipirona monohidratada..." />
-                    </Form.Group>
-                  </Col>
-                  <Col>
-                    <Form.Group className="mb-1" controlId="formBasicEmail">
-                      <Form.Label>Número:</Form.Label>
-                      <Form.Control type="email" placeholder="Dipirona monohidratada..." />
-                    </Form.Group>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col>
-                    <Form.Group className="mb-3" controlId="formBasicEmail">
-                      <Form.Label>Bairro:</Form.Label>
-                      <Form.Control type="email" placeholder="Dipirona monohidratada..." />
-                    </Form.Group>
-                  </Col>
-                  <Col>
-                    <Form.Group className="mb-3" controlId="formBasicEmail">
-                      <Form.Label>Cidade:</Form.Label>
-                      <Form.Control type="email" placeholder="Dipirona monohidratada..." />
-                    </Form.Group>
-                  </Col>
-                  <Col>
-                    <Form.Group className="mb-1" controlId="formBasicEmail">
-                      <Form.Label>Estado:</Form.Label>
-                      <Form.Select>
-                        <option value="">ES</option>
-                        <option value="">RJ</option>
-                        <option value="">SP</option>
-                      </Form.Select>
-                    </Form.Group>
-                  </Col>
-                </Row>
-                </Row>
+                      <FormCheck type="switch" id="devolverMesmo" label="O mesmo do anterior" 
+                        onChange={(e) => {
+                          setDevolverMesmo(e.target.checked);
+                        }}
+                      ></FormCheck>
+                    </Form.Group>  
+                <CamposEndereco 
+                  setValue={setValue}
+                  handleChange={handleEnderecoChange}
+                  formConfigs={{ isRequired: incluirDevolver }} 
+                  register={register} 
+                  errors={errors} 
+                  prefix={'enderecoDevolver'}
+                />
               </Accordion.Body>
             </Accordion.Item>
           </Accordion>
@@ -322,10 +496,15 @@ const Agendamento = () => {
                 as="textarea"
                 placeholder="Deixe aqui uma observação"
                 style={{ height: '150px' }}
+                {...register("observacoes")}
               />
             </FloatingLabel>
           </Row>
-          <Button variant="primary" type="submit" className="mt-4">
+          <Button 
+          variant="primary" 
+          onClick={e => {getData()}} 
+          type="submit" 
+          className="mt-4">
             Agendar
           </Button>
         </Form>

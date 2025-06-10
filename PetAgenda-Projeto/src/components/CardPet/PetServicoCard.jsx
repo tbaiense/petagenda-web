@@ -12,10 +12,12 @@ const PetServicoCard = ({
     especie,
     sexo,
     remedios: remediosProp,
-    alimentacao
+    alimentacao,
+    handleRemove
 }) => {
 
     const [ remedios, setRemedios] = useState(remediosProp || []);
+
 
     function CustomToggle({ children, eventKey}) {
         const decoratedOnClick = useAccordionButton(eventKey, () => {
@@ -44,12 +46,12 @@ const PetServicoCard = ({
             <Card.Header> 
                 <Stack direction="horizontal" gap={3}>
                     <h4 className="me-auto">
-                        {nome || "Rika"}
+                        {nome}
                     </h4>
                     <span style={{ fontSize: '1.0em',border: '1px solid grey', borderRadius: '2em', paddingInline: '1em', paddingBlock: '0.3em'}}>
-                        { especie.nome || "Gato"}
+                        { especie.nome}
                     </span>
-                    <Button>✕</Button>
+                    <Button onClick={ e => {handleRemove(id)}}>✕</Button>
                     <CustomToggle></CustomToggle>
                 </Stack>
             </Card.Header>
@@ -60,7 +62,7 @@ const PetServicoCard = ({
                         <FloatingLabel className="mt-2 mb-4" controlId="floatingTextarea2" label="Instruções de alimentação">
                         <Form.Control
                             as="textarea"
-                            value={alimentacao || "Deixe aqui uma instrução para a alimentação do pet"}
+                            value={alimentacao}
                             placeholder="Deixe aqui uma instrução para a alimentação do pet"
                             style={{ height: '70px' }}
                         />
@@ -83,34 +85,37 @@ const PetServicoCard = ({
                         </Form.Group>
                         </Col>
                         <Col>
-                        <Button variant="primary" type="button" onClick={ e => {
-                            const rem = {
-                                nome: document.getElementById("nome-remedio").textContent,
-                                instrucoes: document.getElementById("instrucoes-remedio").textContent,
-                            };
-                            
-                            setRemedios(remedios.concat([ rem ]));
-                
-                        }}>
+                        <Button 
+                            variant="primary" 
+                            type="button" 
+                            onClick={ e => {
+                                const rem = {
+                                    nome: document.getElementById("nome-remedio").value,
+                                    instrucoes: document.getElementById("instrucoes-remedio").value,
+                                };
+                                setRemedios(remedios.concat([ rem ]));
+                                remediosProp = remedios;
+                            }}
+                        >
                             Adicionar
                         </Button>
                         </Col>
                     </Row>
                     {/* Remedios */}
                     {
-                        remedios && remedios.map( r => {
+                        remedios && remedios.map( (r, idx) => {
                         return (
-                            <div key={r.id || r.nome } >
+                            <div key={r.id || r.nome + idx } >
                             <Row style={{ borderTop: "1px solid grey"}} className="pt-3 mt-4">
                                 <Stack direction="horizontal" gap={3}>
-                                <h4 className="me-auto">{ r.nome || "Dipirona monohidratada 100g"}</h4>
+                                <h4 className="me-auto">{ r.nome}</h4>
                                 <Button onClick={ e=> {
                                     setRemedios(remedios.flatMap( rem => (rem.id == r.id) ? [] : rem ));
                                 }}>✕</Button>
                                 </Stack>
                             </Row>
                             <Row>
-                                <p>{ r.instrucoes || "Após ao almoço, duas vezes ao dia depois de refeições."}</p>
+                                <p>{ r.instrucoes}</p>
                             </Row>
                             </div>
                         );
