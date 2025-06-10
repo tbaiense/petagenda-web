@@ -3,7 +3,9 @@ import { useState, createContext, useContext  } from "react";
 export const AuthContext = createContext()
 
 export const AuthProvider = ({ children }) => {
-  
+  // URL da API
+  const apiURL = 'http://127.0.0.1:3000';
+
   const [ validar, setValidar ] = useState(false);
   
   const tokenKey = 'access_token';
@@ -99,8 +101,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem(empresa_licencaKey);
   };
 
-  // URL da API
-  const apiURL = 'http://192.168.15.2:3000';
+  
 
   function deveRodar() {
     if (!validar) {
