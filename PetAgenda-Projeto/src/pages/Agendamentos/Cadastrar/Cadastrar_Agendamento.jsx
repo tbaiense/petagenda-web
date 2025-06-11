@@ -50,8 +50,8 @@ const Agendamento = () => {
       });
   }
 
-  async function popularPetsCliente() {
-    empresaFetch(`/pet?idCliente=${watch("cliente")}`)
+  async function popularPetsCliente(id) {
+    empresaFetch(`/pet?idCliente=${id}`)
       .then(res => res.json())
       .then(data => {
           setPetsCliente(data.pets);
@@ -163,7 +163,6 @@ const Agendamento = () => {
     if (validar) {
       popularServicosOferecidos();
       popularClientes();
-      popularPetsCliente();
       popularFuncionarios();
     }
   }, []);
@@ -315,7 +314,12 @@ const Agendamento = () => {
             <Col>
               <Form.Group controlId="formServico">
                 <Form.Label>Serviço</Form.Label>
-                <Form.Select {...register("servico")}>
+                <Form.Select {...register("servico", {
+                  required: {
+                    value: true,
+                    message: "Selecione o serviço para o agendamento"
+                  }
+                })}>
                   <option value="">Selecione um serviço</option>
                   {servicos.map((servico) => (
                     <option key={servico.id} value={servico.id}>
@@ -344,7 +348,7 @@ const Agendamento = () => {
                 <Form.Control
                   type="time"
                   {...register("hora", { required: true })}
-                  defaultValue="09:00"
+                  defaultValue=""
                 />
               </Form.Group>
             </Col>
@@ -370,13 +374,18 @@ const Agendamento = () => {
             <Col>
               <Form.Group controlId="formServico">
                 <Form.Label>Cliente:</Form.Label>
-                <Form.Select {...register("cliente", { required: true })}>
-                  <option value="">Selecione um cliente</option>
-                  {clientes && clientes.map((cli) => (
-                    <option key={cli.id} value={cli.id}>
-                      {cli.nome}
-                    </option>
-                  ))}
+                <Form.Select 
+                  onInput={ e=> {
+                    popularPetsCliente(e.target.value);
+                    setPetsSel([]);
+                  }}
+                  {...register("cliente", { required: true })}>
+                    <option value="">Selecione um cliente</option>
+                    {clientes && clientes.map((cli) => (
+                      <option key={cli.id} value={cli.id}>
+                        {cli.nome}
+                      </option>
+                    ))}
                 </Form.Select>
               </Form.Group>
             </Col>
