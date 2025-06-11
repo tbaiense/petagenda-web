@@ -36,10 +36,15 @@
     display: flex;
     gap: 20px;
     padding: 1rem 1.5rem 1rem 1.5rem ;
-    background-color: rgb(61, 162, 245);
+    background-color: rgb(166, 83, 38);
+    /* background-color: rgb(61, 162, 245); */
     color: white;
     border-radius: 12px 12px 0px 0px;
     justify-content: space-between;
+}
+.filtros select{
+    padding: 3px;
+    border-radius: 5px;
 }
 
 /* ==================================== INFORMAÇÕES ================================= */
@@ -79,12 +84,13 @@
 /* ==================================== SELECTS ================================= */
 
 .slct{
-    background-color: rgb(61, 162, 245);
+    background-color: rgb(166, 83, 38);
+    /* background-color: rgb(61, 162, 245); */
     color: white;
     border-color:1px solid black;
     padding: 2px;
 }
-/* ==================================== SELECTS ================================= */
+/* ==================================== BOTÃO DA SETA ================================= */
 
 .bttn{
     background-color: white;
@@ -99,18 +105,44 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);
-  color: white;
+  color: rgb(255, 255, 255);
   z-index: 5;
 }
+
+.estiloModal{
+    background-color: rgb(166, 83, 38);
+    width: 30vw;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    position: relative;
+    transform: translate(123%, 15%);
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+/* ==================================== MODAL ORGANIZAÇÃO ================================= */
+
+.orgLayoutCampos{
+    display: flex;
+    justify-content: space-between;
+}
+
+.spanFechar{
+    cursor: pointer;
+    position: relative;
+    z-index: 10;
+    transform: translate(65%,490%);
+    color: rgb(255, 255, 255);
+}
+/* ==================================== ESTILO DOS CAMPOS ================================= */
 
 .estiloCampos{
     display: flex;
     flex-direction: column;
 }
-
-/* ==================================== MODAL ORGANIZAÇÃO ================================= */
-
-.orgLayoutCampos{
-    display: flex;
+.estiloCampos input{
+    width: 97%;
+}
+.estiloCampos textarea{
+    resize: none;
 }

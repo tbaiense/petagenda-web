@@ -10,62 +10,71 @@ const ListarPets = () => {
     const [pets, setPets] = useState([])
 
 
-    async function obterPets() {
-        try{
-            const resPets = await empresaFetch('/pets');
-            
-            if (resPets.status == 200){
-                const jsonBody = await resPets.json();
+    // preciso pegar todas as especies cadastradas
 
-                if (!jsonBody.pets){
-                    throw new Error(jsonBody.message)
-                }
-
-                if (!jsonBody.pets) {
-                    throw new Error(jsonBody.message || 'Nenhum pet encontrado');
-                }
-
-                if (jsonBody.pets.length == 0) {
-                    return [];
-                } else {
-                    return jsonBody.pets;
-                }
-            } else {
-                throw new Error('requisição não retornou código 200');
-            }
-                    
-        } catch(err) {
-            err.message = "Falha ao obter pets cadastrados: " + err.message;
-            throw err;
-      // return [];
-        }
-    }
-
-    // Pega os pets cadastrados para listar
-    useEffect(() => {
-        obterPets()
-        .then(petsList => {
-            setPets(petsList);
-        })
-        .catch(err => {
-            alert(err.message)
-        })
-        // Função para filtrar por nome 
-        async function filtroNome(query) {
-            
-        }
     
-        // Função para filtrar por especie
-        async function filtroEspecie(query) {
-            
-        }
 
-        // Função para ?ordenar? por crescente e decrescente
-        async function filtroOrdem(query) {
+    // async function obterPets() {
+    //     try{
+    //         const resPets = await empresaFetch('/pets');
             
-        }
+    //         if (resPets.status == 200){
+    //             const jsonBody = await resPets.json();
 
-    }, [])
+    //             if (!jsonBody.pets){
+    //                 throw new Error(jsonBody.message)
+    //             }
+
+    //             if (!jsonBody.pets) {
+    //                 throw new Error(jsonBody.message || 'Nenhum pet encontrado');
+    //             }
+
+    //             if (jsonBody.pets.length == 0) {
+    //                 return [];
+    //             } else {
+    //                 return jsonBody.pets;
+    //             }
+    //         } else {
+    //             throw new Error('requisição não retornou código 200');
+    //         }
+                    
+    //     } catch(err) {
+    //         err.message = "Falha ao obter pets cadastrados: " + err.message;
+    //         throw err;
+    //   // return [];
+    //     }
+    // }
+
+    // // Pega os pets cadastrados para listar
+    // useEffect(() => {
+    //     obterPets()
+    //     .then(petsList => {
+    //         setPets(petsList);
+    //     })
+    //     .catch(err => {
+    //         alert(err.message)
+    //     })
+    //     // Função para filtrar por nome 
+    //     async function filtroNome(query) {
+            
+    //     }
+    
+    //     // Função para filtrar por especie
+    //     async function filtroEspecie(query) {
+            
+    //     }
+
+    //     // Função para ?ordenar? por crescente e decrescente
+    //     async function filtroOrdem(query) {
+            
+    //     }
+
+    // }, [])
+
+    const abrirModalInfo = (pets, id) => {
+        
+        setShowInfo(true)
+    }
 
     return(
         <div className={styles.viewConteudo}>
@@ -86,6 +95,13 @@ const ListarPets = () => {
                     {/* Filtros */}
                     <div className={styles.filtros}>
                         <div>
+                            <label htmlFor="">Ordem:</label>
+                            <select name="" id="" className={styles.slct}>
+                                <option value="">Crescente</option>
+                                <option value="">Decrescente</option>
+                            </select>
+                        </div>
+                        <div>
                             <label htmlFor="">Filtrar por:</label>
                             <select name="" id="" className={styles.slct}>
                                 <option value="">Nome</option>
@@ -99,13 +115,6 @@ const ListarPets = () => {
                             </select>
                         </div>
 
-                        <div>
-                            <label htmlFor="">Ordem:</label>
-                            <select name="" id="" className={styles.slct}>
-                                <option value="">Crescente</option>
-                                <option value="">Decrescente</option>
-                            </select>
-                        </div>
                     </div>
 
                     <div>
@@ -113,14 +122,28 @@ const ListarPets = () => {
                             return(
                                 <div className={styles.miniCard}>
 
+                                    {if(pet.sexo === Feminino){
+                                        return (
+                                            <div className={styles.female}>
+                                                <img src={female} alt="" />
+                                            </div>
+                                        )
+                                    }else{
+                                        return (
+                                            <div className={styles.male}>
+                                                <img src={male} alt="" />
+                                            </div>
+                                        )
+                                    }}
+
                                     <div className={styles.subInfo} key={pet}>
                                         <span className={styles.estiloNome}>{pet.nome}</span>
                                         <span className={styles.estiloEspecie}>{pet.especie}</span>
                                         <span className={styles.estiloDono}>{pet.dono}</span>
                                     </div>
                                 
-                                    <div className={styles.toModal}>
-                                        <img src="" alt="seta" />
+                                    <div>
+                                        <button onClick={abrirModalInfo(pets,pets.id)} className={styles.bttn}><img src={seta} alt="seta" /></button>
                                     </div>
 
                                 </div>
@@ -148,19 +171,24 @@ const ListarPets = () => {
                         
                         {showInfo && (
                             <div className={styles.infoModal}>
-
-                                <div>
+                                <div className={styles.spanFechar}>
+                                    <span onClick={() => setShowInfo(false)} >X</span> 
+                                </div>
+                                <div className={styles.estiloModal}>
+                                    <div>
+                                        <h2>Ficha do Pet</h2>
+                                    </div>
 
                                     <div className={styles.orgLayoutCampos}>
 
                                         <div className={styles.estiloCampos}>
                                             <label htmlFor="">Dono:</label>
-                                            <label htmlFor="">(nome_do_dono)</label>
+                                            <input type="text" value="nome do dono" disabled />
                                         </div>
 
                                         <div className={styles.estiloCampos}> 
                                             <label htmlFor="">Pet:</label>
-                                            <label htmlFor="">(nome_do_pet)</label>
+                                            <input type="text" value="nome do pet" disabled />
                                         </div >
 
                                     </div>
@@ -169,63 +197,67 @@ const ListarPets = () => {
 
                                         <div className={styles.estiloCampos}>
                                             <label htmlFor="">Espécie:</label>
-                                            <label htmlFor="">(Espécie)</label>
+                                            <input type="text" value="Espécie" disabled/>
                                         </div>
 
                                         <div className={styles.estiloCampos}>
                                             <label htmlFor="">Raça:</label>
-                                            <label htmlFor="">(Raça)</label>
+                                            <input type="text" value="Raça" disabled />
                                         </div>  
 
                                     </div>
 
-                                    <div className={styles.orgLayout}>
+                                    <div className={styles.orgLayoutCampos}>
 
                                         <div className={styles.estiloCampos}>
                                             <label htmlFor="">Cor:</label>
-                                            <label htmlFor="">(Cor)</label>
+                                            <input type="text" value="Cor" disabled/>
                                         </div>
 
                                         <div className={styles.estiloCampos}>
                                             <label htmlFor="">Porte:</label>
-                                            <label htmlFor="">(Porte)</label>
+                                            <input type="text" value="Porte" disabled/>
                                         </div> 
 
                                     </div>
 
-                                    <div className={styles.orgLayout}>
+                                    <div className={styles.orgLayoutCampos}>
 
                                         <div className={styles.estiloCampos}>
                                             <label htmlFor="">Sexo:</label>
-                                            <label htmlFor="">(Sexo)</label>
+                                            <input type="text" value="Sexo" disabled/>
                                         </div>
 
                                         <div className={styles.estiloCampos}>
                                             <label htmlFor="">Castrado:</label>
-                                            <label htmlFor="">(sim ou não)</label>
+                                            <input type="text" value="Sim ou não " disabled/>
                                         </div>
 
                                         <div className={styles.estiloCampos}>
-                                            <label htmlFor="">Data de nascimento:</label>
-                                            <label htmlFor="">(Data de nascimento)</label>
+                                            <label htmlFor="">Nascido:</label>
+                                            <input type="date" value="" disabled/>
                                         </div>
 
                                     </div>
 
                                     <div className={styles.estiloCampos}>
                                         <label htmlFor="">Estado de Saúde:</label>
-                                        <textarea htmlFor="">(Estado de Saúde)</textarea>
+                                        <textarea htmlFor="" disabled>(Estado de Saúde)</textarea>
                                     </div>
                                     <div className={styles.estiloCampos}>
                                         <label htmlFor="">Comportamento:</label>
-                                        <textarea htmlFor="">(Comportamento)</textarea>
+                                        <textarea htmlFor="" disabled>(Comportamento)</textarea>
                                     </div>
-
-                                    <button onClick={() => setShowInfo(false)}>fechar</button>
                                 </div>
-                            </div>
-                            
+                            </div>  
                         )}
+                        <p>falta fazer as funções:</p>
+                        <ul>
+                            <li>pegar a query da barra de pesquisa e mandar para o backend</li>
+                            <li>Pegar todas as espécies e popular o o filtro de espécie</li>
+                            <li>aplicar as ordens</li>
+                            <li>logica de passar o id do pet clicado para pegar as informações</li>
+                        </ul>
                     </div>
                 </div>
             </div>
