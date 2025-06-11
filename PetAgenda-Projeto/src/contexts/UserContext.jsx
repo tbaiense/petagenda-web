@@ -4,7 +4,7 @@ export const AuthContext = createContext()
 
 export const AuthProvider = ({ children }) => {
   // URL da API
-  const apiURL = 'http://127.0.0.1:3000';
+  const apiURL = 'http://localhost:3000';
 
   const [ validar, setValidar ] = useState(false);
   
