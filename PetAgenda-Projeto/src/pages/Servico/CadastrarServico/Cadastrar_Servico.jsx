@@ -86,7 +86,7 @@ function CadastrarServico() {
     
   }, []);
 
-  const { register, handleSubmit, reset, watch } = useForm();
+  const { register, handleSubmit, reset, watch, getValues, setValue } = useForm();
 
   const imagemServ = watch("pathImgFile")
   const imagemServURL = imagemServ && imagemServ[0] ? URL.createObjectURL(imagemServ[0]) : null
@@ -96,7 +96,7 @@ function CadastrarServico() {
       nome: data.nome.trim(),
       categoria: +data.categoria,
       tipoPreco: data.tipoPreco,
-      preco: +data.preco,
+      preco: +data.preco.replace(',', '.'),
       descricao: data.descricao.trim(),
       restricaoParticipante: data.restricaoParticipante,
       restricaoEspecie: (data.restricaoEspecie?.length > 0) 
@@ -157,7 +157,15 @@ function CadastrarServico() {
                 <Form.Control
                   type="text"
                   placeholder="Valor do serviço"
-                  {...register("preco")}
+                  {...register("preco", {
+                    onChange: (e) => {
+                      let preco = getValues('preco');
+                      preco = preco.replaceAll(/[^\d,.]/g, '');
+                      preco = preco.replace('.', ',')
+
+                      setValue('preco', preco);
+                    }
+                  })}
                 />
                 <InputGroup.Text>R$</InputGroup.Text>
               </InputGroup>

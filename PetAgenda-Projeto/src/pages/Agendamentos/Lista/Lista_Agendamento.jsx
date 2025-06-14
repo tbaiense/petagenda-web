@@ -4,24 +4,89 @@ import { useForm } from "react-hook-form";
 import { useAuth } from "../../../contexts/UserContext";
 import "../Lista/Lista_Agendamento.module.css";
 import Modal_Atualizar_Rapido_Agendamento from "./Modal_Atualizar_Rapido_Agendamento";
+import CardAgendamento from "../../../components/CardAgendamento/CardAgendamento";
+import { useNavigate } from 'react-router-dom';
 
 const Lista_Agendamentos = () => {
-    const [show, setShow] = useState(false);
+    const { empresaFetch, validar } = useAuth();
+    const navigate = useNavigate();
+    const [ agendamentos, setAgendamentos ] = useState([/*
+        {
+            "id": 1,
+            "idInfoServico": 1,
+            "dtHrMarcada": "2025-06-13 22:12:00",
+            "servico": {
+                "id": 2,
+                "nome": "Dog Walking",
+                "categoria": 7,
+                "nomeCategoria": "PetCare"
+            },
+            "valor": {
+                "servico": 0,
+                "pets": 59.9,
+                "total": 59.9
+            },
+            "funcionario": {
+                "id": 1,
+                "nome": "Maria Joaquina Silveira"
+            },
+            "estado": {
+                "id": "preparado"
+            },
+            "pets": [
+                {
+                    "id": 1,
+                    "instrucaoAlim": "Alimentar com petiscos leves",
+                    "remedios": [
+                        {
+                            "id": 1,
+                            "nome": "Torcilax",
+                            "instrucoes": "Uma vez após a primeira refeição"
+                        }
+                    ]
+                }
+            ]
+        }
+    */]);
 
-
-    const handleShowEditarModal = () => {
-        setShow(true);
+    const [ funcDisponiveis, setFuncDisponiveis ] = useState([]);
+    async function popularFuncionarios() {
+        empresaFetch('/funcionario')
+        .then(res => res.json())
+        .then(data => {
+            setFuncDisponiveis(data.funcionarios);
+        })
+        .catch(error => {
+            console.error("Erro ao buscar Funcionarios:", error);
+        });
     }
 
-    const handleCloseEditarModal = () => {
-        setShow(false);
+    useEffect(() => {
+        popularFuncionarios();
+    }, []);
+
+    async function popularAgendamentos() {
+        const resp = await empresaFetch('/agendamento');
+
+        if (resp.status != 200) {
+            alert('falha ao obter agendamentos!')
+            return;
+        }
+
+        const { agendamentos: agendList } = await resp.json();
+
+        if (agendList.length > 0) {
+            setAgendamentos(agendList.map( a => ({ ...a, funcionario: (a.funcionario) ? a.funcionario : { id: "" }})));
+        }
     }
 
+    useEffect(() => {
+        popularAgendamentos();
+    }, []);
 
     return (
         <div className="lista_agendamentos_servicos mt-4">
             <Container>
-                <Modal_Atualizar_Rapido_Agendamento show={show} setShow={setShow}></Modal_Atualizar_Rapido_Agendamento>
                 {/* Topo */}
                 <div>
                     <Row>
@@ -34,8 +99,8 @@ const Lista_Agendamentos = () => {
                                     Cadastrar novo
                                 </Dropdown.Toggle>
                                 <Dropdown.Menu>
-                                    <Dropdown.Item href="#/action-1">Agendamento</Dropdown.Item>
-                                    <Dropdown.Item href="#/action-2">Serviço Executado</Dropdown.Item>
+                                    <Dropdown.Item onClick={(e) => {navigate('/empresa/agendamentos/cadastrar')}}>Agendamento</Dropdown.Item>
+                                    <Dropdown.Item onClick={ e => {navigate('/empresa/servicos/realizados/cadastrar')}}>Serviço Executado</Dropdown.Item>
                                 </Dropdown.Menu>
                             </Dropdown>                        
                         </Col>
@@ -83,84 +148,9 @@ const Lista_Agendamentos = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>Banho e Tosa Completa Para Cães</td>
-                                <td>Antônio Souza Ribeiro Albuquerque</td>
-                                <td>Marina Tavares Siqueira</td>
-                                <td>20/10/2025<br></br>~2 meses</td>
-                                <td>08:30</td>
-                                <td>Preparando</td>
-                                <td>R$ 2220,90</td>
-                                <td>
-                                    <Button className="form-button" variant="primary" onClick={handleShowEditarModal}>Editar</Button>
-                                    <Button className="form-button" variant="success">Detalhes</Button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Banho e Tosa Completa Para Cães</td>
-                                <td>Antônio Souza Ribeiro Albuquerque</td>
-                                <td>Marina Tavares Siqueira</td>
-                                <td>20/10/2025<br></br>~2 meses</td>
-                                <td>08:30</td>
-                                <td>Preparando</td>
-                                <td>R$ 2220,90</td>
-                                <td>
-                                    <Button className="form-button" variant="primary">Editar</Button>
-                                    <Button className="form-button" variant="success">Detalhes</Button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Banho e Tosa Completa Para Cães</td>
-                                <td>Antônio Souza Ribeiro Albuquerque</td>
-                                <td>Marina Tavares Siqueira</td>
-                                <td>20/10/2025<br></br>~2 meses</td>
-                                <td>08:30</td>
-                                <td>Preparando</td>
-                                <td>R$ 2220,90</td>
-                                <td>
-                                    <Button className="form-button" variant="primary">Editar</Button>
-                                    <Button className="form-button" variant="success">Detalhes</Button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Banho e Tosa Completa Para Cães</td>
-                                <td>Antônio Souza Ribeiro Albuquerque</td>
-                                <td>Marina Tavares Siqueira</td>
-                                <td>20/10/2025<br></br>~2 meses</td>
-                                <td>08:30</td>
-                                <td>Preparando</td>
-                                <td>R$ 2220,90</td>
-                                <td>
-                                    <Button className="form-button" variant="primary">Editar</Button>
-                                    <Button className="form-button" variant="success">Detalhes</Button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Banho e Tosa Completa Para Cães</td>
-                                <td>Antônio Souza Ribeiro Albuquerque</td>
-                                <td>Marina Tavares Siqueira</td>
-                                <td>20/10/2025<br></br>~2 meses</td>
-                                <td>08:30</td>
-                                <td>Preparando</td>
-                                <td>R$ 2220,90</td>
-                                <td>
-                                    <Button className="form-button" variant="primary">Editar</Button>
-                                    <Button className="form-button" variant="success">Detalhes</Button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Banho e Tosa Completa Para Cães</td>
-                                <td>Antônio Souza Ribeiro Albuquerque</td>
-                                <td>Marina Tavares Siqueira</td>
-                                <td>20/10/2025<br></br>~2 meses</td>
-                                <td>08:30</td>
-                                <td>Preparando</td>
-                                <td>R$ 2220,90</td>
-                                <td>
-                                    <Button className="form-button" variant="primary">Editar</Button>
-                                    <Button className="form-button" variant="success">Detalhes</Button>
-                                </td>
-                            </tr>
+                            { agendamentos && agendamentos.map( a => {
+                                return <CardAgendamento funcDisponiveis={funcDisponiveis} key={a.id} agendamento={a}/>
+                            })}
                         </tbody>
                         </Table>
                     </Tab>
