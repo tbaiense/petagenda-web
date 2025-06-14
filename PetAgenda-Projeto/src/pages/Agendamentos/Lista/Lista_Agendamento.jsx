@@ -11,6 +11,7 @@ const Lista_Agendamentos = () => {
     const { empresaFetch, validar } = useAuth();
     const navigate = useNavigate();
     const [ paginaAtual, setPaginaAtual ] = useState(0);
+    const [ refresh, setRefresh ] = useState(0);
     const [ paginas, setPaginas ] = useState([]);
     const [ agendamentos, setAgendamentos ] = useState([/*}
         {
@@ -52,7 +53,7 @@ const Lista_Agendamentos = () => {
     */]);
 
     const [ funcDisponiveis, setFuncDisponiveis ] = useState([]);
-    async function popularFuncionarios() {
+    async function popularFuncionarios() {        
         empresaFetch('/funcionario')
         .then(res => res.json())
         .then(data => {
@@ -64,11 +65,13 @@ const Lista_Agendamentos = () => {
     }
 
     useEffect(() => {
-        popularFuncionarios();
+        if (validar) {
+            popularFuncionarios();
+        }
     }, []);
 
     async function popularAgendamentos() {
-        const limit = 2;
+        const limit = 6;
         const resp = await empresaFetch(`/agendamento?limit=${limit}&page=${paginaAtual}`);
 
         if (resp.status != 200) {
@@ -89,10 +92,27 @@ const Lista_Agendamentos = () => {
             setAgendamentos(agendList.map( a => ({ ...a, funcionario: (a.funcionario) ? a.funcionario : { id: "" }})));
         }
     }
+    useEffect(() => {
+        if (validar) {
+            popularAgendamentos();
+        }
+    }, [paginaAtual]);
+
+    useEffect(() => {
+        if (validar) {
+            setTimeout(() => {
+                setRefresh(refresh + 1)
+            }, 10000);
+        }
+    }, [refresh]);
+
+    useEffect(() => {
+        console.log('refresh agendamentos!')
+    }, [agendamentos]);
 
     useEffect(() => {
         popularAgendamentos();
-    }, [paginaAtual]);
+    }, [refresh]);
 
     return (
         <div className="lista_agendamentos_servicos mt-4">

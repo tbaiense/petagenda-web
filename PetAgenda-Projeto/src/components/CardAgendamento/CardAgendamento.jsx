@@ -27,8 +27,7 @@ const CardAgendamento = ({ agendamento, funcDisponiveis }) => {
     useEffect(() => {
         setEstado(agendamento.estado);
         if (agendamento.funcionario?.nome) setFuncionario(agendamento.funcionario);
-    }, []);
-
+    });
   return (
     <>
         <tr>

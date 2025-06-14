@@ -5,6 +5,7 @@ import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import { useAuth } from '../../../contexts/UserContext';
 import { useNavigate } from 'react-router-dom';
+
 const Modal_Atualizar_Rapido_Agendamento = ({agendamento, show, setShow, estado, setEstado, funcionario, setFuncionario, funcDisponiveis }) => {
     const [ novoEstado, setNovoEstado ] = useState({});
     const [ novoFuncionario, setNovoFuncionario ] = useState({});

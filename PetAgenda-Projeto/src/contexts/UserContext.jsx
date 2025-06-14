@@ -4,7 +4,7 @@ export const AuthContext = createContext()
 
 export const AuthProvider = ({ children }) => {
   // URL da API
-  const apiURL = 'http://localhost:3000';
+  const apiURL = 'http://192.168.15.2:3000';
 
   const [ validar, setValidar ] = useState(false);
   
@@ -106,8 +106,8 @@ export const AuthProvider = ({ children }) => {
   function deveRodar() {
     if (!validar) {
         const msg = 'Operação não permitida em modo de desenvolvimento (sem back-end)';
-        alert(msg);
-
+        // alert(msg);
+        console.error(msg);
         // throw Error(msg);
     }
   }

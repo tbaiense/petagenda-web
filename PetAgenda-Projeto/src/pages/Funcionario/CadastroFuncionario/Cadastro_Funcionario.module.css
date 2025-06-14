@@ -64,12 +64,18 @@
   justify-content: center;
   padding-top: 1rem;
 }
+
+.controlaCampos {
+  margin-bottom: 0.2em;
+}
+
 .controlaCampos input{
   border: 1px solid rgba(0, 0, 0, 0.2);
   padding: 5px 1rem;
   border-radius: 7px;
   transition: all 0.3s ease-in-out;
-  outline: none;   
+  outline: none;
+  margin-bottom: 0.5em;
 }
 .controlaCampos input:focus{
   border-color: #1FAF30;
@@ -80,9 +86,15 @@
   padding: 5px 1rem;
   border-radius: 7px;
   transition: all 0.3s ease-in-out;
-  outline: none;  
+  outline: none;
+  margin-bottom: 0.5em;
+
 }
 .controlaCampos select:focus{
   border-color: #1FAF30;
   box-shadow: 0 0 10px rgba(31, 175, 48, 0.6); 
+}
+
+.controlaCampos:last-child {
+  margin-bottom: unset;
 }
