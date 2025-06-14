@@ -10,7 +10,9 @@ import { useNavigate } from 'react-router-dom';
 const Lista_Agendamentos = () => {
     const { empresaFetch, validar } = useAuth();
     const navigate = useNavigate();
-    const [ agendamentos, setAgendamentos ] = useState([/*
+    const [ paginaAtual, setPaginaAtual ] = useState(0);
+    const [ paginas, setPaginas ] = useState([]);
+    const [ agendamentos, setAgendamentos ] = useState([/*}
         {
             "id": 1,
             "idInfoServico": 1,
@@ -66,23 +68,31 @@ const Lista_Agendamentos = () => {
     }, []);
 
     async function popularAgendamentos() {
-        const resp = await empresaFetch('/agendamento');
+        const limit = 2;
+        const resp = await empresaFetch(`/agendamento?limit=${limit}&page=${paginaAtual}`);
 
         if (resp.status != 200) {
-            alert('falha ao obter agendamentos!')
+            console.log('falha ao obter agendamentos!')
             return;
         }
 
-        const { agendamentos: agendList } = await resp.json();
+        const { qtdAgendamento, agendamentos: agendList } = await resp.json();
 
         if (agendList.length > 0) {
+            const pageList = [];
+
+            for (let i = 1; i <= Math.ceil(qtdAgendamento / limit) ; i++) {
+                pageList.push(i);
+            }
+
+            setPaginas(pageList);
             setAgendamentos(agendList.map( a => ({ ...a, funcionario: (a.funcionario) ? a.funcionario : { id: "" }})));
         }
     }
 
     useEffect(() => {
         popularAgendamentos();
-    }, []);
+    }, [paginaAtual]);
 
     return (
         <div className="lista_agendamentos_servicos mt-4">
@@ -161,16 +171,19 @@ const Lista_Agendamentos = () => {
                         Tab content for Contact
                     </Tab>
                 </Tabs>
-                <Pagination>
-                    <Pagination.First />
-                    <Pagination.Prev />
-                    <Pagination.Item>{1}</Pagination.Item>
-                    <Pagination.Item>{2}</Pagination.Item>
-                    <Pagination.Item>{3}</Pagination.Item>
-                    <Pagination.Item>{4}</Pagination.Item>
-                    <Pagination.Next />
-                    <Pagination.Last />
-                </Pagination>
+                { paginas.length > 1 && 
+                    <Pagination>
+                        <Pagination.First onClick={ () => {setPaginaAtual(0)}}/>
+                        { paginas.map( p => 
+                            <Pagination.Item
+                                active={ p-1 == paginaAtual }
+                                key={p}
+                                onClick={ () => {setPaginaAtual(p-1)} }>{p}
+                            </Pagination.Item>
+                        )}
+                        <Pagination.Last onClick={ () => { setPaginaAtual(paginas[paginas.length - 1] -1) }}/>
+                    </Pagination>
+                }
             </Container>
         </div>
     )

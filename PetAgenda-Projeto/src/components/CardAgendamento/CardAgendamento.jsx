@@ -33,7 +33,7 @@ const CardAgendamento = ({ agendamento, funcDisponiveis }) => {
     <>
         <tr>
             <td>{agendamento.servico.nome}</td>
-            <td>TODO: Nome do cliente</td>
+            <td>{agendamento.cliente.nome}</td>
             <td>{funcionario.nome}</td>
             <td><div>{agendamento.dtHrMarcada.replace(/ \d\d:\d\d:\d\d/, '')}</div><br></br>~2 meses</td>
             <td>{agendamento.dtHrMarcada.replace(/\d{4}-\d{2}-\d{2} /, '')}</td>
