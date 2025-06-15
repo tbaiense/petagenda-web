@@ -88,7 +88,7 @@ const Lista_ServicosOferecidos = () => {
                             <h2>Serviços oferecidos</h2>
                         </Col>
                         <Col>
-                                <Button variant="success" id="dropdown-basic">
+                                <Button variant="success" id="dropdown-basic" onClick={()=> {navigate('/empresa/servicos/cadastrar')}}>
                                     Cadastrar +
                                 </Button>                     
                         </Col>
