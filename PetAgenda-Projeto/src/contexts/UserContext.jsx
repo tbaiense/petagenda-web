@@ -4,7 +4,7 @@ export const AuthContext = createContext()
 
 export const AuthProvider = ({ children }) => {
   // URL da API
-  const apiURL = 'http://192.168.15.2:3000';
+  const apiURL = 'http://petagenda.live/api/v1';
 
   const [ validar, setValidar ] = useState(false);
   
@@ -101,7 +101,6 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem(empresa_licencaKey);
   };
 
-  
 
   function deveRodar() {
     if (!validar) {

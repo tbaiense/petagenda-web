@@ -130,7 +130,8 @@ const ServicoExecutado = () => {
     }
 
     const servicoData = {
-      dtHrMarcada: `${formData.data} ${formData.hora}`,
+      inicio: `${formData.dataExecucao} ${formData.horaInicio}`,
+      fim: `${formData.dataExecucao} ${formData.horaFim}`,
       servico: { id: formData.servico },
       funcionario: formData.funcionario
         ? { id: formData.funcionario }
@@ -254,7 +255,7 @@ const ServicoExecutado = () => {
   const onSubmit = async (data) => {
     // Cadastrando agendamento
     try {
-      const resp = await empresaFetch("/agendamento", {
+      const resp = await empresaFetch("/servico-realizado", {
         method: "POST",
         body: JSON.stringify(getData()),
       });
@@ -358,7 +359,13 @@ const ServicoExecutado = () => {
             <Col md={5}>
               <Form.Group controlId="formFuncionario">
                 <Form.Label>Funcionário que realizou</Form.Label>
-                <Form.Select {...register("funcionario")}>
+                <Form.Select 
+                  {...register("funcionario", {
+                    required: {
+                      value: true, 
+                      message: "Selecione o funcionário atribuído"
+                    }})
+                  }>
                   <option value="">Selecione um funcionário</option>
                   {funcionarios &&
                     funcionarios.map((funcionario) => (

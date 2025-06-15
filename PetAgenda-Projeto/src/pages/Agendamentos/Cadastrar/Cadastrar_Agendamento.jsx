@@ -170,7 +170,7 @@ const Agendamento = () => {
   }, []);
 
   useEffect(() => {
-    if (servicos?.length > 0) {
+    if (servicos?.length > 0 && location.state?.servicoSelecionado) {
       console.log('location: ', location);
       if (location && Number.isInteger(location.state.servicoSelecionado)) {
         setValue('servico', location.state.servicoSelecionado);
