@@ -243,7 +243,7 @@ const SideBar = () => {
                   <Link to="/empresa/servicos/cadastrar">Novo Serviço</Link>
                 </li>
                 <li className={styles.dropdownItem}>
-                  <Link to="/empresa/servicos">Lista de Serviços</Link>
+                  <Link to="/empresa/servicos/lista">Lista de Serviços</Link>
                 </li>
                 <li className={styles.dropdownItem}>
                   <Link to="/empresa/servicos/realizados">Serviço Realizado</Link>
@@ -257,7 +257,7 @@ const SideBar = () => {
                   <Link to="/empresa/servicos/cadastrar">Novo</Link>
                 </li>
                 <li>
-                  <Link to="/empresa/servicos">Lista</Link>
+                  <Link to="/empresa/servicos/lista">Lista</Link>
                 </li>
                 <li>
                   <Link to="/empresa/servicos/realizados">Realizado</Link>

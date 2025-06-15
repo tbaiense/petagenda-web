@@ -102,7 +102,7 @@ const Lista_Agendamentos = () => {
         if (validar) {
             setTimeout(() => {
                 setRefresh(refresh + 1)
-            }, 10000);
+            }, 2000);
         }
     }, [refresh]);
 

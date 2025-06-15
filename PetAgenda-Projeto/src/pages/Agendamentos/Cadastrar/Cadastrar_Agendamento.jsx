@@ -10,7 +10,7 @@ import { useAuth } from "../../../contexts/UserContext";
 import PetServicoCardList from "../../../components/CardPet/PetServicoCardList";
 import CamposEndereco from "../../../components/Endereco/CamposEndereco";
 import "../../../components/CardPet/PetServicoCard.css";
-
+import { useLocation } from 'react-router-dom';
 
 const Agendamento = () => {
   const { register, handleSubmit, subscribe, reset, watch, formState: { errors }, setValue, getValues } = useForm();
@@ -23,6 +23,7 @@ const Agendamento = () => {
   const [ petsSel, setPetsSel ] = useState([]);
   const [ funcionarios, setFuncionarios ] = useState([]);
   const { empresaFetch, validar } = useAuth();
+  const location = useLocation();
 
   // Remover pet da lista
   function handleRemove(idPet) {
@@ -167,6 +168,16 @@ const Agendamento = () => {
       popularFuncionarios();
     }
   }, []);
+
+  useEffect(() => {
+    if (servicos?.length > 0) {
+      console.log('location: ', location);
+      if (location && Number.isInteger(location.state.servicoSelecionado)) {
+        setValue('servico', location.state.servicoSelecionado);
+        console.log('servico setado!');
+      }
+    }
+  }, [servicos])
 
   function handleEnderecoChange(e) {
     const newEnd = {...endereco };

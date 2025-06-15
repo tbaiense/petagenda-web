@@ -24,6 +24,7 @@ import ListarPets from "../pages/Pets/ListarPets.jsx"
 
 //Serviços
 import CadastrarServico from "../pages/Servico/CadastrarServico/Cadastrar_Servico";
+import Lista_ServicosOferecidos from '../pages/Servico/ListarServicosOferecidos/Lista_ServicosOferecidos.jsx'
 
 // Agendamento
 import CadastrarAgendamento from "../pages/Agendamentos/Cadastrar/Cadastrar_Agendamento";
@@ -70,9 +71,9 @@ const router = createBrowserRouter([
     path: "/empresa",
     element: (
 
-      //<PrivateRoute>
+      <PrivateRoute>
         <MenuDashBoard />
-      //</PrivateRoute>
+      </PrivateRoute>
     ),
     children: [
       // Empresa
@@ -135,6 +136,10 @@ const router = createBrowserRouter([
         element: (
           <CadastrarServico />
         ),
+      },
+      {
+        path: "servicos/lista",
+        element: (<Lista_ServicosOferecidos />)
       },
 
       // Agendamentos
