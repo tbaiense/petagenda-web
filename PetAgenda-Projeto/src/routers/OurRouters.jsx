@@ -25,7 +25,7 @@ import ListarPets from "../pages/Pets/ListarPets.jsx"
 //Serviços
 import CadastrarServico from "../pages/Servico/CadastrarServico/Cadastrar_Servico";
 import Lista_ServicosOferecidos from '../pages/Servico/ListarServicosOferecidos/Lista_ServicosOferecidos.jsx'
-
+import ServicoExecutado from '../pages/Servico/ServicoExecutado/ServicoExecutado.jsx';
 // Agendamento
 import CadastrarAgendamento from "../pages/Agendamentos/Cadastrar/Cadastrar_Agendamento";
 import Lista_Agendamento from "../pages/Agendamentos/Lista/Lista_Agendamento.jsx"
@@ -141,6 +141,13 @@ const router = createBrowserRouter([
         path: "servicos/lista",
         element: (<Lista_ServicosOferecidos />)
       },
+      {
+        path: "servicos/executados",
+        element: (
+          <ServicoExecutado />
+        ),
+      },
+      
 
       // Agendamentos
       {

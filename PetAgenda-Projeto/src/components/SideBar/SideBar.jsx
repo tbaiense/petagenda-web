@@ -246,7 +246,7 @@ const SideBar = () => {
                   <Link to="/empresa/servicos/lista">Lista de Serviços</Link>
                 </li>
                 <li className={styles.dropdownItem}>
-                  <Link to="/empresa/servicos/realizados">Serviço Realizado</Link>
+                  <Link to="/empresa/servicos/executados">Serviço Realizado</Link>
                 </li>
               </ul>
             )}
@@ -260,7 +260,7 @@ const SideBar = () => {
                   <Link to="/empresa/servicos/lista">Lista</Link>
                 </li>
                 <li>
-                  <Link to="/empresa/servicos/realizados">Realizado</Link>
+                  <Link to="/empresa/servicos/executados">Realizado</Link>
                 </li>
               </ul>
             )}
