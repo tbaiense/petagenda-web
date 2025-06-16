@@ -71,9 +71,9 @@ const router = createBrowserRouter([
     path: "/empresa",
     element: (
 
-      //<PrivateRoute>
+      <PrivateRoute>
         <MenuDashBoard />
-      //</PrivateRoute>
+      </PrivateRoute>
     ),
     children: [
       // Empresa
@@ -142,7 +142,7 @@ const router = createBrowserRouter([
         element: (<Lista_ServicosOferecidos />)
       },
       {
-        path: "servicos/executados",
+        path: "servicos/realizados/cadastrar",
         element: (
           <ServicoExecutado />
         ),

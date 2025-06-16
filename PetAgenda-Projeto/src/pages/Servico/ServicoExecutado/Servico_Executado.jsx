@@ -276,7 +276,7 @@ const ServicoExecutado = () => {
 
   return (
     <div className="cadatrar_agendamento mt-4">
-      <h2 className="cadastrar_agendamento__title">Novo serviço executado</h2>
+      <h2 className="cadastrar_agendamento__title">Novo serviço realizado</h2>
       <Container>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <Row>

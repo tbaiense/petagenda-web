@@ -130,7 +130,7 @@ const Lista_Agendamentos = () => {
                                 </Dropdown.Toggle>
                                 <Dropdown.Menu>
                                     <Dropdown.Item onClick={(e) => {navigate('/empresa/agendamentos/cadastrar')}}>Agendamento</Dropdown.Item>
-                                    <Dropdown.Item onClick={ e => {navigate('/empresa/servicos/realizados/cadastrar')}}>Serviço Executado</Dropdown.Item>
+                                    <Dropdown.Item onClick={ e => {navigate('/empresa/servicos/realizados/cadastrar')}}>Serviço Realizado</Dropdown.Item>
                                 </Dropdown.Menu>
                             </Dropdown>                        
                         </Col>
