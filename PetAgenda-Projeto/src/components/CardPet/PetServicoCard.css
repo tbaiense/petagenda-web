@@ -1,0 +1,27 @@
+.accordion, .acordion-item {
+    background-color: unset;
+}
+.accordion-button:not(.collapsed) {
+    background-color: initial;
+    box-shadow: none;
+}
+
+.accordion-button {
+    background-color: unset;
+}
+.accordion-item.pet-servico-card-item {
+    border-radius: 0.3em;
+    padding: 1em 2em;
+    margin-top: 1em;
+    background-color: rgb(250, 250, 255);
+    box-shadow: 0 0.05em 0.4em rgba(0, 0, 0, 0.2);
+}
+
+.card-body {
+    margin: 0;
+    padding-inline: 1em;
+}
+
+.me-auto {
+    min-width: max-content;
+}

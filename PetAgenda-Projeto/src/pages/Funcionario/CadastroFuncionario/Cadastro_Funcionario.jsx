@@ -15,7 +15,8 @@ const CadastroFuncionario = () => {
         handleSubmit,
         formState:{errors},
         reset,
-        watch
+        watch,
+        setValue
     } = useForm();
     
     function popularListaFuncionarios() {
@@ -98,51 +99,86 @@ const CadastroFuncionario = () => {
 
                     <div className={styles.areaNomeSexo}>
                         <div className={styles.controlaCampos}>
-                            <label htmlFor="">Nome:</label>
+                            <label htmlFor="">Nome<span style={{color: 'red'}}>*</span>:</label>
                             <input type="text" placeholder="Digite o nome" 
                             {...register("nome", {
-                                required:"O nome é obrigatorio",
+                                required: {
+                                    value: true,
+                                    message: "O nome é obrigatorio"
+                                },
+                                onChange: (e) => {
+                                    let value = e.target.value;
+                    
+                                    if (value && value.length > 0) {
+                                        let values = value.split(' ');
+                                        values = values.map( v => `${v.charAt(0).toUpperCase()}${v.substring(1)}` );
+                                        value = values.join(' ');
+                                    }
+                                    setValue(e.target.name, value);
+                                },
                                 minLength:{
-                                    value:15,
-                                    message:"O nome deve ter pelo menos 15 caracteres"
+                                    value: 3,
+                                    message:"O nome deve ter pelo menos 3 caracteres"
                                 },
                                 maxLength:{
-                                    value:100,
-                                    message:"O nome dever ter no maximo 100 caracteres"
+                                    value: 64,
+                                    message:"O nome dever ter no maximo 64 caracteres"
                                 }
                             })} />
+                            {errors.nome && <p style={{color: 'red'}}>{errors.nome.message}</p>}
                         </div>
                     </div>
                     
                     <div>
 
                         <div className={styles.controlaCampos}>
-                            <label htmlFor="">Serviço Prestado:</label>
-                            <select {...register("servico", { required: "Selecione um serviço" })}>
+                            <label htmlFor="">Serviço Exercido<span style={{color: 'red'}}>*</span>:</label>
+                            <select {...register("servico", { required: {
+                                    value: true,
+                                    message: "Selecione um serviço exercido"
+                                } })}>
 
                                 <option value="">Selecione um serviço</option>
 
                                 {servicos.map((servico) => (
                                     <option key={servico.id} value={servico.id}>{servico.nome}</option>
                                 ))}
-
                             </select>
+                            {errors.servico && <p style={{color: 'red'}}>{errors.servico.message}</p>}
                         </div>
 
                         <div className={styles.controlaCampos}>
-                            <label htmlFor="">Telefone:</label>
+                            <label htmlFor="">Telefone<span style={{color: 'red'}}>*</span>:</label>
                             <input type="text" placeholder="Digite o telefone" 
                             {...register("telefone", {
-                                required:"O telefone é obrigatorio",
+                                required: {
+                                    value: true,
+                                    message: "O telefone é obrigatorio"
+                                },
+                                pattern: {
+                                    value: /^\d{2,2} \d{5,5}-\d{4,4}$/,
+                                    message: "Formato esperado: 27 99888-7766",
+                                  },
+                                onChange: (e) => {
+                                    let value = e.target.value;
+                    
+                                    if (value && value.length > 0) {
+                                        value = value.replaceAll(/[^0-9]/g, '');
+                                        value = `${value.substring(0,2)}${(value.length > 2) ? " " : "" }${value.substring(2,7)}${(value.length > 7) ? "-" : "" }${value.substring(7,11)}`;
+                                        console.log('limpei')
+                                    }
+                                    setValue(e.target.name, value);
+                                },
                                 minLength:{
-                                    value:14,
-                                    message:"O telefone deve ter pelo menos 14 caracteres"
+                                    value:13,
+                                    message:"O telefone deve ter pelo menos 13 caracteres"
                                 },
                                 maxLength:{
                                     value:14,
-                                    message:"O telefone dever ter no maximo 14 caracteres"
+                                    message:"O telefone dever ter no maximo 15 caracteres"
                                 }
                             })}/>
+                            {errors.telefone && <p style={{color: 'red'}}>{errors.telefone.message}</p>}
                         </div>
 
                     </div>

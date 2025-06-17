@@ -81,16 +81,22 @@ const SideBar = () => {
                     Lista de Agendamentos
                   </Link>
                 </li>
+                <li className={styles.dropdownItem}>
+                  <Link to="/empresa/servicos/realizados/cadastrar">Realizado</Link>
+                </li>
               </ul>
             )}
             {!isOpen && (
               <ul className={styles.floatingDropdown}>
-                <p className={styles.tituloDropdow}>Agendamento</p>
+                <p className={styles.tituloDropdow}>Agendamentos</p>
                 <li>
                   <Link to="/empresa/agendamentos/cadastrar">Novo</Link>
                 </li>
                 <li>
                   <Link to="/empresa/agendamentos/lista">Lista</Link>
+                </li>
+                <li>
+                  <Link to="/empresa/servicos/realizados/cadastrar">Realizado</Link>
                 </li>
               </ul>
             )}
@@ -148,7 +154,7 @@ const SideBar = () => {
               }
             >
               <FaUserFriends />
-              <span className={styles.itemDescription}>Clients</span>
+              <span className={styles.itemDescription}>Clientes</span>
               {isOpen && (
                 <FaChevronDown
                   className={
@@ -160,10 +166,10 @@ const SideBar = () => {
             {isOpen && openDropdown === "clients" && (
               <ul className={styles.dropdownMenu}>
                 <li className={styles.dropdownItem}>
-                  <Link to="/empresa/clients/cadastrar">Novo Cliente</Link>
+                  <Link to="/empresa/clientes/cadastrar">Novo Cliente</Link>
                 </li>
                 <li className={styles.dropdownItem}>
-                  <Link to="/empresa/clients/lista">Lista de Clientes</Link>
+                  <Link to="/empresa/clientes/lista">Lista de Clientes</Link>
                 </li>
               </ul>
             )}
@@ -228,7 +234,7 @@ const SideBar = () => {
               }
             >
               <FaClipboardList />
-              <span className={styles.itemDescription}>Serviços</span>
+              <span className={styles.itemDescription}>Serviço oferecido</span>
               {isOpen && (
                 <FaChevronDown
                   className={
@@ -240,27 +246,21 @@ const SideBar = () => {
             {isOpen && openDropdown === "servicos" && (
               <ul className={styles.dropdownMenu}>
                 <li className={styles.dropdownItem}>
-                  <Link to="/empresa/servicos/cadastrar">Novo Serviço</Link>
+                  <Link to="/empresa/servicos/cadastrar">Novo</Link>
                 </li>
                 <li className={styles.dropdownItem}>
-                  <Link to="/empresa/servicos">Lista de Serviços</Link>
-                </li>
-                <li className={styles.dropdownItem}>
-                  <Link to="/empresa/servicos/realizados">Serviço Realizado</Link>
+                  <Link to="/empresa/servicos/lista">Lista</Link>
                 </li>
               </ul>
             )}
             {!isOpen && (
               <ul className={styles.floatingDropdown}>
-                <p className={styles.tituloDropdow}>Serviço</p>
+                <p className={styles.tituloDropdow}>Serviço oferecido</p>
                 <li>
                   <Link to="/empresa/servicos/cadastrar">Novo</Link>
                 </li>
                 <li>
-                  <Link to="/empresa/servicos">Lista</Link>
-                </li>
-                <li>
-                  <Link to="/empresa/servicos/realizados">Realizado</Link>
+                  <Link to="/empresa/servicos/lista">Lista</Link>
                 </li>
               </ul>
             )}

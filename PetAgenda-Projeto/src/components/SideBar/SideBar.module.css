@@ -275,6 +275,7 @@ ul {
   text-decoration: none;
   font-size: 14px;
   display: block;
+  min-width: max-content;
 }
 
 .tituloDropdow {
@@ -282,7 +283,9 @@ ul {
   font-weight: 550;
   font-size: 1em;
   color: #5c5c5c;
-  padding-inline: 4em;
+  padding-inline: 2em;
+  min-width: max-content;
+
   border-bottom: 1px solid gray;
 }
 

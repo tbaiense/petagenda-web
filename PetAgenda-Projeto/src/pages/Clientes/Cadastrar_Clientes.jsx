@@ -95,6 +95,13 @@ const CadastrarClientes = () => {
 
   }, [subscribe]);
 
+  function handleEnderecoChange(e) {
+    const newEnd = {...endereco };
+    newEnd[e.target.name.split('.')[1]] = e.target.value;
+    
+    setEndereco(newEnd);
+    setValue(e.target.name.split('.')[1], e.target.value);
+  }
   // Pego os serviços oferecidos do banco da empresa
   useEffect(() => {
     if (validar) {
@@ -109,13 +116,6 @@ const CadastrarClientes = () => {
     }
   }, []);
 
-  function handleEnderecoChange(e) {
-    const newEnd = {...endereco };
-    newEnd[e.target.name.split('.')[1]] = e.target.value;
-    
-    setEndereco(newEnd);
-    setValue(e.target.name.split('.')[1], e.target.value);
-  }
   // Aqui esta pegando o serviço pelo id 
   const handleSelectChange = (e) => {
     if (servicos?.length > 0) {

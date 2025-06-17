@@ -4,7 +4,9 @@ import styles from "./CamposEndereco.module.css";
 const CamposEndereco = ({ 
   // cep, setCep, endereco, handleChange, 
   setValue,
-  prefix, register, errors }) => {
+  prefix, register, errors,
+  formConfigs
+}) => {
   /* Thiago >>> Castro, modifiquei o componente para ficar um pouco mais fácil
                 de usar quando tem apenas um endereço, como no caso do cadastro
                 de cliente: o 'prefix' é definido fora do componente e ele apenas
@@ -25,18 +27,21 @@ const CamposEndereco = ({
   //   };
   // }
 
+  const errorsObj = errors[prefix];
+
   return (
     <div className={styles.enderecoContainer}>
       <div className={styles.linhaEndereco}>
+        {/* <div>{(formConfigs) ? (formConfigs.isRequired ? "true" : "false") : "true"}</div> */}
         <div className={`${styles.labelInput} ${styles.flex5}`}>
           <label>CEP</label>
           <input
             type="text"
             // value={cep ?? ''}
             placeholder="12345678"
-            {...register(`${prefix}.cep`,
+            { ...register(`${prefix}.cep`,
               {
-                required: true,
+                required: (formConfigs) ? formConfigs.isRequired : true,
                 onChange: (e) => {
                   let value = e.target.value;
 
@@ -53,7 +58,7 @@ const CamposEndereco = ({
               })
             }
           />
-          {errors.endereco?.cep && <p style={{ color: 'red' }}>{errors.endereco?.cep.message}</p>}
+          {errorsObj?.cep && <p style={{ color: 'red' }}>{errorsObj?.cep.message}</p>}
         </div>
         <div className={`${styles.labelInput} ${styles.flex5}`}>
           <label>Logradouro</label>
@@ -62,9 +67,9 @@ const CamposEndereco = ({
             // onInput={handleChange}
             type="text"
             placeholder="Rua Feliz dos Palmares..."
-            {...register(`${prefix}.logradouro`, { required: { value: true, message: "Logradouro é obrigatório" } })}
+            {...register(`${prefix}.logradouro`, { required: { value: (formConfigs) ? formConfigs.isRequired : true, message: "Logradouro é obrigatório" } })}
           />
-          {errors.endereco?.logradouro && <p style={{ color: 'red' }}>{errors.endereco?.logradouro.message}</p>}
+          {errorsObj?.logradouro && <p style={{ color: 'red' }}>{errorsObj?.logradouro.message}</p>}
         </div>
 
         <div className={`${styles.labelInput} ${styles.flex1}`}>
@@ -74,9 +79,9 @@ const CamposEndereco = ({
             // value={endereco.numero ?? ''}
             // onInput={handleChange}
             placeholder="Apto. 10, bloco 5..."
-            {...register(`${prefix}.numero`, { required: { value: true, message: "Número é obrigatório" } })}
+            {...register(`${prefix}.numero`, { required: { value: (formConfigs) ? formConfigs.isRequired : true, message: "Número é obrigatório" } })}
           />
-          {errors.endereco?.numero && <p style={{ color: 'red' }}>{errors.endereco?.numero.message}</p>}
+          {errorsObj?.numero && <p style={{ color: 'red' }}>{errorsObj?.numero.message}</p>}
         </div>
       </div>
       <div className={styles.linhaEndereco}>
@@ -87,9 +92,9 @@ const CamposEndereco = ({
             // value={endereco.bairro ?? ''}
             // onInput={handleChange}
             placeholder="Bairro das Palmeiras"
-            {...register(`${prefix}.bairro`, { required: { value: true, message: "Bairro é obrigatório" } })}
+            {...register(`${prefix}.bairro`, { required: { value: (formConfigs) ? formConfigs.isRequired : true, message: "Bairro é obrigatório" } })}
           />
-          {errors.endereco?.bairro && <p style={{ color: 'red' }}>{errors.endereco?.bairro.message}</p>}
+          {errorsObj?.bairro && <p style={{ color: 'red' }}>{errorsObj?.bairro.message}</p>}
         </div>
         <div className={`${styles.labelInput} ${styles.flex3}`}>
           <label>Cidade</label>
@@ -98,9 +103,9 @@ const CamposEndereco = ({
             // value={endereco.cidade ?? ''}
             // onInput={handleChange}
             placeholder="Cidade do Futuro..."
-            {...register(`${prefix}.cidade`, { required: { value: true, message: "Cidade é obrigatória" } })}
+            {...register(`${prefix}.cidade`, { required: { value: (formConfigs) ? formConfigs.isRequired : true, message: "Cidade é obrigatória" } })}
           />
-          {errors.endereco?.cidade && <p style={{ color: 'red' }}>{errors.endereco?.cidade.message}</p>}
+          {errorsObj?.cidade && <p style={{ color: 'red' }}>{errorsObj?.cidade.message}</p>}
         </div>
         <div className={`${styles.labelInput} ${styles.flex1}`}>
           <label>UF</label>
@@ -108,7 +113,7 @@ const CamposEndereco = ({
             // value={endereco.uf ?? ''} 
             // onInput={handleChange}
             {...register(`${prefix}.estado`, 
-            { required: { value: true, message: "Unidade Federativa é obrigatória" },
+            { required: { value: (formConfigs) ? formConfigs.isRequired : true, message: "Unidade Federativa é obrigatória" },
             })}>
             <option value="">UF</option>
             {UFS.map((uf, i) => (
@@ -117,7 +122,7 @@ const CamposEndereco = ({
               </option>
             ))}
           </select>
-          {errors.endereco?.estado && <p style={{ color: 'red' }}>{errors.endereco?.estado.message}</p>}
+          {errorsObj?.estado && <p style={{ color: 'red' }}>{errorsObj?.estado.message}</p>}
         </div>
       </div>
     </div>
