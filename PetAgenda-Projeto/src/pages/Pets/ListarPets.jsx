@@ -1,80 +1,34 @@
 import styles from "./ListarPets.module.css"
 import { useEffect, useState } from "react"
-import { useAuth } from '../../contexts/UserContext';4
-import seta from '../../assets/icon_seta.svg'
-import male from '../../assets/icon_male.svg'
-
+import { useAuth } from '../../contexts/UserContext';
+import PetListaCard from "../../components/CardPet/PetListaCard";
 
 const ListarPets = () => {
     const [showInfo, setShowInfo] = useState(false)
     const [pets, setPets] = useState([])
+    const { empresaFetch } = useAuth();
 
-
-    // preciso pegar todas as especies cadastradas
-
-    
-
-    // async function obterPets() {
-    //     try{
-    //         const resPets = await empresaFetch('/pets');
+    async function obterPets() {
+        try{
+            const resPets = await empresaFetch('/pet');
             
-    //         if (resPets.status == 200){
-    //             const jsonBody = await resPets.json();
-
-    //             if (!jsonBody.pets){
-    //                 throw new Error(jsonBody.message)
-    //             }
-
-    //             if (!jsonBody.pets) {
-    //                 throw new Error(jsonBody.message || 'Nenhum pet encontrado');
-    //             }
-
-    //             if (jsonBody.pets.length == 0) {
-    //                 return [];
-    //             } else {
-    //                 return jsonBody.pets;
-    //             }
-    //         } else {
-    //             throw new Error('requisição não retornou código 200');
-    //         }
-                    
-    //     } catch(err) {
-    //         err.message = "Falha ao obter pets cadastrados: " + err.message;
-    //         throw err;
-    //   // return [];
-    //     }
-    // }
-
-    // // Pega os pets cadastrados para listar
-    // useEffect(() => {
-    //     obterPets()
-    //     .then(petsList => {
-    //         setPets(petsList);
-    //     })
-    //     .catch(err => {
-    //         alert(err.message)
-    //     })
-    //     // Função para filtrar por nome 
-    //     async function filtroNome(query) {
-            
-    //     }
-    
-    //     // Função para filtrar por especie
-    //     async function filtroEspecie(query) {
-            
-    //     }
-
-    //     // Função para ?ordenar? por crescente e decrescente
-    //     async function filtroOrdem(query) {
-            
-    //     }
-
-    // }, [])
-
-    const abrirModalInfo = (pets, id) => {
-        
-        setShowInfo(true)
+            const jsonBody = await resPets.json();
+            return jsonBody.pets;
+        } catch(err) {
+            err.message = "Falha ao obter pets cadastrados: " + err.message;
+            throw err;
+        }
     }
+
+    async function popularPets() {
+        const petsObtidos = await obterPets();
+        setPets(petsObtidos);
+    }
+
+    // Pega os pets cadastrados para listar
+    useEffect(() => {
+        popularPets();
+    }, [])
 
     return(
         <div className={styles.viewConteudo}>
@@ -118,6 +72,7 @@ const ListarPets = () => {
                     </div>
 
                     <div>
+<<<<<<< HEAD
                         {/* {pets.map((pet) => {
                             return(
                                 <div className={styles.miniCard}>
@@ -168,6 +123,13 @@ const ListarPets = () => {
                                 <button onClick={() => setShowInfo(true)} className={styles.bttn}><img src={seta} alt="seta" /></button>
                             </div>
                         </div>
+=======
+                        { pets && pets.map(p => {
+                            return (
+                                <PetListaCard nome={p.nome} sexo={p.sexo} dono={p.dono.nome} especie={p.especie.nome} />
+                            );
+                        })}
+>>>>>>> a007361 (cria componente de listagem de pets)
                         
                         {showInfo && (
                             <div className={styles.infoModal}>
