@@ -44,38 +44,13 @@
 
 /* ==================================== INFORMAÇÕES ================================= */
 
-.miniCard{
-    display: flex;
-    justify-content: space-between;
-    padding: 1rem;
-    align-items: center;
-    border-bottom: 1px solid black;
-    border-left: 1px solid black;
-    border-right: 1px solid black;
-}
-.suporte{
-    display: flex;
-    gap: 10px;
-}
 .subInfo{
     display: flex;
     flex-wrap: wrap;
     width: 55%;
     gap: 7px;
 }
-.estiloEspecie{
-    border: 1px solid black;
-    border-radius: 10px;
-    font-size: smaller;
-    padding: 1px 3px 1px 3px;
-}
-.estiloNome{
-    font-weight: bold;
-}
-.estiloDono{
-    font-size: small;
-    color: grey;
-}
+
 /* ==================================== SELECTS ================================= */
 
 .slct{
@@ -85,11 +60,6 @@
     padding: 2px;
 }
 /* ==================================== SELECTS ================================= */
-
-.bttn{
-    background-color: white;
-    border: none;
-}
 
 /* ==================================== MODAL ================================= */
 

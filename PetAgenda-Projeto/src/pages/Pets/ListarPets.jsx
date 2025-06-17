@@ -1,70 +1,33 @@
 import styles from "./ListarPets.module.css"
 import { useEffect, useState } from "react"
-import { useAuth } from '../../contexts/UserContext';4
-import seta from '../../assets/icon_seta.svg'
-import male from '../../assets/icon_male.svg'
-
+import { useAuth } from '../../contexts/UserContext';
+import PetListaCard from "../../components/CardPet/PetListaCard";
 
 const ListarPets = () => {
     const [showInfo, setShowInfo] = useState(false)
     const [pets, setPets] = useState([])
-
+    const { empresaFetch } = useAuth();
 
     async function obterPets() {
         try{
-            const resPets = await empresaFetch('/pets');
+            const resPets = await empresaFetch('/pet');
             
-            if (resPets.status == 200){
-                const jsonBody = await resPets.json();
-
-                if (!jsonBody.pets){
-                    throw new Error(jsonBody.message)
-                }
-
-                if (!jsonBody.pets) {
-                    throw new Error(jsonBody.message || 'Nenhum pet encontrado');
-                }
-
-                if (jsonBody.pets.length == 0) {
-                    return [];
-                } else {
-                    return jsonBody.pets;
-                }
-            } else {
-                throw new Error('requisição não retornou código 200');
-            }
-                    
+            const jsonBody = await resPets.json();
+            return jsonBody.pets;
         } catch(err) {
             err.message = "Falha ao obter pets cadastrados: " + err.message;
             throw err;
-      // return [];
         }
+    }
+
+    async function popularPets() {
+        const petsObtidos = await obterPets();
+        setPets(petsObtidos);
     }
 
     // Pega os pets cadastrados para listar
     useEffect(() => {
-        obterPets()
-        .then(petsList => {
-            setPets(petsList);
-        })
-        .catch(err => {
-            alert(err.message)
-        })
-        // Função para filtrar por nome 
-        async function filtroNome(query) {
-            
-        }
-    
-        // Função para filtrar por especie
-        async function filtroEspecie(query) {
-            
-        }
-
-        // Função para ?ordenar? por crescente e decrescente
-        async function filtroOrdem(query) {
-            
-        }
-
+        popularPets();
     }, [])
 
     return(
@@ -109,42 +72,11 @@ const ListarPets = () => {
                     </div>
 
                     <div>
-                        {/* {pets.map((pet) => {
-                            return(
-                                <div className={styles.miniCard}>
-
-                                    <div className={styles.subInfo} key={pet}>
-                                        <span className={styles.estiloNome}>{pet.nome}</span>
-                                        <span className={styles.estiloEspecie}>{pet.especie}</span>
-                                        <span className={styles.estiloDono}>{pet.dono}</span>
-                                    </div>
-                                
-                                    <div className={styles.toModal}>
-                                        <img src="" alt="seta" />
-                                    </div>
-
-                                </div>
-                            )
-                        })} */}
-
-                        <div className={styles.miniCard}>
-                            <div className={styles.suporte}>
-                                <div className={styles.male}>
-                                    <img src={male} alt="" />
-                                </div>
-
-                                <div className={styles.subInfo}>
-                                    <span className={styles.estiloNome}>Nome</span>
-                                    <span className={styles.estiloEspecie}>Especie</span>
-                                    <span className={styles.estiloDono}>De Dono</span>
-                                </div>
-                            </div>
-                            
-
-                            <div>
-                                <button onClick={() => setShowInfo(true)} className={styles.bttn}><img src={seta} alt="seta" /></button>
-                            </div>
-                        </div>
+                        { pets && pets.map(p => {
+                            return (
+                                <PetListaCard nome={p.nome} sexo={p.sexo} dono={p.dono.nome} especie={p.especie.nome} />
+                            );
+                        })}
                         
                         {showInfo && (
                             <div className={styles.infoModal}>
