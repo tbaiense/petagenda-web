@@ -138,7 +138,7 @@ const router = createBrowserRouter([
         element: <Lista_Agendamento />,
       },
       {
-        path: "agendamentos/editar/:id",
+        path: "agendamentos/editar",
         element: <EditarAgendamento />,
       },
 
