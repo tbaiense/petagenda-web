@@ -20,14 +20,15 @@ import ListarClientes from "../pages/Clientes/ListarClientes.jsx";
 
 //Pets
 import CadastrarPets from "../pages/Pets/Cadastrar_Pets";
-import ListarPets from "../pages/Pets/ListarPets.jsx"
+import ListarPets from "../pages/Pets/ListarPets.jsx";
 
 //Serviços
 import CadastrarServico from "../pages/Servico/CadastrarServico/Cadastrar_Servico";
 
 // Agendamento
 import CadastrarAgendamento from "../pages/Agendamentos/Cadastrar/Cadastrar_Agendamento";
-import Lista_Agendamento from "../pages/Agendamentos/Lista/Lista_Agendamento.jsx"
+import Lista_Agendamento from "../pages/Agendamentos/Lista/Lista_Agendamento.jsx";
+import EditarAgendamento from "../pages/Agendamentos/Editar/Editar_Agendamento.jsx";
 
 // Relatórios
 import Relatorio_Simples from "../pages/Relatorios/Simples/Relatorio_Simples";
@@ -69,113 +70,87 @@ const router = createBrowserRouter([
   {
     path: "/empresa",
     element: (
-       //<PrivateRoute>
-        <MenuDashBoard />
-        //</PrivateRoute>
+      //<PrivateRoute>
+      <MenuDashBoard />
+      //</PrivateRoute>
     ),
     children: [
       // Empresa
       {
         path: "cadastrar",
-        element: (
-          <CadastroEmpresa />
-        ),
+        element: <CadastroEmpresa />,
       },
       {
         path: "informacoes",
-        element: (
-          <ViewEmpresa />
-        ),
+        element: <ViewEmpresa />,
       },
       {
         path: "planos",
-        element: (
-          <PlanosEmpresa />
-        ),
+        element: <PlanosEmpresa />,
       },
 
       // Funcionários
       {
         path: "funcionarios",
-        element: (
-          <CadastroFuncionario />
-        ),
+        element: <CadastroFuncionario />,
       },
       // Clientes
       {
         path: "clientes/cadastrar",
-        element: (
-          <CadastrarClientes />
-        ),
+        element: <CadastrarClientes />,
       },
       {
         path: "clientes/lista",
-        element: (
-          <ListarClientes/>
-        )
+        element: <ListarClientes />,
       },
       // Pets
       {
         path: "pets/cadastrar",
-        element: (
-          <CadastrarPets />
-        ),
+        element: <CadastrarPets />,
       },
       {
         path: "pets/lista",
-        element: (
-          <ListarPets/>
-        )
+        element: <ListarPets />,
       },
 
       // Serviços
       {
         path: "servicos/cadastrar",
-        element: (
-          <CadastrarServico />
-        ),
+        element: <CadastrarServico />,
       },
 
       // Agendamentos
       {
         path: "agendamentos/cadastrar",
-        element: (
-          <CadastrarAgendamento />
-        ),
+        element: <CadastrarAgendamento />,
       },
       {
         path: "agendamentos/lista",
-        element: (
-          <Lista_Agendamento />
-        ),
+        element: <Lista_Agendamento />,
+      },
+      {
+        path: "agendamentos/editar/:id",
+        element: <EditarAgendamento />,
       },
 
       // Relatórios
       {
         path: "relatorios/simples",
-        element: (
-          <Relatorio_Simples />
-        ),
+        element: <Relatorio_Simples />,
       },
       {
         path: "relatorios/detalhado",
-        element: (
-          <Relatorio_Detalhado />
-        ),
+        element: <Relatorio_Detalhado />,
       },
       {
         path: "relatorios/gastos",
-        element: (
-          <Gastos />
-        ),
+        element: <Gastos />,
       },
 
       // Dashboard
       {
         path: "dashboard",
-        element: (
-          <Dashboard />
-        ),
+        element: <Dashboard />,
       },
     ],
   },
