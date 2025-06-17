@@ -19,13 +19,6 @@ const ViewEmpresa = () => {
     }
   }, []);
 
-  // Faço a conexão com o banco
-
-  // Pego os Dados da empresa baseado no plano adquirido e no ID
-
-  // Converto os Dados em JSON
-
-  // Uso o Map para gerar as informações dentro de cada campo
 
   return (
     <div>

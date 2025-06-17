@@ -49,6 +49,13 @@ const ListarPets = () => {
                     {/* Filtros */}
                     <div className={styles.filtros}>
                         <div>
+                            <label htmlFor="">Ordem:</label>
+                            <select name="" id="" className={styles.slct}>
+                                <option value="">Crescente</option>
+                                <option value="">Decrescente</option>
+                            </select>
+                        </div>
+                        <div>
                             <label htmlFor="">Filtrar por:</label>
                             <select name="" id="" className={styles.slct}>
                                 <option value="">Nome</option>
@@ -62,13 +69,6 @@ const ListarPets = () => {
                             </select>
                         </div>
 
-                        <div>
-                            <label htmlFor="">Ordem:</label>
-                            <select name="" id="" className={styles.slct}>
-                                <option value="">Crescente</option>
-                                <option value="">Decrescente</option>
-                            </select>
-                        </div>
                     </div>
 
                     <div>
@@ -80,19 +80,24 @@ const ListarPets = () => {
                         
                         {showInfo && (
                             <div className={styles.infoModal}>
-
-                                <div>
+                                <div className={styles.spanFechar}>
+                                    <span onClick={() => setShowInfo(false)} >X</span> 
+                                </div>
+                                <div className={styles.estiloModal}>
+                                    <div>
+                                        <h2>Ficha do Pet</h2>
+                                    </div>
 
                                     <div className={styles.orgLayoutCampos}>
 
                                         <div className={styles.estiloCampos}>
                                             <label htmlFor="">Dono:</label>
-                                            <label htmlFor="">(nome_do_dono)</label>
+                                            <input type="text" value="nome do dono" disabled />
                                         </div>
 
                                         <div className={styles.estiloCampos}> 
                                             <label htmlFor="">Pet:</label>
-                                            <label htmlFor="">(nome_do_pet)</label>
+                                            <input type="text" value="nome do pet" disabled />
                                         </div >
 
                                     </div>
@@ -101,63 +106,67 @@ const ListarPets = () => {
 
                                         <div className={styles.estiloCampos}>
                                             <label htmlFor="">Espécie:</label>
-                                            <label htmlFor="">(Espécie)</label>
+                                            <input type="text" value="Espécie" disabled/>
                                         </div>
 
                                         <div className={styles.estiloCampos}>
                                             <label htmlFor="">Raça:</label>
-                                            <label htmlFor="">(Raça)</label>
+                                            <input type="text" value="Raça" disabled />
                                         </div>  
 
                                     </div>
 
-                                    <div className={styles.orgLayout}>
+                                    <div className={styles.orgLayoutCampos}>
 
                                         <div className={styles.estiloCampos}>
                                             <label htmlFor="">Cor:</label>
-                                            <label htmlFor="">(Cor)</label>
+                                            <input type="text" value="Cor" disabled/>
                                         </div>
 
                                         <div className={styles.estiloCampos}>
                                             <label htmlFor="">Porte:</label>
-                                            <label htmlFor="">(Porte)</label>
+                                            <input type="text" value="Porte" disabled/>
                                         </div> 
 
                                     </div>
 
-                                    <div className={styles.orgLayout}>
+                                    <div className={styles.orgLayoutCampos}>
 
                                         <div className={styles.estiloCampos}>
                                             <label htmlFor="">Sexo:</label>
-                                            <label htmlFor="">(Sexo)</label>
+                                            <input type="text" value="Sexo" disabled/>
                                         </div>
 
                                         <div className={styles.estiloCampos}>
                                             <label htmlFor="">Castrado:</label>
-                                            <label htmlFor="">(sim ou não)</label>
+                                            <input type="text" value="Sim ou não " disabled/>
                                         </div>
 
                                         <div className={styles.estiloCampos}>
-                                            <label htmlFor="">Data de nascimento:</label>
-                                            <label htmlFor="">(Data de nascimento)</label>
+                                            <label htmlFor="">Nascido:</label>
+                                            <input type="date" value="" disabled/>
                                         </div>
 
                                     </div>
 
                                     <div className={styles.estiloCampos}>
                                         <label htmlFor="">Estado de Saúde:</label>
-                                        <textarea htmlFor="">(Estado de Saúde)</textarea>
+                                        <textarea htmlFor="" disabled>(Estado de Saúde)</textarea>
                                     </div>
                                     <div className={styles.estiloCampos}>
                                         <label htmlFor="">Comportamento:</label>
-                                        <textarea htmlFor="">(Comportamento)</textarea>
+                                        <textarea htmlFor="" disabled>(Comportamento)</textarea>
                                     </div>
-
-                                    <button onClick={() => setShowInfo(false)}>fechar</button>
                                 </div>
-                            </div>
-                            
+                            </div>  
                         )}
+                        <p>falta fazer as funções:</p>
+                        <ul>
+                            <li>pegar a query da barra de pesquisa e mandar para o backend</li>
+                            <li>Pegar todas as espécies e popular o o filtro de espécie</li>
+                            <li>aplicar as ordens</li>
+                            <li>logica de passar o id do pet clicado para pegar as informações</li>
+                        </ul>
                     </div>
                 </div>
             </div>
