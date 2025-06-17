@@ -4,7 +4,7 @@ export const AuthContext = createContext()
 
 export const AuthProvider = ({ children }) => {
   // URL da API
-  const apiURL = 'http://127.0.0.1:3000';
+  const apiURL = 'http://petagenda.live/api/v1';
 
   const [ validar, setValidar ] = useState(false);
   
@@ -101,13 +101,12 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem(empresa_licencaKey);
   };
 
-  
 
   function deveRodar() {
     if (!validar) {
         const msg = 'Operação não permitida em modo de desenvolvimento (sem back-end)';
-        alert(msg);
-
+        // alert(msg);
+        console.error(msg);
         // throw Error(msg);
     }
   }

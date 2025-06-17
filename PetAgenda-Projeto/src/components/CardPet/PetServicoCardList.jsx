@@ -14,7 +14,7 @@ const PetServicoCardList = ({ petList, setPetList }) => {
         })
       }
     </Accordion>
-  )qqew
+  )
 }
 
 export default PetServicoCardList

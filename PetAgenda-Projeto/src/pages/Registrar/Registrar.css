@@ -2,7 +2,7 @@
   background-color: #fff8f0;
   min-height: 90vh;
   display: flex;
-  align-items: center;
+  align-items: start;
   padding-top: 3rem;
   padding-bottom: 3rem;
 }
@@ -13,8 +13,10 @@
 
 .form-container {
   background-color: #ffffff;
+  width: 40rem;
   padding: 2rem;
   border-radius: 0.5rem;
+  border: 1px solid rgba(102, 102, 102, 0.8);
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
 }
 
@@ -36,16 +38,6 @@
   text-align: center;
 }
 
-.linha {
-  position: absolute;
-  top: 12px;
-  left: -50%;
-  width: 100%;
-  height: 3px;
-  background-color: #ccc;
-  z-index: 0;
-}
-
 .bolinha {
   width: 28px;
   height: 28px;
@@ -61,10 +53,6 @@
   transition: background-color 0.3s ease;
 }
 
-.bolinha.ativa {
-  background-color: #007bff;
-}
-
 .label {
   margin-top: 0.5rem;
   font-size: 0.8rem;
@@ -72,7 +60,7 @@
 }
 
 .label.ativa {
-  color: #007bff;
+  color: #d97706;
   font-weight: 600;
 }
 
@@ -82,14 +70,14 @@
 
 .botoes-navegacao {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   margin-top: 2rem;
 }
 
 .barra-progresso {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: start;
   margin-bottom: 1rem;
 }
 
@@ -101,6 +89,12 @@
   position: relative;
 }
 
+.botao {
+  background-color: #d97706;
+  border: #d97706;
+  border-radius: 0px;
+  padding: 8px 22px;
+}
 .bolinha {
   width: 30px;
   height: 30px;
@@ -113,11 +107,10 @@
 }
 
 .bolinha.ativa {
-  background-color: #0d6efd;
+  background-color: #d97706;
   color: white;
   font-weight: bold;
 }
-
 
 .label {
   margin-top: 8px;
