@@ -1,157 +1,216 @@
-import styles from "./CadastroEmpresa.module.css"
-import { useForm } from "react-hook-form"
+import styles from "./CadastroEmpresa.module.css";
+import { useForm } from "react-hook-form";
 import { useAuth } from "../../../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import NavEmpresa from "../../../components/navegacaoEmpresa/NavEmpresa.jsx";
 
-
 const CadastroEmpresa = () => {
-    const { setEmpresa, apiFetch, getToken } = useAuth();
+  const { setEmpresa, apiFetch, getToken } = useAuth();
 
-    const navigate = useNavigate()
-    const {
-        register,
-        handleSubmit,
-        formState:{errors},
-        watch,
-        reset
-    } = useForm();
+  const navigate = useNavigate();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    watch,
+    reset,
+  } = useForm();
 
-    const imagemEmpresa = watch("pathImgFile")
-    const imagemURL = imagemEmpresa && imagemEmpresa[0] ? URL.createObjectURL(imagemEmpresa[0]) : null
+  const imagemEmpresa = watch("pathImgFile");
+  const imagemURL =
+    imagemEmpresa && imagemEmpresa[0]
+      ? URL.createObjectURL(imagemEmpresa[0])
+      : null;
 
-    const onSubmit = async (data) => {
-        console.log(typeof data);
-        const fileFoto = data.pathImgFile.item(0);
-        // const byteString = await fileFoto.bytes();
-        // const base64 = byteString.toBase64();
+  const onSubmit = async (data) => {
+    console.log(typeof data);
+    const fileFoto = data.pathImgFile.item(0);
+    // const byteString = await fileFoto.bytes();
+    // const base64 = byteString.toBase64();
 
-        const objEmp = {
-            nomeFantasia: data.NomeFantasia,
-            razaoSocial: data.RazaoSocial,
-            cnpj: data.CNPJ,
-            lema: data.Lema,
-            // foto: {
-            //     type: fileFoto.type,
-            //     data: base64
-            // }
-        };
+    const objEmp = {
+      nomeFantasia: data.NomeFantasia,
+      razaoSocial: data.RazaoSocial,
+      cnpj: data.CNPJ,
+      lema: data.Lema,
+      // foto: {
+      //     type: fileFoto.type,
+      //     data: base64
+      // }
+    };
 
-        const res = await apiFetch('/empresa', {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${getToken()}`
-            },
-            body: JSON.stringify(objEmp)
-        });
+    const res = await apiFetch("/empresa", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+      body: JSON.stringify(objEmp),
+    });
 
-        const jsonBody = await res.json();
+    const jsonBody = await res.json();
 
-        if (res.status == 200) {
-            setEmpresa(jsonBody.empresa);
-            alert('cadastrado');
-            navigate("/empresa/planos")
-        } else {
-            alert('erro ao cadastrar empresa');
-        }
+    if (res.status == 200) {
+      setEmpresa(jsonBody.empresa);
+      alert("cadastrado");
+      navigate("/empresa/planos");
+    } else {
+      alert("erro ao cadastrar empresa");
     }
+  };
 
-    const onError = (errors) => {
-        console.log("Erro ao Enviar:",errors)
-    }
+  const onError = (errors) => {
+    console.log("Erro ao Enviar:", errors);
+  };
 
-    return(
-        <div>
-            <NavEmpresa/>
-            <div className={styles.areaDoCadastro}>
+  return (
+    <div>
+      <NavEmpresa />
+      <div className="container my-5">
+        <h2 className="text-center mb-4">Cadastro da Empresa</h2>
 
-                <h2>Cadastro</h2>
+        <div className="row">
+          <div className="col-md-8">
+            <form
+              onSubmit={handleSubmit(onSubmit, onError)}
+              className="p-4"
+            >
+              <div className="mb-3">
+                <label className="form-label">Nome Fantasia</label>
+                <input
+                  type="text"
+                  className={`form-control ${
+                    errors.NomeFantasia ? "is-invalid" : ""
+                  }`}
+                  {...register("NomeFantasia", {
+                    required: "O nome fantasia é obrigatório",
+                    minLength: {
+                      value: 10,
+                      message: "Deve ter pelo menos 10 caracteres",
+                    },
+                    maxLength: {
+                      value: 80,
+                      message: "Deve ter no máximo 80 caracteres",
+                    },
+                  })}
+                />
+                {errors.NomeFantasia && (
+                  <div className="invalid-feedback">
+                    {errors.NomeFantasia.message}
+                  </div>
+                )}
+              </div>
 
-                <div className={styles.cardCadastro}>
+              <div className="mb-3">
+                <label className="form-label">Razão Social</label>
+                <input
+                  type="text"
+                  className={`form-control ${
+                    errors.RazaoSocial ? "is-invalid" : ""
+                  }`}
+                  {...register("RazaoSocial", {
+                    required: "A razão social é obrigatória",
+                    minLength: {
+                      value: 10,
+                      message: "Deve ter pelo menos 10 caracteres",
+                    },
+                    maxLength: {
+                      value: 80,
+                      message: "Deve ter no máximo 80 caracteres",
+                    },
+                  })}
+                />
+                {errors.RazaoSocial && (
+                  <div className="invalid-feedback">
+                    {errors.RazaoSocial.message}
+                  </div>
+                )}
+              </div>
 
-                    <form className={styles.formCadastro} onSubmit={handleSubmit(onSubmit, onError)}>
+              <div className="mb-3">
+                <label className="form-label">CNPJ</label>
+                <input
+                  type="text"
+                  className={`form-control ${errors.CNPJ ? "is-invalid" : ""}`}
+                  {...register("CNPJ", {
+                    required: "O CNPJ é obrigatório",
+                    pattern: {
+                      value: /^[0-9]{14}$/,
+                      message: "O CNPJ deve conter exatamente 14 números",
+                    },
+                  })}
+                />
+                {errors.CNPJ && (
+                  <div className="invalid-feedback">{errors.CNPJ.message}</div>
+                )}
+              </div>
 
-                        <input type="text" placeholder="Nome Fantasia:" 
-                        {...register("NomeFantasia", {
-                            required:"O nome fantasia é obrigatório",
-                            minLength:{
-                                value:10,
-                                message:"O nome fantasia deve ter pelo menos 10 caracteres"
-                            },
-                            maxLength:{
-                                value:80,
-                                message:"O nome fantasia dever ter no maximo 80 caracteres"
-                            }
-                        })} />
-                        {errors.NomeFantasia && <p className={styles.error}>{errors.NomeFantasia.message}</p>}
+              <div className="mb-3">
+                <label className="form-label">Lema</label>
+                <textarea
+                  className={`form-control ${errors.Lema ? "is-invalid" : ""}`}
+                  rows={3}
+                  placeholder="Nosso lema é..."
+                  {...register("Lema", {
+                    minLength: {
+                      value: 10,
+                      message: "O lema deve ter pelo menos 10 caracteres",
+                    },
+                    maxLength: {
+                      value: 150,
+                      message: "O lema deve ter no máximo 150 caracteres",
+                    },
+                  })}
+                />
+                {errors.Lema && (
+                  <div className="invalid-feedback">{errors.Lema.message}</div>
+                )}
+              </div>
 
-                        <input type="text" placeholder="Razão Social:" 
-                        {...register("RazaoSocial", {
-                            required:"A razão social é obrigatório",
-                            minLength:{
-                                value:10,
-                                message:"O razão social deve ter pelo menos 10 caracteres"
-                            },
-                            maxLength:{
-                                value:80,
-                                message:"O razão social dever ter no maximo 80 caracteres"
-                            }
-                        })} />
-                        {errors.RazaoSocial && <p className={styles.error}>{errors.RazaoSocial.message}</p>}
+              <div className="mb-3">
+                <label className="form-label">Imagem de Perfil</label>
+                <input
+                  type="file"
+                  className="form-control"
+                  {...register("pathImgFile")}
+                />
+              </div>
 
-                        <input type="text" placeholder="CNPJ:" 
-                        {...register("CNPJ", {
-                            required:"O CNPJ é obrigatório",
-                            minLength:{
-                                value:10,
-                                message:"O CNPJ deve ter pelo menos 10 caracteres"
-                            },
-                            maxLength:{
-                                value:80,
-                                message:"O CNPJ dever ter no maximo 80 caracteres"
-                            },
-                            pattern: {
-                                value: /^[0-9]+$/,
-                                message: "O CNPJ deve conter apenas números"
-                            }
-                        })} />
-                        {errors.CNPJ && <p className={styles.error}>{errors.CNPJ.message}</p>}
+              <div className="d-flex justify-content-center mt-4 gap-3">
+                <button type="submit" className="btn btn-success">
+                  Finalizar
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => {
+                    reset();
+                    setImagemURL(null);
+                  }}
+                >
+                  Limpar
+                </button>
+              </div>
+            </form>
+          </div>
 
-                        <textarea id={styles.inputLema} placeholder="Lema:" 
-                        {...register("Lema", {
-                            minLength:{
-                                value:10,
-                                message:"O Lema deve ter pelo menos 10 caracteres"
-                            },
-                            maxLength:{
-                                value:80,
-                                message:"O Lema dever ter no maximo 150 caracteres"
-                            }
-                        })} />
-                        {errors.Lema && <p className={styles.error}>{errors.Lema.message}</p>}
-
-                        <input type="file" {...register("pathImgFile")}/>
-                        
-                        <div className={styles.bttn}> 
-                            <button type="submit">Finalizar</button>
-                            <button type="button" onClick={() => reset()}>Limpar</button>
-                        </div>
-                    </form>
-
-                    <div className={styles.viewImg}>
-                        {imagemURL && <img src={imagemURL} alt="Pre-Visualização" width={200} height={210}/>}
-                        <h2>Foto de Perfil</h2>
-                    </div>
-                    
-                </div>
-            </div>
+          <div className="col-md-4 d-flex flex-column align-items-center justify-content-start mt-4 mt-md-0">
+            {imagemURL && (
+              <img
+                src={imagemURL}
+                alt="Pré-visualização"
+                className="img-thumbnail mb-3"
+                width={200}
+                height={210}
+              />
+            )}
+            <h5>Foto de Perfil</h5>
+          </div>
         </div>
+      </div>
+    </div>
+  );
+};
 
-        
-
-    )
-}
-
-export default CadastroEmpresa
+export default CadastroEmpresa;

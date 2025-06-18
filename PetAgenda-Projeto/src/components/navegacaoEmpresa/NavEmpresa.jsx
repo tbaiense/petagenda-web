@@ -25,9 +25,6 @@ const NavEmpresa = () => {
               {infoEmpresa?.licenca ? "Atualizar" : "Adquirir"} Licença
             </Link>
           </button>
-          <button>
-            <Link to="/empresa/editar">Alterar dados</Link>
-          </button>
         </>
       ) : undefined}
     </div>

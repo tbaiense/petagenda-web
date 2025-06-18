@@ -11,6 +11,18 @@ body {
   padding: 1rem;
   height: max-content;
 }
+
+.plano_atual{
+  width: 100%;
+}
+
+.plano_atualizacao{
+  padding: 5px;
+  font-size: 1rem;
+  width: 200px;
+  border: #000000 1px solid;
+  border-radius: 5px;
+}
 .plano__imagem {
   max-width: 100%;
   height: auto;
