@@ -2,9 +2,10 @@ import ftTemp from "../../../assets/LogoNav.png";
 import NavEmpresa from "../../../components/navegacaoEmpresa/NavEmpresa.jsx";
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../../contexts/UserContext';
-import { data, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styles from "./ViewEmpresa.module.css"
 import iconEditar from "../../../assets/icon_editar.svg"
+import iconPerson from "../../../assets/icon_person.svg"
 
 
 const ViewEmpresa = () => {
@@ -80,6 +81,10 @@ const ViewEmpresa = () => {
     navigate("/empresa/servicos/cadastrar")
   }
 
+  const navEditarEmpresa = () => {
+    // Aqui eu envio o objeto empresa para a pagina de editar
+    navigate('/empresa/editar')
+  }
   
 
   return (
@@ -93,24 +98,33 @@ const ViewEmpresa = () => {
         {/* Aqui é a foto */}
 
         <div className={styles.foto}>
-          <span>foto</span>
+
+          {empresas?.foto ? (
+            <img src={empresas?.foto} alt="Foto da empresa"/>
+          ) : (
+            <img src={iconPerson}/>
+          )}
         </div>
 
         <div className={styles.littleContent}>
 
           <div className={styles.estiloNome}>
-            <span className={styles.nomeEmpresa}><strong></strong></span>
-            <img src={iconEditar} alt="" />
+            <span className={styles.nomeEmpresa}><strong>{empresas?.nomeFantasia || "..."}</strong></span>
+            <img src={iconEditar} alt="" onClick={navEditarEmpresa} className={styles.icone}/>
           </div>
 
           <hr />
           <div className={styles.razaoCnpj}>
-            <span>essa é a minha razão social</span>
+            <span>{empresas?.razaoSocial}</span>
             <span>|</span>
-            <span>12345678966</span>
+            <span>{empresas?.cnpj}</span>
+            
           </div>
-
-          <span className={styles.lema}><i>Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed quia </i></span>
+          {empresas?.lema ? (
+              <span className={styles.lema}>{empresas?.lema}</span>
+            ) : (
+              <span className={styles.lema}>Não há lema</span>
+            )}
           
         </div>
 
@@ -125,11 +139,21 @@ const ViewEmpresa = () => {
             <span className={styles.nomeInfo}>Funcionários</span>
             <span className={styles.mais} onClick={navFuncionario}>+</span>
           </div>
-          <div>
-            {/* cards funcionarios */}
-            <div>
+          <div className={styles.orgCard}>
+            {/* cards de funcionario */}
 
-            </div>
+            {funcionarios?.length > 0 ? (
+              funcionarios?.map((funcionario) => (
+               <div key={funcionario.id} className={styles.cardInfo}>
+                  <span>{funcionario.nome}</span>
+                  <span>{funcionario.telefone}</span>
+               </div>
+              ))
+            ) : (
+              <div>
+                <span className={styles.cardInfo}>Nenhum serviço cadastrado</span>
+              </div>
+            )}
           </div>
 
         </div>
@@ -139,11 +163,21 @@ const ViewEmpresa = () => {
             <span className={styles.nomeInfo}>Serviços Oferecidos</span>
             <span className={styles.mais} onClick={navServico}>+</span>
           </div>
-          <div>
+          <div className={styles.orgCard}>
             {/* cards de serviço */}
-            <div>
 
-            </div>
+            {servicos?.length > 0 ? (
+              servicos?.map((servico) => (
+               <div key={servico.id} className={styles.cardInfo}>
+                  <span>{servico.nome}</span>
+                  <span>{servico.nomeCategoria}</span>
+               </div>
+              ))
+            ) : (
+              <div>
+                <span className={styles.cardInfo}>Nenhum serviço cadastrado</span>
+              </div>
+            )}
           </div>
 
         </div>

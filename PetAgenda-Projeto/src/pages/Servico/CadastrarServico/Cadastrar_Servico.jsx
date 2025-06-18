@@ -143,7 +143,7 @@ function CadastrarServico() {
               <Form.Select {...register("categoria")}>
                 <option value="">Selecione...</option>
                 { categorias?.length > 0 && categorias.map( cat => {
-                  return <option key={cat.id} value={cat.id}>{cat.nome}</option>
+                  return <option key={cat.id} value={cat.nome}>{cat.nome}</option>
                 })}
               </Form.Select>
             </Form.Group>
