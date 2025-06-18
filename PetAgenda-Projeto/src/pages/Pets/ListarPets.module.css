@@ -39,7 +39,7 @@
     background-color: rgb(166, 83, 38);
     /* background-color: rgb(61, 162, 245); */
     color: white;
-    border-radius: 12px 12px 0px 0px;
+    border-radius: 8px 8px 0px 0px;
     justify-content: space-between;
 }
 .filtros select{
