@@ -85,7 +85,6 @@ const ViewEmpresa = () => {
     // Aqui eu envio o objeto empresa para a pagina de editar
     navigate('/empresa/editar')
   }
-  
 
   return (
     <div>
