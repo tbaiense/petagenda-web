@@ -186,19 +186,19 @@ const Lista_Agendamentos = () => {
                                 })}
                             </tbody>
                         </Table>
-                                { paginasServ.length > 1 && 
-                                    <Pagination>
-                                        <Pagination.First onClick={ () => {setPaginaAtualServ(0)}}/>
-                                        { paginasServ.map( p => 
-                                            <Pagination.Item
-                                                active={ p-1 == paginaAtualServ }
-                                                key={p}
-                                                onClick={ () => {setPaginaAtualServ(p-1)} }>{p}
-                                            </Pagination.Item>
-                                        )}
-                                        <Pagination.Last onClick={ () => { setPaginaAtualServ(paginasServ[paginasServ.length - 1] -1) }}/>
-                                    </Pagination>
-                                }
+                        { paginas.length > 1 && 
+                            <Pagination>
+                                <Pagination.First onClick={ () => {setPaginaAtual(0)}}/>
+                                { paginas.map( p => 
+                                    <Pagination.Item
+                                        active={ p-1 == paginaAtual }
+                                        key={p}
+                                        onClick={ () => {setPaginaAtual(p-1)} }>{p}
+                                    </Pagination.Item>
+                                )}
+                                <Pagination.Last onClick={ () => { setPaginaAtual(paginas[paginas.length - 1] -1) }}/>
+                            </Pagination>
+                        }
                     </Tab>
                     <Tab eventKey="servicos-executados" title="Serviços executados">
                         <Table striped>
@@ -220,6 +220,19 @@ const Lista_Agendamentos = () => {
                                 })}
                             </tbody>
                         </Table>
+                        { paginasServ.length > 1 && 
+                            <Pagination>
+                                <Pagination.First onClick={ () => {setPaginaAtualServ(0)}}/>
+                                { paginasServ.map( p => 
+                                    <Pagination.Item
+                                        active={ p-1 == paginaAtualServ }
+                                        key={p}
+                                        onClick={ () => {setPaginaAtualServ(p-1)} }>{p}
+                                    </Pagination.Item>
+                                )}
+                                <Pagination.Last onClick={ () => { setPaginaAtualServ(paginasServ[paginasServ.length - 1] -1) }}/>
+                            </Pagination>
+                        }
                     </Tab>
                     <Tab eventKey="todos" title="Todos">
                         Tab content for Contact
