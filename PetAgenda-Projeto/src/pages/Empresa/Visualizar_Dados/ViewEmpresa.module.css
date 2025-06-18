@@ -1,0 +1,56 @@
+.firstInfo{
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    padding-bottom: 1rem;
+}
+.littleContent{
+    display: flex;
+    flex-direction: column;
+    width: 35%;
+}
+.razaoCnpj{
+    display: flex;
+    gap: 1rem;
+}
+.lema{
+    color: grey;
+}
+.nomeEmpresa{
+    font-size: x-large;
+    
+}
+hr{
+    margin: 7px;
+}
+.foto{
+    width: 140px;
+    height: 140px;
+    background-color: rgb(167, 167, 167);
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.layoutSubInfo{
+    display: flex;
+    justify-content: center;
+    gap: 25rem;
+}
+.subTitulos{
+    display: flex;
+    gap: 4px;
+}
+.mais{
+    border: 1px solid rgb(0, 0, 0,0.3);
+    border-radius: 30px;
+    padding: 0 6px;
+    cursor: pointer;
+}
+.nomeInfo{
+    font-size: larger;
+}
+.estiloNome{
+    display: flex;
+    gap: 10px;
+}
