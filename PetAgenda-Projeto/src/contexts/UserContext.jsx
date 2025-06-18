@@ -5,6 +5,7 @@ export const AuthContext = createContext()
 export const AuthProvider = ({ children }) => {
   // URL da API
   const apiURL = 'http://petagenda.live/api/v1';
+  // const apiURL = 'http://localhost:3000';
 
   const [ validar, setValidar ] = useState(false);
   
