@@ -6,51 +6,18 @@ import "../Lista/Lista_Agendamento.module.css";
 import Modal_Atualizar_Rapido_Agendamento from "./Modal_Atualizar_Rapido_Agendamento";
 import CardAgendamento from "../../../components/CardAgendamento/CardAgendamento";
 import { useNavigate } from 'react-router-dom';
+import CardServicoRealizado from "../../../components/CardServicoRealizado/CardServicoRealizado";
 
 const Lista_Agendamentos = () => {
     const { empresaFetch, validar } = useAuth();
     const navigate = useNavigate();
     const [ paginaAtual, setPaginaAtual ] = useState(0);
+    const [ paginaAtualServ, setPaginaAtualServ ] = useState(0);
     const [ refresh, setRefresh ] = useState(0);
     const [ paginas, setPaginas ] = useState([]);
-    const [ agendamentos, setAgendamentos ] = useState([/*}
-        {
-            "id": 1,
-            "idInfoServico": 1,
-            "dtHrMarcada": "2025-06-13 22:12:00",
-            "servico": {
-                "id": 2,
-                "nome": "Dog Walking",
-                "categoria": 7,
-                "nomeCategoria": "PetCare"
-            },
-            "valor": {
-                "servico": 0,
-                "pets": 59.9,
-                "total": 59.9
-            },
-            "funcionario": {
-                "id": 1,
-                "nome": "Maria Joaquina Silveira"
-            },
-            "estado": {
-                "id": "preparado"
-            },
-            "pets": [
-                {
-                    "id": 1,
-                    "instrucaoAlim": "Alimentar com petiscos leves",
-                    "remedios": [
-                        {
-                            "id": 1,
-                            "nome": "Torcilax",
-                            "instrucoes": "Uma vez após a primeira refeição"
-                        }
-                    ]
-                }
-            ]
-        }
-    */]);
+    const [ paginasServ, setPaginasServ ] = useState([]);
+    const [ agendamentos, setAgendamentos ] = useState([]);
+    const [ servicosRealizados, setServicosRealizados ] = useState([]);
 
     const [ funcDisponiveis, setFuncDisponiveis ] = useState([]);
     async function popularFuncionarios() {        
@@ -92,11 +59,41 @@ const Lista_Agendamentos = () => {
             setAgendamentos(agendList.map( a => ({ ...a, funcionario: (a.funcionario) ? a.funcionario : { id: "" }})));
         }
     }
+
+    async function popularServicosRealizados() {
+        const limit = 6;
+        const resp = await empresaFetch(`/servico-realizado?limit=${limit}&page=${paginaAtual}`);
+
+        if (resp.status != 200) {
+            console.log('falha ao obter serviços realizados!')
+            return;
+        }
+
+        const { qtdServicosRealizados, servicosRealizados: servList } = await resp.json();
+
+        if (servList.length > 0) {
+            const pageList = [];
+
+            for (let i = 1; i <= Math.ceil(qtdServicosRealizados / limit) ; i++) {
+                pageList.push(i);
+            }
+
+            setPaginasServ(pageList);
+            setServicosRealizados(servList);
+        }
+    }
+
     useEffect(() => {
         if (validar) {
             popularAgendamentos();
         }
     }, [paginaAtual]);
+    
+    useEffect(() => {
+        if (validar) {
+            popularServicosRealizados();
+        }
+    }, [paginaAtualServ]);
 
     useEffect(() => {
         if (validar) {
@@ -110,8 +107,14 @@ const Lista_Agendamentos = () => {
         console.log('refresh agendamentos!')
     }, [agendamentos]);
 
+
+    useEffect(() => {
+        console.log('refresh serviços realizados!')
+    }, [servicosRealizados]);
+
     useEffect(() => {
         popularAgendamentos();
+        popularServicosRealizados();
     }, [refresh]);
 
     return (
@@ -164,46 +167,64 @@ const Lista_Agendamentos = () => {
                     className="mb-3"
                 >
                     <Tab eventKey="agendamentos" title="Agendamentos">
-                    <Table striped>
-                        <thead>
-                            <tr>
-                                <th>Serviço</th>
-                                <th>Nome do cliente</th>
-                                <th>Funcionário atribuído</th>
-                                <th>Data</th>
-                                <th>Hora</th>
-                                <th>Estado</th>
-                                <th>Valor</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            { agendamentos && agendamentos.map( a => {
-                                return <CardAgendamento funcDisponiveis={funcDisponiveis} key={a.id} agendamento={a}/>
-                            })}
-                        </tbody>
+                        <Table striped>
+                            <thead>
+                                <tr>
+                                    <th>Serviço</th>
+                                    <th>Nome do cliente</th>
+                                    <th>Funcionário atribuído</th>
+                                    <th>Data</th>
+                                    <th>Hora</th>
+                                    <th>Estado</th>
+                                    <th>Valor</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                { agendamentos && agendamentos.map( a => {
+                                    return <CardAgendamento funcDisponiveis={funcDisponiveis} key={a.id} agendamento={a}/>
+                                })}
+                            </tbody>
                         </Table>
+                                { paginasServ.length > 1 && 
+                                    <Pagination>
+                                        <Pagination.First onClick={ () => {setPaginaAtualServ(0)}}/>
+                                        { paginasServ.map( p => 
+                                            <Pagination.Item
+                                                active={ p-1 == paginaAtualServ }
+                                                key={p}
+                                                onClick={ () => {setPaginaAtualServ(p-1)} }>{p}
+                                            </Pagination.Item>
+                                        )}
+                                        <Pagination.Last onClick={ () => { setPaginaAtualServ(paginasServ[paginasServ.length - 1] -1) }}/>
+                                    </Pagination>
+                                }
                     </Tab>
                     <Tab eventKey="servicos-executados" title="Serviços executados">
-                        Tab content for Profile
+                        <Table striped>
+                            <thead>
+                                <tr>
+                                    <th>Serviço</th>
+                                    <th>Nome do cliente</th>
+                                    <th>Funcionário atribuído</th>
+                                    <th>Data</th>
+                                    <th>Início</th>
+                                    <th>Fim</th>
+                                    <th>Valor</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                { servicosRealizados && servicosRealizados.map( s => {
+                                    return <CardServicoRealizado key={s.id} servicoRealizado={s}/>
+                                })}
+                            </tbody>
+                        </Table>
                     </Tab>
                     <Tab eventKey="todos" title="Todos">
                         Tab content for Contact
                     </Tab>
                 </Tabs>
-                { paginas.length > 1 && 
-                    <Pagination>
-                        <Pagination.First onClick={ () => {setPaginaAtual(0)}}/>
-                        { paginas.map( p => 
-                            <Pagination.Item
-                                active={ p-1 == paginaAtual }
-                                key={p}
-                                onClick={ () => {setPaginaAtual(p-1)} }>{p}
-                            </Pagination.Item>
-                        )}
-                        <Pagination.Last onClick={ () => { setPaginaAtual(paginas[paginas.length - 1] -1) }}/>
-                    </Pagination>
-                }
             </Container>
         </div>
     )

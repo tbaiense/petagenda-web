@@ -79,58 +79,6 @@ const ListarPets = () => {
                     </div>
 
                     <div>
-<<<<<<< HEAD
-                        {/* {pets.map((pet) => {
-                            return(
-                                <div className={styles.miniCard}>
-
-                                    {if(pet.sexo === Feminino){
-                                        return (
-                                            <div className={styles.female}>
-                                                <img src={female} alt="" />
-                                            </div>
-                                        )
-                                    }else{
-                                        return (
-                                            <div className={styles.male}>
-                                                <img src={male} alt="" />
-                                            </div>
-                                        )
-                                    }}
-
-                                    <div className={styles.subInfo} key={pet}>
-                                        <span className={styles.estiloNome}>{pet.nome}</span>
-                                        <span className={styles.estiloEspecie}>{pet.especie}</span>
-                                        <span className={styles.estiloDono}>{pet.dono}</span>
-                                    </div>
-                                
-                                    <div>
-                                        <button onClick={abrirModalInfo(pets,pets.id)} className={styles.bttn}><img src={seta} alt="seta" /></button>
-                                    </div>
-
-                                </div>
-                            )
-                        })} */}
-
-                        <div className={styles.miniCard}>
-                            <div className={styles.suporte}>
-                                <div className={styles.male}>
-                                    <img src={male} alt="" />
-                                </div>
-
-                                <div className={styles.subInfo}>
-                                    <span className={styles.estiloNome}>Nome</span>
-                                    <span className={styles.estiloEspecie}>Especie</span>
-                                    <span className={styles.estiloDono}>De Dono</span>
-                                </div>
-                            </div>
-                            
-
-                            <div>
-                                <button onClick={() => setShowInfo(true)} className={styles.bttn}><img src={seta} alt="seta" /></button>
-                            </div>
-                        </div>
-=======
                         { pets && pets.map(p => {
                             return (
                                 <PetListaCard key={p.id} pet={{nome: p.nome, sexo: p.sexo, especie: p.especie.nome, dono: p.dono.nome}} showInfo={() => {
@@ -139,7 +87,6 @@ const ListarPets = () => {
                                 }} />
                             );
                         })}
->>>>>>> a007361 (cria componente de listagem de pets)
                         
                         {showInfo && (
                             <div className={styles.infoModal}>
