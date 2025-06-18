@@ -1,0 +1,77 @@
+.firstInfo{
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    padding-bottom: 1rem;
+}
+.littleContent{
+    display: flex;
+    flex-direction: column;
+    width: 35%;
+}
+.razaoCnpj{
+    display: flex;
+    gap: 1rem;
+}
+.lema{
+    color: grey;
+}
+.nomeEmpresa{
+    font-size: x-large;
+    
+}
+hr{
+    margin: 7px;
+}
+.foto{
+    width: 140px;
+    height: 140px;
+    background-color: rgb(205, 205, 205);
+    border-radius: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.foto img{
+    width: 100%;
+}
+.layoutSubInfo{
+    display: flex;
+    justify-content: space-around;
+
+}
+.subTitulos{
+    display: flex;
+    gap: 4px;
+}
+
+.mais{
+    border: 1px solid rgb(0, 0, 0,0.3);
+    border-radius: 30px;
+    padding: 0 6px;
+    cursor: pointer;
+}
+.nomeInfo{
+    font-size: larger;
+}
+.estiloNome{
+    display: flex;
+    gap: 10px;
+}
+.icone{
+    cursor: pointer;
+}
+.cardInfo{
+    border: 1px solid black;
+    padding: 1rem 1.5rem;
+    border-radius: 15px;
+    display: flex;
+    justify-content: space-between;
+    width: 130%;
+}
+.orgCard{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 1rem;
+}

@@ -3,7 +3,7 @@ import Stack from "react-bootstrap/Stack";
 import Accordion from "react-bootstrap/Accordion";
 import Card from "react-bootstrap/Card";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
-import { Container, Form, Row, Col, Button, FormCheck } from "react-bootstrap";
+import { Container, Form, Row, Col, Button, FormCheck,InputGroup } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import "./Servico_Executado.css";
 import { useAuth } from "../../../contexts/UserContext";
@@ -351,6 +351,71 @@ const ServicoExecutado = () => {
                   {...register("horaFim", { required: true })}
                   defaultValue={new Date().toTimeString().slice(0, 5)}
                 />
+              </Form.Group>
+            </Col>
+          </Row>
+                    <Row className="mt-3">
+            <Col>
+              <Form.Group>
+                <Form.Label>Valor Total:</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>R$</InputGroup.Text>
+                  <Form.Control
+                    type="text"
+                    placeholder="Valor total dos pets"
+                    {...register("precoPet", {
+                      onChange: (e) => {
+                        let preco = getValues('precoPet');
+                        preco = preco.replaceAll(/[^\d,.]/g, '');
+                        preco = preco.replace('.', ',')
+
+                        setValue('precoPet', preco);
+                      }
+                    })}
+                  />
+                </InputGroup>
+              </Form.Group>
+            </Col>
+            <Col>
+              <Form.Group>
+                <Form.Label>Valor do Serviço:</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>R$</InputGroup.Text>
+                  <Form.Control
+                    type="text"
+                    placeholder="Valor do Serviço"
+                    {...register("precoServico", {
+                      onChange: (e) => {
+                        let preco = getValues('precoServico');
+                        preco = preco.replaceAll(/[^\d,.]/g, '');
+                        preco = preco.replace('.', ',')
+
+                        setValue('precoServico', preco);
+                      }
+                    })}
+                  />
+                </InputGroup>
+              </Form.Group>
+            </Col>
+            <Col>
+              <Form.Group>
+                <Form.Label>?</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>R$</InputGroup.Text>
+                  <Form.Control
+                    type="text"
+                    placeholder="Valor "
+                    {...register("precoServico", {
+                      onChange: (e) => {
+                        let preco = getValues('precoServico');
+                        preco = preco.replaceAll(/[^\d,.]/g, '');
+                        preco = preco.replace('.', ',')
+
+                        setValue('precoServico', preco);
+                      }
+                    })}
+                  />
+                </InputGroup>
               </Form.Group>
             </Col>
           </Row>

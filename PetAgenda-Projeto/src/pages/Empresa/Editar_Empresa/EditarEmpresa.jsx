@@ -1,11 +1,11 @@
-import styles from "./CadastroEmpresa.module.css";
+import "./EditarEmpresa.css";
 import { useForm } from "react-hook-form";
 import { useAuth } from "../../../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import NavEmpresa from "../../../components/navegacaoEmpresa/NavEmpresa.jsx";
 
-const CadastroEmpresa = () => {
+const EditarEmpresa = () => {
   const { setEmpresa, apiFetch, getToken } = useAuth();
 
   const navigate = useNavigate();
@@ -15,6 +15,7 @@ const CadastroEmpresa = () => {
     formState: { errors },
     watch,
     reset,
+    setValue,
   } = useForm();
 
   const imagemEmpresa = watch("pathImgFile");
@@ -41,7 +42,7 @@ const CadastroEmpresa = () => {
     };
 
     const res = await apiFetch("/empresa", {
-      method: "POST",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${getToken()}`,
@@ -53,10 +54,10 @@ const CadastroEmpresa = () => {
 
     if (res.status == 200) {
       setEmpresa(jsonBody.empresa);
-      alert("cadastrado");
-      navigate("/empresa/planos");
+      alert("Empresa atualizada com sucesso!");
+      navigate("/empresa/informacoes");
     } else {
-      alert("erro ao cadastrar empresa");
+      alert("Erro ao atualizar empresa");
     }
   };
 
@@ -68,14 +69,11 @@ const CadastroEmpresa = () => {
     <div>
       <NavEmpresa />
       <div className="container my-5">
-        <h2 className="text-center mb-4">Cadastro da Empresa</h2>
+        <h2 className="text-center mb-4">Editar da Empresa</h2>
 
         <div className="row">
           <div className="col-md-8">
-            <form
-              onSubmit={handleSubmit(onSubmit, onError)}
-              className="p-4"
-            >
+            <form onSubmit={handleSubmit(onSubmit, onError)} className="p-4">
               <div className="mb-3">
                 <label className="form-label">Nome Fantasia</label>
                 <input
@@ -133,6 +131,7 @@ const CadastroEmpresa = () => {
                 <input
                   type="text"
                   className={`form-control ${errors.CNPJ ? "is-invalid" : ""}`}
+                  disabled
                   {...register("CNPJ", {
                     required: "O CNPJ é obrigatório",
                     pattern: {
@@ -213,4 +212,4 @@ const CadastroEmpresa = () => {
   );
 };
 
-export default CadastroEmpresa;
+export default EditarEmpresa;

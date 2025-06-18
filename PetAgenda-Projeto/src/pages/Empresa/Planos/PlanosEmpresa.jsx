@@ -5,20 +5,24 @@ import MenuDashBoard from "../../../components/SideBar/SideBar";
 import { useState } from "react";
 import NavEmpresa from "../../../components/navegacaoEmpresa/NavEmpresa.jsx";
 import { useAuth } from "../../../contexts/UserContext";
-import { useEffect } from 'react';
-
+import { useEffect } from "react";
 
 function PlanosEmpresa() {
-  const { 
-    getToken, getEmpresa, 
-    getLicenca, setLicenca, removeLicenca, 
-    empresaFetch 
+  const {
+    getToken,
+    getEmpresa,
+    getLicenca,
+    setLicenca,
+    removeLicenca,
+    empresaFetch,
   } = useAuth();
 
   useEffect(() => {
     const licenca = getLicenca();
 
-    console.log((licenca) ? ` licença atual: ${licenca}` : 'empresa sem licença!');
+    console.log(
+      licenca ? ` licença atual: ${licenca}` : "empresa sem licença!"
+    );
   }, []);
 
   const [selected, setSelected] = useState("mensal");
@@ -55,26 +59,23 @@ function PlanosEmpresa() {
   const assinarPlano = async (plano) => {
     const dadoPlano = {
       tipo: plano,
-      periodo: selected
-    }
+      periodo: selected,
+    };
 
     try {
       const fetchOpts = {
         method: "POST",
-        body: JSON.stringify(dadoPlano)
-      }
-      const response = await empresaFetch(
-        '/licenca',
-        fetchOpts
-      );
-  
+        body: JSON.stringify(dadoPlano),
+      };
+      const response = await empresaFetch("/licenca", fetchOpts);
+
       const jsonBody = await response.json();
       if (response.status == 200 && jsonBody?.success) {
         setLicenca(dadoPlano.tipo);
         alert(jsonBody.message);
         return;
       } else {
-        throw new Error(jsonBody.errors.join('\n'));
+        throw new Error(jsonBody.errors.join("\n"));
       }
     } catch (err) {
       alert("Falha ao obter licença:\n" + err.message);
@@ -83,7 +84,7 @@ function PlanosEmpresa() {
 
   return (
     <div>
-      <NavEmpresa/>
+      <NavEmpresa />
       <section className="plano__section">
         <Container className="">
           <Row className="justify-content-center">
@@ -125,7 +126,11 @@ function PlanosEmpresa() {
             </Col>
           </Row>
           <Row className="justify-content-center plano__linha gap-5">
-            <h1>Atual: {(getLicenca()) ? getLicenca() : "não possui"}</h1>
+            <div className="plano_atual">
+              <h7 className="plano_atualizacao">
+                Atual: {getLicenca() ? getLicenca() : "não possui"}
+              </h7>
+            </div>
             <Col md={3} className="plano__coluna text-center">
               <div className="plano__item">
                 <img
@@ -209,7 +214,11 @@ function PlanosEmpresa() {
                     Relatórios Detalhados <strong>ilimitados</strong>
                   </li>
                 </ul>
-                <Button variant="primary" onClick={() => assinarPlano("corporativo")} className="plano__botao">
+                <Button
+                  variant="primary"
+                  onClick={() => assinarPlano("corporativo")}
+                  className="plano__botao"
+                >
                   Assinar
                 </Button>
               </div>

@@ -10,7 +10,7 @@ import Registrar from "../pages/Registrar/Registrar";
 import CadastroEmpresa from "../pages/Empresa/Cadastro_Empresa/CadastroEmpresa";
 import PlanosEmpresa from "../pages/Empresa/Planos/PlanosEmpresa";
 import ViewEmpresa from "../pages/Empresa/Visualizar_Dados/ViewEmpresa";
-
+import EditarEmpresa from "../pages/Empresa/Editar_Empresa/EditarEmpresa.jsx";
 // Funcionários
 import CadastroFuncionario from "../pages/Funcionario/CadastroFuncionario/Cadastro_Funcionario";
 
@@ -72,8 +72,9 @@ const router = createBrowserRouter([
     path: "/empresa",
     element: (
       // <PrivateRoute>
-      <MenuDashBoard />
-      // </PrivateRoute>
+        <MenuDashBoard />
+      // </PrivateRoute> 
+
     ),
     children: [
       // Empresa
@@ -88,6 +89,10 @@ const router = createBrowserRouter([
       {
         path: "planos",
         element: <PlanosEmpresa />,
+      },
+      {
+        path: "editar",
+        element: <EditarEmpresa />,
       },
 
       // Funcionários
