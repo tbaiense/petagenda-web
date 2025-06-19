@@ -9,9 +9,6 @@ import iconEditar from "../../assets/icon_editarAzul.svg"
 import iconDeletar from "../../assets/icon_delete.svg"
 import seta from "../../assets/icon_seta.svg"
 
-
-
-
 const { Search } = Input;
 
 const ListarClientes = () => {
@@ -70,7 +67,7 @@ const ListarClientes = () => {
     }, []);
 
     const navEditarCliente = ( cliente ) => {
-        navigate(`/empresa/clientes/editar/${cliente.id}`, {state:cliente})
+        navigate(`/empresa/clientes/editar/${cliente.id}`, { state:cliente })
     }
 
     return(

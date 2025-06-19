@@ -107,6 +107,10 @@ const CadastroFuncionario = () => {
     }
   };
 
+  const onError = (errors) => {
+    console.log("Erro ao Enviar", errors);
+  };
+
   return (
     <div className={styles.viewConteudo}>
       <div>

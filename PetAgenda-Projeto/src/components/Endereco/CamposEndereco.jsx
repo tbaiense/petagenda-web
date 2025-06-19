@@ -1,11 +1,13 @@
+import { useEffect, useState } from "react";
 import { UFS } from "../../data/info";
 import styles from "./CamposEndereco.module.css";
 
 const CamposEndereco = ({ 
-  // cep, setCep, endereco, handleChange, 
+  cep, setCep, endereco, handleChange, 
   setValue,
   prefix, register, errors,
-  formConfigs
+  formConfigs,
+  estadoPadrao,
 }) => {
   /* Thiago >>> Castro, modifiquei o componente para ficar um pouco mais fácil
                 de usar quando tem apenas um endereço, como no caso do cadastro
@@ -28,6 +30,7 @@ const CamposEndereco = ({
   // }
 
   const errorsObj = errors[prefix];
+  const [ estadoSel, setEstadoSel ] = useState(0);
 
   return (
     <div className={styles.enderecoContainer}>
@@ -38,10 +41,11 @@ const CamposEndereco = ({
           <input
             type="text"
             // value={cep ?? ''}
+            defaultValue={endereco?.cep || ""}
             placeholder="12345678"
             { ...register(`${prefix}.cep`,
               {
-                required: (formConfigs) ? formConfigs.isRequired : true,
+                required: (formConfigs) ? formConfigs.isRequired : false,
                 onChange: (e) => {
                   let value = e.target.value;
 
@@ -65,6 +69,7 @@ const CamposEndereco = ({
           <input
             // value={endereco.logradouro ?? ''}
             // onInput={handleChange}
+            defaultValue={endereco?.logradouro || ""}
             type="text"
             placeholder="Rua Feliz dos Palmares..."
             {...register(`${prefix}.logradouro`, { required: { value: (formConfigs) ? formConfigs.isRequired : true, message: "Logradouro é obrigatório" } })}
@@ -76,6 +81,7 @@ const CamposEndereco = ({
           <label>Número</label>
           <input
             type="text"
+            defaultValue={endereco?.numero || ""}
             // value={endereco.numero ?? ''}
             // onInput={handleChange}
             placeholder="Apto. 10, bloco 5..."
@@ -89,6 +95,7 @@ const CamposEndereco = ({
           <label>Bairro</label>
           <input
             type="text"
+            defaultValue={endereco?.bairro || ""}
             // value={endereco.bairro ?? ''}
             // onInput={handleChange}
             placeholder="Bairro das Palmeiras"
@@ -102,6 +109,7 @@ const CamposEndereco = ({
             type="text"
             // value={endereco.cidade ?? ''}
             // onInput={handleChange}
+            defaultValue={endereco?.cidade || ""}
             placeholder="Cidade do Futuro..."
             {...register(`${prefix}.cidade`, { required: { value: (formConfigs) ? formConfigs.isRequired : true, message: "Cidade é obrigatória" } })}
           />
@@ -112,6 +120,7 @@ const CamposEndereco = ({
           <select
             // value={endereco.uf ?? ''} 
             // onInput={handleChange}
+            defaultValue={estadoPadrao}
             {...register(`${prefix}.estado`, 
             { required: { value: (formConfigs) ? formConfigs.isRequired : true, message: "Unidade Federativa é obrigatória" },
             })}>

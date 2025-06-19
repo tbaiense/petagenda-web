@@ -40,7 +40,7 @@ const ModalEditarFuncionario = ({ isOpen, onClose, funcionario, setFuncionario, 
     
     const onError = (errors) => {
         console.log("Erro ao Enviar", errors);
-      };
+    };
 
     return(
         <div className={styles.beforeModal}>
