@@ -1,18 +1,36 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useAuth } from "../../../contexts/UserContext";
 import ModalCadastroFuncionario from "../../../components/ModalFuncionario/ModalCadastroFuncionario";
-import ModalEditarFuncionario from "../../../components/ModalEditarFuncionario/ModalEditarFuncionario";
+import CardFuncionario from "../../../components/CardFuncionario/CardFuncionario";
 import styles from "./Cadastro_Funcionario.module.css";
-import Button from "react-bootstrap/Button";
+import ModalEditarFuncionario from "../../../components/ModalEditarFuncionario/ModalEditarFuncionario";
+
 const CadastroFuncionario = () => {
+  const { empresaFetch, validar } = useAuth();
   const [showModal, setShowModal] = useState(false);
   const [showModalEditar, setShowModalEditar] = useState(false);
+  const [funcionarioSelecionado, setFuncionarioSelecionado] = useState([]);
   const [funcionarios, setFuncionarios] = useState([]);
   const [servicos, setServicos] = useState([]);
-  const [funcionarioSelecionado, setFuncionarioSelecionado] = useState(null);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    watch,
+    setValue,
+  } = useForm();
+
+  const abrirModalEditar = (funcionario) => {
+    setFuncionarioSelecionado(funcionario);
+    setValue("nome", funcionario.nome);
+    setValue("telefone", funcionario.telefone);
+    setValue("servico", funcionario.exerce[0]?.servico.toString());
+    setShowModalEditar(true);
+  };
 
   function popularListaFuncionarios() {
-    // Pego os funcionarios do banco da empresa
     empresaFetch("/funcionario")
       .then((res) => res.json())
       .then((data) => {
@@ -22,7 +40,6 @@ const CadastroFuncionario = () => {
         console.error("Erro ao buscar Funcionarios:", error);
       });
 
-    // Pego os funcionarios do banco da empresa
     empresaFetch("/servico-oferecido")
       .then((res) => res.json())
       .then((data) => {
@@ -32,6 +49,12 @@ const CadastroFuncionario = () => {
         console.error("Erro ao buscar serviços oferecidos:", error);
       });
   }
+
+  useEffect(() => {
+    if (validar) {
+      popularListaFuncionarios();
+    }
+  }, []);
 
   function cadastrarFuncionario(objFun) {
     empresaFetch("/funcionario", {
@@ -49,65 +72,54 @@ const CadastroFuncionario = () => {
       setShowModal(false);
     });
   }
-  
-  useEffect(() => {
-    if (validar) {
-      popularListaFuncionarios();
-    }
-  }, []);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-    setValue,
-  } = useForm();
+  function editarFuncionario(objFun) {
+    empresaFetch(`/funcionario/${objFun.id}`, {
+      method: "PUT",
+      body: JSON.stringify(objFun),
+    }).then(async (res) => {
+      if (res.status === 200) {
+        const json = await res.json();
+        popularListaFuncionarios();
+        alert(json.message);
+      } else {
+        alert("Erro ao editar funcionário");
+      }
+      reset();
+      setShowModalEditar(false);
+    });
+  }
 
   const onSubmit = async (data) => {
-    const novoFuncionario = {
-      id: funcionarios.length + 1,
+    const objFun = {
       nome: data.nome,
       telefone: data.telefone,
-      exerce: [{ servico: Number(data.servico) }],
+      exerce: [
+        {
+          id: Number(data.servico),
+        },
+      ],
     };
 
-    setFuncionarios([...funcionarios, novoFuncionario]);
-    alert("Funcionário cadastrado com sucesso!");
-    reset();
-    setShowModal(false);
+    if (validar) {
+      cadastrarFuncionario(objFun);
+    }
   };
-
-  const handleEditarClick = (funcionario) => {
-    const dadosParaFormulario = {
-      id: funcionario.id,
-      nome: funcionario.nome,
-      telefone: funcionario.telefone,
-      servico: funcionario.exerce?.[0]?.servico || "",
-    };
-
-    setFuncionarioSelecionado(dadosParaFormulario);
-    reset(dadosParaFormulario);
-    setShowModalEditar(true);
-  };
-
   const onSubmitEditar = async (data) => {
-    const funcionarioEditado = {
-      id: data.id,
+    const objFun = {
+      id: funcionarioSelecionado.id,
       nome: data.nome,
       telefone: data.telefone,
-      exerce: [{ servico: Number(data.servico) }],
+      exerce: [
+        {
+          id: Number(data.servico),
+        },
+      ],
     };
 
-    setFuncionarios((prev) =>
-      prev.map((func) =>
-        func.id === funcionarioEditado.id ? funcionarioEditado : func
-      )
-    );
-    alert("Funcionário editado com sucesso!");
-
-    reset();
-    setShowModalEditar(false);
+    if (validar) {
+      editarFuncionario(objFun);
+    }
   };
 
   const onError = (errors) => {
@@ -116,38 +128,59 @@ const CadastroFuncionario = () => {
 
   return (
     <div className={styles.viewConteudo}>
-      <h1>Funcionários Cadastrados</h1>
-      <hr />
+      <div>
+        <h1>Funcionarios Cadastrados</h1>
+        <hr />
+      </div>
+
+      {/* ------------------------------------------------------------------------------------------------------------------------ */}
+      {/* Aqui estou criando um modal para o usuario poder cadastrar rapidamente um novo funcionario */}
+      {/* Podemos reutilizar esse modal para a aba da empresa futuramente */}
 
       <ModalCadastroFuncionario
         isOpen={showModal}
         onClose={() => setShowModal(false)}
       >
-        <h2>Cadastro de Funcionário</h2>
+        <h2>Cadastro de Funcionario</h2>
+
         <form
-          onSubmit={handleSubmit(onSubmit, onError)}
+          id="form-func"
+          action=""
           className={styles.customeForm}
+          onSubmit={handleSubmit(onSubmit, onError)}
         >
           <div className={styles.areaNomeSexo}>
-            <input type="hidden" {...register("id")} />
             <div className={styles.controlaCampos}>
-              <label>
+              <label htmlFor="">
                 Nome<span style={{ color: "red" }}>*</span>:
               </label>
               <input
                 type="text"
                 placeholder="Digite o nome"
                 {...register("nome", {
-                  required: "O nome é obrigatório",
-                  minLength: { value: 3, message: "Mínimo 3 caracteres" },
-                  maxLength: { value: 64, message: "Máximo 64 caracteres" },
+                  required: {
+                    value: true,
+                    message: "O nome é obrigatorio",
+                  },
                   onChange: (e) => {
                     let value = e.target.value;
-                    value = value
-                      .split(" ")
-                      .map((v) => v.charAt(0).toUpperCase() + v.slice(1))
-                      .join(" ");
-                    setValue("nome", value);
+
+                    if (value && value.length > 0) {
+                      let values = value.split(" ");
+                      values = values.map(
+                        (v) => `${v.charAt(0).toUpperCase()}${v.substring(1)}`
+                      );
+                      value = values.join(" ");
+                    }
+                    setValue(e.target.name, value);
+                  },
+                  minLength: {
+                    value: 3,
+                    message: "O nome deve ter pelo menos 3 caracteres",
+                  },
+                  maxLength: {
+                    value: 64,
+                    message: "O nome dever ter no maximo 64 caracteres",
                   },
                 })}
               />
@@ -157,54 +190,76 @@ const CadastroFuncionario = () => {
             </div>
           </div>
 
-          <div className={styles.controlaCampos}>
-            <label>
-              Serviço<span style={{ color: "red" }}>*</span>:
-            </label>
-            <select
-              {...register("servico", {
-                required: "Selecione um serviço",
-              })}
-            >
-              <option value="">Selecione um serviço</option>
-              {servicos.map((servico) => (
-                <option key={servico.id} value={servico.id}>
-                  {servico.nome}
-                </option>
-              ))}
-            </select>
-            {errors.servico && (
-              <p style={{ color: "red" }}>{errors.servico.message}</p>
-            )}
-          </div>
+          <div>
+            <div className={styles.controlaCampos}>
+              <label htmlFor="">
+                Serviço Exercido<span style={{ color: "red" }}>*</span>:
+              </label>
+              <select
+                {...register("servico", {
+                  required: {
+                    value: true,
+                    message: "Selecione um serviço exercido",
+                  },
+                })}
+              >
+                <option value="">Selecione um serviço</option>
 
-          <div className={styles.controlaCampos}>
-            <label>
-              Telefone<span style={{ color: "red" }}>*</span>:
-            </label>
-            <input
-              type="text"
-              placeholder="Digite o telefone"
-              {...register("telefone", {
-                required: "O telefone é obrigatório",
-                pattern: {
-                  value: /^\d{2} \d{5}-\d{4}$/,
-                  message: "Formato esperado: 27 99888-7766",
-                },
-                onChange: (e) => {
-                  let value = e.target.value.replace(/\D/g, "");
-                  value = `${value.slice(0, 2)}${
-                    value.length > 2 ? " " : ""
-                  }${value.slice(2, 7)}${
-                    value.length > 7 ? "-" : ""
-                  }${value.slice(7, 11)}`;
-                  setValue("telefone", value);
-                },
-              })}
-            />
-            {errors.telefone && (
-              <p style={{ color: "red" }}>{errors.telefone.message}</p>
-            )}
+                {servicos.map((servico) => (
+                  <option key={servico.id} value={servico.id}>
+                    {servico.nome}
+                  </option>
+                ))}
+              </select>
+              {errors.servico && (
+                <p style={{ color: "red" }}>{errors.servico.message}</p>
+              )}
+            </div>
+
+            <div className={styles.controlaCampos}>
+              <label htmlFor="">
+                Telefone<span style={{ color: "red" }}>*</span>:
+              </label>
+              <input
+                type="text"
+                placeholder="Digite o telefone"
+                {...register("telefone", {
+                  required: {
+                    value: true,
+                    message: "O telefone é obrigatorio",
+                  },
+                  pattern: {
+                    value: /^\d{2,2} \d{5,5}-\d{4,4}$/,
+                    message: "Formato esperado: 27 99888-7766",
+                  },
+                  onChange: (e) => {
+                    let value = e.target.value;
+
+                    if (value && value.length > 0) {
+                      value = value.replaceAll(/[^0-9]/g, "");
+                      value = `${value.substring(0, 2)}${
+                        value.length > 2 ? " " : ""
+                      }${value.substring(2, 7)}${
+                        value.length > 7 ? "-" : ""
+                      }${value.substring(7, 11)}`;
+                      console.log("limpei");
+                    }
+                    setValue(e.target.name, value);
+                  },
+                  minLength: {
+                    value: 13,
+                    message: "O telefone deve ter pelo menos 13 caracteres",
+                  },
+                  maxLength: {
+                    value: 14,
+                    message: "O telefone dever ter no maximo 15 caracteres",
+                  },
+                })}
+              />
+              {errors.telefone && (
+                <p style={{ color: "red" }}>{errors.telefone.message}</p>
+              )}
+            </div>
           </div>
 
           <div className={styles.posicaoBotaoForm}>
@@ -212,7 +267,6 @@ const CadastroFuncionario = () => {
           </div>
         </form>
       </ModalCadastroFuncionario>
-
       <ModalEditarFuncionario
         isOpen={showModalEditar}
         onClose={() => setShowModalEditar(false)}
@@ -303,37 +357,46 @@ const CadastroFuncionario = () => {
           </div>
         </form>
       </ModalEditarFuncionario>
+      {/* ------------------------------------------------------------------------------------------------------------------------ */}
+      {/* Aqui eu estou gerando a lista de funcionarios */}
+      <div>
+        <table className={styles.tabelaBonita}>
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Telefone</th>
+              <th>Serviço</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {funcionarios &&
+              funcionarios.map((func) => {
+                const servExerce = servicos.flatMap((serv) => {
+                  if (serv.id == func.exerce[0].servico) {
+                    return serv.nome;
+                  } else {
+                    return [];
+                  }
+                });
+                return (
+                  <tr key={func.id}>
+                    <td>{func.nome}</td>
+                    <td>{func.telefone}</td>
+                    <td>{servExerce.length > 0 && servExerce[0]}</td>
+                    <td>
+                      <button onClick={() => abrirModalEditar(func)}>
+                        Editar
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+          </tbody>
+        </table>
+      </div>
 
-      <table className={styles.tabelaBonita}>
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>Telefone</th>
-            <th>Serviço</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {funcionarios.map((func) => {
-            const servico = servicos.find(
-              (s) => s.id === func.exerce[0].servico
-            );
-            return (
-              <tr key={func.id}>
-                <td>{func.nome}</td>
-                <td>{func.telefone}</td>
-                <td>{servico?.nome || "Não informado"}</td>
-                <td>
-                  <Button onClick={() => handleEditarClick(func)}>
-                    Editar
-                  </Button>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-
+      {/* Ao clicar em um "botão" abre um modal para cadastrar um novo funcionario */}
       <div className={styles.estiloBotao}>
         <button onClick={() => setShowModal(true)}>Adicionar</button>
       </div>
