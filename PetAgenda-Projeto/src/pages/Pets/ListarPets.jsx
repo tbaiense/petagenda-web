@@ -212,7 +212,7 @@ const ListarPets = () => {
                                             <label htmlFor="">Castrado:</label>
                                             <input type="text" defaultValue={(petView.eCastrado) ? "Sim" : "Não"} disabled/>
                                         </div>
-{/* 
+                                    {/* 
                                         <div className={styles.estiloCampos}>
                                             <label htmlFor="">Nascido:</label>
                                             <input type="date" defaultValue={petView.} disabled/>
