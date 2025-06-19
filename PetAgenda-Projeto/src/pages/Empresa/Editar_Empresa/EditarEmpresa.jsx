@@ -1,13 +1,13 @@
 import "./EditarEmpresa.css";
 import { useForm } from "react-hook-form";
 import { useAuth } from "../../../contexts/UserContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";
 import NavEmpresa from "../../../components/navegacaoEmpresa/NavEmpresa.jsx";
 
 const EditarEmpresa = () => {
   const { setEmpresa, apiFetch, getToken } = useAuth();
-
+  const {state} = useLocation();
   const navigate = useNavigate();
   const {
     register,
@@ -78,6 +78,7 @@ const EditarEmpresa = () => {
                 <label className="form-label">Nome Fantasia</label>
                 <input
                   type="text"
+                  value={state.nomeFantasia}
                   className={`form-control ${
                     errors.NomeFantasia ? "is-invalid" : ""
                   }`}
@@ -104,6 +105,7 @@ const EditarEmpresa = () => {
                 <label className="form-label">Razão Social</label>
                 <input
                   type="text"
+                  value={state.razaoSocial}
                   className={`form-control ${
                     errors.RazaoSocial ? "is-invalid" : ""
                   }`}
@@ -131,11 +133,11 @@ const EditarEmpresa = () => {
                 <input
                   type="text"
                   className={`form-control ${errors.CNPJ ? "is-invalid" : ""}`}
-                  disabled
+                  value={state.cnpj}
                   {...register("CNPJ", {
                     required: "O CNPJ é obrigatório",
                     pattern: {
-                      value: /^[0-9]{14}$/,
+                      value: /^[0-9]{10}$/,
                       message: "O CNPJ deve conter exatamente 14 números",
                     },
                   })}
@@ -150,6 +152,7 @@ const EditarEmpresa = () => {
                 <textarea
                   className={`form-control ${errors.Lema ? "is-invalid" : ""}`}
                   rows={3}
+                  value={state.lema}
                   placeholder="Nosso lema é..."
                   {...register("Lema", {
                     minLength: {
@@ -171,6 +174,7 @@ const EditarEmpresa = () => {
                 <label className="form-label">Imagem de Perfil</label>
                 <input
                   type="file"
+                  value={state.foto}
                   className="form-control"
                   {...register("pathImgFile")}
                 />

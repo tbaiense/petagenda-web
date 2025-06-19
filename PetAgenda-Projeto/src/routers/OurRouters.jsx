@@ -17,6 +17,7 @@ import CadastroFuncionario from "../pages/Funcionario/CadastroFuncionario/Cadast
 //Clientes
 import CadastrarClientes from "../pages/Clientes/Cadastrar_Clientes";
 import ListarClientes from "../pages/Clientes/ListarClientes.jsx";
+import EditarCliente from "../pages/Clientes/EditarCliente.jsx"
 
 //Pets
 import CadastrarPets from "../pages/Pets/Cadastrar_Pets";
@@ -71,9 +72,9 @@ const router = createBrowserRouter([
   {
     path: "/empresa",
     element: (
-      //  <PrivateRoute>
+       <PrivateRoute>
         <MenuDashBoard />
-      //  </PrivateRoute> 
+       </PrivateRoute> 
 
     ),
     children: [
@@ -108,6 +109,10 @@ const router = createBrowserRouter([
       {
         path: "clientes/lista",
         element: <ListarClientes />,
+      },
+      {
+        path: "clientes/editar/:id",
+        element: <EditarCliente/>,
       },
       // Pets
       {

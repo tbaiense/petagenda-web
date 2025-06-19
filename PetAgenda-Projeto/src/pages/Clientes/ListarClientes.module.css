@@ -1,88 +1,129 @@
 .viewConteudo h1{
     text-align: center;
-    padding-top: 7px;
-  }
-  .estiloBotao{
+    padding-top: 1rem;
+}
+
+.alinhamento{
     display: flex;
     justify-content: center;
-    padding-top: 1rem;
-  }
-  .estiloBotao button{
-    padding: 5px 20px 5px 20px;
-    border-radius: 12px;
-    border: none;
-    background-color: #1FAF30;
-    transition: background-color 0.3s ease;
-    color: white;
-  }
-  .estiloBotao button:hover{
-    background-color: #0e811c;
-  }
-  .tabelaBonita {
+}
+.orgContent {
+    display: flex;
+    flex-direction: column;
+    width: 42vw;
+
+}
+.cardInfo{
+    border: 1px solid black;
+    border-top: none;
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
     width: 100%;
-    border-collapse: collapse;
-    text-align: center;
-    background-color: #f9f9f9;
-  }
-  
-  .tabelaBonita th, .tabelaBonita td {
-    border: 1px solid #ccc;
-    padding: 12px;
-  }
-  
-  .tabelaBonita th {
-    background-color: #e2e2e2;
-    color: #333;
-    font-weight: bold;
-  }
-  
-  .tabelaBonita tr:hover {
-    transition: background-color 0.3s ease;
-    background-color: #f1f1f1;
-  }
+}
+.nomeCliente{
+  font-size: large;
+  font-weight: bold;
+}
+.layoutInfoPerson{
+  display: flex;
+  gap: 10px;
+  color: grey;
+}
+.position{
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+.position img{
+  cursor: pointer;
+}
+.position2{
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+.position2 img{
+  cursor: pointer;
+}
+.filtros{
+    display: flex;
+    gap: 20px;
+    padding: 1rem 1.5rem 1rem 1.5rem ;
+    background-color: rgb(9, 4, 163);
+    /* background-color: rgb(61, 162, 245); */
+    color: white;
+    border-radius: 8px 8px 0px 0px;
+    justify-content: space-between;
+}
+.filtros select{
+    padding: 3px;
+    border-radius: 5px;
+}
+.pesquisa{
+    padding-bottom: 1rem;
+    padding-top: 1rem;
+}
   
   
   /* ---------------------------------------------------------------------------------------------- */
-  .customeForm button{
-    padding: 5px 20px 5px 20px;
-    border-radius: 12px;
-    border: none;
-    transition: background-color 0.3s ease;
-    background-color: #1FAF30;
-    color: white;
-  }
-  .customeForm button:hover{
-    background-color: #0e811c;
-  }
-  
-  .customeForm .controlaCampos{
-    display: flex;
-    flex-direction: column;
-  }
-  .posicaoBotaoForm{
-    display: flex;
-    justify-content: center;
-    padding-top: 1rem;
-  }
-  .controlaCampos input{
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    padding: 5px 1rem;
-    border-radius: 7px;
-    transition: all 0.3s ease-in-out;
-    outline: none;   
-  }
-  .controlaCampos input:focus{
-    border-color: #1FAF30;
-    box-shadow: 0 0 10px rgba(31, 175, 48, 0.6); 
-  }
-  .controlaCampos select{
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    padding: 5px 1rem;
-    border-radius: 7px;
-    transition: all 0.3s ease-in-out;
-    outline: none;  
-  }
-  .controlaCampos select:focus{
-    border-color: #1FAF30;
-    box-shadow: 0 0 10px rgba(31, 175, 48, 0.6); 
-  }
+.infoModal{
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  color: rgb(0, 0, 0);
+  background-color: rgb(0, 0, 0, 0.3);
+  z-index: 5;
+}
+.estiloModal{
+  background-color: rgb(255, 255, 255);
+  width: 40vw;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: relative;
+  top: 40%;
+  left: 53%;
+  transform: translate(-50%, -50%);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 2px solid rgb(0, 0, 0, 0.5);
+}
+.estiloModal label{
+  font-weight: bold;
+}
+.spanFechar{
+  display: flex;
+  justify-content: center;
+}
+.spanFechar button{
+  background-color: rgb(13, 110, 253);
+  color: white;
+  border: none;
+  padding: 0.3rem 1.5rem;
+  border-radius: 10px;
+  transition: background-color 0.3s ease;
+}
+.spanFechar button:hover{
+    background-color: rgb(0, 0, 255);
+}
+.estiloTitulo{
+  text-align: center;
+}
+.tele{
+  display: flex;
+  gap: 5px;
+}
+.estiloEndereco{
+  display: flex;
+  flex-direction: column;
+}
+.quadro{
+  border: 1px solid rgb(0, 0, 0, 0.3);
+  padding: 10px;
+}
+.servicosFavority{
+  padding-left: 10px;
+}

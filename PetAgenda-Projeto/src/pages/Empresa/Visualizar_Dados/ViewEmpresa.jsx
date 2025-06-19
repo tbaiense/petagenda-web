@@ -83,7 +83,7 @@ const ViewEmpresa = () => {
 
   const navEditarEmpresa = () => {
     // Aqui eu envio o objeto empresa para a pagina de editar
-    navigate('/empresa/editar')
+    navigate('/empresa/editar', {state:empresas})
   }
 
   return (
