@@ -4,9 +4,12 @@ import { useAuth } from "../../../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import NavEmpresa from "../../../components/navegacaoEmpresa/NavEmpresa.jsx";
+import { LoadingOutlined } from "@ant-design/icons";
+import React, { useState } from 'react';
 
 const CadastroEmpresa = () => {
   const { setEmpresa, apiFetch, getToken } = useAuth();
+  const [ isLoading, setIsLoading ] = useState(false);
 
   const navigate = useNavigate();
   const {
@@ -24,6 +27,7 @@ const CadastroEmpresa = () => {
       : null;
 
   const onSubmit = async (data) => {
+    setIsLoading(true);
     console.log(typeof data);
     const fileFoto = data.pathImgFile.item(0);
     // const byteString = await fileFoto.bytes();
@@ -50,7 +54,7 @@ const CadastroEmpresa = () => {
     });
 
     const jsonBody = await res.json();
-
+    setIsLoading(false);
     if (res.status == 200) {
       setEmpresa(jsonBody.empresa);
       alert("cadastrado");
@@ -178,8 +182,14 @@ const CadastroEmpresa = () => {
               </div>
 
               <div className="d-flex justify-content-center mt-4 gap-3">
-                <button type="submit" className="btn btn-success">
-                  Finalizar
+                <button 
+                disabled={!!isLoading}
+                type="submit" 
+                className="btn btn-success">
+                  Cadastrar Empresa
+                  {isLoading && <span style={{display: 'inline-block', marginLeft: '0.8em', verticalAlign: 'center'}}>
+                      <LoadingOutlined />
+                  </span>}
                 </button>
                 <button
                   type="button"

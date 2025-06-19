@@ -6,7 +6,7 @@ import { useState } from "react";
 import NavEmpresa from "../../../components/navegacaoEmpresa/NavEmpresa.jsx";
 import { useAuth } from "../../../contexts/UserContext";
 import { useEffect } from "react";
-
+import { LoadingOutlined } from '@ant-design/icons';
 function PlanosEmpresa() {
   const {
     getToken,
@@ -29,6 +29,8 @@ function PlanosEmpresa() {
   const [precoBasico, setPrecoBasico] = useState("R$ 29,90");
   const [precoProfissional, setPrecoProfissional] = useState("R$ 29,90");
   const [precoCorporativo, setPrecoCorporativo] = useState("R$ 29,90");
+  const [ isLoading, setIsLoading ] = useState(false);
+  const [ planoSel, setPlanoSel ] = useState('');
 
   const handleChange = (plano) => {
     setSelected(plano);
@@ -56,6 +58,13 @@ function PlanosEmpresa() {
     }
   };
 
+  useEffect(() => {
+    if (planoSel) {
+      setIsLoading(true);
+      assinarPlano(planoSel);
+    }
+  }, [ planoSel ]);
+
   const assinarPlano = async (plano) => {
     const dadoPlano = {
       tipo: plano,
@@ -70,6 +79,7 @@ function PlanosEmpresa() {
       const response = await empresaFetch("/licenca", fetchOpts);
 
       const jsonBody = await response.json();
+      setIsLoading(false);
       if (response.status == 200 && jsonBody?.success) {
         setLicenca(dadoPlano.tipo);
         alert(jsonBody.message);
@@ -78,6 +88,7 @@ function PlanosEmpresa() {
         throw new Error(jsonBody.errors.join("\n"));
       }
     } catch (err) {
+      setIsLoading(false);
       alert("Falha ao obter licença:\n" + err.message);
     }
   };
@@ -152,10 +163,14 @@ function PlanosEmpresa() {
                 </ul>
                 <Button
                   variant="primary"
-                  onClick={() => assinarPlano("basico")}
+                  onClick={() => setPlanoSel('basico')}
                   className="plano__botao"
+                  disabled={!!isLoading}
                 >
                   Assinar
+                  {isLoading && planoSel == 'basico' && <span style={{display: 'inline-block', marginLeft: '0.8em', verticalAlign: 'center'}}>
+                      <LoadingOutlined />
+                  </span>}
                 </Button>
               </div>
             </Col>
@@ -184,10 +199,14 @@ function PlanosEmpresa() {
                 </ul>
                 <Button
                   variant="primary"
-                  onClick={() => assinarPlano("profissional")}
+                  onClick={() => setPlanoSel('profissional')}
                   className="plano__botao"
+                  disabled={!!isLoading}
                 >
                   Assinar
+                  {isLoading && planoSel == 'profissional' && <span style={{display: 'inline-block', marginLeft: '0.8em', verticalAlign: 'center'}}>
+                      <LoadingOutlined />
+                  </span>}
                 </Button>
               </div>
             </Col>
@@ -216,10 +235,14 @@ function PlanosEmpresa() {
                 </ul>
                 <Button
                   variant="primary"
-                  onClick={() => assinarPlano("corporativo")}
+                  onClick={() => setPlanoSel('corporativo')}
                   className="plano__botao"
+                  disabled={!!isLoading}
                 >
                   Assinar
+                  {isLoading && planoSel == 'corporativo' && <span style={{display: 'inline-block', marginLeft: '0.8em', verticalAlign: 'center'}}>
+                      <LoadingOutlined />
+                  </span>}
                 </Button>
               </div>
             </Col>

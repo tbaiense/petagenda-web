@@ -1,15 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container, Button, Form, Row, Col } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import "./Registrar.css";
 import { useAuth } from "../../contexts/UserContext";
 import NavBarPetAgenda from "../../components/NavBar/NavBarPetAgenda";
+import { LoadingOutlined } from "@ant-design/icons";
+
 
 function Registrar() {
   const navigate = useNavigate();
   const { apiFetch } = useAuth();
-
+  const [ isLoading, setIsLoading ] = useState(false);
   const [etapaAtual, setEtapaAtual] = useState(1);
   const etapas = [
     { id: 1, label: "Insira endereço de e-mail" },
@@ -23,11 +25,23 @@ function Registrar() {
     watch,
     trigger,
     formState: { errors },
+    getValues
   } = useForm();
 
   const senha = watch("senha");
 
-  const cadastrarUsuario = async (data) => {
+  useEffect(() => {
+    console.log(etapaAtual);
+  }, [etapaAtual]);
+
+  const cadastrarUsuario = async () => {
+
+    const data = getValues();
+
+    if (etapaAtual < 3) {
+      return;
+    }
+    setIsLoading(true);
     const usuario = {
       email: data.email,
       senha: data.senha,
@@ -46,6 +60,7 @@ function Registrar() {
       const body = await response.json();
 
       if (body?.success) {
+        setIsLoading(false);
         alert("Cadastro realizado com sucesso!");
         navigate("/login");
       } else {
@@ -58,17 +73,20 @@ function Registrar() {
     } catch (error) {
       alert("Erro de conexão. Tente novamente.");
     }
+    setIsLoading(false);
   };
 
   const onNext = async () => {
-    let camposValidar = [];
-
-    if (etapaAtual === 1) camposValidar = ["email"];
-    else if (etapaAtual === 2) camposValidar = ["senha", "confirmarSenha"];
-    else if (etapaAtual === 3) camposValidar = ["pergunta", "resposta"];
-
-    const valido = await trigger(camposValidar);
-    if (valido) setEtapaAtual(etapaAtual + 1);
+    if (etapaAtual < 3) {
+      let camposValidar = [];
+  
+      if (etapaAtual === 1) camposValidar = ["email"];
+      else if (etapaAtual === 2) camposValidar = ["senha", "confirmarSenha"];
+      else if (etapaAtual === 3) camposValidar = ["pergunta", "resposta"];
+  
+      const valido = await trigger(camposValidar);
+      if (valido) setEtapaAtual(etapaAtual + 1);
+    }
   };
 
   const renderConteudo = () => (
@@ -216,18 +234,24 @@ function Registrar() {
                   ))}
                 </div>
 
-                <Form onSubmit={handleSubmit(cadastrarUsuario)}>
+                <Form onSubmit={ (e) => {e.preventDefault(); onNext(); console.log('submit')}}>
                   {renderConteudo()}
 
                   <div className="botoes-navegacao mt-4 d-flex">
 
                     {etapaAtual < etapas.length ? (
-                      <Button variant="primary" onClick={onNext} className="botao">
+                      <Button variant="primary" type="button" onClick={onNext} className="botao">
                         Próximo
                       </Button>
                     ) : (
-                      <Button variant="primary" type="submit" className="botao">
+                      <Button variant="primary" type="submit" className="botao"
+                        disabled={!!isLoading}
+                        onClick={(e) => { if (etapaAtual == 3) cadastrarUsuario() }}
+                      >
                         Cadastrar-se
+                        {isLoading && <span style={{display: 'inline-block', marginLeft: '0.8em', verticalAlign: 'center'}}>
+                          <LoadingOutlined />
+                        </span>}
                       </Button>
                     )}
                   </div>

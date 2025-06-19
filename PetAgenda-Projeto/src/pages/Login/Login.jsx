@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../../contexts/UserContext";
 import NavBarPetAgenda from "../../components/NavBar/NavBarPetAgenda";
-
+import { LoadingOutlined } from '@ant-design/icons';
 import {
   Container,
   Col,
@@ -15,6 +15,7 @@ import {
 import "./Login.css";
 function Login() {
   const navigate = useNavigate();
+  const [ isLoading, setIsLoading ] = useState(false);
   const { 
     setToken, removeToken, 
     setUsuario, removeUsuario, 
@@ -24,9 +25,11 @@ function Login() {
 
   const checkCredentials = async (userCredentials) => {
     console.log('checando credenciais...');
-
+    setIsLoading(true);
     apiFetch('/usuario/login', {method: "POST", body: JSON.stringify(userCredentials)})
       .then( async (response) => {
+        setIsLoading(false);
+
         switch (response.status) {
           case 200: {
             const jsonResponse = await response.json();
@@ -53,7 +56,6 @@ function Login() {
             if (empresas && empresas[0]) {
               setEmpresa(empresas[0]);
             }
-
             navigate('/empresa/dashboard');
             break;
           };
@@ -118,9 +120,13 @@ function Login() {
                 </FloatingLabel>
                 <Button
                   type="submit"
-                  className="mt-4 mb-4 login__button mx-auto d-block"
+                  className="mt-4 mb-4 login__button mx-auto d-block" 
+                  disabled={!!isLoading}
                 >
-                  Enviar
+                  Entrar
+                  {isLoading && <span style={{display: 'inline-block', marginLeft: '0.8em', verticalAlign: 'center'}}>
+                          <LoadingOutlined />
+                  </span>}
                 </Button>
               </Form>
             </Row>

@@ -11,6 +11,7 @@
     "server": "json-server --watch src/data/db.json --port 5000"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.6.1",
     "@ant-design/v5-patch-for-react-19": "^1.0.3",
     "@fortawesome/free-brands-svg-icons": "^6.7.2",
     "@fortawesome/free-regular-svg-icons": "^6.7.2",
