@@ -33,6 +33,44 @@ const ServicoExecutado = () => {
   const [devolverMesmo, setDevolverMesmo] = useState(false);
   const { empresaFetch, validar } = useAuth();
 
+  const [ preco, setPreco ] = useState({ precoServico: 0, precoPet: 0, precoTotal: 0});
+  const [ servicoSel, setServicoSel ] = useState({});
+
+  // Lógica de cálculo de preços
+  async function popularPreco() {
+    const idServ = servicoSel;
+    
+    if (Number.isInteger(idServ) && idServ != 0) {
+      const resp = await empresaFetch(`/servico-oferecido/${idServ}`);
+  
+      if (resp.status != 200) {
+        return;
+      }
+      
+      const jsonBody = await resp.json();
+      const { preco: precoObtido, tipoPreco } = jsonBody.servicoOferecido;
+  
+      let pets = 0, servico = 0, total = 0;
+      if (tipoPreco == 'pet') {
+        pets = precoObtido;
+        total = pets * petsSel.length;
+      } else if (tipoPreco == 'servico') {
+        servico = precoObtido;
+        total = servico;
+      }
+      
+      setPreco({precoPet: pets, precoServico: servico, precoTotal: total});
+    } else {
+      setPreco({precoPet: 0, precoServico: 0, precoTotal: 0});
+
+    }
+  }
+  
+  useEffect(() => {
+    popularPreco();
+  }, [petsSel, servicoSel])
+
+
   async function popularServicosOferecidos() {
     empresaFetch("/servico-oferecido")
       .then((res) => res.json())
@@ -304,12 +342,19 @@ const ServicoExecutado = () => {
               <Form.Group controlId="formServico">
                 <Form.Label>Serviço</Form.Label>
                 <Form.Select
+                  value={servicoSel}
                   {...register("servico", {
                     required: {
                       value: true,
                       message: "Selecione o serviço para o agendamento",
                     },
                   })}
+                  onInput={ (e) => {
+                    // const novoServ = getValues('servico')
+                    const novoServ = e.target.value;
+                    setServicoSel(+novoServ);
+                    console.log('rodei: ' ,novoServ)
+                  }}
                 >
                   <option value="">Selecione um serviço</option>
                   {servicos.map((servico) => (
@@ -354,66 +399,46 @@ const ServicoExecutado = () => {
               </Form.Group>
             </Col>
           </Row>
-                    <Row className="mt-3">
+          {/* Preços */}
+          <Row className="mt-3">
             <Col>
               <Form.Group>
-                <Form.Label>Valor Total:</Form.Label>
+                <Form.Label>Preço por pets:</Form.Label>
                 <InputGroup>
                   <InputGroup.Text>R$</InputGroup.Text>
                   <Form.Control
                     type="text"
-                    placeholder="Valor total dos pets"
-                    {...register("precoPet", {
-                      onChange: (e) => {
-                        let preco = getValues('precoPet');
-                        preco = preco.replaceAll(/[^\d,.]/g, '');
-                        preco = preco.replace('.', ',')
-
-                        setValue('precoPet', preco);
-                      }
-                    })}
+                    placeholder="Valor por pet"
+                    value={preco.precoPet}
+                    readOnly={true}
                   />
                 </InputGroup>
               </Form.Group>
             </Col>
             <Col>
               <Form.Group>
-                <Form.Label>Valor do Serviço:</Form.Label>
+                <Form.Label>Preço do Serviço:</Form.Label>
                 <InputGroup>
                   <InputGroup.Text>R$</InputGroup.Text>
                   <Form.Control
                     type="text"
                     placeholder="Valor do Serviço"
-                    {...register("precoServico", {
-                      onChange: (e) => {
-                        let preco = getValues('precoServico');
-                        preco = preco.replaceAll(/[^\d,.]/g, '');
-                        preco = preco.replace('.', ',')
-
-                        setValue('precoServico', preco);
-                      }
-                    })}
+                    value={preco.precoServico}
+                    readOnly={true}
                   />
                 </InputGroup>
               </Form.Group>
             </Col>
             <Col>
               <Form.Group>
-                <Form.Label>?</Form.Label>
+                <Form.Label>Preço total</Form.Label>
                 <InputGroup>
                   <InputGroup.Text>R$</InputGroup.Text>
                   <Form.Control
                     type="text"
-                    placeholder="Valor "
-                    {...register("precoServico", {
-                      onChange: (e) => {
-                        let preco = getValues('precoServico');
-                        preco = preco.replaceAll(/[^\d,.]/g, '');
-                        preco = preco.replace('.', ',')
-
-                        setValue('precoServico', preco);
-                      }
-                    })}
+                    placeholder="Valor total"
+                    value={preco.precoTotal}
+                    readOnly={true}
                   />
                 </InputGroup>
               </Form.Group>
