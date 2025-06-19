@@ -1,0 +1,39 @@
+.beforeModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 5;
+
+}
+.cardModal {
+  position: relative;
+  transform: translate(123%, 50%);
+  background-color: white;
+  border-radius: 12px;
+  width: 30vw;
+  padding: 1.5rem;
+}
+.containerFechar {
+  position: absolute;
+  top: 0px;
+  right: 10px;
+}
+.posicaoBotao{
+  position: relative;
+  transform: translate(100%,-60%);
+}
+.botaoFechar {
+  background-color: white;
+  border: none;
+  font-size: x-large;
+  cursor: pointer;
+  padding: 0;
+}
+.onlyTitle h2{
+  text-align: center;
+  top: 0;
+  padding-bottom: 1rem;
+}
