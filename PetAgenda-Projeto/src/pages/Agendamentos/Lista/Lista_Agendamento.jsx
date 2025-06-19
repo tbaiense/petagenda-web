@@ -62,7 +62,7 @@ const Lista_Agendamentos = () => {
 
     async function popularServicosRealizados() {
         const limit = 6;
-        const resp = await empresaFetch(`/servico-realizado?limit=${limit}&page=${paginaAtual}`);
+        const resp = await empresaFetch(`/servico-realizado?limit=${limit}&page=${paginaAtualServ}`);
 
         if (resp.status != 200) {
             console.log('falha ao obter serviços realizados!')
@@ -79,6 +79,7 @@ const Lista_Agendamentos = () => {
             }
 
             setPaginasServ(pageList);
+            console.log(pageList);
             setServicosRealizados(servList);
         }
     }
