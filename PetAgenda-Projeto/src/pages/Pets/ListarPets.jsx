@@ -16,61 +16,61 @@ const ListarPets = () => {
     const [ pesquisando, setPesquisando ] = useState(false);
     const { empresaFetch } = useAuth();
 
-     async function obterPets() {
-        return [
-            {
-                id: 1,
-                nome: "Rex",
-                sexo: "M",
-                especie: { nome: "Cachorro" },
-                raca: "Labrador",
-                cor: "Amarelo",
-                porte: "G",
-                eCastrado: true,
-                estadoSaude: "Saudável, com vacinas em dia.",
-                comportamento: "Muito brincalhão e amigável.",
-                dono: { nome: "João Silva" }
-            },
-            {
-                id: 2,
-                nome: "Mimi",
-                sexo: "F",
-                especie: { nome: "Gato" },
-                raca: "Persa",
-                cor: "Branco",
-                porte: "P",
-                eCastrado: false,
-                estadoSaude: "Alergia leve, sendo tratada.",
-                comportamento: "Tímida com estranhos.",
-                dono: { nome: "Maria Oliveira" }
-            },
-            {
-                id: 3,
-                nome: "Thor",
-                sexo: "M",
-                especie: { nome: "Cachorro" },
-                raca: "Pitbull",
-                cor: "Cinza",
-                porte: "G",
-                eCastrado: true,
-                estadoSaude: "Excelente",
-                comportamento: "Protetor e leal.",
-                dono: { nome: "Carlos Pereira" }
-            },
-        ];
-    }
-
-    // async function obterPets() {
-    //     try{
-    //         const resPets = await empresaFetch('/pet');
-            
-    //         const jsonBody = await resPets.json();
-    //         return jsonBody.pets;
-    //     } catch(err) {
-    //         err.message = "Falha ao obter pets cadastrados: " + err.message;
-    //         throw err;
-    //     }
+    //  async function obterPets() {
+    //     return [
+    //         {
+    //             id: 1,
+    //             nome: "Rex",
+    //             sexo: "M",
+    //             especie: { nome: "Cachorro" },
+    //             raca: "Labrador",
+    //             cor: "Amarelo",
+    //             porte: "G",
+    //             eCastrado: true,
+    //             estadoSaude: "Saudável, com vacinas em dia.",
+    //             comportamento: "Muito brincalhão e amigável.",
+    //             dono: { nome: "João Silva" }
+    //         },
+    //         {
+    //             id: 2,
+    //             nome: "Mimi",
+    //             sexo: "F",
+    //             especie: { nome: "Gato" },
+    //             raca: "Persa",
+    //             cor: "Branco",
+    //             porte: "P",
+    //             eCastrado: false,
+    //             estadoSaude: "Alergia leve, sendo tratada.",
+    //             comportamento: "Tímida com estranhos.",
+    //             dono: { nome: "Maria Oliveira" }
+    //         },
+    //         {
+    //             id: 3,
+    //             nome: "Thor",
+    //             sexo: "M",
+    //             especie: { nome: "Cachorro" },
+    //             raca: "Pitbull",
+    //             cor: "Cinza",
+    //             porte: "G",
+    //             eCastrado: true,
+    //             estadoSaude: "Excelente",
+    //             comportamento: "Protetor e leal.",
+    //             dono: { nome: "Carlos Pereira" }
+    //         },
+    //     ];
     // }
+
+    async function obterPets() {
+        try{
+            const resPets = await empresaFetch('/pet');
+            
+            const jsonBody = await resPets.json();
+            return jsonBody.pets;
+        } catch(err) {
+            err.message = "Falha ao obter pets cadastrados: " + err.message;
+            throw err;
+        }
+    }
 
     async function popularPets() {
         const petsObtidos = await obterPets();
@@ -120,10 +120,13 @@ const ListarPets = () => {
                     <div>
                         { pets && pets.map(p => {
                             return (
-                                <PetListaCard key={p.id} pet={{nome: p.nome, sexo: p.sexo, especie: p.especie.nome, dono: p.dono.nome}} showInfo={() => {
-                                    setPetView(p);
-                                    setShowInfo(true);
-                                }} />
+                                <PetListaCard key={p.id} 
+                                    pet={{nome: p.nome, sexo: p.sexo, especie: p.especie.nome, dono: p.dono.nome}} 
+                                    showInfo={() => {
+                                        setPetView(p);
+                                        setShowInfo(true);
+                                    }} 
+                                />
                             );
                         })}
                         

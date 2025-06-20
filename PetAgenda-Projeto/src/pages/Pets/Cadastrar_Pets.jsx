@@ -37,7 +37,7 @@ const CadastrarPets = () => {
         const idPet = jsonBody.pet.id;
 
         alert('cadastrado');
-        navigate(`/empresa/pets/${idPet}`);
+        navigate(`/empresa/pets/lista`);
       } else {
           alert('erro ao cadastrar pet');
       }
