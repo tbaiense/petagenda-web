@@ -29,29 +29,40 @@ const CardAgendamento = ({ agendamento, funcDisponiveis }) => {
   });
   return (
     <>
-        <tr>
-            <td>{agendamento.servico.nome}</td>
-            <td>{agendamento.cliente.nome}</td>
-            <td>{funcionario.nome}</td>
-            <td><div>{agendamento.dtHrMarcada.replace(/ \d\d:\d\d:\d\d/, '')}</div><br></br>~2 meses</td>
-            <td>{agendamento.dtHrMarcada.replace(/\d{4}-\d{2}-\d{2} /, '')}</td>
-            <td>{estado.id}</td>
-            <td>{`R$ ${agendamento.valor.total}`}</td>
-            <td>
-                <Button className="form-button" variant="primary" onClick={handleShowEditarModal}>Atualizar</Button>
-                <Button className="form-button" variant="success">Visualizar</Button>
-            </td>
-        </tr>
-        <Modal_Atualizar_Rapido_Agendamento
-            funcDisponiveis={funcDisponiveis} 
-            agendamento={agendamento} 
-            estado={estado} 
-            setEstado={setEstado} 
-            funcionario={funcionario} 
-            setFuncionario={setFuncionario} 
-            show={show} 
-            setShow={setShow}>
-        </Modal_Atualizar_Rapido_Agendamento>
+      <tr>
+        <td>{agendamento.servico.nome}</td>
+        <td>{agendamento.cliente.nome}</td>
+        <td>{funcionario.nome}</td>
+        <td>
+          <div>{agendamento.dtHrMarcada.replace(/ \d\d:\d\d:\d\d/, "")}</div>
+          <br></br>~2 meses
+        </td>
+        <td>{agendamento.dtHrMarcada.replace(/\d{4}-\d{2}-\d{2} /, "")}</td>
+        <td>{estado.id}</td>
+        <td>{`R$ ${agendamento.valor.total}`}</td>
+        <td>
+          <Button
+            className="form-button"
+            variant="primary"
+            onClick={handleShowEditarModal}
+          >
+            Atualizar
+          </Button>
+          <Button className="form-button" variant="success">
+            Visualizar
+          </Button>
+        </td>
+      </tr>
+      <Modal_Atualizar_Rapido_Agendamento
+        funcDisponiveis={funcDisponiveis}
+        agendamento={agendamento}
+        estado={estado}
+        setEstado={setEstado}
+        funcionario={funcionario}
+        setFuncionario={setFuncionario}
+        show={show}
+        setShow={setShow}
+      ></Modal_Atualizar_Rapido_Agendamento>
     </>
   );
 };
