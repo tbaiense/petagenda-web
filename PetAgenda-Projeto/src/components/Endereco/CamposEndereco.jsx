@@ -8,6 +8,7 @@ const CamposEndereco = ({
   prefix, register, errors,
   formConfigs,
   estadoPadrao,
+  isDisabled = false
 }) => {
   /* Thiago >>> Castro, modifiquei o componente para ficar um pouco mais fácil
                 de usar quando tem apenas um endereço, como no caso do cadastro
@@ -31,7 +32,6 @@ const CamposEndereco = ({
 
   const errorsObj = errors[prefix];
   const [ estadoSel, setEstadoSel ] = useState(0);
-
   return (
     <div className={styles.enderecoContainer}>
       <div className={styles.linhaEndereco}>
@@ -43,18 +43,20 @@ const CamposEndereco = ({
             // value={cep ?? ''}
             defaultValue={endereco?.cep || ""}
             placeholder="12345678"
+            disabled={isDisabled}
+            onInput={(e) => {
+              let value = e.target.value;
+
+              if (value && value.length > 0) {
+                value = value.replaceAll(/[^0-9]/g, '');
+                value = value.substring(0, 8);
+              }
+              setValue(e.target.name, value);
+              setCep(e.target.value);
+            }}
             { ...register(`${prefix}.cep`,
               {
-                required: (formConfigs) ? formConfigs.isRequired : false,
-                onChange: (e) => {
-                  let value = e.target.value;
-
-                  if (value && value.length > 0) {
-                    value = value.replaceAll(/[^0-9]/g, '');
-                    value = value.substring(0, 8);
-                  }
-                  setValue(e.target.name, value);
-                },
+                required: false,
                 pattern: {
                   value: /^\d{5,5}\d{3,3}$/,
                   message: "Formato esperado: 12345678 ou 12345-678 "
@@ -71,6 +73,7 @@ const CamposEndereco = ({
             // onInput={handleChange}
             defaultValue={endereco?.logradouro || ""}
             type="text"
+            disabled={isDisabled}
             placeholder="Rua Feliz dos Palmares..."
             {...register(`${prefix}.logradouro`, { required: { value: (formConfigs) ? formConfigs.isRequired : true, message: "Logradouro é obrigatório" } })}
           />
@@ -84,6 +87,7 @@ const CamposEndereco = ({
             defaultValue={endereco?.numero || ""}
             // value={endereco.numero ?? ''}
             // onInput={handleChange}
+            disabled={isDisabled}
             placeholder="Apto. 10, bloco 5..."
             {...register(`${prefix}.numero`, { required: { value: (formConfigs) ? formConfigs.isRequired : true, message: "Número é obrigatório" } })}
           />
@@ -98,6 +102,7 @@ const CamposEndereco = ({
             defaultValue={endereco?.bairro || ""}
             // value={endereco.bairro ?? ''}
             // onInput={handleChange}
+            disabled={isDisabled}
             placeholder="Bairro das Palmeiras"
             {...register(`${prefix}.bairro`, { required: { value: (formConfigs) ? formConfigs.isRequired : true, message: "Bairro é obrigatório" } })}
           />
@@ -109,6 +114,7 @@ const CamposEndereco = ({
             type="text"
             // value={endereco.cidade ?? ''}
             // onInput={handleChange}
+            disabled={isDisabled}
             defaultValue={endereco?.cidade || ""}
             placeholder="Cidade do Futuro..."
             {...register(`${prefix}.cidade`, { required: { value: (formConfigs) ? formConfigs.isRequired : true, message: "Cidade é obrigatória" } })}
@@ -120,6 +126,7 @@ const CamposEndereco = ({
           <select
             // value={endereco.uf ?? ''} 
             // onInput={handleChange}
+            disabled={isDisabled}
             defaultValue={estadoPadrao}
             {...register(`${prefix}.estado`, 
             { required: { value: (formConfigs) ? formConfigs.isRequired : true, message: "Unidade Federativa é obrigatória" },

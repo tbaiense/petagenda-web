@@ -29,7 +29,6 @@ const EditarCliente = () => {
 
   useEffect(() => {
     const clienteRec = location.state;
-    console.log('loc: ', location);
     if (clienteRec) {
       setClienteRecebido(clienteRec);
       setValue('nome', clienteRec.nome);
@@ -110,24 +109,10 @@ const EditarCliente = () => {
 
   // Verificação de CEP
   useEffect(() => {
-    const callback = subscribe({
-      name: [ "endereco.cep" ],
-      formState: {
-        values: true,
-        touchedFields: true,
-        isValid: true
-      },
-      callback: ({values}) => {
-        if (values.endereco && values.endereco.cep?.length == 8 && values.endereco.cep.match(/^\d{5,5}\d{3,3}$/)) {
-          const { cep } = values.endereco;
-          preencherEnderecosCEP(cep);
-        }
-      }
-    });
-
-    return () => callback();
-
-  }, [subscribe]);
+    if (cep?.length == 8 && cep.match(/^\d{5,5}\d{3,3}$/)) {
+      preencherEnderecosCEP(cep);
+    }
+  }, [cep]);
 
   function handleEnderecoChange(e) {
     const newEnd = {...endereco };
@@ -185,7 +170,7 @@ const EditarCliente = () => {
   };
 
   async function editarCliente(objCli) {
-    return empresaFetch('/cliente', { method: "PUT", body: JSON.stringify(objCli) })
+    return empresaFetch(`/cliente/${objCli.id}`, { method: "PUT", body: JSON.stringify(objCli) })
     .then( async res => { 
         if (res.status == 200) {
             const json = await res.json()
@@ -200,6 +185,7 @@ const EditarCliente = () => {
   const onSubmit = async (data) => {
     console.log('submit: ', data)
     const objCli = {
+      id: clienteRecebido.id,
       ...data,
       servico: undefined,
       servicoRequerido: servicosSelecionados.map( s => ({ servico: s.id })),
@@ -213,7 +199,7 @@ const EditarCliente = () => {
         reset();
         setServicosSelecionados([]);
 
-        navigate(`/empresa/clientes/${jsonResp.cliente.id}`);
+        navigate(`/empresa/clientes/lista`);
       }
     }
   }
