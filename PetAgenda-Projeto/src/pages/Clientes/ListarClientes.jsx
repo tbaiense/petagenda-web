@@ -154,9 +154,9 @@ const ListarClientes = () => {
                             <div>
                                 <label htmlFor="">Serviço(s) Favorito(s):</label>
                                 {clientView.servicoRequerido?.length > 0 ? (
-                                    clientView.servicoRequerido.map((servico, index) => (
-                                        <div className={styles.servicosFavority}>
-                                            <span readOnly key={index}>{servico.nome}</span>
+                                    clientView.servicoRequerido.map((servico) => (
+                                        <div key={servico.servico} className={styles.servicosFavority}>
+                                            <span readOnly >{servico.nome}</span>
                                         </div>
                                     ))
                                 ) : (

@@ -76,24 +76,10 @@ const CadastrarClientes = () => {
 
   // Verificação de CEP
   useEffect(() => {
-    const callback = subscribe({
-      name: [ "endereco.cep" ],
-      formState: {
-        values: true,
-        touchedFields: true,
-        isValid: true
-      },
-      callback: ({values}) => {
-        if (values.endereco && values.endereco.cep?.length == 8 && values.endereco.cep.match(/^\d{5,5}\d{3,3}$/)) {
-          const { cep } = values.endereco;
-          preencherEnderecosCEP(cep);
-        }
-      }
-    });
-
-    return () => callback();
-
-  }, [subscribe]);
+    if (cep?.length == 8 && cep.match(/^\d{5,5}\d{3,3}$/)) {
+      preencherEnderecosCEP(cep);
+    }
+  }, [cep]);
 
   function handleEnderecoChange(e) {
     const newEnd = {...endereco };
@@ -102,6 +88,7 @@ const CadastrarClientes = () => {
     setEndereco(newEnd);
     setValue(e.target.name.split('.')[1], e.target.value);
   }
+  
   // Pego os serviços oferecidos do banco da empresa
   useEffect(() => {
     if (validar) {
@@ -157,7 +144,7 @@ const CadastrarClientes = () => {
         reset();
         setServicosSelecionados([]);
 
-        navigate(`/empresa/clientes/${jsonResp.cliente.id}`);
+        navigate(`/empresa/clientes/lista`);
       }
     }
   }

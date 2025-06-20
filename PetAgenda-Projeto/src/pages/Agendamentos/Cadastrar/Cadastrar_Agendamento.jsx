@@ -10,7 +10,7 @@ import { useAuth } from "../../../contexts/UserContext";
 import PetServicoCardList from "../../../components/CardPet/PetServicoCardList";
 import CamposEndereco from "../../../components/Endereco/CamposEndereco";
 import "../../../components/CardPet/PetServicoCard.css";
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const Agendamento = () => {
   const { register, handleSubmit, subscribe, reset, watch, formState: { errors }, setValue, getValues } = useForm();
@@ -25,6 +25,10 @@ const Agendamento = () => {
   const [ servicoSel, setServicoSel ] = useState({});
   const [ funcionarios, setFuncionarios ] = useState([]);
   const { empresaFetch, validar } = useAuth();
+  const [ cepBuscar, setCepBuscar ] = useState("");
+  const [ cepDevolver, setCepDevolver ] = useState("");
+  const navigate = useNavigate();
+  
   const location = useLocation();
 
   // Remover pet da lista
@@ -117,64 +121,48 @@ const Agendamento = () => {
     let enderecos = [];
 
     if (formData.enderecoBuscar || formData.enderecoDevolver) {
-      if (devolverMesmo) {
-        const {
-          logradouro,
-          numero,
-          bairro,
-          cidade,
-          estado,
-        } = formData.enderecoBuscar;
+      let endBuscar;
 
+      if (formData.enderecoBuscar) {
+        endBuscar = {
+          logradouro: formData.enderecoBuscar.logradouro,
+          numero: formData.enderecoBuscar.numero,
+          bairro: formData.enderecoBuscar.bairro,
+          cidade: formData.enderecoBuscar.cidade,
+          estado: formData.enderecoBuscar.estado,
+        };
+      }
+
+      if (devolverMesmo) {
         enderecos.push(
           {
             tipo: "buscar-devolver",
-            logradouro: logradouro,
-            numero: numero,
-            bairro: bairro,
-            cidade: cidade,
-            estado: estado
+            ...endBuscar
           }
         );
       } else {
         if (incluirBuscar) {
-          const {
-            logradouro,
-            numero,
-            bairro,
-            cidade,
-            estado,
-          } = formData.enderecoBuscar;
-  
           enderecos.push(
             {
               tipo: "buscar",
-              logradouro: logradouro,
-              numero: numero,
-              bairro: bairro,
-              cidade: cidade,
-              estado: estado
+              ...endBuscar
             }
           );
-        }
-
-        if (incluirDevolver) {
-          const {
-            logradouro,
-            numero,
-            bairro,
-            cidade,
-            estado,
-          } = formData.enderecoBuscar;
+        } 
+        
+        if (incluirDevolver && formData.enderecoDevolver) {
+          const endDevolver = {
+            logradouro: formData.enderecoDevolver.logradouro,
+            numero: formData.enderecoDevolver.numero,
+            bairro: formData.enderecoDevolver.bairro,
+            cidade: formData.enderecoDevolver.cidade,
+            estado: formData.enderecoDevolver.estado,
+          };
   
           enderecos.push(
             {
               tipo: "devolver",
-              logradouro: logradouro,
-              numero: numero,
-              bairro: bairro,
-              cidade: cidade,
-              estado: estado
+              ...endDevolver
             }
           );
         }
@@ -219,7 +207,6 @@ const Agendamento = () => {
     const newEnd = {...endereco };
     newEnd[e.target.name.split('.')[1]] = e.target.value;
     
-    setEndereco(newEnd);
     setValue(e.target.name.split('.')[1], e.target.value);
   }
 
@@ -247,6 +234,7 @@ const Agendamento = () => {
       if (endRes.status == 200) {
 
         const jsonBody = await endRes.json();
+
         if (!jsonBody.erro) {
           const endFound = {
             logradouro: jsonBody.logradouro,
@@ -255,12 +243,8 @@ const Agendamento = () => {
             cidade: jsonBody.localidade,
             estado: jsonBody.uf,
           }
-  
-          const entries = Object.entries(endFound);
-  
-          for (const [key, value] of entries) {
-            setValue(`${prefix}.${key}`, value, { shouldTouch: true });
-          }
+          
+          preencherEndereco(prefix, endFound);
         }
       } else {
         throw new Error("Falha ao obter informaçoes de endereço a partir de CEP");
@@ -270,6 +254,13 @@ const Agendamento = () => {
     }
   }
 
+  function preencherEndereco(prefix, end) {
+    const entries = Object.entries(end);
+
+    for (const [key, value] of entries) {
+      setValue(`${prefix}.${key}`, value, { shouldTouch: true });
+    }
+  }
 
   // Verificação de CEP de busca
   useEffect(() => {
@@ -322,6 +313,7 @@ const Agendamento = () => {
       if (jsonBody) {
         if (resp.status == 200) {
           alert('cadastrado!')
+          navigate('/empresa/agendamentos/lista');
           reset();
         } else {
           throw new Error(jsonBody.errors[0]);
@@ -542,8 +534,11 @@ const Agendamento = () => {
               <Accordion.Header>
                   <Stack direction="horizontal" gap={3}>
                   <Form.Group className="mb-3" controlId="formBasicEmail">
-                      <FormCheck type="switch" id="buscarChk" onChange={ e => {
+                      <FormCheck type="switch" id="buscarChk" checked={incluirBuscar} onChange={ e => {
                         setIncluirBuscar(e.target.checked);
+                        if (!e.target.checked && devolverMesmo) {
+                          setDevolverMesmo(false);
+                        }
                       }}></FormCheck>
                     </Form.Group>  
                   <span>Buscar</span>
@@ -552,10 +547,13 @@ const Agendamento = () => {
               <Accordion.Body>
                 <CamposEndereco 
                   setValue={setValue}
+                  cep={cepBuscar}
+                  setCep={setCepBuscar}
                   handleChange={handleEnderecoChange}
-                  formConfigs={{ isRequired: incluirBuscar }} 
+                  formConfigs={{ isRequired: incluirBuscar || devolverMesmo && incluirDevolver}} 
                   register={register} 
-                  errors={errors} 
+                  errors={errors}
+                  isDisabled={!incluirBuscar}
                   prefix={'enderecoBuscar'}
                 />
               </Accordion.Body>
@@ -564,8 +562,11 @@ const Agendamento = () => {
               <Accordion.Header>
                   <Stack direction="horizontal" gap={3}>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
-                      <FormCheck type="switch" id="devolverChk" onChange={ e => {
+                      <FormCheck type="switch" id="devolverChk" checked={incluirDevolver} onChange={ e => {
                         setIncluirDevolver(e.target.checked);
+                        if (!e.target.checked && devolverMesmo) {
+                          setDevolverMesmo(false);
+                        }
                       }}></FormCheck>
                     </Form.Group>  
                     <span>Devolver</span>
@@ -574,19 +575,25 @@ const Agendamento = () => {
               </Accordion.Header>
               <Accordion.Body>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
-                      <FormCheck type="switch" id="devolverMesmo" label="O mesmo do anterior" 
+                      <FormCheck type="switch" id="devolverMesmo" label="O mesmo do anterior" checked={devolverMesmo} disabled={!incluirDevolver || !incluirBuscar}
                         onChange={(e) => {
                           setDevolverMesmo(e.target.checked);
+                          if (e.target.checked) {
+                            preencherEndereco('enderecoDevolver', {...(getValues('enderecoBuscar')), cep: ""});
+                          }
                         }}
                       ></FormCheck>
                     </Form.Group>  
                 <CamposEndereco 
                   setValue={setValue}
+                  cep={cepDevolver}
+                  setCep={setCepDevolver}
                   handleChange={handleEnderecoChange}
-                  formConfigs={{ isRequired: incluirDevolver }} 
+                  formConfigs={{ isRequired: incluirDevolver && !devolverMesmo }} 
                   register={register} 
                   errors={errors} 
                   prefix={'enderecoDevolver'}
+                  isDisabled={!incluirDevolver || devolverMesmo}
                 />
               </Accordion.Body>
             </Accordion.Item>
