@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import NavEmpresa from "../../../components/navegacaoEmpresa/NavEmpresa.jsx";
 
 const EditarEmpresa = () => {
-  const { setEmpresa, apiFetch, getToken } = useAuth();
+  const { setEmpresa, empresaFetch, getToken, licenca, setLicenca } = useAuth();
   const {state} = useLocation();
   const navigate = useNavigate();
   const {
@@ -41,12 +41,8 @@ const EditarEmpresa = () => {
       // }
     };
 
-    const res = await apiFetch("/empresa", {
+    const res = await empresaFetch("", {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${getToken()}`,
-      },
       body: JSON.stringify(objEmp),
     });
 
@@ -54,6 +50,7 @@ const EditarEmpresa = () => {
 
     if (res.status == 200) {
       setEmpresa(jsonBody.empresa);
+      setLicenca(licenca);
       alert("Empresa atualizada com sucesso!");
       navigate("/empresa/informacoes");
     } else {
@@ -78,7 +75,7 @@ const EditarEmpresa = () => {
                 <label className="form-label">Nome Fantasia</label>
                 <input
                   type="text"
-                  value={state.nomeFantasia}
+                  defaultValue={state.nomeFantasia}
                   className={`form-control ${
                     errors.NomeFantasia ? "is-invalid" : ""
                   }`}
@@ -105,7 +102,7 @@ const EditarEmpresa = () => {
                 <label className="form-label">Razão Social</label>
                 <input
                   type="text"
-                  value={state.razaoSocial}
+                  defaultValue={state.razaoSocial}
                   className={`form-control ${
                     errors.RazaoSocial ? "is-invalid" : ""
                   }`}
@@ -132,12 +129,13 @@ const EditarEmpresa = () => {
                 <label className="form-label">CNPJ</label>
                 <input
                   type="text"
+                  disabled={true}
                   className={`form-control ${errors.CNPJ ? "is-invalid" : ""}`}
-                  value={state.cnpj}
+                  defaultValue={state.cnpj}
                   {...register("CNPJ", {
                     required: "O CNPJ é obrigatório",
                     pattern: {
-                      value: /^[0-9]{10}$/,
+                      value: /^[0-9]{14}$/,
                       message: "O CNPJ deve conter exatamente 14 números",
                     },
                   })}
@@ -152,7 +150,7 @@ const EditarEmpresa = () => {
                 <textarea
                   className={`form-control ${errors.Lema ? "is-invalid" : ""}`}
                   rows={3}
-                  value={state.lema}
+                  defaultValue={state.lema}
                   placeholder="Nosso lema é..."
                   {...register("Lema", {
                     minLength: {
@@ -174,7 +172,7 @@ const EditarEmpresa = () => {
                 <label className="form-label">Imagem de Perfil</label>
                 <input
                   type="file"
-                  value={state.foto}
+                  defaultValue={state.foto}
                   className="form-control"
                   {...register("pathImgFile")}
                 />
