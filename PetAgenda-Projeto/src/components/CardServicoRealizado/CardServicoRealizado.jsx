@@ -1,19 +1,9 @@
 import { Button } from "react-bootstrap";
 import { useState } from "react";
-import Modal_Atualizar_Rapido_ServicoRealizado from '../../pages/Agendamentos/Lista/Modal_Atualizar_Rapido_ServicoRealizado.jsx'
 
-const CardServicoRealizado = ({ servicoRealizado, setServicosRealizados }) => {
-  const [show, setShow] = useState(false);
-
-  const handleShowEditarModal = () => {
-    setShow(true);
-  };
-
-  const atualizarNaLista = (novoServico) => {
-    setServicosRealizados((prev) =>
-      prev.map((s) => (s.id === novoServico.id ? novoServico : s))
-    );
-  };
+const CardServicoRealizado = ({ 
+  servicoRealizado, handleEditar
+}) => {
 
   return (
     <>
@@ -39,7 +29,11 @@ const CardServicoRealizado = ({ servicoRealizado, setServicosRealizados }) => {
         </td>
         <td>{`R$ ${servicoRealizado.valor.total}`}</td>
         <td>
-          <Button className="form-button" variant="primary" onClick={handleShowEditarModal}>
+          <Button 
+            className="form-button" 
+            variant="primary" 
+            onClick={(e) => handleEditar(servicoRealizado)}
+          >
             Atualizar
           </Button>
           <Button className="form-button" variant="success">
@@ -47,12 +41,6 @@ const CardServicoRealizado = ({ servicoRealizado, setServicosRealizados }) => {
           </Button>
         </td>
       </tr>
-      <Modal_Atualizar_Rapido_ServicoRealizado
-        show={show}
-        setShow={setShow}
-        servicoRealizado={servicoRealizado}
-        setServicoRealizado={atualizarNaLista}
-      />
     </>
   );
 };

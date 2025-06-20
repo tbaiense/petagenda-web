@@ -21,7 +21,7 @@ import { useForm } from "react-hook-form";
 import { useAuth } from "../../../contexts/UserContext";
 import "../Lista/Lista_Agendamento.module.css";
 import { useNavigate } from "react-router-dom";
-import Modal_Atualizar_Rapido_Agendamento from "./Modal_Atualizar_Rapido_Agendamento";
+import Modal_Atualizar_Rapido_ServicoRealizado from "./Modal_Atualizar_Rapido_ServicoRealizado";
 import CardAgendamento from "../../../components/CardAgendamento/CardAgendamento";
 import CardServicoRealizado from "../../../components/CardServicoRealizado/CardServicoRealizado";
 
@@ -36,7 +36,9 @@ const Lista_Agendamentos = () => {
   const [agendamentos, setAgendamentos] = useState([]);
   const [servicosRealizados, setServicosRealizados] = useState([]);
   const [funcDisponiveis, setFuncDisponiveis] = useState([]);
-  
+  const [ showModalServ, setShowModalServ ] = useState(false);
+  const [ editarServ, setEditarServ ] = useState({});
+
   async function popularFuncionarios() {
     empresaFetch("/funcionario")
       .then((res) => res.json())
@@ -106,9 +108,13 @@ const Lista_Agendamentos = () => {
       }
 
       setPaginasServ(pageList);
-      console.log(pageList);
       setServicosRealizados(servList);
     }
+  }
+
+  function handleEditarServ(serv) {
+    setShowModalServ(true);
+    setEditarServ(serv);
   }
 
   useEffect(() => {
@@ -130,14 +136,6 @@ const Lista_Agendamentos = () => {
       }, 2000);
     }
   }, [refresh]);
-
-  useEffect(() => {
-    console.log("refresh agendamentos!");
-  }, [agendamentos]);
-
-  useEffect(() => {
-    console.log("refresh serviços realizados!");
-  }, [servicosRealizados]);
 
   useEffect(() => {
     popularAgendamentos();
@@ -265,6 +263,15 @@ const Lista_Agendamentos = () => {
             )}
           </Tab>
           <Tab eventKey="servicos-executados" title="Serviços executados">
+            {
+              showModalServ && 
+              <Modal_Atualizar_Rapido_ServicoRealizado
+                show={showModalServ}
+                setShow={setShowModalServ}
+                servicoRealizado={editarServ}
+                handleRefresh={popularServicosRealizados}
+              />
+            }
             <Table striped>
               <thead>
                 <tr>
@@ -283,9 +290,9 @@ const Lista_Agendamentos = () => {
                   servicosRealizados.map((s) => {
                     return (
                       <CardServicoRealizado
-                        setServicosRealizados={setServicosRealizados}
                         key={s.id}
                         servicoRealizado={s}
+                        handleEditar={handleEditarServ}
                       />
                     );
                   })}
