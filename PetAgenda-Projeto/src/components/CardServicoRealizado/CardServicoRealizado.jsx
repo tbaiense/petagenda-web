@@ -1,3 +1,7 @@
+import { Button } from "react-bootstrap";
+import { useState } from "react";
+import Modal_Atualizar_Rapido_ServicoRealizado from '../../pages/Agendamentos/Lista/Modal_Atualizar_Rapido_ServicoRealizado.jsx'
+
 const CardServicoRealizado = ({ servicoRealizado, setServicosRealizados }) => {
   const [show, setShow] = useState(false);
 
