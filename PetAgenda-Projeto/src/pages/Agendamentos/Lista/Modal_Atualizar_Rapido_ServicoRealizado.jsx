@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
@@ -12,22 +12,34 @@ const Modal_Atualizar_Rapido_ServicoRealizado = ({
 }) => {
   const { empresaFetch } = useAuth();
   const handleClose = () => setShow(false);
-
+  const [funcionarios, setFuncionarios] = useState([]);
   const [novoServico, setNovoServico] = useState({
-    nome: servicoRealizado.servico.nome,
-    preco: servicoRealizado.valor.total,
-    observacoes: servicoRealizado.observacoes || "",
-    foto: servicoRealizado.foto || "",
+    inicio: servicoRealizado.inicio || "",
+    fim: servicoRealizado.fim || "",
+    funcionario: servicoRealizado.funcionario?.id || "",
   });
 
+  async function popularFuncionarios() {
+    empresaFetch("/funcionario")
+      .then((res) => res.json())
+      .then((data) => {
+        setFuncionarios(data.funcionarios);
+      })
+      .catch((error) => {
+        console.error("Erro ao buscar Funcionarios:", error);
+      });
+  }
+
   async function atualizarServico() {
+    const funcionarioSelecionado = funcionarios.find(
+      (f) => f.id === parseInt(novoServico.funcionario)
+    );
     empresaFetch(`/servico-realizado/${servicoRealizado.id}`, {
       method: "PUT",
       body: JSON.stringify({
-        nome: novoServico.nome,
-        preco: novoServico.preco,
-        observacoes: novoServico.observacoes,
-        foto: novoServico.foto,
+        inicio: novoServico.inicio,
+        fim: novoServico.fim,
+        funcionario: novoServico.funcionario,
       }),
     })
       .then((res) => res.json())
@@ -35,10 +47,9 @@ const Modal_Atualizar_Rapido_ServicoRealizado = ({
         if (data.success) {
           setServicoRealizado({
             ...servicoRealizado,
-            servico: { ...servicoRealizado.servico, nome: novoServico.nome },
-            valor: { ...servicoRealizado.valor, total: novoServico.preco },
-            observacoes: novoServico.observacoes,
-            foto: novoServico.foto,
+            inicio: novoServico.inicio,
+            fim: novoServico.fim,
+            funcionario: funcionarioSelecionado,
           });
           alert(data.message);
           handleClose();
@@ -52,6 +63,18 @@ const Modal_Atualizar_Rapido_ServicoRealizado = ({
       });
   }
 
+  useEffect(() => {
+    if (show) {
+      popularFuncionarios();
+
+      setNovoServico({
+        inicio: servicoRealizado.inicio || "",
+        fim: servicoRealizado.fim || "",
+        funcionario: servicoRealizado.funcionario?.id || "",
+      });
+    }
+  }, [show, servicoRealizado]);
+
   function handleSave() {
     atualizarServico();
   }
@@ -63,52 +86,44 @@ const Modal_Atualizar_Rapido_ServicoRealizado = ({
       </Modal.Header>
       <Modal.Body>
         <Form>
-          <Form.Group className="mb-3" controlId="formNomeServico">
-            <Form.Label>Nome do Serviço:</Form.Label>
+          <Form.Group className="mb-3" controlId="formInicioServico">
+            <Form.Label>Hora de Início:</Form.Label>
             <Form.Control
-              type="text"
-              value={novoServico.nome}
+              type="datetime-local"
+              value={novoServico.inicio}
               onChange={(e) =>
-                setNovoServico({ ...novoServico, nome: e.target.value })
+                setNovoServico({ ...novoServico, inicio: e.target.value })
               }
             />
           </Form.Group>
 
-          <Form.Group className="mb-3" controlId="formPrecoServico">
-            <Form.Label>Preço:</Form.Label>
+          <Form.Group className="mb-3" controlId="formFimServico">
+            <Form.Label>Hora de Finalização:</Form.Label>
             <Form.Control
-              type="number"
-              value={novoServico.preco}
+              type="datetime-local"
+              value={novoServico.fim}
               onChange={(e) =>
-                setNovoServico({ ...novoServico, preco: e.target.value })
+                setNovoServico({ ...novoServico, fim: e.target.value })
               }
             />
           </Form.Group>
 
-          <Form.Group className="mb-3" controlId="formObservacoes">
-            <Form.Label>Observações:</Form.Label>
-            <Form.Control
-              as="textarea"
-              rows={3}
-              value={novoServico.observacoes}
+          <Form.Group controlId="formFuncionario">
+            <Form.Label>Funcionário</Form.Label>
+            <Form.Select
+              value={novoServico.funcionario}
               onChange={(e) =>
-                setNovoServico({
-                  ...novoServico,
-                  observacoes: e.target.value,
-                })
+                setNovoServico({ ...novoServico, funcionario: e.target.value })
               }
-            />
-          </Form.Group>
-
-          <Form.Group className="mb-3" controlId="formFotoServico">
-            <Form.Label>Foto (URL ou nome):</Form.Label>
-            <Form.Control
-              type="text"
-              value={novoServico.foto}
-              onChange={(e) =>
-                setNovoServico({ ...novoServico, foto: e.target.value })
-              }
-            />
+            >
+              <option value="">Selecione um funcionário</option>
+              {funcionarios &&
+                funcionarios.map((funcionario) => (
+                  <option key={funcionario.id} value={funcionario.id}>
+                    {funcionario.nome}
+                  </option>
+                ))}
+            </Form.Select>
           </Form.Group>
         </Form>
       </Modal.Body>
