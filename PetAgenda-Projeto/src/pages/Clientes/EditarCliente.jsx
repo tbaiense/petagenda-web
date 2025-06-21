@@ -137,22 +137,24 @@ const EditarCliente = () => {
 
 
   useEffect(() => {
-    if (clienteRecebido && servicos.length != 0) {
+    if (clienteRecebido && servicos.length > 0) {
       console.log('rodei');
       console.log('servicos: ', servicos);
       console.log('requeridos: ', clienteRecebido.servicoRequerido);
 
-      const servicosRequeridos = servicos.flatMap((s) => {
-        console.log('s ', s.id);
-        const encontrado = clienteRecebido.servicoRequerido.find( (e) => (e.servico == s.id));
-        if (Number.isInteger(encontrado?.servico)) {
-          return s;
-        } else {
-          return [];
-        }
-      });
-      console.log('final: ', servicosRequeridos);
-      setServicosSelecionados(servicosRequeridos);
+      if (clienteRecebido.servicoRequerido?.length > 0) {
+        const servicosRequeridos = servicos.flatMap((s) => {
+          console.log('s ', s.id);
+          const encontrado = clienteRecebido.servicoRequerido.find( (e) => (e.servico == s.id));
+          if (Number.isInteger(encontrado?.servico)) {
+            return s;
+          } else {
+            return [];
+          }
+        });
+        console.log('final: ', servicosRequeridos);
+        setServicosSelecionados(servicosRequeridos);
+      }
     }
   }, [ clienteRecebido, servicos ]);
 
