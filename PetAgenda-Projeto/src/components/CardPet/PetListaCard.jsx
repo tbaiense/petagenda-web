@@ -5,8 +5,11 @@ import female from "../../assets/icon_female.svg";
 import iconEditar from "../../assets/icon_editarAzul.svg";
 import iconDeletar from "../../assets/icon_delete.svg";
 import styles from "./PetListaCard.module.css";
+import { useNavigate } from "react-router-dom";
 
 const PetListaCard = ({ pet: p, showInfo }) => {
+  const navigate = useNavigate();
+
   return (
     <div className={styles.cardInfo}>
       <div className={styles.petInfoContainer}>
@@ -33,7 +36,7 @@ const PetListaCard = ({ pet: p, showInfo }) => {
             <img
               src={iconEditar}
               alt="Editar"
-              onClick={() => console.log("Editar pet")}
+              onClick={() => navigate(`/editar/${p.id}`)}
             />
           </div>
           <div className={styles.alinhamentoImage}>
@@ -49,11 +52,7 @@ const PetListaCard = ({ pet: p, showInfo }) => {
           </div>
         </div>
         <div>
-          <img
-            src={seta}
-            alt="Mostrar detalhes"
-            onClick={() => showInfo(p)}
-          />
+          <img src={seta} alt="Mostrar detalhes" onClick={() => showInfo(p)} />
         </div>
       </div>
     </div>

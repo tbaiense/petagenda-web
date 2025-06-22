@@ -17,12 +17,12 @@ import CadastroFuncionario from "../pages/Funcionario/CadastroFuncionario/Cadast
 //Clientes
 import CadastrarClientes from "../pages/Clientes/Cadastrar_Clientes";
 import ListarClientes from "../pages/Clientes/ListarClientes.jsx";
-import EditarCliente from "../pages/Clientes/EditarCliente.jsx"
+import EditarCliente from "../pages/Clientes/EditarCliente.jsx";
 
 //Pets
 import CadastrarPets from "../pages/Pets/Cadastrar_Pets";
 import ListarPets from "../pages/Pets/ListarPets.jsx";
-
+import EditarPets from "../pages/Pets/Editar_Pets.jsx";
 //Serviços
 import CadastrarServico from "../pages/Servico/CadastrarServico/Cadastrar_Servico";
 import Lista_ServicosOferecidos from "../pages/Servico/ListarServicosOferecidos/Lista_ServicosOferecidos.jsx";
@@ -72,12 +72,12 @@ const router = createBrowserRouter([
   {
     path: "/empresa",
     element: (
-       <PrivateRoute>
+      // <PrivateRoute>
         <MenuDashBoard />
-       </PrivateRoute> 
-
+      // </PrivateRoute>
     ),
     children: [
+
       // Empresa
       {
         path: "cadastrar",
@@ -101,6 +101,7 @@ const router = createBrowserRouter([
         path: "funcionarios",
         element: <CadastroFuncionario />,
       },
+
       // Clientes
       {
         path: "clientes/cadastrar",
@@ -112,8 +113,9 @@ const router = createBrowserRouter([
       },
       {
         path: "clientes/editar/:id",
-        element: <EditarCliente/>,
+        element: <EditarCliente />,
       },
+
       // Pets
       {
         path: "pets/cadastrar",
@@ -122,6 +124,10 @@ const router = createBrowserRouter([
       {
         path: "pets/lista",
         element: <ListarPets />,
+      },
+      {
+        path: "pets/editar/:id",
+        element: <EditarPets />,
       },
 
       // Serviços
