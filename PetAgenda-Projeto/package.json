@@ -20,6 +20,7 @@
     "antd": "^5.26.1",
     "bootstrap": "^5.3.6",
     "date-fns": "^4.1.0",
+    "dayjs": "^1.11.13",
     "react": "^19.1.0",
     "react-bootstrap": "^2.10.10",
     "react-datepicker": "^8.4.0",
