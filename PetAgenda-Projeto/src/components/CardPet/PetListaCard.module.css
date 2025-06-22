@@ -1,59 +1,61 @@
-.estiloEspecie{
-    border: 1px solid black;
-    border-radius: 10px;
-    padding: 1px 3px 1px 3px;
-}
-.estiloNome{
-    font-weight: bold;
-}
-.estiloDono{
-    font-size: small;
-    color: grey;
+.cardInfo {
+  border: 1px solid black;
+  border-top: none;
+  padding: 1rem 1.5rem 1rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center; 
 }
 
-.miniCard{
-    display: flex;
-    justify-content: space-between;
-    padding: 1.5rem;
-    align-items: center;
-    border-bottom: 1px solid gray;
-    border-left: 1px solid gray;
-    border-right: 1px solid gray;
-}
-.suporte{
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    justify-content: space-between;
+.petInfoContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-
-.bttn{
-    background-color: white;
-    border: none;
+.imagem_raca {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  margin: 0;
+  padding: 0;
 }
 
-.estiloEspecie,.estiloDono,.estiloNome{
-    font-size: 1.2rem
+.nomeCliente {
+  font-size: large;
+  font-weight: 700;
 }
 
-.subInfo{
-    display: flex;
-    gap: 10px;
+.layoutInfoPerson {
+  display: flex;
+  gap: 10px;
+  color: grey;
 }
-.imagem{
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    object-fit: cover;
+
+.position {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
 }
-.estiloNomeEspecie{
-    display: flex;
-    gap: 10px;
+
+.position img {
+  cursor: pointer;
 }
-.imagem_raca{
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
+.position2 {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.position2 img {
+  cursor: pointer;
+}
+
+.alinhamentoImage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
