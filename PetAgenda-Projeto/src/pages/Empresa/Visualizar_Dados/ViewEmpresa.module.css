@@ -67,11 +67,17 @@ hr{
     border-radius: 15px;
     display: flex;
     justify-content: space-between;
-    width: 130%;
+
 }
 .orgCard{
     display: flex;
     flex-direction: column;
     gap: 10px;
     padding-top: 1rem;
+}
+.coluna{
+    max-height: 300px;
+    overflow-y: auto;
+    width: 32%;
+    overflow-x: hidden;
 }

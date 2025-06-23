@@ -173,8 +173,8 @@ const ViewEmpresa = () => {
                </div>
               ))
             ) : (
-              <div>
-                <span className={styles.cardInfo}>Nenhum serviço cadastrado</span>
+              <div className={styles.cardInfo}>
+                <span>Nenhum serviço cadastrado</span>
               </div>
             )}
           </div>
