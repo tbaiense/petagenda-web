@@ -72,9 +72,9 @@ const router = createBrowserRouter([
   {
     path: "/empresa",
     element: (
-
+      <PrivateRoute>
         <MenuDashBoard />
-
+      </PrivateRoute>
     ),
     children: [
 
