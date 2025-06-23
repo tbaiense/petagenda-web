@@ -122,8 +122,8 @@ const ListarPets = () => {
           </div>
 
           <div>
-            {pets &&
-              pets.map((p) => {
+            {pets?.length > 0 ? (
+              pets && pets.map((p) => {
                 return (
                   <PetListaCard
                     key={p.id}
@@ -140,7 +140,12 @@ const ListarPets = () => {
                     }}
                   />
                 );
-              })}
+              })
+            ) : (
+              <div className={styles.cardInfo}>
+                <span>Nenhum Pet Cadastrado</span>
+              </div>
+            )}
 
             {showInfo && (
               <div className={styles.infoModal}>

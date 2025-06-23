@@ -201,7 +201,7 @@ const CadastroFuncionario = () => {
             })
           ) : (
             <div className={styles.cardInfo}>
-              <span>Nenhum serviço cadastrado</span>
+              <span>Nenhum funcionario cadastrado</span>
             </div>
           )}
         </div>
