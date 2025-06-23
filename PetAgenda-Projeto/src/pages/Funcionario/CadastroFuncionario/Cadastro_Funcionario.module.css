@@ -1,48 +1,72 @@
+/* --------------------------------------- Organização da pagina ------------------------------------------ */
 .viewConteudo h1{
   text-align: center;
-  padding-top: 7px;
-}
-.estiloBotao{
-  display: flex;
-  justify-content: center;
   padding-top: 1rem;
 }
-.estiloBotao button{
-  padding: 5px 20px 5px 20px;
-  border-radius: 12px;
-  border: none;
-  background-color: #1FAF30;
-  transition: background-color 0.3s ease;
+.alinhamento{
+  display: flex;
+  justify-content: center;
+}
+.orgContent {
+  display: flex;
+  flex-direction: column;
+  width: 42vw;
+}
+/* --------------------------------------- Pesquisa e filtros --------------------------------------------- */
+
+.filtros{
+  display: flex;
+  gap: 20px;
+  padding: 1rem 1.5rem 1rem 1.5rem ;
+  background-color: rgb(9, 4, 163);
+  /* background-color: rgb(61, 162, 245); */
   color: white;
+  border-radius: 8px 8px 0px 0px;
+  justify-content: space-between;
 }
-.estiloBotao button:hover{
-  background-color: #0e811c;
+.filtros select{
+    padding: 3px;
+    border-radius: 5px;
 }
-.tabelaBonita {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: center;
-  background-color: #f9f9f9;
+.pesquisa{
+    padding-bottom: 1rem;
+    padding-top: 1rem;
 }
-
-.tabelaBonita th, .tabelaBonita td {
-  border: 1px solid #ccc;
-  padding: 12px;
-}
-
-.tabelaBonita th {
-  background-color: #e2e2e2;
-  color: #333;
+/* --------------------------------------- Estilo Cards Funcionario ---------------------------------------- */
+.nomeFuncionario{
+  font-size: large;
   font-weight: bold;
 }
-
-.tabelaBonita tr:hover {
-  transition: background-color 0.3s ease;
-  background-color: #f1f1f1;
+.cardInfo{
+    border: 1px solid black;
+    border-top: none;
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
 }
-
-
-/* ---------------------------------------------------------------------------------------------- */
+.layoutInfoPerson{
+  display: flex;
+  gap: 10px;
+  color: grey;
+}
+.position{
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+.position img{
+  cursor: pointer;
+}
+.position2{
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+.position2 img{
+  cursor: pointer;
+}
+/* --------------------------------------- Layout Formulario ---------------------------------------------- */
 .customeForm button{
   padding: 5px 20px 5px 20px;
   border-radius: 12px;
@@ -64,7 +88,7 @@
   justify-content: center;
   padding-top: 1rem;
 }
-
+/* ------------------------------------------ Campos Formulario -------------------------------------------- */
 .controlaCampos {
   margin-bottom: 0.2em;
 }
@@ -97,4 +121,27 @@
 
 .controlaCampos:last-child {
   margin-bottom: unset;
+}
+/* ----------------------------------- Tamanho da lista de Funcionario ------------------------------------- */
+.listFuncionarioLimit{
+  max-height: 300px; 
+  overflow-y: auto;  
+  overflow-x: hidden;
+}
+/* ------------------------------------------ Botão adicionar ---------------------------------------------- */
+.estiloBotao{
+  display: flex;
+  justify-content: center;
+  padding-top: 1rem;
+}
+.estiloBotao button{
+  padding: 5px 20px 5px 20px;
+  border-radius: 12px;
+  border: none;
+  background-color: #1FAF30;
+  transition: background-color 0.3s ease;
+  color: white;
+}
+.estiloBotao button:hover{
+  background-color: #0e811c;
 }

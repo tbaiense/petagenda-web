@@ -95,7 +95,6 @@ const ListarClientes = () => {
                                 <option value="">Decrescente</option>
                             </select>
                         </div>
-
                     </div>
                     {clientes?.length > 0 ? (
                         clientes?.map((cliente) => (

@@ -2,9 +2,13 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useAuth } from "../../../contexts/UserContext";
 import ModalCadastroFuncionario from "../../../components/ModalFuncionario/ModalCadastroFuncionario";
-import CardFuncionario from "../../../components/CardFuncionario/CardFuncionario";
 import styles from "./Cadastro_Funcionario.module.css";
 import ModalEditarFuncionario from "../../../components/ModalEditarFuncionario/ModalEditarFuncionario";
+import { Input } from 'antd';
+import iconEditar from "../../../assets/icon_editarAzul.svg"
+import iconDeletar from "../../../assets/icon_delete.svg"
+
+const { Search } = Input;
 
 const CadastroFuncionario = () => {
   const { empresaFetch, validar } = useAuth();
@@ -13,6 +17,8 @@ const CadastroFuncionario = () => {
   const [funcionarioSelecionado, setFuncionarioSelecionado] = useState([]);
   const [funcionarios, setFuncionarios] = useState([]);
   const [servicos, setServicos] = useState([]);
+  const [pesquisando, setPesquisando] = useState(false);
+
 
   const {
     register,
@@ -27,6 +33,22 @@ const CadastroFuncionario = () => {
     setFuncionarioSelecionado(funcionario);
     setShowModalEditar(true);
   };
+  async function deletarFuncionario(id) {
+    try {
+      const response = await empresaFetch(`/funcionario/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        setFuncionarios((prev) => prev.filter((funcionario) => funcionario.id !== id));
+        console.log('Funcionario deletado com sucesso!');
+      } else {
+        console.error('Erro ao deletar funcionario');
+      }
+    } catch (error) {
+      console.error('Erro ao deletar funcionario:', error);
+    }
+  }
 
   function popularListaFuncionarios() {
     empresaFetch("/funcionario")
@@ -47,6 +69,7 @@ const CadastroFuncionario = () => {
         console.error("Erro ao buscar serviços oferecidos:", error);
       });
   }
+
 
   useEffect(() => {
     if (validar) {
@@ -76,8 +99,8 @@ const CadastroFuncionario = () => {
       method: "PUT",
       body: JSON.stringify(objFun)
     });
-    
-    
+
+
     if (res.status === 200) {
       reset();
       setShowModalEditar(false);
@@ -117,12 +140,75 @@ const CadastroFuncionario = () => {
         <h1>Funcionarios Cadastrados</h1>
         <hr />
       </div>
+      <div className={styles.alinhamento} >
+        <div className={styles.orgContent}>
+          <div className={styles.pesquisa}>
+            <Search placeholder="Pesquise pelo funcionario..." enterButton="Search" size="large" loading={pesquisando} onChange={(e) => { setPesquisando(!pesquisando) }} />
+          </div>
+          <div className={styles.filtros}>
+            <div>
+              <label htmlFor="">Filtrar por:</label>
+              <select name="" id="" className={styles.slct}>
+                <option value="">Nome</option>
+              </select>
+            </div>
+            <div>
+              <label htmlFor="">Ordenação:</label>
+              <select name="" id="" className={styles.slct}>
+                <option value="">Crescente</option>
+                <option value="">Decrescente</option>
+              </select>
+            </div>
+          </div>
+          {funcionarios?.length > 0 ? (
+            funcionarios?.map((funcionario) => {
+              const servExerce = servicos.flatMap((serv) => {
+                if (serv.id == func.exerce[0].servico) {
+                  return serv.nome;
+                } else {
+                  return [];
+                }
+              })
 
-      {/* ------------------------------------------------------------------------------------------------------------------------ */}
-      {/* Aqui estou criando um modal para o usuario poder cadastrar rapidamente um novo funcionario */}
-      {/* Podemos reutilizar esse modal para a aba da empresa futuramente */}
+              return (
+                <div className={styles.listFuncionarioLimit}>
+                  <div key={funcionario.id} className={styles.cardInfo}>
+                    <div>
+                      <span className={styles.nomeFuncionario}>{funcionario.nome}</span>
+                      <div className={styles.layoutInfoPerson}>
+                        <span>{funcionario.telefone}</span>
+                        <span>|</span>
+                        <span>{servExerce.length > 0 && servExerce[0]}</span>
+                      </div>
+                    </div>
+                    <div className={styles.position}>
+                      <div className={styles.position2}>
+                        <div className={styles.alinhamentoImage}>
+                          <img src={iconEditar} alt="" onClick={() => abrirModalEditar(funcionario)} />
+                        </div>
+                        <div className={styles.alinhamentoImage}>
+                          <img src={iconDeletar} alt="" onClick={() => {
+                            if (confirm('Deseja realmente deletar este cliente?')) {
+                              deletarFuncionario(funcionario.id);
+                            }
+                          }} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )
+            })
+          ) : (
+            <div className={styles.cardInfo}>
+              <span>Nenhum serviço cadastrado</span>
+            </div>
+          )}
+        </div>
+      </div>
+
       {
-        showModal && 
+        showModal &&
         <ModalCadastroFuncionario
           isOpen={showModal}
           onClose={() => setShowModal(false)}
@@ -223,11 +309,9 @@ const CadastroFuncionario = () => {
 
                       if (value && value.length > 0) {
                         value = value.replaceAll(/[^0-9]/g, "");
-                        value = `${value.substring(0, 2)}${
-                          value.length > 2 ? " " : ""
-                        }${value.substring(2, 7)}${
-                          value.length > 7 ? "-" : ""
-                        }${value.substring(7, 11)}`;
+                        value = `${value.substring(0, 2)}${value.length > 2 ? " " : ""
+                          }${value.substring(2, 7)}${value.length > 7 ? "-" : ""
+                          }${value.substring(7, 11)}`;
                         console.log("limpei");
                       }
                       setValue(e.target.name, value);
@@ -254,7 +338,7 @@ const CadastroFuncionario = () => {
           </form>
         </ModalCadastroFuncionario>
       }
-      {showModalEditar && funcionarioSelecionado && 
+      {showModalEditar && funcionarioSelecionado &&
         <ModalEditarFuncionario
           funcionario={funcionarioSelecionado}
           setFuncionario={setFuncionarioSelecionado}
@@ -264,10 +348,8 @@ const CadastroFuncionario = () => {
           onClose={() => setShowModalEditar(false)}
         />
       }
-      {/* ------------------------------------------------------------------------------------------------------------------------ */}
-      {/* Aqui eu estou gerando a lista de funcionarios */}
       <div>
-        <table className={styles.tabelaBonita}>
+        {/* <table className={styles.tabelaBonita}>
           <thead>
             <tr>
               <th>Nome</th>
@@ -300,7 +382,7 @@ const CadastroFuncionario = () => {
                 );
               })}
           </tbody>
-        </table>
+        </table> */}
       </div>
 
       {/* Ao clicar em um "botão" abre um modal para cadastrar um novo funcionario */}
