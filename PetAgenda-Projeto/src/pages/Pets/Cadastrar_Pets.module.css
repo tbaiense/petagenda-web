@@ -1,149 +1,44 @@
-/* ======================================== Geral =========================================== */
-
-.layoutCadastro {
-  display: flex;
-  justify-content: center;
-  padding: 1rem;
+.containergeral {
+  max-width: 100%;
 }
 
-.previnindoVazamento{
+form label,
+form .form-label {
+  display: block;
+}
+
+.cadatrar_agendamento {
+  max-width: 900px;
+  margin: auto;
+  padding: 0 15px;
+}
+
+.cadastrar_agendamento__title {
+  text-align: center;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.custom_datepicker {
+  display: block;
   width: 100%;
-  max-width: 550px;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-/* ===================================== Geral Input ========================================= */
-
-.previnindoVazamento input{
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    padding: 5px 1rem;
-    border-radius: 7px;
-    transition: all 0.3s ease-in-out;
-    outline: none; 
-    width: 100%;
-}
-.previnindoVazamento input:focus{
-    border-color: #1FAF30;
-    box-shadow: 0 0 10px rgba(31, 175, 48, 0.6); 
-}
-
-/* ===================================== Geral Select ======================================== */
-
-.previnindoVazamento select{
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    padding: 5px 1rem;
-    border-radius: 7px;
-    transition: all 0.3s ease-in-out;
-    outline: none;
-}
-.previnindoVazamento select:focus{
-    border-color: #1FAF30;
-    box-shadow: 0 0 10px rgba(31, 175, 48, 0.6);     
-}
-
-/* ===================================== Geral TextArea ====================================== */
-
-.previnindoVazamento textarea{
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    padding: 5px 1rem;
-    border-radius: 7px;
-    transition: all 0.3s ease-in-out;
-    outline: none;
-}
-.previnindoVazamento textarea:focus{
-    border-color: #1FAF30;
-    box-shadow: 0 0 10px rgba(31, 175, 48, 0.6);  
-}
-
-/* ======================================== Titulo =========================================== */
-
-.titulo{
-    text-align: center;
-    padding-top: 0.5rem;
-}
-
-/* ==================================== Campos comuns ======================================== */
-
-
-.estiloCampos {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-/* ==================================== Área do textArea ===================================== */
-
-
-.inputTextArea {
-  resize: none;
-  min-height: 80px;
-  padding: 0.5rem;
+  padding: 0.45rem 0.75rem;
   font-size: 1rem;
+  line-height: 1.5;
+  color: black;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: 0.375rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
-/* ================================== Checkbox alinhado ====================================== */
-
-
-.checkboxGroup {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+.campos_espaco {
+  margin-right: 15px;
 }
 
-/* ================================== Grid com duas colunas ================================== */
 
 
-.linhaDoisCampos {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-}
-
-/* ================================= Campo checkbox + select ================================= */
-
-
-.linhaComCheckbox {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-}
-
-/* =============================== Layout da seção de vacina ================================= */
-
-.cartaoVacina {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.inputFile{
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-/* ========================================= Botão =========================================== */
-
-.botton{
-    display: flex;
-    gap: 20px;
-    justify-content: center;
-    padding-bottom: 1rem;
-}
-
-.botton button{
-  padding: 5px 10px;
-  border: none;
-  border-radius: 12px;
-  transition: background-color 0.3s ease;
-  background-color: #1FAF30;
-  color: white;
-}
-
-.botton button:hover {
-  background-color: #0e811c;
-  cursor: pointer;
+.raca_input{
+  width: 20rem;
 }

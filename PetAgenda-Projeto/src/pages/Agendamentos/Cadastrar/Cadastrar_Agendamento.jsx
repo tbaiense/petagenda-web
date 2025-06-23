@@ -1,122 +1,143 @@
 import React, { useState, useEffect } from "react";
-import Stack from 'react-bootstrap/Stack';
-import Accordion from 'react-bootstrap/Accordion';
-import Card from 'react-bootstrap/Card';
-import FloatingLabel from 'react-bootstrap/FloatingLabel';
-import { Container, Form, Row, Col, Button, FormCheck,InputGroup } from "react-bootstrap";
+import Stack from "react-bootstrap/Stack";
+import Accordion from "react-bootstrap/Accordion";
+import Card from "react-bootstrap/Card";
+import FloatingLabel from "react-bootstrap/FloatingLabel";
+import {
+  Container,
+  Form,
+  Row,
+  Col,
+  Button,
+  FormCheck,
+  InputGroup,
+} from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import "./Cadastrar_Agendamento.css";
 import { useAuth } from "../../../contexts/UserContext";
 import PetServicoCardList from "../../../components/CardPet/PetServicoCardList";
 import CamposEndereco from "../../../components/Endereco/CamposEndereco";
 import "../../../components/CardPet/PetServicoCard.css";
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Agendamento = () => {
-  const { register, handleSubmit, subscribe, reset, watch, formState: { errors }, setValue, getValues } = useForm();
-  const [ clientes, setClientes ] = useState([]);
-  const [ incluirBuscar, setIncluirBuscar ] = useState(false);
-  const [ devolverMesmo, setDevolverMesmo ] = useState(false);
-  const [ incluirDevolver, setIncluirDevolver ] = useState(false);
-  const [ petsCliente, setPetsCliente ] = useState([]);
-  const [ servicos, setServicos ] = useState([]);
-  const [ petsSel, setPetsSel ] = useState([]);
-  const [ preco, setPreco ] = useState({ precoServico: 0, precoPet: 0, precoTotal: 0});
-  const [ servicoSel, setServicoSel ] = useState({});
-  const [ funcionarios, setFuncionarios ] = useState([]);
+  const {
+    register,
+    handleSubmit,
+    subscribe,
+    reset,
+    watch,
+    formState: { errors },
+    setValue,
+    getValues,
+  } = useForm();
+  const [clientes, setClientes] = useState([]);
+  const [incluirBuscar, setIncluirBuscar] = useState(false);
+  const [devolverMesmo, setDevolverMesmo] = useState(false);
+  const [incluirDevolver, setIncluirDevolver] = useState(false);
+  const [petsCliente, setPetsCliente] = useState([]);
+  const [servicos, setServicos] = useState([]);
+  const [petsSel, setPetsSel] = useState([]);
+  const [preco, setPreco] = useState({
+    precoServico: 0,
+    precoPet: 0,
+    precoTotal: 0,
+  });
+  const [servicoSel, setServicoSel] = useState({});
+  const [funcionarios, setFuncionarios] = useState([]);
   const { empresaFetch, validar } = useAuth();
-  const [ cepBuscar, setCepBuscar ] = useState("");
-  const [ cepDevolver, setCepDevolver ] = useState("");
+  const [cepBuscar, setCepBuscar] = useState("");
+  const [cepDevolver, setCepDevolver] = useState("");
   const navigate = useNavigate();
-  
+
   const location = useLocation();
 
   // Remover pet da lista
   function handleRemove(idPet) {
-    setPetsSel(petsSel.filter( p => (p.id != idPet)));
+    setPetsSel(petsSel.filter((p) => p.id != idPet));
   }
 
   // Lógica de cálculo de preços
   async function popularPreco() {
     const idServ = servicoSel;
-    
+
     if (Number.isInteger(idServ) && idServ != 0) {
       const resp = await empresaFetch(`/servico-oferecido/${idServ}`);
-  
+
       if (resp.status != 200) {
         return;
       }
-      
+
       const jsonBody = await resp.json();
       const { preco: precoObtido, tipoPreco } = jsonBody.servicoOferecido;
-  
-      let pets = 0, servico = 0, total = 0;
-      if (tipoPreco == 'pet') {
+
+      let pets = 0,
+        servico = 0,
+        total = 0;
+      if (tipoPreco == "pet") {
         pets = precoObtido;
         total = pets * petsSel.length;
-      } else if (tipoPreco == 'servico') {
+      } else if (tipoPreco == "servico") {
         servico = precoObtido;
         total = servico;
       }
-      
-      setPreco({precoPet: pets, precoServico: servico, precoTotal: total});
-    } else {
-      setPreco({precoPet: 0, precoServico: 0, precoTotal: 0});
 
+      setPreco({ precoPet: pets, precoServico: servico, precoTotal: total });
+    } else {
+      setPreco({ precoPet: 0, precoServico: 0, precoTotal: 0 });
     }
   }
-  
+
   useEffect(() => {
     popularPreco();
-  }, [petsSel, servicoSel])
-  
+  }, [petsSel, servicoSel]);
+
   async function popularServicosOferecidos() {
-    empresaFetch('/servico-oferecido')
-      .then(res => res.json())
-      .then(data => {
+    empresaFetch("/servico-oferecido")
+      .then((res) => res.json())
+      .then((data) => {
         setServicos(data.servicosOferecidos);
       })
-      .catch(error => {
-          console.error("Erro ao buscar serviçoes oferecidos:", error);
+      .catch((error) => {
+        console.error("Erro ao buscar serviçoes oferecidos:", error);
       });
   }
 
   async function popularClientes() {
-    empresaFetch('/cliente')
-      .then(res => res.json())
-      .then(data => {
-          setClientes(data.clientes);
+    empresaFetch("/cliente")
+      .then((res) => res.json())
+      .then((data) => {
+        setClientes(data.clientes);
       })
-      .catch(error => {
-          console.error("Erro ao buscar Clientes:", error);
+      .catch((error) => {
+        console.error("Erro ao buscar Clientes:", error);
       });
   }
 
   async function popularPetsCliente(id) {
     empresaFetch(`/pet?idCliente=${id}`)
-      .then(res => res.json())
-      .then(data => {
-          setPetsCliente(data.pets);
+      .then((res) => res.json())
+      .then((data) => {
+        setPetsCliente(data.pets);
       })
-      .catch(error => {
-          console.error("Erro ao buscar Clientes:", error);
+      .catch((error) => {
+        console.error("Erro ao buscar Clientes:", error);
       });
   }
 
   async function popularFuncionarios() {
-    empresaFetch('/funcionario')
-      .then(res => res.json())
-      .then(data => {
-          setFuncionarios(data.funcionarios);
+    empresaFetch("/funcionario")
+      .then((res) => res.json())
+      .then((data) => {
+        setFuncionarios(data.funcionarios);
       })
-      .catch(error => {
-          console.error("Erro ao buscar Funcionarios:", error);
+      .catch((error) => {
+        console.error("Erro ao buscar Funcionarios:", error);
       });
-
   }
 
   function getData() {
-    const formData = {...getValues()};
+    const formData = { ...getValues() };
     const pets = petsSel;
     let enderecos = [];
 
@@ -134,22 +155,18 @@ const Agendamento = () => {
       }
 
       if (devolverMesmo) {
-        enderecos.push(
-          {
-            tipo: "buscar-devolver",
-            ...endBuscar
-          }
-        );
+        enderecos.push({
+          tipo: "buscar-devolver",
+          ...endBuscar,
+        });
       } else {
         if (incluirBuscar) {
-          enderecos.push(
-            {
-              tipo: "buscar",
-              ...endBuscar
-            }
-          );
-        } 
-        
+          enderecos.push({
+            tipo: "buscar",
+            ...endBuscar,
+          });
+        }
+
         if (incluirDevolver && formData.enderecoDevolver) {
           const endDevolver = {
             logradouro: formData.enderecoDevolver.logradouro,
@@ -158,13 +175,11 @@ const Agendamento = () => {
             cidade: formData.enderecoDevolver.cidade,
             estado: formData.enderecoDevolver.estado,
           };
-  
-          enderecos.push(
-            {
-              tipo: "devolver",
-              ...endDevolver
-            }
-          );
+
+          enderecos.push({
+            tipo: "devolver",
+            ...endDevolver,
+          });
         }
       }
     }
@@ -176,10 +191,12 @@ const Agendamento = () => {
     const agendamentoData = {
       dtHrMarcada: `${formData.data} ${formData.hora}`,
       servico: { id: formData.servico },
-      funcionario: (formData.funcionario) ? { id: formData.funcionario } : undefined,
+      funcionario: formData.funcionario
+        ? { id: formData.funcionario }
+        : undefined,
       observacoes: formData.observacoes,
       pets: pets,
-      enderecos: enderecos
+      enderecos: enderecos,
     };
 
     return agendamentoData;
@@ -195,19 +212,19 @@ const Agendamento = () => {
 
   useEffect(() => {
     if (servicos?.length > 0 && location.state?.servicoSelecionado) {
-      console.log('location: ', location);
+      console.log("location: ", location);
       if (location && Number.isInteger(location.state.servicoSelecionado)) {
-        setValue('servico', location.state.servicoSelecionado);
-        console.log('servico setado!');
+        setValue("servico", location.state.servicoSelecionado);
+        console.log("servico setado!");
       }
     }
-  }, [servicos])
+  }, [servicos]);
 
   function handleEnderecoChange(e) {
-    const newEnd = {...endereco };
-    newEnd[e.target.name.split('.')[1]] = e.target.value;
-    
-    setValue(e.target.name.split('.')[1], e.target.value);
+    const newEnd = { ...endereco };
+    newEnd[e.target.name.split(".")[1]] = e.target.value;
+
+    setValue(e.target.name.split(".")[1], e.target.value);
   }
 
   async function preencherEnderecosCEP(prefix, cep) {
@@ -230,9 +247,8 @@ const Agendamento = () => {
         "siafi": "5625"
       }
       */
-  
-      if (endRes.status == 200) {
 
+      if (endRes.status == 200) {
         const jsonBody = await endRes.json();
 
         if (!jsonBody.erro) {
@@ -242,12 +258,14 @@ const Agendamento = () => {
             numero: "",
             cidade: jsonBody.localidade,
             estado: jsonBody.uf,
-          }
-          
+          };
+
           preencherEndereco(prefix, endFound);
         }
       } else {
-        throw new Error("Falha ao obter informaçoes de endereço a partir de CEP");
+        throw new Error(
+          "Falha ao obter informaçoes de endereço a partir de CEP"
+        );
       }
     } catch (err) {
       console.error(err.message);
@@ -265,55 +283,62 @@ const Agendamento = () => {
   // Verificação de CEP de busca
   useEffect(() => {
     const callback = subscribe({
-      name: [ "enderecoBuscar.cep" ],
+      name: ["enderecoBuscar.cep"],
       formState: {
         values: true,
         touchedFields: true,
-        isValid: true
+        isValid: true,
       },
-      callback: ({values}) => {
-        if (values.enderecoBuscar && values.enderecoBuscar.cep?.length == 8 && values.enderecoBuscar.cep.match(/^\d{5,5}\d{3,3}$/)) {
+      callback: ({ values }) => {
+        if (
+          values.enderecoBuscar &&
+          values.enderecoBuscar.cep?.length == 8 &&
+          values.enderecoBuscar.cep.match(/^\d{5,5}\d{3,3}$/)
+        ) {
           const { cep } = values.enderecoBuscar;
           preencherEnderecosCEP("enderecoBuscar", cep);
         }
-      }
+      },
     });
   }, [subscribe]);
 
   // Verificação de CEP de devolução
   useEffect(() => {
     const callback = subscribe({
-      name: [ "enderecoDevolver.cep" ],
+      name: ["enderecoDevolver.cep"],
       formState: {
         values: true,
         touchedFields: true,
-        isValid: true
+        isValid: true,
       },
-      callback: ({values}) => {
-        if (values.enderecoDevolver && values.enderecoDevolver.cep?.length == 8 && values.enderecoDevolver.cep.match(/^\d{5,5}\d{3,3}$/)) {
+      callback: ({ values }) => {
+        if (
+          values.enderecoDevolver &&
+          values.enderecoDevolver.cep?.length == 8 &&
+          values.enderecoDevolver.cep.match(/^\d{5,5}\d{3,3}$/)
+        ) {
           const { cep } = values.enderecoDevolver;
           preencherEnderecosCEP("enderecoDevolver", cep);
         }
-      }
+      },
     });
 
     return () => callback();
-
   }, [subscribe]);
 
   const onSubmit = async (data) => {
     // Cadastrando agendamento
     try {
-      const resp = await empresaFetch('/agendamento', {
+      const resp = await empresaFetch("/agendamento", {
         method: "POST",
-        body: JSON.stringify(getData())
+        body: JSON.stringify(getData()),
       });
-      
+
       const jsonBody = await resp.json();
       if (jsonBody) {
         if (resp.status == 200) {
-          alert('cadastrado!')
-          navigate('/empresa/agendamentos/lista');
+          alert("cadastrado!");
+          navigate("/empresa/agendamentos/lista");
           reset();
         } else {
           throw new Error(jsonBody.errors[0]);
@@ -322,17 +347,17 @@ const Agendamento = () => {
     } catch (err) {
       alert(err.message);
     }
-
   };
 
   return (
-    <div className="cadatrar_agendamento mt-4">
-      <h2 className="cadastrar_agendamento__title">Novo agendamento</h2>
-      <Container>
+    <div className="containergeral mt-1">
+      <h1 className="cadastrar_agendamento__title">Novo agendamento</h1>
+      <hr />
+      <Container className="cadatrar_agendamento mt-4">
         <Form onSubmit={handleSubmit(onSubmit)}>
           <Row>
-            <Col>
-              <Form.Group controlId="formServico">
+            <Col className="campos-espaco">
+              <Form.Group controlId="formServico" className="form-servico">
                 <Form.Label>Filtrar serviço por:</Form.Label>
                 <Form.Select {...register("filtro")}>
                   <option value="">Restrição de espécie</option>
@@ -341,7 +366,7 @@ const Agendamento = () => {
                 </Form.Select>
               </Form.Group>
             </Col>
-            <Col>
+            <Col className="campos-espaco">
               <Form.Group controlId="formServico">
                 <Form.Label>Tipo do filtro:</Form.Label>
                 <Form.Select {...register("tipoFiltro")}>
@@ -351,8 +376,8 @@ const Agendamento = () => {
                 </Form.Select>
               </Form.Group>
             </Col>
-            <Col>
-              <Form.Group controlId="formServico">
+            <Col className="">
+              <Form.Group className="" controlId="formServico">
                 <Form.Label>Serviço</Form.Label>
                 <Form.Select
                   value={servicoSel}
@@ -362,11 +387,11 @@ const Agendamento = () => {
                       message: "Selecione o serviço para o agendamento",
                     },
                   })}
-                  onInput={ (e) => {
+                  onInput={(e) => {
                     // const novoServ = getValues('servico')
                     const novoServ = e.target.value;
                     setServicoSel(+novoServ);
-                    console.log('rodei: ' ,novoServ)
+                    console.log("rodei: ", novoServ);
                   }}
                 >
                   <option value="">Selecione um serviço</option>
@@ -381,8 +406,8 @@ const Agendamento = () => {
           </Row>
 
           <Row className="mt-3">
-            <Col>
-              <Form.Group controlId="formData">
+            <Col className="campos-espaco">
+              <Form.Group controlId="formData" className="">
                 <Form.Label>Data do agendamento</Form.Label>
                 <Form.Control
                   type="date"
@@ -391,37 +416,40 @@ const Agendamento = () => {
                 />
               </Form.Group>
             </Col>
-            <Col>
+            <Col className="campos-espaco">
               <Form.Group controlId="formHora">
                 <Form.Label>Hora do agendamento</Form.Label>
                 <Form.Control
+
                   type="time"
                   {...register("hora", { required: true })}
                   defaultValue=""
                 />
               </Form.Group>
             </Col>
-             <Col>
+            <Col className="">
               <Form.Group controlId="formFuncionario">
                 <Form.Label>Funcionário</Form.Label>
                 <Form.Select {...register("funcionario")}>
                   <option value="">Selecione um funcionário</option>
-                  {funcionarios && funcionarios.map((funcionario) => (
-                    <option key={funcionario.id} value={funcionario.id}>
-                      {funcionario.nome}
-                    </option>
-                  ))}
+                  {funcionarios &&
+                    funcionarios.map((funcionario) => (
+                      <option key={funcionario.id} value={funcionario.id}>
+                        {funcionario.nome}
+                      </option>
+                    ))}
                 </Form.Select>
               </Form.Group>
             </Col>
           </Row>
           <Row className="mt-3">
-            <Col>
+            <Col className="campos-espaco">
               <Form.Group>
                 <Form.Label>Preço por pets:</Form.Label>
                 <InputGroup>
                   <InputGroup.Text>R$</InputGroup.Text>
                   <Form.Control
+                    className="form-agendamento"
                     type="text"
                     placeholder="Valor por pet"
                     value={preco.precoPet}
@@ -430,12 +458,13 @@ const Agendamento = () => {
                 </InputGroup>
               </Form.Group>
             </Col>
-            <Col>
+            <Col className="campos-espaco">
               <Form.Group>
                 <Form.Label>Preço do Serviço:</Form.Label>
                 <InputGroup>
                   <InputGroup.Text>R$</InputGroup.Text>
                   <Form.Control
+                    className="form-agendamento"
                     type="text"
                     placeholder="Valor do Serviço"
                     value={preco.precoServico}
@@ -444,12 +473,13 @@ const Agendamento = () => {
                 </InputGroup>
               </Form.Group>
             </Col>
-            <Col>
+            <Col className="">
               <Form.Group>
                 <Form.Label>Preço total</Form.Label>
                 <InputGroup>
                   <InputGroup.Text>R$</InputGroup.Text>
                   <Form.Control
+                    className="form-agendamento"
                     type="text"
                     placeholder="Valor total"
                     value={preco.precoTotal}
@@ -460,21 +490,23 @@ const Agendamento = () => {
             </Col>
           </Row>
           <Row>
-              <h2 className="mt-4">Pets participantes</h2>
-              <hr></hr>
+            <h2 className="mt-4">Pets participantes</h2>
+            <hr></hr>
           </Row>
           <Row className="mt-3">
-            <Col>
+            <Col className="campos-espaco">
               <Form.Group controlId="formServico">
                 <Form.Label>Cliente:</Form.Label>
-                <Form.Select 
-                  onInput={ e=> {
+                <Form.Select
+                  onInput={(e) => {
                     popularPetsCliente(e.target.value);
                     setPetsSel([]);
                   }}
-                  {...register("cliente", { required: true })}>
-                    <option value="">Selecione um cliente</option>
-                    {clientes && clientes.map((cli) => (
+                  {...register("cliente", { required: true })}
+                >
+                  <option value="">Selecione um cliente</option>
+                  {clientes &&
+                    clientes.map((cli) => (
                       <option key={cli.id} value={cli.id}>
                         {cli.nome}
                       </option>
@@ -482,139 +514,176 @@ const Agendamento = () => {
                 </Form.Select>
               </Form.Group>
             </Col>
-            <Col>
+            <Col className="campos-espaco">
               <Form.Group controlId="formServico">
                 <Form.Label>Pet:</Form.Label>
                 <Form.Select id="pet-selecionar" {...register("pet")}>
                   <option value="">Selecione um pet</option>
-                  {petsCliente && petsCliente.map((pet) => (
-                    <option key={pet.id} value={pet.id}>
-                      {pet.nome}
-                    </option>
-                  ))}
+                  {petsCliente &&
+                    petsCliente.map((pet) => (
+                      <option key={pet.id} value={pet.id}>
+                        {pet.nome}
+                      </option>
+                    ))}
                 </Form.Select>
               </Form.Group>
             </Col>
-            
-            <Col>
-              <Button 
-                variant="secondary" 
+
+            <Col className="justify-content-start d-flex align-items-end ">
+              <Button
+                className="button-adicionar"
                 type="button"
-                onClick={
-                  e => {
-                    let petSelect, petSelecionado;
+                onClick={(e) => {
+                  let petSelect, petSelecionado;
 
-                    const petSel = petsCliente.find( p => {
-                      petSelect = document.getElementById('pet-selecionar');
-                      petSelecionado = petSelect.value;
-                      return (p.id == petSelecionado);
-                    });
+                  const petSel = petsCliente.find((p) => {
+                    petSelect = document.getElementById("pet-selecionar");
+                    petSelecionado = petSelect.value;
+                    return p.id == petSelecionado;
+                  });
 
-                    const jaExiste = petsSel.some( p => {
-                      return p.id == petSel.id;
-                    });
+                  const jaExiste = petsSel.some((p) => {
+                    return p.id == petSel.id;
+                  });
 
-                    if (!jaExiste) {
-                      setPetsSel(petsSel.concat([petSel]));
-                    }
+                  if (!jaExiste) {
+                    setPetsSel(petsSel.concat([petSel]));
                   }
-                }
+                }}
               >
                 Adicionar
               </Button>
             </Col>
           </Row>
           {/* Card de pets */}
-          <PetServicoCardList petList={petsSel} setPetList={setPetsSel}/>
+          <PetServicoCardList petList={petsSel} setPetList={setPetsSel} />
           {/* Endereços ======================================================*/}
           <h5>Endereços</h5>
           <hr />
-          <Accordion className="mt-3 mb-4" defaultActiveKey="0" flush alwaysOpen>
+          <Accordion
+            className="mt-3 mb-4"
+            defaultActiveKey="0"
+            flush
+            alwaysOpen
+          >
             <Accordion.Item eventKey="0" className="pet-servico-card-item">
               <Accordion.Header>
-                  <Stack direction="horizontal" gap={3}>
+                <Stack direction="horizontal" gap={3}>
                   <Form.Group className="mb-3" controlId="formBasicEmail">
-                      <FormCheck type="switch" id="buscarChk" checked={incluirBuscar} onChange={ e => {
+                    <FormCheck
+                      type="switch"
+                      id="buscarChk"
+                      checked={incluirBuscar}
+                      onChange={(e) => {
                         setIncluirBuscar(e.target.checked);
                         if (!e.target.checked && devolverMesmo) {
                           setDevolverMesmo(false);
                         }
-                      }}></FormCheck>
-                    </Form.Group>  
+                      }}
+                    ></FormCheck>
+                  </Form.Group>
                   <span>Buscar</span>
-                  </Stack>
+                </Stack>
               </Accordion.Header>
               <Accordion.Body>
-                <CamposEndereco 
+                <CamposEndereco
                   setValue={setValue}
                   cep={cepBuscar}
                   setCep={setCepBuscar}
                   handleChange={handleEnderecoChange}
-                  formConfigs={{ isRequired: incluirBuscar || devolverMesmo && incluirDevolver}} 
-                  register={register} 
+                  formConfigs={{
+                    isRequired:
+                      incluirBuscar || (devolverMesmo && incluirDevolver),
+                  }}
+                  register={register}
                   errors={errors}
                   isDisabled={!incluirBuscar}
-                  prefix={'enderecoBuscar'}
+                  prefix={"enderecoBuscar"}
                 />
               </Accordion.Body>
             </Accordion.Item>
             <Accordion.Item eventKey="1" className="pet-servico-card-item">
               <Accordion.Header>
-                  <Stack direction="horizontal" gap={3}>
-                    <Form.Group className="mb-3" controlId="formBasicEmail">
-                      <FormCheck type="switch" id="devolverChk" checked={incluirDevolver} onChange={ e => {
+                <Stack direction="horizontal" gap={3}>
+                  <Form.Group className="mb-3" controlId="formBasicEmail">
+                    <FormCheck
+                      type="switch"
+                      id="devolverChk"
+                      checked={incluirDevolver}
+                      onChange={(e) => {
                         setIncluirDevolver(e.target.checked);
                         if (!e.target.checked && devolverMesmo) {
                           setDevolverMesmo(false);
                         }
-                      }}></FormCheck>
-                    </Form.Group>  
-                    <span>Devolver</span>
-
-                  </Stack>
+                      }}
+                    ></FormCheck>
+                  </Form.Group>
+                  <span>Devolver</span>
+                </Stack>
               </Accordion.Header>
               <Accordion.Body>
-                    <Form.Group className="mb-3" controlId="formBasicEmail">
-                      <FormCheck type="switch" id="devolverMesmo" label="O mesmo do anterior" checked={devolverMesmo} disabled={!incluirDevolver || !incluirBuscar}
-                        onChange={(e) => {
-                          setDevolverMesmo(e.target.checked);
-                          if (e.target.checked) {
-                            preencherEndereco('enderecoDevolver', {...(getValues('enderecoBuscar')), cep: ""});
-                          }
-                        }}
-                      ></FormCheck>
-                    </Form.Group>  
-                <CamposEndereco 
+                <Form.Group className="mb-3" controlId="formBasicEmail">
+                  <FormCheck
+                    type="switch"
+                    id="devolverMesmo"
+                    label="O mesmo do anterior"
+                    checked={devolverMesmo}
+                    disabled={!incluirDevolver || !incluirBuscar}
+                    onChange={(e) => {
+                      setDevolverMesmo(e.target.checked);
+                      if (e.target.checked) {
+                        preencherEndereco("enderecoDevolver", {
+                          ...getValues("enderecoBuscar"),
+                          cep: "",
+                        });
+                      }
+                    }}
+                  ></FormCheck>
+                </Form.Group>
+                <CamposEndereco
                   setValue={setValue}
                   cep={cepDevolver}
                   setCep={setCepDevolver}
                   handleChange={handleEnderecoChange}
-                  formConfigs={{ isRequired: incluirDevolver && !devolverMesmo }} 
-                  register={register} 
-                  errors={errors} 
-                  prefix={'enderecoDevolver'}
+                  formConfigs={{
+                    isRequired: incluirDevolver && !devolverMesmo,
+                  }}
+                  register={register}
+                  errors={errors}
+                  prefix={"enderecoDevolver"}
                   isDisabled={!incluirDevolver || devolverMesmo}
                 />
               </Accordion.Body>
             </Accordion.Item>
           </Accordion>
           <Row>
-            <FloatingLabel className="mt-4" controlId="floatingTextarea2" label="Observações">
+            <FloatingLabel
+              className="mt-4"
+              controlId="floatingTextarea2"
+              label="Observações"
+            >
               <Form.Control
                 as="textarea"
                 placeholder="Deixe aqui uma observação"
-                style={{ height: '150px' }}
+                style={{ height: "150px" }}
                 {...register("observacoes")}
               />
             </FloatingLabel>
           </Row>
-          <Button 
-          variant="primary" 
-          onClick={e => {getData()}} 
-          type="submit" 
-          className="mt-4">
-            Agendar
-          </Button>
+          <Row className="d-flex justify-content-center">
+            <Col md="auto">
+              <Button
+                variant="primary"
+                onClick={(e) => {
+                  getData();
+                }}
+                type="submit"
+                className="mt-4 mb-4 button-agendamento"
+              >
+                Agendar
+              </Button>
+            </Col>
+          </Row>
         </Form>
       </Container>
     </div>

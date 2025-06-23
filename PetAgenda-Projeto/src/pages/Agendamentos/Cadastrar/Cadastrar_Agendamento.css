@@ -2,6 +2,9 @@ form label,
 form .form-label {
   display: block;
 }
+.containergeral {
+  max-width: 100%;
+}
 
 .cadatrar_agendamento {
   max-width: 900px;
@@ -11,7 +14,8 @@ form .form-label {
 
 .cadastrar_agendamento__title {
   text-align: center;
-  margin-bottom: 1.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .datepicker-grande {
@@ -19,13 +23,45 @@ form .form-label {
   box-sizing: border-box;
 }
 
-.rs-input-group-md.rs-input-group>.rs-input, .rs-input-group-md.rs-input-group>.rs-input-group-addon {
-    height: 38px;
-    font-size: 1.03rem;
+.rs-input-group-md.rs-input-group > .rs-input,
+.rs-input-group-md.rs-input-group > .rs-input-group-addon {
+  height: 38px;
+  font-size: 1.03rem;
 }
 
-.estiloTitulos{
-    font-size: x-large;
-    background-color: #fff;
+.campos-espaco {
+  margin-right: 15px;
 }
 
+.form-servico {
+  width: 20rem;
+}
+
+.form-agendamento {
+  border-radius: 8px !important;
+}
+
+.button-adicionar {
+  padding: 8px 12px;
+}
+
+.button-agendamento {
+  width: 100%;
+  padding: 8px 25px;
+  margin-top: 1rem;
+  border-radius: 15px;
+  background-color: #4bec53;
+  border: 1px solid #4bec53;
+}
+.button-agendamento:hover {
+  background-color: #3cbf42;
+  border: 1px solid #3cbf42;
+}
+
+h1 {
+  font-size: 2.5rem;
+}
+
+.form-agendamento {
+  border-radius: 0px 8px 8px 0px !important;
+}
