@@ -655,7 +655,7 @@ const Agendamento = () => {
                 />
               </Accordion.Body>
             </Accordion.Item>
-          </Accordion>
+          </Accordion> variant="secondary"
           <Row>
             <FloatingLabel
               className="mt-4"
