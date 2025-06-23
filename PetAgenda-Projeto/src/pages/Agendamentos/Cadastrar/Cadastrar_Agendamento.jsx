@@ -378,7 +378,7 @@ const Agendamento = () => {
             </Col>
             <Col className="">
               <Form.Group className="" controlId="formServico">
-                <Form.Label>Serviço</Form.Label>
+                <Form.Label>Serviço:</Form.Label>
                 <Form.Select
                   value={servicoSel}
                   {...register("servico", {
@@ -408,7 +408,7 @@ const Agendamento = () => {
           <Row className="mt-3">
             <Col className="campos-espaco">
               <Form.Group controlId="formData" className="">
-                <Form.Label>Data do agendamento</Form.Label>
+                <Form.Label>Data do agendamento:</Form.Label>
                 <Form.Control
                   type="date"
                   {...register("data", { required: true })}
@@ -418,7 +418,7 @@ const Agendamento = () => {
             </Col>
             <Col className="campos-espaco">
               <Form.Group controlId="formHora">
-                <Form.Label>Hora do agendamento</Form.Label>
+                <Form.Label>Hora do agendamento:</Form.Label>
                 <Form.Control
 
                   type="time"
@@ -429,7 +429,7 @@ const Agendamento = () => {
             </Col>
             <Col className="">
               <Form.Group controlId="formFuncionario">
-                <Form.Label>Funcionário</Form.Label>
+                <Form.Label>Funcionário:</Form.Label>
                 <Form.Select {...register("funcionario")}>
                   <option value="">Selecione um funcionário</option>
                   {funcionarios &&
@@ -475,7 +475,7 @@ const Agendamento = () => {
             </Col>
             <Col className="">
               <Form.Group>
-                <Form.Label>Preço total</Form.Label>
+                <Form.Label>Preço total:</Form.Label>
                 <InputGroup>
                   <InputGroup.Text>R$</InputGroup.Text>
                   <Form.Control
