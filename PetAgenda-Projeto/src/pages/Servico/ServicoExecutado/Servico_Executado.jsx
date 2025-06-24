@@ -3,7 +3,15 @@ import Stack from "react-bootstrap/Stack";
 import Accordion from "react-bootstrap/Accordion";
 import Card from "react-bootstrap/Card";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
-import { Container, Form, Row, Col, Button, FormCheck,InputGroup } from "react-bootstrap";
+import {
+  Container,
+  Form,
+  Row,
+  Col,
+  Button,
+  FormCheck,
+  InputGroup,
+} from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import "./Servico_Executado.css";
 import { useAuth } from "../../../contexts/UserContext";
@@ -33,43 +41,47 @@ const ServicoExecutado = () => {
   const [devolverMesmo, setDevolverMesmo] = useState(false);
   const { empresaFetch, validar } = useAuth();
 
-  const [ preco, setPreco ] = useState({ precoServico: 0, precoPet: 0, precoTotal: 0});
-  const [ servicoSel, setServicoSel ] = useState({});
+  const [preco, setPreco] = useState({
+    precoServico: 0,
+    precoPet: 0,
+    precoTotal: 0,
+  });
+  const [servicoSel, setServicoSel] = useState({});
 
   // Lógica de cálculo de preços
   async function popularPreco() {
     const idServ = servicoSel;
-    
+
     if (Number.isInteger(idServ) && idServ != 0) {
       const resp = await empresaFetch(`/servico-oferecido/${idServ}`);
-  
+
       if (resp.status != 200) {
         return;
       }
-      
+
       const jsonBody = await resp.json();
       const { preco: precoObtido, tipoPreco } = jsonBody.servicoOferecido;
-  
-      let pets = 0, servico = 0, total = 0;
-      if (tipoPreco == 'pet') {
+
+      let pets = 0,
+        servico = 0,
+        total = 0;
+      if (tipoPreco == "pet") {
         pets = precoObtido;
         total = pets * petsSel.length;
-      } else if (tipoPreco == 'servico') {
+      } else if (tipoPreco == "servico") {
         servico = precoObtido;
         total = servico;
       }
-      
-      setPreco({precoPet: pets, precoServico: servico, precoTotal: total});
-    } else {
-      setPreco({precoPet: 0, precoServico: 0, precoTotal: 0});
 
+      setPreco({ precoPet: pets, precoServico: servico, precoTotal: total });
+    } else {
+      setPreco({ precoPet: 0, precoServico: 0, precoTotal: 0 });
     }
   }
-  
+
   useEffect(() => {
     popularPreco();
-  }, [petsSel, servicoSel])
-
+  }, [petsSel, servicoSel]);
 
   async function popularServicosOferecidos() {
     empresaFetch("/servico-oferecido")
@@ -350,11 +362,11 @@ const ServicoExecutado = () => {
                       message: "Selecione o serviço para o agendamento",
                     },
                   })}
-                  onInput={ (e) => {
+                  onInput={(e) => {
                     // const novoServ = getValues('servico')
                     const novoServ = e.target.value;
                     setServicoSel(+novoServ);
-                    console.log('rodei: ' ,novoServ)
+                    console.log("rodei: ", novoServ);
                   }}
                 >
                   <option value="">Selecione um serviço</option>
@@ -408,7 +420,7 @@ const ServicoExecutado = () => {
                 <InputGroup>
                   <InputGroup.Text>R$</InputGroup.Text>
                   <Form.Control
-                  className="form-agendamento"
+                    className="form-agendamento"
                     type="text"
                     placeholder="Valor por pet"
                     value={preco.precoPet}
@@ -453,13 +465,14 @@ const ServicoExecutado = () => {
             <Col md={5}>
               <Form.Group controlId="formFuncionario">
                 <Form.Label>Funcionário que realizou</Form.Label>
-                <Form.Select 
+                <Form.Select
                   {...register("funcionario", {
                     required: {
-                      value: true, 
-                      message: "Selecione o funcionário atribuído"
-                    }})
-                  }>
+                      value: true,
+                      message: "Selecione o funcionário atribuído",
+                    },
+                  })}
+                >
                   <option value="">Selecione um funcionário</option>
                   {funcionarios &&
                     funcionarios.map((funcionario) => (
@@ -625,16 +638,16 @@ const ServicoExecutado = () => {
           </Row>
           <Row className="d-flex justify-content-center">
             <Col md="auto">
-            <Button
-            variant="primary"
-            onClick={(e) => {
-              getData();
-            }}
-            type="submit"
-            className="mt-4 mb-4 button-agendamento"
-          >
-            Agendar
-          </Button>
+              <Button
+                variant="primary"
+                onClick={(e) => {
+                  getData();
+                }}
+                type="submit"
+                className="mt-4 mb-4 botao__cadastrar"
+              >
+                Agendar
+              </Button>
             </Col>
           </Row>
         </Form>

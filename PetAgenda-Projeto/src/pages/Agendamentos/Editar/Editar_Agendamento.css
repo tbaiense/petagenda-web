@@ -21,3 +21,15 @@
   justify-content: center;
   gap: 20px;
 }
+
+.botao__cancelar{
+  background-color: #f44336; /* Red */
+  border: 1px solid #f44336;
+  font-size: 18px;
+  width: 130px;
+}
+
+.botao__cancelar:hover {
+  background-color: #d32f2f; /* Darker Red */
+  border: 1px solid #d32f2f;
+}

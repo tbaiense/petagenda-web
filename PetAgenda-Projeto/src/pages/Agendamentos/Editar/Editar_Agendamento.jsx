@@ -277,13 +277,14 @@ function Editar_Agendamento() {
   };
 
   return (
-    <div className="cadatrar_agendamento mt-4">
-      <h2 className="cadastrar_agendamento__title">Editar agendamento</h2>
-      <Container>
-        <Form onSubmit={handleSubmit(onSubmit)} className="form_agendamento ">
+    <div className="containergeral mt-1">
+      <h1 className="cadastrar_agendamento__title">Novo agendamento</h1>
+      <hr />
+      <Container className="cadatrar_agendamento mt-4">
+        <Form onSubmit={handleSubmit(onSubmit)}>
           <Row>
-            <Col>
-              <Form.Group controlId="formServico">
+            <Col className="campos-espaco">
+              <Form.Group controlId="formServico" className="form-servico">
                 <Form.Label>Filtrar serviço por:</Form.Label>
                 <Form.Select {...register("filtro")} disabled>
                   <option value="">Restrição de espécie</option>
@@ -292,7 +293,7 @@ function Editar_Agendamento() {
                 </Form.Select>
               </Form.Group>
             </Col>
-            <Col>
+            <Col className="campos-espaco">
               <Form.Group controlId="formServico">
                 <Form.Label>Tipo do filtro:</Form.Label>
                 <Form.Select {...register("tipoFiltro")} disabled>
@@ -326,7 +327,7 @@ function Editar_Agendamento() {
           </Row>
 
           <Row className="mt-3">
-            <Col>
+            <Col className="campos-espaco">
               <Form.Group controlId="formData">
                 <Form.Label>Data do agendamento</Form.Label>
                 <Form.Control
@@ -336,7 +337,7 @@ function Editar_Agendamento() {
                 />
               </Form.Group>
             </Col>
-            <Col>
+            <Col className="campos-espaco">
               <Form.Group controlId="formHora">
                 <Form.Label>Hora do agendamento</Form.Label>
                 <Form.Control
@@ -366,7 +367,7 @@ function Editar_Agendamento() {
             <hr></hr>
           </Row>
           <Row className="mt-3">
-            <Col>
+            <Col className="campos-espaco">
               <Form.Group controlId="formServico">
                 <Form.Label>Cliente:</Form.Label>
                 <Form.Select
@@ -386,7 +387,7 @@ function Editar_Agendamento() {
                 </Form.Select>
               </Form.Group>
             </Col>
-            <Col>
+            <Col className="campos-espaco">
               <Form.Group controlId="formServico">
                 <Form.Label>Pet:</Form.Label>
                 <Form.Select id="pet-selecionar" {...register("pet")}>
@@ -400,9 +401,9 @@ function Editar_Agendamento() {
                 </Form.Select>
               </Form.Group>
             </Col>
-            <Col>
+            <Col className="justify-content-start d-flex align-items-end ">
               <Button
-                variant="secondary"
+                className="button-adicionar"
                 type="button"
                 onClick={(e) => {
                   const petSel = petsCliente.find((p) => {
@@ -512,31 +513,34 @@ function Editar_Agendamento() {
               />
             </FloatingLabel>
           </Row>
-          <div className="botoes_agendamento">
+          <Row className="d-flex justify-content-center">
             {/* Voltar */}
-            <Button
-              variant="secondary"
-              onClick={() => {
-                navigate("/empresa/agendamentos/lista");
-                console.log("Voltar para agendamentos");
-              }}
-              className="mt-4 mb-4 botao_cancelar"
-              type="button"
-            >
-              Cancelar
-            </Button>
-
-            <Button
-              variant="primary"
-              onClick={(e) => {
-                getData();
-              }}
-              type="submit"
-              className="mt-4 mb-4 botao_salvar"
-            >
-              Salvar
-            </Button>
-          </div>
+            <Col md="auto" className="campos-espaco">
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  navigate("/empresa/agendamentos/lista");
+                  console.log("Voltar para agendamentos");
+                }}
+                className="mt-4 mb-4 botao__cancelar"
+                type="button"
+              >
+                Cancelar
+              </Button>
+            </Col>
+            <Col md="auto">
+              <Button
+                variant="primary"
+                onClick={(e) => {
+                  getData();
+                }}
+                type="submit"
+                className="mt-4 mb-4 botao__cadastrar"
+              >
+                Salvar
+              </Button>
+            </Col>
+          </Row>
         </Form>
       </Container>
     </div>
