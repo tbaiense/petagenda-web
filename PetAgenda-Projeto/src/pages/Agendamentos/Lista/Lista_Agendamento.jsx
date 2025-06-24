@@ -148,12 +148,12 @@ const Lista_Agendamentos = () => {
         {/* Topo */}
         <div>
           <Row>
-            <Col>
+            <Col className="mb-3">
               <h2>Agendamentos e serviços executados</h2>
             </Col>
             <Col>
               <Dropdown>
-                <Dropdown.Toggle variant="success" id="dropdown-basic">
+                <Dropdown.Toggle className="botao_cadastrar" id="dropdown-basic">
                   Cadastrar novo
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
@@ -175,11 +175,11 @@ const Lista_Agendamentos = () => {
               </Dropdown>
             </Col>
           </Row>
-          <Row>
-            <Col>
+          <Row className="mb-3">
+            <Col className="campos-espaco">
               <Form.Control type="text" placeholder="Pesquisar..." />
             </Col>
-            <Col>
+            <Col className="campos-espaco">
               <Form.Select
                 className="form-button"
                 aria-label="Default select example"

@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import NavEmpresa from "../../../components/navegacaoEmpresa/NavEmpresa.jsx";
 import { LoadingOutlined } from "@ant-design/icons";
 import React, { useState } from 'react';
-
+import { Button } from "react-bootstrap";
 const CadastroEmpresa = () => {
   const { setEmpresa, apiFetch, getToken } = useAuth();
   const [ isLoading, setIsLoading ] = useState(false);
@@ -182,16 +182,17 @@ const CadastroEmpresa = () => {
               </div>
 
               <div className="d-flex justify-content-center mt-4 gap-3">
-                <button 
+                <Button 
                 disabled={!!isLoading}
+                className={styles.botao__cadastrar}
                 type="submit" 
-                className="btn btn-success">
+                >
                   Cadastrar Empresa
                   {isLoading && <span style={{display: 'inline-block', marginLeft: '0.8em', verticalAlign: 'center'}}>
                       <LoadingOutlined />
                   </span>}
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
                   className="btn btn-secondary"
                   onClick={() => {
@@ -200,7 +201,7 @@ const CadastroEmpresa = () => {
                   }}
                 >
                   Limpar
-                </button>
+                </Button>
               </div>
             </form>
           </div>

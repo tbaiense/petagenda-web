@@ -28,3 +28,16 @@ form .form-label {
     font-size: x-large;
     background-color: #fff;
 }
+
+.button-agendamento {
+  width: 100%;
+  padding: 8px 25px;
+  margin-top: 1rem;
+  border-radius: 15px;
+  background-color: #4bec53;
+  border: 1px solid #4bec53;
+}
+.button-agendamento:hover {
+  background-color: #3cbf42;
+  border: 1px solid #3cbf42;
+}

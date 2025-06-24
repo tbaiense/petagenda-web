@@ -45,29 +45,29 @@ const CadastrarPets = () => {
     watch,
   } = useForm();
 
-  // const cadastrarPet = async (pet) => {
-  //   const jsonPet = JSON.stringify(pet);
-  //   console.log("novo: ",jsonPet);
-  //   try {
-  //     const res = await empresaFetch('/pet', {
-  //         method: "POST",
-  //         body: JSON.stringify(pet)
-  //     });
+  const cadastrarPet = async (pet) => {
+    const jsonPet = JSON.stringify(pet);
+    console.log("novo: ",jsonPet);
+    try {
+      const res = await empresaFetch('/pet', {
+          method: "POST",
+          body: JSON.stringify(pet)
+      });
 
-  //     const jsonBody = await res.json();
+      const jsonBody = await res.json();
 
-  //     if (res.status == 200) {
-  //       const idPet = jsonBody.pet.id;
+      if (res.status == 200) {
+        const idPet = jsonBody.pet.id;
 
-  //       alert('cadastrado');
-  //       navigate(`/empresa/pets/lista`);
-  //     } else {
-  //         alert('erro ao cadastrar pet');
-  //     }
-  //   } catch (err) {
-  //     alert('Falha ao cadastrar pet: ' + err.message);
-  //   }
-  // };
+        alert('cadastrado');
+        navigate(`/empresa/pets/lista`);
+      } else {
+          alert('erro ao cadastrar pet');
+      }
+    } catch (err) {
+      alert('Falha ao cadastrar pet: ' + err.message);
+    }
+  };
 
   const onSubmit = (data) => {
     const newPet = {
@@ -89,89 +89,89 @@ const CadastrarPets = () => {
     };
     console.log("novo: ", newPet);
 
-    // cadastrarPet(newPet);
+    cadastrarPet(newPet);
   };
 
   const onErrors = (errors) => {
     console.log(errors);
   };
 
-  // async function obterClientes() {
-  //   try {
-  //     const cliResp = await empresaFetch('/cliente');
+  async function obterClientes() {
+    try {
+      const cliResp = await empresaFetch('/cliente');
 
-  //     if (cliResp.status == 200) {
-  //       const jsonBody = await cliResp.json();
+      if (cliResp.status == 200) {
+        const jsonBody = await cliResp.json();
 
-  //       if (!jsonBody) {
-  //         throw new Error("servidor enviou corpo vazio");
-  //       }
+        if (!jsonBody) {
+          throw new Error("servidor enviou corpo vazio");
+        }
 
-  //       if (!jsonBody.clientes) {
-  //         throw new Error(jsonBody.message);
-  //       }
+        if (!jsonBody.clientes) {
+          throw new Error(jsonBody.message);
+        }
 
-  //       if (jsonBody.clientes.length == 0) {
-  //         return [];
-  //       } else {
-  //         return jsonBody.clientes;
-  //       }
-  //     } else {
-  //       throw new Error('requisição não retornou código 200');
-  //     }
-  //   } catch (err) {
-  //     err.message = "Falha ao obter clientes cadastrados: " + err.message;
-  //     throw err;
-  //     // return [];
-  //   }
-  // }
+        if (jsonBody.clientes.length == 0) {
+          return [];
+        } else {
+          return jsonBody.clientes;
+        }
+      } else {
+        throw new Error('requisição não retornou código 200');
+      }
+    } catch (err) {
+      err.message = "Falha ao obter clientes cadastrados: " + err.message;
+      throw err;
+      // return [];
+    }
+  }
 
-  // async function obterEspecies() {
-  //   try {
-  //     const espResp = await empresaFetch('/pet/especie');
+  async function obterEspecies() {
+    try {
+      const espResp = await empresaFetch('/pet/especie');
 
-  //     if (espResp.status == 200) {
-  //       const jsonBody = await espResp.json();
-  //       if (!jsonBody) {
-  //         throw new Error("servidor enviou corpo vazio");
-  //       }
+      if (espResp.status == 200) {
+        const jsonBody = await espResp.json();
+        if (!jsonBody) {
+          throw new Error("servidor enviou corpo vazio");
+        }
 
-  //       if (!jsonBody.especiesPet) {
-  //         throw new Error(jsonBody.message);
-  //       }
+        if (!jsonBody.especiesPet) {
+          throw new Error(jsonBody.message);
+        }
 
-  //       return jsonBody.especiesPet;
+        return jsonBody.especiesPet;
 
-  //     } else {
-  //       throw new Error('requisição não retornou código 200');
-  //     }
-  //   } catch (err) {
-  //     err.message = "Falha ao obter espécies cadastradas: " + err.message;
-  //     throw err;
-  //     // return [];
-  //   }
-  // }
+      } else {
+        throw new Error('requisição não retornou código 200');
+      }
+    } catch (err) {
+      err.message = "Falha ao obter espécies cadastradas: " + err.message;
+      throw err;
+      // return [];
+    }
+  }
 
-  // useEffect(() => {
-  //   // Populando clientes
-  //   obterClientes()
-  //     .then( cliList => {
-  //       setClientes(cliList);
-  //       console.log('clientes encontrados: ', cliList);
-  //     })
-  //     .catch( err => {
-  //       alert(err.message);
-  //     });
+  useEffect(() => {
+    // Populando clientes
+    obterClientes()
+      .then( cliList => {
+        setClientes(cliList);
+        console.log('clientes encontrados: ', cliList);
+      })
+      .catch( err => {
+        alert(err.message);
+      });
 
-  //   // Populando espécies
-  //   obterEspecies()
-  //     .then( espList => {
-  //       setEspecies(espList);
-  //     })
-  //     .catch( err => {
-  //       alert(err.message);
-  //     });
-  // }, []);
+    // Populando espécies
+    obterEspecies()
+      .then( espList => {
+        setEspecies(espList);
+      })
+      .catch( err => {
+        alert(err.message);
+      });
+  }, []);
 
   return (
     <div className={`mt-1 ${styles.containergeral}`}>
@@ -413,7 +413,7 @@ const CadastrarPets = () => {
 
           <Row className="d-flex justify-content-center">
             <Col md="auto">
-              <Button type="submit" className="mt-4 mb-4 button-agendamento">
+              <Button type="submit" className="mt-4 mb-4 botao__cadastrar">
                 Cadastrar
               </Button>
             </Col>

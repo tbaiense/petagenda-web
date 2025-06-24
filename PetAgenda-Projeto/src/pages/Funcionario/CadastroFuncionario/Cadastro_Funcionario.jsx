@@ -4,9 +4,10 @@ import { useAuth } from "../../../contexts/UserContext";
 import ModalCadastroFuncionario from "../../../components/ModalFuncionario/ModalCadastroFuncionario";
 import styles from "./Cadastro_Funcionario.module.css";
 import ModalEditarFuncionario from "../../../components/ModalEditarFuncionario/ModalEditarFuncionario";
-import { Input } from 'antd';
-import iconEditar from "../../../assets/icon_editarAzul.svg"
-import iconDeletar from "../../../assets/icon_delete.svg"
+import { Input } from "antd";
+import iconEditar from "../../../assets/icon_editarAzul.svg";
+import iconDeletar from "../../../assets/icon_delete.svg";
+import { Form, Button } from "react-bootstrap";
 
 const { Search } = Input;
 
@@ -18,7 +19,6 @@ const CadastroFuncionario = () => {
   const [funcionarios, setFuncionarios] = useState([]);
   const [servicos, setServicos] = useState([]);
   const [pesquisando, setPesquisando] = useState(false);
-
 
   const {
     register,
@@ -36,17 +36,19 @@ const CadastroFuncionario = () => {
   async function deletarFuncionario(id) {
     try {
       const response = await empresaFetch(`/funcionario/${id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       if (response.ok) {
-        setFuncionarios((prev) => prev.filter((funcionario) => funcionario.id !== id));
-        console.log('Funcionario deletado com sucesso!');
+        setFuncionarios((prev) =>
+          prev.filter((funcionario) => funcionario.id !== id)
+        );
+        console.log("Funcionario deletado com sucesso!");
       } else {
-        console.error('Erro ao deletar funcionario');
+        console.error("Erro ao deletar funcionario");
       }
     } catch (error) {
-      console.error('Erro ao deletar funcionario:', error);
+      console.error("Erro ao deletar funcionario:", error);
     }
   }
 
@@ -69,7 +71,6 @@ const CadastroFuncionario = () => {
         console.error("Erro ao buscar serviços oferecidos:", error);
       });
   }
-
 
   useEffect(() => {
     if (validar) {
@@ -97,9 +98,8 @@ const CadastroFuncionario = () => {
   async function editarFuncionario(objFun) {
     const res = await empresaFetch(`/funcionario/${objFun.id}`, {
       method: "PUT",
-      body: JSON.stringify(objFun)
+      body: JSON.stringify(objFun),
     });
-
 
     if (res.status === 200) {
       reset();
@@ -140,10 +140,18 @@ const CadastroFuncionario = () => {
         <h1>Funcionarios Cadastrados</h1>
         <hr />
       </div>
-      <div className={styles.alinhamento} >
+      <div className={styles.alinhamento}>
         <div className={styles.orgContent}>
           <div className={styles.pesquisa}>
-            <Search placeholder="Pesquise pelo funcionario..." enterButton="Search" size="large" loading={pesquisando} onChange={(e) => { setPesquisando(!pesquisando) }} />
+            <Search
+              placeholder="Pesquise pelo funcionario..."
+              enterButton="Search"
+              size="large"
+              loading={pesquisando}
+              onChange={(e) => {
+                setPesquisando(!pesquisando);
+              }}
+            />
           </div>
           <div className={styles.filtros}>
             <div>
@@ -163,18 +171,20 @@ const CadastroFuncionario = () => {
           {funcionarios?.length > 0 ? (
             funcionarios?.map((funcionario) => {
               const servExerce = servicos.flatMap((serv) => {
-                if (serv.id == func.exerce[0].servico) {
+                if (serv.id == funcionario.exerce[0].servico) {
                   return serv.nome;
                 } else {
                   return [];
                 }
-              })
+              });
 
               return (
                 <div className={styles.listFuncionarioLimit}>
                   <div key={funcionario.id} className={styles.cardInfo}>
                     <div>
-                      <span className={styles.nomeFuncionario}>{funcionario.nome}</span>
+                      <span className={styles.nomeFuncionario}>
+                        {funcionario.nome}
+                      </span>
                       <div className={styles.layoutInfoPerson}>
                         <span>{funcionario.telefone}</span>
                         <span>|</span>
@@ -184,20 +194,32 @@ const CadastroFuncionario = () => {
                     <div className={styles.position}>
                       <div className={styles.position2}>
                         <div className={styles.alinhamentoImage}>
-                          <img src={iconEditar} alt="" onClick={() => abrirModalEditar(funcionario)} />
+                          <img
+                            src={iconEditar}
+                            alt=""
+                            onClick={() => abrirModalEditar(funcionario)}
+                          />
                         </div>
                         <div className={styles.alinhamentoImage}>
-                          <img src={iconDeletar} alt="" onClick={() => {
-                            if (confirm('Deseja realmente deletar este cliente?')) {
-                              deletarFuncionario(funcionario.id);
-                            }
-                          }} />
+                          <img
+                            src={iconDeletar}
+                            alt=""
+                            onClick={() => {
+                              if (
+                                confirm(
+                                  "Deseja realmente deletar este cliente?"
+                                )
+                              ) {
+                                deletarFuncionario(funcionario.id);
+                              }
+                            }}
+                          />
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              )
+              );
             })
           ) : (
             <div className={styles.cardInfo}>
@@ -207,138 +229,133 @@ const CadastroFuncionario = () => {
         </div>
       </div>
 
-      {
-        showModal &&
+      {showModal && (
         <ModalCadastroFuncionario
           isOpen={showModal}
           onClose={() => setShowModal(false)}
         >
-          <h2>Cadastro de Funcionario</h2>
+          <h2 className="mb-4">Cadastro de Funcionario</h2>
 
-          <form
+          <Form
             id="form-func"
             action=""
-            className={styles.customeForm}
             onSubmit={handleSubmit(onSubmit, onError)}
           >
-            <div className={styles.areaNomeSexo}>
-              <div className={styles.controlaCampos}>
-                <label htmlFor="">
-                  Nome<span style={{ color: "red" }}>*</span>:
-                </label>
-                <input
-                  type="text"
-                  placeholder="Digite o nome"
-                  {...register("nome", {
-                    required: {
-                      value: true,
-                      message: "O nome é obrigatorio",
-                    },
-                    onChange: (e) => {
-                      let value = e.target.value;
+            <Form.Group className="mb-3">
+              <Form.Label htmlFor="">
+                Nome<span style={{ color: "red" }}>*</span>:
+              </Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Digite o nome"
+                {...register("nome", {
+                  required: {
+                    value: true,
+                    message: "O nome é obrigatorio",
+                  },
+                  onChange: (e) => {
+                    let value = e.target.value;
 
-                      if (value && value.length > 0) {
-                        let values = value.split(" ");
-                        values = values.map(
-                          (v) => `${v.charAt(0).toUpperCase()}${v.substring(1)}`
-                        );
-                        value = values.join(" ");
-                      }
-                      setValue(e.target.name, value);
-                    },
-                    minLength: {
-                      value: 3,
-                      message: "O nome deve ter pelo menos 3 caracteres",
-                    },
-                    maxLength: {
-                      value: 64,
-                      message: "O nome dever ter no maximo 64 caracteres",
-                    },
-                  })}
-                />
-                {errors.nome && (
-                  <p style={{ color: "red" }}>{errors.nome.message}</p>
-                )}
-              </div>
+                    if (value && value.length > 0) {
+                      let values = value.split(" ");
+                      values = values.map(
+                        (v) => `${v.charAt(0).toUpperCase()}${v.substring(1)}`
+                      );
+                      value = values.join(" ");
+                    }
+                    setValue(e.target.name, value);
+                  },
+                  minLength: {
+                    value: 3,
+                    message: "O nome deve ter pelo menos 3 caracteres",
+                  },
+                  maxLength: {
+                    value: 64,
+                    message: "O nome dever ter no maximo 64 caracteres",
+                  },
+                })}
+              />
+              {errors.nome && (
+                <p style={{ color: "red" }}>{errors.nome.message}</p>
+              )}
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>
+                Serviço Exercido<span style={{ color: "red" }}>*</span>:
+              </Form.Label>
+              <Form.Select
+                {...register("servico", {
+                  required: {
+                    value: true,
+                    message: "Selecione um serviço exercido",
+                  },
+                })}
+              >
+                <option value="">Selecione um serviço</option>
+
+                {servicos.map((servico) => (
+                  <option key={servico.id} value={servico.id}>
+                    {servico.nome}
+                  </option>
+                ))}
+              </Form.Select>
+              {errors.servico && (
+                <p style={{ color: "red" }}>{errors.servico.message}</p>
+              )}
+            </Form.Group>
+            <Form.Group className="mb-4">
+              <Form.Label>
+                Telefone<span style={{ color: "red" }}>*</span>:
+              </Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Digite o telefone"
+                {...register("telefone", {
+                  required: {
+                    value: true,
+                    message: "O telefone é obrigatorio",
+                  },
+                  pattern: {
+                    value: /^\d{2,2} \d{5,5}-\d{4,4}$/,
+                    message: "Formato esperado: 27 99888-7766",
+                  },
+                  onChange: (e) => {
+                    let value = e.target.value;
+
+                    if (value && value.length > 0) {
+                      value = value.replaceAll(/[^0-9]/g, "");
+                      value = `${value.substring(0, 2)}${
+                        value.length > 2 ? " " : ""
+                      }${value.substring(2, 7)}${
+                        value.length > 7 ? "-" : ""
+                      }${value.substring(7, 11)}`;
+                      console.log("limpei");
+                    }
+                    setValue(e.target.name, value);
+                  },
+                  minLength: {
+                    value: 13,
+                    message: "O telefone deve ter pelo menos 13 caracteres",
+                  },
+                  maxLength: {
+                    value: 14,
+                    message: "O telefone dever ter no maximo 15 caracteres",
+                  },
+                })}
+              />
+              {errors.telefone && (
+                <p style={{ color: "red" }}>{errors.telefone.message}</p>
+              )}
+            </Form.Group>
+
+            <div className="d-flex justify-content-center">
+              <Button type="submit">Cadastrar</Button>
             </div>
-
-            <div>
-              <div className={styles.controlaCampos}>
-                <label htmlFor="">
-                  Serviço Exercido<span style={{ color: "red" }}>*</span>:
-                </label>
-                <select
-                  {...register("servico", {
-                    required: {
-                      value: true,
-                      message: "Selecione um serviço exercido",
-                    },
-                  })}
-                >
-                  <option value="">Selecione um serviço</option>
-
-                  {servicos.map((servico) => (
-                    <option key={servico.id} value={servico.id}>
-                      {servico.nome}
-                    </option>
-                  ))}
-                </select>
-                {errors.servico && (
-                  <p style={{ color: "red" }}>{errors.servico.message}</p>
-                )}
-              </div>
-
-              <div className={styles.controlaCampos}>
-                <label htmlFor="">
-                  Telefone<span style={{ color: "red" }}>*</span>:
-                </label>
-                <input
-                  type="text"
-                  placeholder="Digite o telefone"
-                  {...register("telefone", {
-                    required: {
-                      value: true,
-                      message: "O telefone é obrigatorio",
-                    },
-                    pattern: {
-                      value: /^\d{2,2} \d{5,5}-\d{4,4}$/,
-                      message: "Formato esperado: 27 99888-7766",
-                    },
-                    onChange: (e) => {
-                      let value = e.target.value;
-
-                      if (value && value.length > 0) {
-                        value = value.replaceAll(/[^0-9]/g, "");
-                        value = `${value.substring(0, 2)}${value.length > 2 ? " " : ""
-                          }${value.substring(2, 7)}${value.length > 7 ? "-" : ""
-                          }${value.substring(7, 11)}`;
-                        console.log("limpei");
-                      }
-                      setValue(e.target.name, value);
-                    },
-                    minLength: {
-                      value: 13,
-                      message: "O telefone deve ter pelo menos 13 caracteres",
-                    },
-                    maxLength: {
-                      value: 14,
-                      message: "O telefone dever ter no maximo 15 caracteres",
-                    },
-                  })}
-                />
-                {errors.telefone && (
-                  <p style={{ color: "red" }}>{errors.telefone.message}</p>
-                )}
-              </div>
-            </div>
-
-            <div className={styles.posicaoBotaoForm}>
-              <button type="submit">Cadastrar</button>
-            </div>
-          </form>
+          </Form>
         </ModalCadastroFuncionario>
-      }
-      {showModalEditar && funcionarioSelecionado &&
+      )}
+      {showModalEditar && funcionarioSelecionado && (
         <ModalEditarFuncionario
           funcionario={funcionarioSelecionado}
           setFuncionario={setFuncionarioSelecionado}
@@ -347,7 +364,7 @@ const CadastroFuncionario = () => {
           servicos={servicos}
           onClose={() => setShowModalEditar(false)}
         />
-      }
+      )}
       <div>
         {/* <table className={styles.tabelaBonita}>
           <thead>

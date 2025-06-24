@@ -313,13 +313,14 @@ const ServicoExecutado = () => {
   };
 
   return (
-    <div className="cadatrar_agendamento mt-4">
-      <h2 className="cadastrar_agendamento__title">Novo serviço realizado</h2>
-      <Container>
+    <div className="containergeral mt-1">
+      <h1 className="cadastrar_agendamento__title">Novo Serviço Realizado</h1>
+      <hr />
+      <Container className="cadatrar_agendamento mt-4">
         <Form onSubmit={handleSubmit(onSubmit)}>
           <Row>
-            <Col>
-              <Form.Group controlId="formFiltro">
+            <Col className="campos-espaco">
+              <Form.Group controlId="formFiltro" className="form-servico">
                 <Form.Label>Filtrar serviço por:</Form.Label>
                 <Form.Select {...register("filtro")}>
                   <option value="">Restrição de espécie</option>
@@ -328,7 +329,7 @@ const ServicoExecutado = () => {
                 </Form.Select>
               </Form.Group>
             </Col>
-            <Col>
+            <Col className="campos-espaco">
               <Form.Group controlId="formServico">
                 <Form.Label>Tipo do filtro:</Form.Label>
                 <Form.Select {...register("tipoFiltro")}>
@@ -368,7 +369,7 @@ const ServicoExecutado = () => {
           </Row>
 
           <Row className="mt-3">
-            <Col>
+            <Col className="campos-espaco">
               <Form.Group controlId="dataExecucao">
                 <Form.Label>Data de execução</Form.Label>
                 <Form.Control
@@ -378,7 +379,7 @@ const ServicoExecutado = () => {
                 />
               </Form.Group>
             </Col>
-            <Col>
+            <Col className="campos-espaco">
               <Form.Group controlId="horaInicio">
                 <Form.Label>Hora de início</Form.Label>
                 <Form.Control
@@ -401,12 +402,13 @@ const ServicoExecutado = () => {
           </Row>
           {/* Preços */}
           <Row className="mt-3">
-            <Col>
+            <Col className="campos-espaco">
               <Form.Group>
                 <Form.Label>Preço por pets:</Form.Label>
                 <InputGroup>
                   <InputGroup.Text>R$</InputGroup.Text>
                   <Form.Control
+                  className="form-agendamento"
                     type="text"
                     placeholder="Valor por pet"
                     value={preco.precoPet}
@@ -415,12 +417,13 @@ const ServicoExecutado = () => {
                 </InputGroup>
               </Form.Group>
             </Col>
-            <Col>
+            <Col className="campos-espaco">
               <Form.Group>
                 <Form.Label>Preço do Serviço:</Form.Label>
                 <InputGroup>
                   <InputGroup.Text>R$</InputGroup.Text>
                   <Form.Control
+                    className="form-agendamento"
                     type="text"
                     placeholder="Valor do Serviço"
                     value={preco.precoServico}
@@ -429,12 +432,13 @@ const ServicoExecutado = () => {
                 </InputGroup>
               </Form.Group>
             </Col>
-            <Col>
+            <Col className="">
               <Form.Group>
                 <Form.Label>Preço total</Form.Label>
                 <InputGroup>
                   <InputGroup.Text>R$</InputGroup.Text>
                   <Form.Control
+                    className="form-agendamento"
                     type="text"
                     placeholder="Valor total"
                     value={preco.precoTotal}
@@ -473,7 +477,7 @@ const ServicoExecutado = () => {
             <hr></hr>
           </Row>
           <Row className="mt-3">
-            <Col>
+            <Col className="campos-espaco">
               <Form.Group controlId="formServico">
                 <Form.Label>Cliente:</Form.Label>
                 <Form.Select
@@ -493,7 +497,7 @@ const ServicoExecutado = () => {
                 </Form.Select>
               </Form.Group>
             </Col>
-            <Col>
+            <Col className="campos-espaco">
               <Form.Group controlId="formServico">
                 <Form.Label>Pet:</Form.Label>
                 <Form.Select id="pet-selecionar" {...register("pet")}>
@@ -507,11 +511,10 @@ const ServicoExecutado = () => {
                 </Form.Select>
               </Form.Group>
             </Col>
-            <Col>
+            <Col className="justify-content-start d-flex align-items-end ">
               <Button
-                variant="secondary"
+                className="button-adicionar"
                 type="button"
-                className="mt-4"
                 onClick={(e) => {
                   const petSel = petsCliente.find((p) => {
                     const pelSelecionado =
@@ -620,16 +623,20 @@ const ServicoExecutado = () => {
               />
             </FloatingLabel>
           </Row>
-          <Button
+          <Row className="d-flex justify-content-center">
+            <Col md="auto">
+            <Button
             variant="primary"
             onClick={(e) => {
               getData();
             }}
             type="submit"
-            className="mt-4 mb-4"
+            className="mt-4 mb-4 button-agendamento"
           >
             Agendar
           </Button>
+            </Col>
+          </Row>
         </Form>
       </Container>
     </div>
