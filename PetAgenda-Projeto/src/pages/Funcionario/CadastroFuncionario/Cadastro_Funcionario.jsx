@@ -172,7 +172,7 @@ const CadastroFuncionario = () => {
             funcionarios?.map((funcionario) => {
               const servExerce = servicos.flatMap((serv) => {
                 if (serv.id == funcionario.exerce[0].servico) {
-                  return serv.nome;
+                  return serv.nome
                 } else {
                   return [];
                 }
