@@ -477,7 +477,7 @@ const ServicoExecutado = () => {
             <hr></hr>
           </Row>
           <Row className="mt-3">
-            <Col>
+            <Col className="campos-espaco">
               <Form.Group controlId="formServico">
                 <Form.Label>Cliente:</Form.Label>
                 <Form.Select
