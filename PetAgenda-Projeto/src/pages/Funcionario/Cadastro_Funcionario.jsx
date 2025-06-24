@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useAuth } from "../../../contexts/UserContext";
-import ModalCadastroFuncionario from "../../../components/ModalFuncionario/ModalCadastroFuncionario";
+import { useAuth } from "../../contexts/UserContext";
+import ModalCadastroFuncionario from "../../components/ModalFuncionario/ModalCadastroFuncionario";
 import styles from "./Cadastro_Funcionario.module.css";
-import ModalEditarFuncionario from "../../../components/ModalEditarFuncionario/ModalEditarFuncionario";
+import ModalEditarFuncionario from "../../components/ModalEditarFuncionario/ModalEditarFuncionario";
 import { Input } from "antd";
-import iconEditar from "../../../assets/icon_editarAzul.svg";
-import iconDeletar from "../../../assets/icon_delete.svg";
+import iconEditar from "../../assets/icon_editarAzul.svg";
+import iconDeletar from "../../assets/icon_delete.svg";
 import { Form, Button } from "react-bootstrap";
 
 const { Search } = Input;

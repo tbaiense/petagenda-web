@@ -23,11 +23,11 @@
 
 .pesquisa{
     padding-bottom: 1rem;
+    padding-top: 1rem;
 }
 .pesquisa input{
     width: 100%;
-    padding: 7px;
-    border-radius: 20px;
+
 }
 
 /* ==================================== FILTROS ================================= */
@@ -36,8 +36,7 @@
     display: flex;
     gap: 20px;
     padding: 1rem 1.5rem 1rem 1.5rem ;
-    background-color: rgb(166, 83, 38);
-    /* background-color: rgb(61, 162, 245); */
+    background-color: rgb(9, 4, 163);
     color: white;
     border-radius: 8px 8px 0px 0px;
     justify-content: space-between;
@@ -55,17 +54,14 @@
     width: 55%;
     gap: 7px;
 }
-
-/* ==================================== SELECTS ================================= */
-
-.slct{
-    background-color: rgb(166, 83, 38);
-    /* background-color: rgb(61, 162, 245); */
-    color: white;
-    border-color:1px solid black;
-    padding: 2px;
+.cardInfo{
+    border: 1px solid black;
+    border-top: none;
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
 }
-/* ==================================== BOTÃO DA SETA ================================= */
 
 /* ==================================== MODAL ================================= */
 
