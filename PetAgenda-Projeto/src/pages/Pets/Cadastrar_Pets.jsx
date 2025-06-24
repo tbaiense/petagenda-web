@@ -413,7 +413,7 @@ const CadastrarPets = () => {
 
           <Row className="d-flex justify-content-center">
             <Col md="auto">
-              <Button type="submit" className="mt-4 mb-4 button-agendamento">
+              <Button type="submit" className="mt-4 mb-4 botao__cadastrar">
                 Cadastrar
               </Button>
             </Col>
