@@ -7,9 +7,8 @@ import { useNavigate } from "react-router-dom";
 
 function CadastrarServico() {
   const [categorias, setCategorias] = useState([]);
-  const [especies, setEspecies] = useState([]);
   const navigate = useNavigate();
-
+  const [especies, setEspecies] = useState([]);
   const { getToken, getEmpresa, validar, empresaFetch } = useAuth();
 
   useEffect(() => {
@@ -196,7 +195,7 @@ function CadastrarServico() {
               </Form.Group>
             </Col>
           </Row>
-          <Row className="mt-3">
+          <Row className="mt-3 mb-3">
             <Col className="campos-espaco">
               <Form.Group controlId="formRestricaoEspecies">
                 <Form.Label>Restrição de espécies</Form.Label>
