@@ -1,15 +1,14 @@
-
-.areaDoCadastro h2{
+.areaDoCadastro h2 {
   text-align: center;
   padding: 1rem 1rem;
 }
-.cardCadastro{
+.cardCadastro {
   display: grid;
   grid-template-areas: "lx form view";
   grid-template-columns: 1fr 2fr 1fr 1fr; /* Ajuste como quiser */
   gap: 2rem;
 }
-.formCadastro{
+.formCadastro {
   grid-area: form;
   display: flex;
   flex-direction: column;
@@ -18,20 +17,20 @@
   padding-right: 1rem;
   width: 100%;
 }
-.formCadastro input{
+.formCadastro input {
   padding: 10px;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: "Times New Roman", Times, serif;
   border: 1px solid rgba(0, 0, 0, 0.3);
   border-radius: 12px;
 }
-.formCadastro #inputLema{
+.formCadastro #inputLema {
   resize: none;
   padding: 10px;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: "Times New Roman", Times, serif;
   border-radius: 12px;
   border: 1px solid rgba(0, 0, 0, 0.3);
 }
-.viewImg{
+.viewImg {
   grid-area: view;
   display: flex;
   flex-direction: column;
@@ -44,29 +43,37 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   height: 70%;
 }
-.viewImg img{
+.viewImg img {
   border-radius: 100%;
 }
-.bttn{
+.btn {
   display: flex;
   gap: 20px;
   justify-content: center;
   padding-bottom: 1rem;
 }
-.bttn button{
+.btn Button {
   padding: 5px 10px;
   border: none;
   border-radius: 12px;
   transition: background-color 0.3s ease;
-  background-color: #1FAF30;
   color: white;
 }
-.bttn button:hover {
-  background-color: #0e811c;
-  cursor: pointer;
-}
+
 @media (max-width: 768px) {
-  .formCadastro, .viewImg {
+  .formCadastro,
+  .viewImg {
     width: 90vw;
   }
 }
+
+.botao__cadastrar {
+  background-color: #1FAF30;
+  border: 1px #1FAF30;
+}
+
+.botao__cadastrar:hover {
+  background-color: #0e811c;
+  border: 1px #0e811c;
+}
+

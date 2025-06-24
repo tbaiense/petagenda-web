@@ -49,13 +49,12 @@ form .form-label {
   width: 100%;
   padding: 8px 25px;
   margin-top: 1rem;
-  border-radius: 15px;
-  background-color: #4bec53;
-  border: 1px solid #4bec53;
+  background-color: #1faf30;
+  border: 1px #1faf30;
 }
 .button-agendamento:hover {
-  background-color: #3cbf42;
-  border: 1px solid #3cbf42;
+  background-color: #0e811c;
+  border: 1px #0e811c;
 }
 
 h1 {
@@ -64,4 +63,14 @@ h1 {
 
 .form-agendamento {
   border-radius: 0px 8px 8px 0px !important;
+}
+
+.botao_cadastrar {
+  background-color: #1FAF30;
+  border: 1px #1FAF30;
+}
+
+.botao_cadastrar:hover {
+  background-color: #0e811c;
+  border: 1px #0e811c;
 }

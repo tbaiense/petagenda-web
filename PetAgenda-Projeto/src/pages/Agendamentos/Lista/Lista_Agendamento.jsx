@@ -153,7 +153,7 @@ const Lista_Agendamentos = () => {
             </Col>
             <Col>
               <Dropdown>
-                <Dropdown.Toggle variant="success" id="dropdown-basic">
+                <Dropdown.Toggle className="botao_cadastrar" id="dropdown-basic">
                   Cadastrar novo
                 </Dropdown.Toggle>
                 <Dropdown.Menu>

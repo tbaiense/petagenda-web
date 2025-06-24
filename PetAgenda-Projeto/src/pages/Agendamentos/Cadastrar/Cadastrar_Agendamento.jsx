@@ -678,7 +678,7 @@ const Agendamento = () => {
                   getData();
                 }}
                 type="submit"
-                className="mt-4 mb-4 button-agendamento"
+                className="mt-4 mb-4 botao__cadastrar"
               >
                 Agendar
               </Button>
