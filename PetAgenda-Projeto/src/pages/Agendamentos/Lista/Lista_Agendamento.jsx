@@ -17,6 +17,7 @@ import {
   Card,
   Nav,
 } from "react-bootstrap";
+import { Input } from 'antd';
 import { useForm } from "react-hook-form";
 import { useAuth } from "../../../contexts/UserContext";
 import "../Lista/Lista_Agendamento.module.css";
@@ -25,7 +26,14 @@ import Modal_Atualizar_Rapido_ServicoRealizado from "./Modal_Atualizar_Rapido_Se
 import CardAgendamento from "../../../components/CardAgendamento/CardAgendamento";
 import CardServicoRealizado from "../../../components/CardServicoRealizado/CardServicoRealizado";
 
+const { Search } = Input;
+
 const Lista_Agendamentos = () => {
+  const [pesquisando, setPesquisando] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [ ordenacao, setOrdenacao ] = useState('');
+  const [ filtroEstado, setFiltroEstado ] = useState('');
+  const [ abaAtual, setAbaAtual ] = useState('agendamentos');
   const { empresaFetch, validar } = useAuth();
   const navigate = useNavigate();
   const [paginaAtual, setPaginaAtual] = useState(0);
@@ -38,6 +46,7 @@ const Lista_Agendamentos = () => {
   const [funcDisponiveis, setFuncDisponiveis] = useState([]);
   const [ showModalServ, setShowModalServ ] = useState(false);
   const [ editarServ, setEditarServ ] = useState({});
+  const [ tipoFiltro, setTipoFiltro ] = useState('cliente');
 
   async function popularFuncionarios() {
     empresaFetch("/funcionario")
@@ -57,59 +66,63 @@ const Lista_Agendamentos = () => {
   }, []);
 
   async function popularAgendamentos() {
+    setPesquisando(true);
     const limit = 6;
     const resp = await empresaFetch(
-      `/agendamento?limit=${limit}&page=${paginaAtual}`
+      `/agendamento?query=${searchQuery}&option=${tipoFiltro}&estado=${filtroEstado}&ordenacao=${ordenacao}&limit=${limit}&page=${paginaAtual}`
     );
 
     if (resp.status != 200) {
-      console.log("falha ao obter agendamentos!");
-      return;
-    }
-
-    const { qtdAgendamento, agendamentos: agendList } = await resp.json();
-
-    if (agendList.length > 0) {
-      const pageList = [];
-
-      for (let i = 1; i <= Math.ceil(qtdAgendamento / limit); i++) {
-        pageList.push(i);
+      setAgendamentos([]);
+    } else {
+      const { qtdAgendamento, agendamentos: agendList } = await resp.json();
+  
+      if (agendList.length > 0) {
+        const pageList = [];
+  
+        for (let i = 1; i <= Math.ceil(qtdAgendamento / limit); i++) {
+          pageList.push(i);
+        }
+  
+        setPaginas(pageList);
+        setAgendamentos(
+          agendList.map((a) => ({
+            ...a,
+            funcionario: a.funcionario ? a.funcionario : { id: "" },
+          }))
+        );
       }
-
-      setPaginas(pageList);
-      setAgendamentos(
-        agendList.map((a) => ({
-          ...a,
-          funcionario: a.funcionario ? a.funcionario : { id: "" },
-        }))
-      );
     }
+
+    setPesquisando(false);
+    console.log('desliquei')
   }
 
   async function popularServicosRealizados() {
     const limit = 6;
     const resp = await empresaFetch(
-      `/servico-realizado?limit=${limit}&page=${paginaAtualServ}`
+      `/servico-realizado?query=${searchQuery}&option=${tipoFiltro}&ordenacao=${ordenacao}&limit=${limit}&page=${paginaAtualServ}`
     );
 
     if (resp.status != 200) {
-      console.log("falha ao obter serviços realizados!");
-      return;
-    }
-
-    const { qtdServicosRealizados, servicosRealizados: servList } =
-      await resp.json();
-
-    if (servList.length > 0) {
-      const pageList = [];
-
-      for (let i = 1; i <= Math.ceil(qtdServicosRealizados / limit); i++) {
-        pageList.push(i);
+      setServicosRealizados([]);
+    } else {
+      const { qtdServicosRealizados, servicosRealizados: servList } =
+        await resp.json();
+  
+      if (servList.length > 0) {
+        const pageList = [];
+  
+        for (let i = 1; i <= Math.ceil(qtdServicosRealizados / limit); i++) {
+          pageList.push(i);
+        }
+  
+        setPaginasServ(pageList);
+        setServicosRealizados(servList);
       }
-
-      setPaginasServ(pageList);
-      setServicosRealizados(servList);
     }
+    setPesquisando(false);
+    console.log('desliquei')
   }
 
   function handleEditarServ(serv) {
@@ -118,16 +131,16 @@ const Lista_Agendamentos = () => {
   }
 
   useEffect(() => {
+    console.log([abaAtual, paginaAtual, paginaAtualServ, searchQuery, refresh]);
     if (validar) {
-      popularAgendamentos();
+      if (abaAtual == 'agendamentos') {
+        popularAgendamentos();
+      } else if (abaAtual == 'servicos-executados') {
+        popularServicosRealizados();
+      }
     }
-  }, [paginaAtual]);
+  }, [abaAtual, paginaAtual, paginaAtualServ, searchQuery, refresh]);
 
-  useEffect(() => {
-    if (validar) {
-      popularServicosRealizados();
-    }
-  }, [paginaAtualServ]);
 
   useEffect(() => {
     if (validar) {
@@ -135,11 +148,6 @@ const Lista_Agendamentos = () => {
         setRefresh(refresh + 1);
       }, 2000);
     }
-  }, [refresh]);
-
-  useEffect(() => {
-    popularAgendamentos();
-    popularServicosRealizados();
   }, [refresh]);
 
   return (
@@ -177,36 +185,75 @@ const Lista_Agendamentos = () => {
           </Row>
           <Row className="mb-3">
             <Col className="campos-espaco">
-              <Form.Control type="text" placeholder="Pesquisar..." />
+              <Search
+                placeholder="Digite o que deseja pesquisar..."
+                enterButton="Pesquisar"
+                size="large"
+                loading={pesquisando}
+                onSearch={(value, event, type) => {
+                  const searchQuery = value.trim();
+                  if (!searchQuery) {
+                    setSearchQuery("");
+                  } else {
+                    setSearchQuery(searchQuery);
+                  }
+
+                }}
+              />
             </Col>
             <Col className="campos-espaco">
               <Form.Select
                 className="form-button"
                 aria-label="Default select example"
+                defaultValue={tipoFiltro}
+                onChange={ (e) => setTipoFiltro(e.target.value) }
               >
-                <option>Filtrar por</option>
-                <option value="1">One</option>
-                <option value="2">Two</option>
-                <option value="3">Three</option>
+                <option value="cliente">Nome do cliente</option>
               </Form.Select>
             </Col>
-            <Col>
+            <Col className="campos-espaco">
               <Form.Select
                 className="form-button"
                 aria-label="Default select example"
+                onChange={(e) => {
+                  setOrdenacao(e.target.value);
+                }}
               >
-                <option>Ordenar</option>
-                <option value="1">One</option>
-                <option value="2">Two</option>
-                <option value="3">Three</option>
+                <>
+                  <option value="ascending">Crescente</option>
+                  <option value="descending">Decrescente</option>
+                </>
               </Form.Select>
             </Col>
+            {
+              abaAtual == 'agendamentos' 
+              && <Col className="campos-espaco">
+                <Form.Select
+                  className="form-button"
+                  aria-label="Default select example"
+                  onChange={(e) => {
+                    setFiltroEstado(e.target.value);
+                  }}
+                >
+                  <option>Todos</option>
+                  <option value="criado">Criado</option>
+                  <option value="preparado">Preparado</option>
+                  <option value="pendente">Pendente</option>
+                  <option value="concluido">Concluído</option>
+                  <option value="cancelado">Cancelado</option>
+                </Form.Select>
+              </Col>
+            }
           </Row>
         </div>
         {/* Nav */}
         <Tabs
-          defaultActiveKey="agendamentos"
           id="uncontrolled-tab-example"
+          activeKey={abaAtual}
+          onSelect={(k) => {
+            setAbaAtual(k);
+            console.log('aba mudada! ', k)
+          }}
           className="mb-3"
         >
           <Tab eventKey="agendamentos" title="Agendamentos">
@@ -233,7 +280,8 @@ const Lista_Agendamentos = () => {
                         agendamento={a}
                       />
                     );
-                  })}
+                  })
+                }
               </tbody>
             </Table>
             {paginas.length > 1 && (
