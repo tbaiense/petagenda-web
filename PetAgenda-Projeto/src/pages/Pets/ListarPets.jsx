@@ -92,9 +92,10 @@ const ListarPets = () => {
               placeholder="Pesquise pelo pet..."
               enterButton="Search"
               size="large"
-              loading={pesquisando}
-              onChange={(e) => {
-                setPesquisando(!pesquisando);
+              loading={false}
+              onSearch={(value, event, type) => {
+                console.log('rodei');
+                setSearchQuery(e.target.value);
               }}
             />
           </div>
