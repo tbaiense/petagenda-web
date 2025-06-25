@@ -17,23 +17,22 @@ import {
   Card,
   Nav,
 } from "react-bootstrap";
-import { Input } from 'antd';
+import { Input } from "antd";
 import { useForm } from "react-hook-form";
 import { useAuth } from "../../../contexts/UserContext";
-import "../Lista/Lista_Agendamento.module.css";
 import { useNavigate } from "react-router-dom";
 import Modal_Atualizar_Rapido_ServicoRealizado from "./Modal_Atualizar_Rapido_ServicoRealizado";
 import CardAgendamento from "../../../components/CardAgendamento/CardAgendamento";
 import CardServicoRealizado from "../../../components/CardServicoRealizado/CardServicoRealizado";
-
+import "./Lista_Agendamento.css";
 const { Search } = Input;
 
 const Lista_Agendamentos = () => {
   const [pesquisando, setPesquisando] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [ ordenacao, setOrdenacao ] = useState('');
-  const [ filtroEstado, setFiltroEstado ] = useState('');
-  const [ abaAtual, setAbaAtual ] = useState('agendamentos');
+  const [ordenacao, setOrdenacao] = useState("");
+  const [filtroEstado, setFiltroEstado] = useState("");
+  const [abaAtual, setAbaAtual] = useState("agendamentos");
   const { empresaFetch, validar } = useAuth();
   const navigate = useNavigate();
   const [paginaAtual, setPaginaAtual] = useState(0);
@@ -44,9 +43,9 @@ const Lista_Agendamentos = () => {
   const [agendamentos, setAgendamentos] = useState([]);
   const [servicosRealizados, setServicosRealizados] = useState([]);
   const [funcDisponiveis, setFuncDisponiveis] = useState([]);
-  const [ showModalServ, setShowModalServ ] = useState(false);
-  const [ editarServ, setEditarServ ] = useState({});
-  const [ tipoFiltro, setTipoFiltro ] = useState('cliente');
+  const [showModalServ, setShowModalServ] = useState(false);
+  const [editarServ, setEditarServ] = useState({});
+  const [tipoFiltro, setTipoFiltro] = useState("cliente");
 
   async function popularFuncionarios() {
     empresaFetch("/funcionario")
@@ -76,14 +75,14 @@ const Lista_Agendamentos = () => {
       setAgendamentos([]);
     } else {
       const { qtdAgendamento, agendamentos: agendList } = await resp.json();
-  
+
       if (agendList.length > 0) {
         const pageList = [];
-  
+
         for (let i = 1; i <= Math.ceil(qtdAgendamento / limit); i++) {
           pageList.push(i);
         }
-  
+
         setPaginas(pageList);
         setAgendamentos(
           agendList.map((a) => ({
@@ -95,7 +94,7 @@ const Lista_Agendamentos = () => {
     }
 
     setPesquisando(false);
-    console.log('desliquei')
+    console.log("desliquei");
   }
 
   async function popularServicosRealizados() {
@@ -109,20 +108,20 @@ const Lista_Agendamentos = () => {
     } else {
       const { qtdServicosRealizados, servicosRealizados: servList } =
         await resp.json();
-  
+
       if (servList.length > 0) {
         const pageList = [];
-  
+
         for (let i = 1; i <= Math.ceil(qtdServicosRealizados / limit); i++) {
           pageList.push(i);
         }
-  
+
         setPaginasServ(pageList);
         setServicosRealizados(servList);
       }
     }
     setPesquisando(false);
-    console.log('desliquei')
+    console.log("desliquei");
   }
 
   function handleEditarServ(serv) {
@@ -133,14 +132,13 @@ const Lista_Agendamentos = () => {
   useEffect(() => {
     console.log([abaAtual, paginaAtual, paginaAtualServ, searchQuery, refresh]);
     if (validar) {
-      if (abaAtual == 'agendamentos') {
+      if (abaAtual == "agendamentos") {
         popularAgendamentos();
-      } else if (abaAtual == 'servicos-executados') {
+      } else if (abaAtual == "servicos-executados") {
         popularServicosRealizados();
       }
     }
   }, [abaAtual, paginaAtual, paginaAtualServ, searchQuery, refresh]);
-
 
   useEffect(() => {
     if (validar) {
@@ -161,7 +159,10 @@ const Lista_Agendamentos = () => {
             </Col>
             <Col>
               <Dropdown>
-                <Dropdown.Toggle className="botao_cadastrar" id="dropdown-basic">
+                <Dropdown.Toggle
+                  className="botao_cadastrar"
+                  id="dropdown-basic"
+                >
                   Cadastrar novo
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
@@ -185,28 +186,29 @@ const Lista_Agendamentos = () => {
           </Row>
           <Row className="mb-3">
             <Col className="campos-espaco">
-              <Search
-                placeholder="Digite o que deseja pesquisar..."
-                enterButton="Pesquisar"
-                size="large"
-                loading={pesquisando}
-                onSearch={(value, event, type) => {
-                  const searchQuery = value.trim();
-                  if (!searchQuery) {
-                    setSearchQuery("");
-                  } else {
-                    setSearchQuery(searchQuery);
-                  }
-
-                }}
-              />
+              <Form.Group className="form-pesquisa">
+                <Search
+                  placeholder="Digite o que deseja pesquisar..."
+                  enterButton="Pesquisar"
+                  size="large"
+                  loading={pesquisando}
+                  onSearch={(value, event, type) => {
+                    const searchQuery = value.trim();
+                    if (!searchQuery) {
+                      setSearchQuery("");
+                    } else {
+                      setSearchQuery(searchQuery);
+                    }
+                  }}
+                />
+              </Form.Group>
             </Col>
             <Col className="campos-espaco">
               <Form.Select
                 className="form-button"
                 aria-label="Default select example"
                 defaultValue={tipoFiltro}
-                onChange={ (e) => setTipoFiltro(e.target.value) }
+                onChange={(e) => setTipoFiltro(e.target.value)}
               >
                 <option value="cliente">Nome do cliente</option>
               </Form.Select>
@@ -225,9 +227,8 @@ const Lista_Agendamentos = () => {
                 </>
               </Form.Select>
             </Col>
-            {
-              abaAtual == 'agendamentos' 
-              && <Col className="campos-espaco">
+            {abaAtual == "agendamentos" && (
+              <Col className="campos-espaco">
                 <Form.Select
                   className="form-button"
                   aria-label="Default select example"
@@ -243,7 +244,7 @@ const Lista_Agendamentos = () => {
                   <option value="cancelado">Cancelado</option>
                 </Form.Select>
               </Col>
-            }
+            )}
           </Row>
         </div>
         {/* Nav */}
@@ -252,7 +253,7 @@ const Lista_Agendamentos = () => {
           activeKey={abaAtual}
           onSelect={(k) => {
             setAbaAtual(k);
-            console.log('aba mudada! ', k)
+            console.log("aba mudada! ", k);
           }}
           className="mb-3"
         >
@@ -280,8 +281,7 @@ const Lista_Agendamentos = () => {
                         agendamento={a}
                       />
                     );
-                  })
-                }
+                  })}
               </tbody>
             </Table>
             {paginas.length > 1 && (
@@ -311,15 +311,14 @@ const Lista_Agendamentos = () => {
             )}
           </Tab>
           <Tab eventKey="servicos-executados" title="Serviços executados">
-            {
-              showModalServ && 
+            {showModalServ && (
               <Modal_Atualizar_Rapido_ServicoRealizado
                 show={showModalServ}
                 setShow={setShowModalServ}
                 servicoRealizado={editarServ}
                 handleRefresh={popularServicosRealizados}
               />
-            }
+            )}
             <Table striped>
               <thead>
                 <tr>

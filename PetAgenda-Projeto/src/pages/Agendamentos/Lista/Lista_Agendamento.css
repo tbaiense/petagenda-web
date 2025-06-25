@@ -1,3 +1,7 @@
 .form-button {
     display: inline-block;
 }
+
+.form-pesquisa {
+    width: 35rem;
+}
