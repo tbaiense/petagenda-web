@@ -18,7 +18,11 @@ const CadastroFuncionario = () => {
   const [funcionarioSelecionado, setFuncionarioSelecionado] = useState([]);
   const [funcionarios, setFuncionarios] = useState([]);
   const [servicos, setServicos] = useState([]);
-  const [pesquisando, setPesquisando] = useState(false);
+
+  const [ pesquisando, setPesquisando ] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [ ordenacao, setOrdenacao ] = useState('ascending');
+  const [ tipoFiltro, setTipoFiltro ] = useState('nome');
 
   const {
     register,
@@ -53,7 +57,8 @@ const CadastroFuncionario = () => {
   }
 
   function popularListaFuncionarios() {
-    empresaFetch("/funcionario")
+    setPesquisando(true);
+    empresaFetch(`/funcionario?query=${searchQuery}&option=${tipoFiltro}&ordenacao=${ordenacao}`)
       .then((res) => res.json())
       .then((data) => {
         setFuncionarios(data.funcionarios);
@@ -76,7 +81,7 @@ const CadastroFuncionario = () => {
     if (validar) {
       popularListaFuncionarios();
     }
-  }, []);
+  }, [ searchQuery ]);
 
   function cadastrarFuncionario(objFun) {
     empresaFetch("/funcionario", {
@@ -130,6 +135,10 @@ const CadastroFuncionario = () => {
     }
   };
 
+  useEffect(() => {
+    setPesquisando(false);
+  }, [ funcionarios ]);
+
   const onError = (errors) => {
     console.log("Erro ao Enviar", errors);
   };
@@ -144,28 +153,41 @@ const CadastroFuncionario = () => {
         <div className={styles.orgContent}>
           <div className={styles.pesquisa}>
             <Search
-              placeholder="Pesquise pelo funcionario..."
-              enterButton="Search"
-              size="large"
-              loading={pesquisando}
-              onChange={(e) => {
-                setPesquisando(!pesquisando);
-              }}
+                placeholder="Digite o que deseja pesquisar..."
+                enterButton="Pesquisar"
+                size="large"
+                loading={pesquisando}
+                allowClear={true}
+                onClear={() => {
+                    setPesquisando(false);
+                    setSearchQuery('');
+                }}
+                onPressEnter={(e) => {
+                    if (pesquisando) {
+                        setPesquisando(false);
+                    }
+                }}s
+                onSearch={(value, event, type) => {
+                    const str = value.trim();
+                    setPesquisando(false);
+
+                    setSearchQuery(str);
+                }}
             />
           </div>
           <div className={styles.filtros}>
             <div>
-              <label htmlFor="">Filtrar por:</label>
-              <select name="" id="" className={styles.slct}>
-                <option value="">Nome</option>
-              </select>
+                <label htmlFor="">Filtrar por:</label>
+                <select name="option" id="filtro-cliente" className={styles.slct} onChange={(e) => {setTipoFiltro(e.target.value)}}>
+                    <option value="nome">Nome</option>
+                </select>
             </div>
             <div>
-              <label htmlFor="">Ordenação:</label>
-              <select name="" id="" className={styles.slct}>
-                <option value="">Crescente</option>
-                <option value="">Decrescente</option>
-              </select>
+                <label htmlFor="">Ordenação:</label>
+                <select value={ordenacao} name="ordenacao" id="ordenacao-cliente" className={styles.slct} onChange={(e) => {setOrdenacao(e.target.value)}}>
+                    <option value="ascending">Crescente</option>
+                    <option value="descending">Decrescente</option>
+                </select>
             </div>
           </div>
           <div className={styles.listaDeFuncionario}>

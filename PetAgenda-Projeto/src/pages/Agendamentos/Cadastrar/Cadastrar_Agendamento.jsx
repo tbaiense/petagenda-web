@@ -104,7 +104,7 @@ const Agendamento = () => {
   }
 
   async function popularClientes() {
-    empresaFetch("/cliente")
+    empresaFetch("/cliente?query=&option=nome&ordenacao=ascending")
       .then((res) => res.json())
       .then((data) => {
         setClientes(data.clientes);
