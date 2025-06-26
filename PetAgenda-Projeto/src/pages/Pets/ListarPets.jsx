@@ -10,57 +10,48 @@ const ListarPets = () => {
   const [showInfo, setShowInfo] = useState(false);
   const [pets, setPets] = useState([]);
   const [petView, setPetView] = useState({});
-  const [searchQuery, setSearchQuery] = useState("");
-  const [pesquisando, setPesquisando] = useState(false);
-  const { empresaFetch } = useAuth();
 
-  //  async function obterPets() {
-  //     return [
-  //         {
-  //             id: 1,
-  //             nome: "Rex",
-  //             sexo: "M",
-  //             especie: { nome: "Cachorro" },
-  //             raca: "Labrador",
-  //             cor: "Amarelo",
-  //             porte: "G",
-  //             eCastrado: true,
-  //             estadoSaude: "Saudável, com vacinas em dia.",
-  //             comportamento: "Muito brincalhão e amigável.",
-  //             dono: { nome: "João Silva" }
-  //         },
-  //         {
-  //             id: 2,
-  //             nome: "Mimi",
-  //             sexo: "F",
-  //             especie: { nome: "Gato" },
-  //             raca: "Persa",
-  //             cor: "Branco",
-  //             porte: "P",
-  //             eCastrado: false,
-  //             estadoSaude: "Alergia leve, sendo tratada.",
-  //             comportamento: "Tímida com estranhos.",
-  //             dono: { nome: "Maria Oliveira" }
-  //         },
-  //         {
-  //             id: 3,
-  //             nome: "Thor",
-  //             sexo: "M",
-  //             especie: { nome: "Cachorro" },
-  //             raca: "Pitbull",
-  //             cor: "Cinza",
-  //             porte: "G",
-  //             eCastrado: true,
-  //             estadoSaude: "Excelente",
-  //             comportamento: "Protetor e leal.",
-  //             dono: { nome: "Carlos Pereira" }
-  //         },
-  //     ];
-  // }
+  const [ searchQuery, setSearchQuery] = useState("");
+  const [ pesquisando, setPesquisando ] = useState(false);
+  const [ ordenacao, setOrdenacao ] = useState('ascending');
+  const [ tipoFiltro, setTipoFiltro ] = useState('nome');
+  const [ especie , setEspecie ] = useState('');
+  const [ especiesDisponiveis, setEspeciesDisponiveis ] = useState([]);
+
+  const { empresaFetch, validar } = useAuth();
+
+  // Obter espécies
+  async function getEspeciesPet() {
+    let errMsg;
+    try {
+      const fetchOpts = { method: "GET" };
+
+      const response = await empresaFetch("/pet/especie", fetchOpts);
+
+      const jsonBody = await response.json();
+
+      if (response.status == 200) {
+        if (jsonBody.especiesPet?.length > 0) {
+          setEspeciesDisponiveis(jsonBody.especiesPet);
+        }
+        return;
+      } else {
+        if (jsonBody?.errors) {
+          errMsg = jsonBody.errors.join("\n");
+        } else {
+          errMsg = "Erro desconhecido";
+        }
+        throw new Error(errMsg);
+      }
+    } catch (err) {
+      alert("Falha ao obter espécies de pet:\n" + err.message);
+    }
+  }
 
   async function obterPets() {
     try {
-      const resPets = await empresaFetch("/pet");
+      setPesquisando(true);
+      const resPets = await empresaFetch(`/pet?query=${searchQuery}&option=${tipoFiltro}&ordenacao=${ordenacao}&especie=${especie}`);
 
       const jsonBody = await resPets.json();
       return jsonBody.pets;
@@ -76,8 +67,18 @@ const ListarPets = () => {
   }
 
   useEffect(() => {
-    popularPets();
+    getEspeciesPet();
   }, []);
+
+  useEffect(() => {
+    popularPets();
+  }, [searchQuery]);
+
+  useEffect(() => {
+    if (validar) {
+      setPesquisando(false);
+    }
+  }, [ pets ]);
 
   return (
     <div className={styles.viewConteudo}>
@@ -89,35 +90,52 @@ const ListarPets = () => {
         <div className={styles.orgContent}>
           <div className={styles.pesquisa}>
             <Search
-              placeholder="Pesquise pelo pet..."
-              enterButton="Search"
+              placeholder="Digite o que deseja pesquisar..."
+              enterButton="Pesquisar"
               size="large"
-              loading={false}
+              loading={pesquisando}
+              allowClear={true}
+              onClear={() => {
+                  setPesquisando(false);
+                  setSearchQuery('');
+              }}
+              onPressEnter={(e) => {
+                  if (pesquisando) {
+                      setPesquisando(false);
+                  }
+              }}s
               onSearch={(value, event, type) => {
-                console.log('rodei');
-                setSearchQuery(e.target.value);
+                  const str = value.trim();
+                  setPesquisando(false);
+
+                  setSearchQuery(str);
               }}
             />
           </div>
           <div className={styles.filtros}>
             <div>
-              <label htmlFor="">Ordem:</label>
-              <select name="" id="" className={styles.slct}>
-                <option value="">Crescente</option>
-                <option value="">Decrescente</option>
-              </select>
+                <label htmlFor="">Filtrar por:</label>
+                <select name="option" id="filtro-cliente" className={styles.slct} onChange={(e) => {setTipoFiltro(e.target.value)}}>
+                    <option value="nome">Nome</option>
+                </select>
             </div>
             <div>
-              <label htmlFor="">Filtrar por:</label>
-              <select name="" id="" className={styles.slct}>
-                <option value="">Nome</option>
-              </select>
+                <label htmlFor="">Ordenação:</label>
+                <select value={ordenacao} name="ordenacao" id="ordenacao-cliente" className={styles.slct} onChange={(e) => {setOrdenacao(e.target.value)}}>
+                    <option value="ascending">Crescente</option>
+                    <option value="descending">Decrescente</option>
+                </select>
             </div>
 
             <div>
               <label htmlFor="">Espécie:</label>
-              <select name="" id="" className={styles.slct}>
+              <select name="" id="" className={styles.slct} value={especie} onChange={(e) => setEspecie(e.target.value)}>
                 <option value="">Todas</option>
+                { especiesDisponiveis?.length > 0 &&
+                    especiesDisponiveis.map((e) => (
+                      <option key={e.id} value={e.id}>{e.nome}</option>
+                    ))
+                }
               </select>
             </div>
           </div>

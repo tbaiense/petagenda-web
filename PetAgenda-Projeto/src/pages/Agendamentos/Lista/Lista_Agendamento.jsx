@@ -66,14 +66,16 @@ const Lista_Agendamentos = () => {
   }, []);
 
   async function popularAgendamentos() {
-    setPesquisando(true);
     const limit = 6;
+    setPesquisando(true);
+
     const resp = await empresaFetch(
       `/agendamento?query=${searchQuery}&option=${tipoFiltro}&estado=${filtroEstado}&ordenacao=${ordenacao}&limit=${limit}&page=${paginaAtual}`
     );
 
     if (resp.status != 200) {
       setAgendamentos([]);
+      setPaginas([]);
     } else {
       const { qtdAgendamento, agendamentos: agendList } = await resp.json();
   
@@ -93,19 +95,20 @@ const Lista_Agendamentos = () => {
         );
       }
     }
-
-    setPesquisando(false);
     console.log('desliquei')
   }
 
   async function popularServicosRealizados() {
     const limit = 6;
+    setPesquisando(true);
+
     const resp = await empresaFetch(
       `/servico-realizado?query=${searchQuery}&option=${tipoFiltro}&ordenacao=${ordenacao}&limit=${limit}&page=${paginaAtualServ}`
     );
 
     if (resp.status != 200) {
       setServicosRealizados([]);
+      setPaginasServ([]);
     } else {
       const { qtdServicosRealizados, servicosRealizados: servList } =
         await resp.json();
@@ -131,6 +134,10 @@ const Lista_Agendamentos = () => {
   }
 
   useEffect(() => {
+    setSearchQuery("");
+  }, [ abaAtual ]);
+
+  useEffect(() => {
     console.log([abaAtual, paginaAtual, paginaAtualServ, searchQuery, refresh]);
     if (validar) {
       if (abaAtual == 'agendamentos') {
@@ -139,16 +146,30 @@ const Lista_Agendamentos = () => {
         popularServicosRealizados();
       }
     }
-  }, [abaAtual, paginaAtual, paginaAtualServ, searchQuery, refresh]);
+  }, [abaAtual, paginaAtual, paginaAtualServ, refresh]);
 
+
+  // Pesquisa
+  useEffect(() => {
+    if (validar) {
+      if (abaAtual == 'agendamentos') {
+        popularAgendamentos();
+      } else if (abaAtual == 'servicos-executados') {
+        popularServicosRealizados();
+      }
+    }
+  }, [ searchQuery ])
 
   useEffect(() => {
     if (validar) {
       setTimeout(() => {
         setRefresh(refresh + 1);
-      }, 2000);
+      }, 10000);
     }
   }, [refresh]);
+
+  useEffect(() => { setPesquisando(false) }, [ agendamentos, servicosRealizados ]);
+
 
   return (
     <div className="lista_agendamentos_servicos mt-4">
@@ -190,14 +211,22 @@ const Lista_Agendamentos = () => {
                 enterButton="Pesquisar"
                 size="large"
                 loading={pesquisando}
+                allowClear={true}
+                onClear={() => {
+                    setPesquisando(false);
+                    setSearchQuery('');
+                }}
+                onPressEnter={(e) => {
+                    if (pesquisando) {
+                        setPesquisando(false);
+                    }
+                }}
                 onSearch={(value, event, type) => {
-                  const searchQuery = value.trim();
-                  if (!searchQuery) {
-                    setSearchQuery("");
-                  } else {
-                    setSearchQuery(searchQuery);
-                  }
+                  const str = value.trim();
 
+                  setSearchQuery(str);
+                  setPaginaAtual(0);
+                  setPaginaAtualServ(0);
                 }}
               />
             </Col>

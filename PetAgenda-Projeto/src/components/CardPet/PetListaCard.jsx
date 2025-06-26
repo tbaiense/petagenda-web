@@ -36,7 +36,7 @@ const PetListaCard = ({ pet: p, showInfo }) => {
             <img
               src={iconEditar}
               alt="Editar"
-              onClick={() => navigate(`/editar/${p.id}`)}
+              onClick={() => navigate(`/empresa/pets/editar/${p.id}`)}
             />
           </div>
           <div className={styles.alinhamentoImage}>

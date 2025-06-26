@@ -8,6 +8,7 @@ import { Input } from 'antd';
 import iconEditar from "../../assets/icon_editarAzul.svg"
 import iconDeletar from "../../assets/icon_delete.svg"
 import seta from "../../assets/icon_seta.svg"
+import { Col, Form } from "react-bootstrap";
 
 const { Search } = Input;
 
@@ -16,12 +17,18 @@ const ListarClientes = () => {
     const [ clientes, setClientes] = useState([]);
     const [ clientView, setClientView ] = useState({});
     const navigate = useNavigate();
+    
     const [ pesquisando, setPesquisando ] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [ ordenacao, setOrdenacao ] = useState('ascending');
+    const [ tipoFiltro, setTipoFiltro ] = useState('nome');
+    
     const [showInfo, setShowInfo] = useState(false)
 
     async function popularListaClientes() {
         // Pego os Clientes do banco da empresa
-        empresaFetch('/cliente')
+        setPesquisando(true);
+        empresaFetch(`/cliente?query=${searchQuery}&option=${tipoFiltro}&ordenacao=${ordenacao}`)
         .then(res => res.json())
         .then(data => {
             setClientes(data.clientes);
@@ -59,12 +66,16 @@ const ListarClientes = () => {
             console.error("Erro ao buscar Clientes:", error);
         });
     }
+
     useEffect(() => {
         if (validar) {
             popularListaClientes();
-            console.log(clientes)
         }
-    }, []);
+    }, [searchQuery]);
+
+    useEffect(() => {
+        setPesquisando(false);
+    }, [ clientes ]);
 
     const navEditarCliente = ( cliente ) => {
         navigate(`/empresa/clientes/editar/${cliente.id}`, { state:cliente })
@@ -79,20 +90,41 @@ const ListarClientes = () => {
             <div className={styles.alinhamento}>
                 <div className={styles.orgContent}>
                     <div className={styles.pesquisa}>
-                        <Search placeholder="Pesquise pelo cliente..." enterButton="Search" size="large" loading={pesquisando} onChange={(e) => {setPesquisando(!pesquisando)}}/>                    
+                        <Search
+                            placeholder="Digite o que deseja pesquisar..."
+                            enterButton="Pesquisar"
+                            size="large"
+                            loading={pesquisando}
+                            allowClear={true}
+                            onClear={() => {
+                                setPesquisando(false);
+                                setSearchQuery('');
+                            }}
+                            onPressEnter={(e) => {
+                                if (pesquisando) {
+                                    setPesquisando(false);
+                                }
+                            }}s
+                            onSearch={(value, event, type) => {
+                                const str = value.trim();
+                                setPesquisando(false);
+
+                                setSearchQuery(str);
+                            }}
+                        />
                     </div>
                     <div className={styles.filtros}>
                         <div>
                             <label htmlFor="">Filtrar por:</label>
-                            <select name="" id="" className={styles.slct}>
-                                <option value="">Nome</option>
+                            <select name="option" id="filtro-cliente" className={styles.slct} onChange={(e) => {setTipoFiltro(e.target.value)}}>
+                                <option value="nome">Nome</option>
                             </select>
                         </div>
                         <div>
                             <label htmlFor="">Ordenação:</label>
-                            <select name="" id="" className={styles.slct}>
-                                <option value="">Crescente</option>
-                                <option value="">Decrescente</option>
+                            <select value={ordenacao} name="ordenacao" id="ordenacao-cliente" className={styles.slct} onChange={(e) => {setOrdenacao(e.target.value)}}>
+                                <option value="ascending">Crescente</option>
+                                <option value="descending">Decrescente</option>
                             </select>
                         </div>
                     </div>
