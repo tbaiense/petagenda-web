@@ -15,6 +15,8 @@ const CamposEndereco = ({
                 de cliente: o 'prefix' é definido fora do componente e ele apenas
                 utiliza diretamente. Espero que não gere problemas... :P  
   */
+//  Castro >>>> Thiago, obrigado pela ajuda!
+
   if (!prefix) {
     prefix = 'endereco';
   }
@@ -127,7 +129,7 @@ const CamposEndereco = ({
             // value={endereco.uf ?? ''} 
             // onInput={handleChange}
             disabled={isDisabled}
-            defaultValue={estadoPadrao}
+            defaultValue={endereco?.estado || ""}
             {...register(`${prefix}.estado`, 
             { required: { value: (formConfigs) ? formConfigs.isRequired : true, message: "Unidade Federativa é obrigatória" },
             })}>

@@ -36,9 +36,16 @@ const EditarServicoExecutavel = () => {
     precoPet: 0,
     precoTotal: 0,
   });
-  const [servicoEscolhido, setServicoEscolhido] = useState();
+  const [dataHora, setDataHora] = useState("");
+  const [horaFim, setHoraFim] = useState("");
+  const [horainicio, setHoraInicio] = useState("");
+  const [servicoRealizado, setServicoRealizado] = useState();
   const {id} = locate.state
-  console.log("Esse é o id:",id)
+  const [idPet, setIdPet] = useState("");
+  
+  const enderecoBuscar = servicoRealizado?.enderecos?.find(
+    (end) => end.tipo === "buscar"
+  )
 
   function handleEnderecoChange(e) {
     const newEnd = { ...endereco };
@@ -58,17 +65,61 @@ const EditarServicoExecutavel = () => {
     setValue,
     getValues,
   } = useForm();
+
   useEffect(() => {
     getServicoExecutado(id);
+    setIdPet(servicoRealizado?.pets?.[0]?.id)
+    // getServicoOferecido(id)
   }, []);
 
+  useEffect(() => {
+    async function buscarPets() {
+      if (!servicoRealizado?.cliente?.id) return;
+
+      try {
+        const resp = await empresaFetch(`/pet?idCliente=${servicoRealizado.cliente.id}`);
+        const json = await resp.json();
+        setPetsCliente(json.pets || []); 
+        console.log("Pets: ",petsCliente)
+      } catch (error) {
+        console.error("Erro ao buscar pets do cliente:", error);
+      }
+    }
+
+    buscarPets();
+  }, [servicoRealizado]);
+
+  useEffect(() => {
+    if(servicoRealizado){
+      console.log("Recebido: ", servicoRealizado);
+
+      const data = servicoRealizado?.fim.split(" ")[0]
+      setDataHora(data);
+      setValue("dataExecucao",data)
+
+      const hFim = servicoRealizado?.fim.split(" ")[1]
+      setHoraFim(hFim)
+      setValue("horaFim", hFim)
+
+      const hInicio = servicoRealizado?.inicio.split(" ")[1]
+      setHoraInicio(hInicio)
+      setValue("horaIncio", hInicio)
+    }
+
+  }, [servicoRealizado]);
+
   async function getServicoExecutado(id) {
-    const limit = 6;
     const resp = await empresaFetch(`/servico-realizado/${id}`);
     const jsonBody = await resp.json();
-    setServicoEscolhido(jsonBody)
-    console.log("Recebido: ", servicoEscolhido);
+    setServicoRealizado(jsonBody.servicoRealizado)
   }
+
+  // async function getServicoOferecido(id) {
+  //   const resp = empresaFetch(`/servico-oferecido/${id}`)
+  //   const jsonBody = await resp.json()
+  //   setServicos(jsonBody.servicosOferecidos);
+  // }
+
 
   const onSubmit = async (data) => {
     // editar servico executado
@@ -137,7 +188,7 @@ const EditarServicoExecutavel = () => {
                   }}
                   disabled
                 >
-                  <option value="">Selecione um serviço</option>
+                  <option value="">Selecione o serviço</option>
                   {servicos.map((servico) => (
                     <option key={servico.id} value={servico.id}>
                       {servico.nome}
@@ -155,7 +206,11 @@ const EditarServicoExecutavel = () => {
                 <Form.Control
                   type="date"
                   {...register("dataExecucao", { required: true })}
-                  defaultValue={new Date().toISOString().split("T")[0]}
+                  value={dataHora}
+                  onChange={(e) => {
+                    setDataHora(e.target.value);
+                    setValue("dataExecucao", e.target.value)
+                  }}
                 />
               </Form.Group>
             </Col>
@@ -165,7 +220,11 @@ const EditarServicoExecutavel = () => {
                 <Form.Control
                   type="time"
                   {...register("horaInicio", { required: true })}
-                  defaultValue={new Date().toTimeString().slice(0, 5)}
+                  value={horainicio.slice(0,5)}
+                  onChange={(e) => {
+                    setHoraInicio(e.target.value)
+                    setValue("horaInicio", e.target.value)
+                  }}
                 />
               </Form.Group>
             </Col>
@@ -175,7 +234,11 @@ const EditarServicoExecutavel = () => {
                 <Form.Control
                   type="time"
                   {...register("horaFim", { required: true })}
-                  defaultValue={new Date().toTimeString().slice(0, 5)}
+                  value={horaFim.slice(0,5)}
+                  onChange={(e) => {
+                    setHoraFim(e.target.value)
+                    setValue("horaFim", e.target.value)
+                  }}
                 />
               </Form.Group>
             </Col>
@@ -191,7 +254,7 @@ const EditarServicoExecutavel = () => {
                     className="form-agendamento"
                     type="text"
                     placeholder="Valor por pet"
-                    value={preco.precoPet}
+                    value={servicoRealizado?.valor?.pets}
                     readOnly={true}
                   />
                 </InputGroup>
@@ -206,7 +269,7 @@ const EditarServicoExecutavel = () => {
                     className="form-agendamento"
                     type="text"
                     placeholder="Valor do Serviço"
-                    value={preco.precoServico}
+                    value={servicoRealizado?.valor.servico}
                     readOnly={true}
                   />
                 </InputGroup>
@@ -221,7 +284,7 @@ const EditarServicoExecutavel = () => {
                     className="form-agendamento"
                     type="text"
                     placeholder="Valor total"
-                    value={preco.precoTotal}
+                    value={servicoRealizado?.valor.total}
                     readOnly={true}
                   />
                 </InputGroup>
@@ -241,7 +304,7 @@ const EditarServicoExecutavel = () => {
                     },
                   })}
                 >
-                  <option value="">Selecione um funcionário</option>
+                  <option value="">{servicoRealizado?.funcionario?.nome}</option>
                   {funcionarios &&
                     funcionarios.map((funcionario) => (
                       <option key={funcionario.id} value={funcionario.id}>
@@ -267,11 +330,11 @@ const EditarServicoExecutavel = () => {
                     setPetsSel([]);
                   }}
                   {...register("cliente", { required: true })}
-                >
-                  <option value={servicoEscolhido?.cliente?.nome}>{servicoEscolhido?.cliente?.nome}</option>
+                 disabled>
+                  <option>{servicoRealizado?.cliente?.nome}</option>
                   {clientes &&
                     clientes.map((cli) => (
-                      <option key={cli.id} value={servicoEscolhido.cliente.nome}>
+                      <option key={cli.id} value={servicoRealizado?.cliente?.nome}>
                         {cli.nome}
                       </option>
                     ))}
@@ -283,12 +346,12 @@ const EditarServicoExecutavel = () => {
                 <Form.Label>Pet:</Form.Label>
                 <Form.Select id="pet-selecionar" {...register("pet")}>
                   <option value="">Selecione um pet</option>
-                  {petsCliente &&
+                  {/* {petsCliente &&
                     petsCliente.map((pet) => (
                       <option key={pet.id} value={pet.id}>
                         {pet.nome}
                       </option>
-                    ))}
+                    ))} */}
                 </Form.Select>
               </Form.Group>
             </Col>
@@ -350,6 +413,7 @@ const EditarServicoExecutavel = () => {
                   register={register}
                   errors={errors}
                   prefix={"enderecoBuscar"}
+                  endereco={enderecoBuscar ?? {}}
                 />
               </Accordion.Body>
             </Accordion.Item>
@@ -401,6 +465,7 @@ const EditarServicoExecutavel = () => {
                 placeholder="Deixe aqui uma observação"
                 style={{ height: "150px" }}
                 {...register("observacoes")}
+                value={servicoRealizado?.observacoes}
               />
             </FloatingLabel>
           </Row>
