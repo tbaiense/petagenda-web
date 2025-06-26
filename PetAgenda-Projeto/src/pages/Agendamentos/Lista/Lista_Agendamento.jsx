@@ -323,6 +323,7 @@ const Lista_Agendamentos = () => {
             <Table striped>
               <thead>
                 <tr>
+                  <th>Editar</th>
                   <th>Serviço</th>
                   <th>Nome do cliente</th>
                   <th>Funcionário atribuído</th>

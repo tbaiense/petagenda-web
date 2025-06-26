@@ -1,13 +1,22 @@
 import { Button } from "react-bootstrap";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import editar from "../../assets/icon_editar.svg";
+import { useNavigate } from "react-router-dom";
 
-const CardServicoRealizado = ({ 
-  servicoRealizado, handleEditar
-}) => {
+
+const CardServicoRealizado = ({ servicoRealizado, handleEditar }) => {
+  const navigate = useNavigate();
+
+  const editarServico = (id) => {
+    console.log("Esse é o ID escolhido:",servicoRealizado?.id)
+    navigate(`/empresa/agendamentos/editar/servicoexecutado`, {state : {id}});
+  };
 
   return (
     <>
+    {/*  */}
       <tr>
+        <td><img src={editar} onClick={() => editarServico(servicoRealizado?.id)} alt=""/>{servicoRealizado.id}</td>
         <td>{servicoRealizado.servico.nome}</td>
         <td>{servicoRealizado.cliente.nome}</td>
         <td>{servicoRealizado.funcionario.nome}</td>
@@ -29,9 +38,9 @@ const CardServicoRealizado = ({
         </td>
         <td>{`R$ ${servicoRealizado.valor.total}`}</td>
         <td>
-          <Button 
-            className="form-button" 
-            variant="primary" 
+          <Button
+            className="form-button"
+            variant="primary"
             onClick={(e) => handleEditar(servicoRealizado)}
           >
             Atualizar
