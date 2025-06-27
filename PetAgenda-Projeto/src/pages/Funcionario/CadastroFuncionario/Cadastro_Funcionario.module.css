@@ -66,6 +66,10 @@
 .position2 img{
   cursor: pointer;
 }
+.listaDeFuncionario{
+  max-height: 400px;  /* limita a altura */
+  overflow-y: auto;   /* ativa rolagem se passar da altura */
+}
 /* --------------------------------------- Layout Formulario ---------------------------------------------- */
 .customeForm button{
   padding: 5px 20px 5px 20px;

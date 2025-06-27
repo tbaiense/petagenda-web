@@ -108,7 +108,7 @@ const ViewEmpresa = () => {
         <div className={styles.littleContent}>
 
           <div className={styles.estiloNome}>
-            <span className={styles.nomeEmpresa}><strong>{empresas?.nomeFantasia || "..."}</strong></span>
+            <span className={styles.nomeEmpresa}><strong>{empresas?.nomeFantasia || "Carregando..."}</strong></span>
             <img src={iconEditar} alt="" onClick={navEditarEmpresa} className={styles.icone}/>
           </div>
 

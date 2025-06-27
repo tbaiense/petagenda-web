@@ -23,6 +23,7 @@ const EditarServicoExecutavel = () => {
   const locate = useLocation();
   const { empresaFetch, validar } = useAuth();
   const [servicoSel, setServicoSel] = useState({});
+  const [servicoEscolhido, setServicoEscolhido] = useState(null);
   const [clientes, setClientes] = useState([]);
   const [petsCliente, setPetsCliente] = useState([]);
   const [petsSel, setPetsSel] = useState([]);
@@ -40,21 +41,9 @@ const EditarServicoExecutavel = () => {
   const [horaFim, setHoraFim] = useState("");
   const [horainicio, setHoraInicio] = useState("");
   const [servicoRealizado, setServicoRealizado] = useState();
-  const {id} = locate.state
+  const { id } = locate.state
   const [idPet, setIdPet] = useState("");
-  
-  const enderecoBuscar = servicoRealizado?.enderecos?.find(
-    (end) => end.tipo === "buscar"
-  )
-
-  function handleEnderecoChange(e) {
-    const newEnd = { ...endereco };
-    newEnd[e.target.name.split(".")[1]] = e.target.value;
-
-    setEndereco(newEnd);
-    setValue(e.target.name.split(".")[1], e.target.value);
-  }
-
+  const [idCliente, setIdCliente] = useState("");
   const {
     register,
     handleSubmit,
@@ -66,36 +55,217 @@ const EditarServicoExecutavel = () => {
     getValues,
   } = useForm();
 
-  useEffect(() => {
-    getServicoExecutado(id);
-    setIdPet(servicoRealizado?.pets?.[0]?.id)
-    // getServicoOferecido(id)
-  }, []);
+  const enderecoBuscar = servicoRealizado?.enderecos?.find(
+    (end) => end.tipo === "buscar"
+  )
+
+  function handleEnderecoChange(e) {
+    const newEnd = { ...endereco };
+    newEnd[e.target.name.split(".")[1]] = e.target.value;
+
+    setEndereco(newEnd);
+    setValue(e.target.name.split(".")[1], e.target.value);
+  }
+  async function preencherEnderecosCEP(prefix, cep) {
+    try {
+      const endRes = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+      /*
+      {
+        "cep": "29149-999",
+        "logradouro": "Rua...",
+        "complemento": "",
+        "unidade": "",
+        "bairro": "",
+        "localidade": "",
+        "uf": "ES",
+        "estado": "Espírito Santo",
+        "regiao": "Sudeste",
+        "ibge": "3201308",
+        "gia": "",
+        "ddd": "27",
+        "siafi": "5625"
+      }
+      */
+
+      if (endRes.status == 200) {
+        const jsonBody = await endRes.json();
+        if (!jsonBody.erro) {
+          const endFound = {
+            logradouro: jsonBody.logradouro,
+            bairro: jsonBody.bairro,
+            numero: "",
+            cidade: jsonBody.localidade,
+            estado: jsonBody.uf,
+          };
+
+          const entries = Object.entries(endFound);
+
+          for (const [key, value] of entries) {
+            setValue(`${prefix}.${key}`, value, { shouldTouch: true });
+          }
+        }
+      } else {
+        throw new Error(
+          "Falha ao obter informaçoes de endereço a partir de CEP"
+        );
+      }
+    } catch (err) {
+      console.error(err.message);
+    }
+  }
 
   useEffect(() => {
-    async function buscarPets() {
-      if (!servicoRealizado?.cliente?.id) return;
+    const callback = subscribe({
+      name: ["enderecoBuscar.cep"],
+      formState: {
+        values: true,
+        touchedFields: true,
+        isValid: true,
+      },
+      callback: ({ values }) => {
+        if (
+          values.enderecoBuscar &&
+          values.enderecoBuscar.cep?.length == 8 &&
+          values.enderecoBuscar.cep.match(/^\d{5,5}\d{3,3}$/)
+        ) {
+          const { cep } = values.enderecoBuscar;
+          preencherEnderecosCEP("enderecoBuscar", cep);
+        }
+      },
+    });
+  }, [subscribe]);
 
-      try {
-        const resp = await empresaFetch(`/pet?idCliente=${servicoRealizado.cliente.id}`);
-        const json = await resp.json();
-        setPetsCliente(json.pets || []); 
-        console.log("Pets: ",petsCliente)
-      } catch (error) {
-        console.error("Erro ao buscar pets do cliente:", error);
+  useEffect(() => {
+    const callback = subscribe({
+      name: ["enderecoDevolver.cep"],
+      formState: {
+        values: true,
+        touchedFields: true,
+        isValid: true,
+      },
+      callback: ({ values }) => {
+        if (
+          values.enderecoDevolver &&
+          values.enderecoDevolver.cep?.length == 8 &&
+          values.enderecoDevolver.cep.match(/^\d{5,5}\d{3,3}$/)
+        ) {
+          const { cep } = values.enderecoDevolver;
+          preencherEnderecosCEP("enderecoDevolver", cep);
+        }
+      },
+    });
+
+    return () => callback();
+  }, [subscribe]);
+  function getData() {
+    const formData = { ...getValues() };
+    const pets = petsSel;
+    let enderecos = [];
+
+    if (formData.enderecoBuscar || formData.enderecoDevolver) {
+      if (devolverMesmo) {
+        const { logradouro, numero, bairro, cidade, estado } =
+          formData.enderecoBuscar;
+
+        enderecos.push({
+          tipo: "buscar-devolver",
+          logradouro: logradouro,
+          numero: numero,
+          bairro: bairro,
+          cidade: cidade,
+          estado: estado,
+        });
+      } else {
+        if (incluirBuscar) {
+          const { logradouro, numero, bairro, cidade, estado } =
+            formData.enderecoBuscar;
+
+          enderecos.push({
+            tipo: "buscar",
+            logradouro: logradouro,
+            numero: numero,
+            bairro: bairro,
+            cidade: cidade,
+            estado: estado,
+          });
+        }
+
+        if (incluirDevolver) {
+          const { logradouro, numero, bairro, cidade, estado } =
+            formData.enderecoBuscar;
+
+          enderecos.push({
+            tipo: "devolver",
+            logradouro: logradouro,
+            numero: numero,
+            bairro: bairro,
+            cidade: cidade,
+            estado: estado,
+          });
+        }
       }
     }
 
-    buscarPets();
-  }, [servicoRealizado]);
+    if (enderecos.length == 0) {
+      enderecos = undefined;
+    }
+
+    const servicoData = {
+      inicio: `${formData.dataExecucao} ${formData.horaInicio}`,
+      fim: `${formData.dataExecucao} ${formData.horaFim}`,
+      servico: { id: formData.servico },
+      funcionario: formData.funcionario
+        ? { id: formData.funcionario }
+        : undefined,
+      observacoes: formData.observacoes,
+      pets: pets,
+      enderecos: enderecos,
+    };
+
+    return servicoData;
+  }
+
 
   useEffect(() => {
-    if(servicoRealizado){
+    getServicoExecutado(id);
+  }, []);
+
+
+
+  useEffect(() => {
+    popularFuncionarios()
+    popularServicosOferecidos()
+  }, [servicoRealizado]);
+
+  async function popularPetsCliente(id) {
+    empresaFetch(`/pet?idCliente=${id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setPetsCliente(data.pets);
+      })
+      .catch((error) => {
+        console.error("Erro ao buscar Clientes:", error);
+      });
+  }
+
+  async function popularFuncionarios() {
+    empresaFetch("/funcionario")
+      .then((res) => res.json())
+      .then((data) => {
+        setFuncionarios(data.funcionarios);
+      })
+      .catch((error) => {
+        console.error("Erro ao buscar Funcionarios:", error);
+      });
+  }
+
+  useEffect(() => {
+    if (servicoRealizado) {
       console.log("Recebido: ", servicoRealizado);
 
       const data = servicoRealizado?.fim.split(" ")[0]
       setDataHora(data);
-      setValue("dataExecucao",data)
+      setValue("dataExecucao", data)
 
       const hFim = servicoRealizado?.fim.split(" ")[1]
       setHoraFim(hFim)
@@ -103,7 +273,12 @@ const EditarServicoExecutavel = () => {
 
       const hInicio = servicoRealizado?.inicio.split(" ")[1]
       setHoraInicio(hInicio)
-      setValue("horaIncio", hInicio)
+      setValue("horaInicio", hInicio)
+
+      getServicoOferecido(servicoRealizado?.servico?.id)
+
+      popularPetsCliente(servicoRealizado?.cliente?.id)
+
     }
 
   }, [servicoRealizado]);
@@ -114,16 +289,36 @@ const EditarServicoExecutavel = () => {
     setServicoRealizado(jsonBody.servicoRealizado)
   }
 
-  // async function getServicoOferecido(id) {
-  //   const resp = empresaFetch(`/servico-oferecido/${id}`)
-  //   const jsonBody = await resp.json()
-  //   setServicos(jsonBody.servicosOferecidos);
-  // }
+  async function getServicoOferecido(id) {
+    const resp = await empresaFetch(`/servico-oferecido/${id}`)
+    const jsonBody = await resp.json()
+    console.log("Servico oferecido:", jsonBody)
+    setServicoEscolhido(jsonBody.servicoOferecido);
+  }
+
+  async function popularServicosOferecidos() {
+    empresaFetch("/servico-oferecido")
+      .then((res) => res.json())
+      .then((data) => {
+        setServicos(data.servicosOferecidos);
+      })
+      .catch((error) => {
+        console.error("Erro ao buscar serviçoes oferecidos:", error);
+      });
+  }
+  useEffect(() => {
+    if (servicoRealizado?.observacoes) {
+      setValue("observacoes", servicoRealizado.observacoes);
+    }
+  }, [servicoRealizado, setValue]);
 
 
   const onSubmit = async (data) => {
     // editar servico executado
+    console.log("Eu cheguei ate aqui!")
     try {
+      console.log("Entrei no try")
+      console.log("aqui é o JSON:", JSON.stringify(getData()))
       const resp = await empresaFetch("/servico-realizado", {
         method: "PUT",
         body: JSON.stringify(getData()),
@@ -173,22 +368,11 @@ const EditarServicoExecutavel = () => {
               <Form.Group controlId="formServico">
                 <Form.Label>Serviço</Form.Label>
                 <Form.Select
-                  value={servicoSel}
-                  {...register("servico", {
-                    required: {
-                      value: true,
-                      message: "Selecione o serviço para o agendamento",
-                    },
-                  })}
-                  onInput={(e) => {
-                    // const novoServ = getValues('servico')
-                    const novoServ = e.target.value;
-                    setServicoSel(+novoServ);
-                    console.log("rodei: ", novoServ);
-                  }}
+                  value={servicoEscolhido?.id}
+                  {...register("servico")}
                   disabled
                 >
-                  <option value="">Selecione o serviço</option>
+                  <option value="">{servicoEscolhido?.nome || "Carregando"}</option>
                   {servicos.map((servico) => (
                     <option key={servico.id} value={servico.id}>
                       {servico.nome}
@@ -220,10 +404,11 @@ const EditarServicoExecutavel = () => {
                 <Form.Control
                   type="time"
                   {...register("horaInicio", { required: true })}
-                  value={horainicio.slice(0,5)}
+                  value={(horainicio || "").slice(0, 5)}
                   onChange={(e) => {
                     setHoraInicio(e.target.value)
                     setValue("horaInicio", e.target.value)
+
                   }}
                 />
               </Form.Group>
@@ -234,7 +419,7 @@ const EditarServicoExecutavel = () => {
                 <Form.Control
                   type="time"
                   {...register("horaFim", { required: true })}
-                  value={horaFim.slice(0,5)}
+                  value={(horaFim || "").slice(0, 5)}
                   onChange={(e) => {
                     setHoraFim(e.target.value)
                     setValue("horaFim", e.target.value)
@@ -303,8 +488,9 @@ const EditarServicoExecutavel = () => {
                       message: "Selecione o funcionário atribuído",
                     },
                   })}
+                  defaultValue={servicoRealizado?.funcionario?.id || ""}
                 >
-                  <option value="">{servicoRealizado?.funcionario?.nome}</option>
+                  <option value={servicoRealizado?.funcionario?.id}>{servicoRealizado?.funcionario?.nome || ""}</option>
                   {funcionarios &&
                     funcionarios.map((funcionario) => (
                       <option key={funcionario.id} value={funcionario.id}>
@@ -329,8 +515,8 @@ const EditarServicoExecutavel = () => {
                     popularPetsCliente(e.target.value);
                     setPetsSel([]);
                   }}
-                  {...register("cliente", { required: true })}
-                 disabled>
+                  {...register("cliente",)}
+                  disabled>
                   <option>{servicoRealizado?.cliente?.nome}</option>
                   {clientes &&
                     clientes.map((cli) => (
@@ -346,12 +532,12 @@ const EditarServicoExecutavel = () => {
                 <Form.Label>Pet:</Form.Label>
                 <Form.Select id="pet-selecionar" {...register("pet")}>
                   <option value="">Selecione um pet</option>
-                  {/* {petsCliente &&
+                  {petsCliente &&
                     petsCliente.map((pet) => (
                       <option key={pet.id} value={pet.id}>
                         {pet.nome}
                       </option>
-                    ))} */}
+                    ))}
                 </Form.Select>
               </Form.Group>
             </Col>
@@ -465,7 +651,6 @@ const EditarServicoExecutavel = () => {
                 placeholder="Deixe aqui uma observação"
                 style={{ height: "150px" }}
                 {...register("observacoes")}
-                value={servicoRealizado?.observacoes}
               />
             </FloatingLabel>
           </Row>
@@ -479,7 +664,7 @@ const EditarServicoExecutavel = () => {
                 type="submit"
                 className="mt-4 mb-4 botao__cadastrar"
               >
-                Agendar
+                Editar
               </Button>
             </Col>
           </Row>

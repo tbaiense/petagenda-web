@@ -168,64 +168,66 @@ const CadastroFuncionario = () => {
               </select>
             </div>
           </div>
-          {funcionarios?.length > 0 ? (
-            funcionarios?.map((funcionario) => {
-              const servExerce = servicos.flatMap((serv) => {
-                if (serv.id == funcionario.exerce[0].servico) {
-                  return serv.nome
-                } else {
-                  return [];
-                }
-              });
+          <div className={styles.listaDeFuncionario}>
+            {funcionarios?.length > 0 ? (
+              funcionarios?.map((funcionario) => {
+                const servExerce = servicos.flatMap((serv) => {
+                  if (serv.id == funcionario.exerce[0].servico) {
+                    return serv.nome
+                  } else {
+                    return [];
+                  }
+                });
 
-              return (
-                <div className={styles.listFuncionarioLimit}>
-                  <div key={funcionario.id} className={styles.cardInfo}>
-                    <div>
-                      <span className={styles.nomeFuncionario}>
-                        {funcionario.nome}
-                      </span>
-                      <div className={styles.layoutInfoPerson}>
-                        <span>{funcionario.telefone}</span>
-                        <span>|</span>
-                        <span>{servExerce.length > 0 && servExerce[0]}</span>
-                      </div>
-                    </div>
-                    <div className={styles.position}>
-                      <div className={styles.position2}>
-                        <div className={styles.alinhamentoImage}>
-                          <img
-                            src={iconEditar}
-                            alt=""
-                            onClick={() => abrirModalEditar(funcionario)}
-                          />
+                return (
+                  <div className={styles.listFuncionarioLimit}>
+                    <div key={funcionario.id} className={styles.cardInfo}>
+                      <div>
+                        <span className={styles.nomeFuncionario}>
+                          {funcionario.nome}
+                        </span>
+                        <div className={styles.layoutInfoPerson}>
+                          <span>{funcionario.telefone}</span>
+                          <span>|</span>
+                          <span>{servExerce.length > 0 && servExerce[0]}</span>
                         </div>
-                        <div className={styles.alinhamentoImage}>
-                          <img
-                            src={iconDeletar}
-                            alt=""
-                            onClick={() => {
-                              if (
-                                confirm(
-                                  "Deseja realmente deletar este cliente?"
-                                )
-                              ) {
-                                deletarFuncionario(funcionario.id);
-                              }
-                            }}
-                          />
+                      </div>
+                      <div className={styles.position}>
+                        <div className={styles.position2}>
+                          <div className={styles.alinhamentoImage}>
+                            <img
+                              src={iconEditar}
+                              alt=""
+                              onClick={() => abrirModalEditar(funcionario)}
+                            />
+                          </div>
+                          <div className={styles.alinhamentoImage}>
+                            <img
+                              src={iconDeletar}
+                              alt=""
+                              onClick={() => {
+                                if (
+                                  confirm(
+                                    "Deseja realmente deletar este cliente?"
+                                  )
+                                ) {
+                                  deletarFuncionario(funcionario.id);
+                                }
+                              }}
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              );
-            })
-          ) : (
-            <div className={styles.cardInfo}>
-              <span>Nenhum funcionario cadastrado</span>
-            </div>
-          )}
+                );
+              })
+            ) : (
+              <div className={styles.cardInfo}>
+                <span>Nenhum funcionario cadastrado</span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -325,11 +327,9 @@ const CadastroFuncionario = () => {
 
                     if (value && value.length > 0) {
                       value = value.replaceAll(/[^0-9]/g, "");
-                      value = `${value.substring(0, 2)}${
-                        value.length > 2 ? " " : ""
-                      }${value.substring(2, 7)}${
-                        value.length > 7 ? "-" : ""
-                      }${value.substring(7, 11)}`;
+                      value = `${value.substring(0, 2)}${value.length > 2 ? " " : ""
+                        }${value.substring(2, 7)}${value.length > 7 ? "-" : ""
+                        }${value.substring(7, 11)}`;
                       console.log("limpei");
                     }
                     setValue(e.target.name, value);

@@ -73,11 +73,17 @@ hr{
     display: flex;
     flex-direction: column;
     gap: 10px;
-    padding-top: 1rem;
+    padding: 1rem;
+    max-height: 350px;
+    overflow-y: auto;
+    width: 130%;
+    overflow-x: hidden;
+    border: 1px solid black;
+    border-radius: 10px;
 }
 .coluna{
-    max-height: 300px;
-    overflow-y: auto;
-    width: 32%;
-    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
+
