@@ -63,6 +63,15 @@ function Login() {
             if (empresas && empresas[0]) {
               setEmpresa(empresas[0]);
             }
+            setMensagemAlerta({
+              tipo: "success",
+              titulo: "Login realizado com sucesso!",
+              descricao: "Redirecionando para o dashboard...",
+            });
+            setTimeout(() => {
+              setMensagemAlerta(null);
+            }, 2500);
+            await new Promise((resolve) => setTimeout(resolve, 2500));
             navigate("/empresa/dashboard");
             break;
           }
@@ -76,7 +85,6 @@ function Login() {
             setTimeout(() => {
               setMensagemAlerta(null);
             }, 2500);
-
             break;
           }
           default: {
