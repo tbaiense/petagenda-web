@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/UserContext";
 import NavBarPetAgenda from "../../components/NavBar/NavBarPetAgenda";
-import { LoadingOutlined } from '@ant-design/icons';
+import { LoadingOutlined } from "@ant-design/icons";
 import {
   Container,
   Col,
@@ -11,23 +11,30 @@ import {
   Row,
   Button,
 } from "react-bootstrap";
-
+import { Alert } from "antd";
 import "./Login.css";
 function Login() {
   const navigate = useNavigate();
-  const [ isLoading, setIsLoading ] = useState(false);
-  const { 
-    setToken, removeToken, 
-    setUsuario, removeUsuario, 
-    setEmpresa, removeEmpresa, 
-    apiFetch 
+  const [mensagemAlerta, setMensagemAlerta] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const {
+    setToken,
+    removeToken,
+    setUsuario,
+    removeUsuario,
+    setEmpresa,
+    removeEmpresa,
+    apiFetch,
   } = useAuth();
 
   const checkCredentials = async (userCredentials) => {
-    console.log('checando credenciais...');
+    console.log("checando credenciais...");
     setIsLoading(true);
-    apiFetch('/usuario/login', {method: "POST", body: JSON.stringify(userCredentials)})
-      .then( async (response) => {
+    apiFetch("/usuario/login", {
+      method: "POST",
+      body: JSON.stringify(userCredentials),
+    })
+      .then(async (response) => {
         setIsLoading(false);
 
         switch (response.status) {
@@ -36,8 +43,8 @@ function Login() {
 
             const { token, usuario, empresas } = jsonResponse;
 
-            if (!token|| !usuario.id) {
-              const msg = 'Falha ao obter informações do usuário!'
+            if (!token || !usuario.id) {
+              const msg = "Falha ao obter informações do usuário!";
               alert(msg);
               throw new Error(msg);
             }
@@ -56,21 +63,31 @@ function Login() {
             if (empresas && empresas[0]) {
               setEmpresa(empresas[0]);
             }
-            navigate('/empresa/dashboard');
+            navigate("/empresa/dashboard");
             break;
-          };
+          }
 
           case 400: {
-            alert('Usuário ou senha incorretos.');
+            setMensagemAlerta({
+              tipo: "error",
+              titulo: "Erro de Login",
+              descricao: "Usuário ou senha incorretos.",
+            });
+            setTimeout(() => {
+              setMensagemAlerta(null);
+            }, 2500);
+
             break;
-          };
+          }
           default: {
-            alert('Erro ao realizar autenticação: HTTP Status Code não esperado.');
+            alert(
+              "Erro ao realizar autenticação: HTTP Status Code não esperado."
+            );
           }
         }
       })
-      .catch( err => {
-        err.message = 'Erro ao realizar autenticação: ', err.message;
+      .catch((err) => {
+        (err.message = "Erro ao realizar autenticação: "), err.message;
         alert(err.message);
         console.log(err);
       });
@@ -78,8 +95,8 @@ function Login() {
 
   const handleSubmit = (formData) => {
     const userCredentials = {
-      email: formData.get('email'),
-      senha: formData.get('senha')
+      email: formData.get("email"),
+      senha: formData.get("senha"),
     };
 
     checkCredentials(userCredentials);
@@ -88,6 +105,32 @@ function Login() {
   return (
     <div>
       <NavBarPetAgenda />
+      {mensagemAlerta && (
+        <div
+          style={{
+            position: "fixed",
+            top: 20,
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 9999,
+            width: "fit-content",
+            maxWidth: "90vw",
+          }}
+        >
+          <Alert
+            message={mensagemAlerta.titulo}
+            description={mensagemAlerta.descricao}
+            type={mensagemAlerta.tipo}
+            showIcon
+            style={{
+              fontSize: "12px",
+              padding: "8px 12px",
+              lineHeight: "1.2",
+            }}
+          />
+        </div>
+      )}
+
       <Container className="login__container mt-5">
         <Row className="align-items-center login__column">
           <Col md={6} className="d-flex flex-column align-items-center">
@@ -120,13 +163,21 @@ function Login() {
                 </FloatingLabel>
                 <Button
                   type="submit"
-                  className="mt-4 mb-4 login__button mx-auto d-block" 
+                  className="mt-4 mb-4 login__button mx-auto d-block"
                   disabled={!!isLoading}
                 >
                   Entrar
-                  {isLoading && <span style={{display: 'inline-block', marginLeft: '0.8em', verticalAlign: 'center'}}>
-                          <LoadingOutlined />
-                  </span>}
+                  {isLoading && (
+                    <span
+                      style={{
+                        display: "inline-block",
+                        marginLeft: "0.8em",
+                        verticalAlign: "center",
+                      }}
+                    >
+                      <LoadingOutlined />
+                    </span>
+                  )}
                 </Button>
               </Form>
             </Row>
