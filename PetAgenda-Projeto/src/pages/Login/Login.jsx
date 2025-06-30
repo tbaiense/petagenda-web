@@ -71,7 +71,9 @@ function Login() {
             setTimeout(() => {
               setMensagemAlerta(null);
             }, 2500);
+
             await new Promise((resolve) => setTimeout(resolve, 2500));
+            
             navigate("/empresa/dashboard");
             break;
           }

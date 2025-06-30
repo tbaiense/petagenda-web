@@ -8,9 +8,10 @@ import styled from "styled-components";
 import { Checkbox } from "antd";
 import { DatePicker } from "antd";
 import { Controller } from "react-hook-form";
-
+import { Alert } from "antd";
 const CadastrarPets = () => {
   const navigate = useNavigate();
+  const [mensagemAlerta, setMensagemAlerta] = useState(null);
   const [clientes, setClientes] = useState([]);
   const [clienteEscolhido, setClienteEscolhido] = useState({});
   const [especies, setEspecies] = useState();
@@ -43,15 +44,16 @@ const CadastrarPets = () => {
     formState: { errors },
     reset,
     watch,
+    control,
   } = useForm();
 
   const cadastrarPet = async (pet) => {
     const jsonPet = JSON.stringify(pet);
-    console.log("novo: ",jsonPet);
+    console.log("novo: ", jsonPet);
     try {
-      const res = await empresaFetch('/pet', {
-          method: "POST",
-          body: JSON.stringify(pet)
+      const res = await empresaFetch("/pet", {
+        method: "POST",
+        body: JSON.stringify(pet),
       });
 
       const jsonBody = await res.json();
@@ -59,13 +61,23 @@ const CadastrarPets = () => {
       if (res.status == 200) {
         const idPet = jsonBody.pet.id;
 
-        alert('cadastrado');
+        setMensagemAlerta({
+          titulo: "Sucesso!",
+          descricao: "Pet cadastrado com sucesso!",
+          tipo: "success",
+        });
+        setTimeout(() => {
+          setMensagemAlerta(null);
+        }, 2500);
+
+        await new Promise((resolve) => setTimeout(resolve, 2500));
+        reset();
         navigate(`/empresa/pets/lista`);
       } else {
-          alert('erro ao cadastrar pet');
+        alert("erro ao cadastrar pet");
       }
     } catch (err) {
-      alert('Falha ao cadastrar pet: ' + err.message);
+      alert("Falha ao cadastrar pet: " + err.message);
     }
   };
 
@@ -98,7 +110,7 @@ const CadastrarPets = () => {
 
   async function obterClientes() {
     try {
-      const cliResp = await empresaFetch('/cliente');
+      const cliResp = await empresaFetch("/cliente");
 
       if (cliResp.status == 200) {
         const jsonBody = await cliResp.json();
@@ -117,7 +129,7 @@ const CadastrarPets = () => {
           return jsonBody.clientes;
         }
       } else {
-        throw new Error('requisição não retornou código 200');
+        throw new Error("requisição não retornou código 200");
       }
     } catch (err) {
       err.message = "Falha ao obter clientes cadastrados: " + err.message;
@@ -128,7 +140,7 @@ const CadastrarPets = () => {
 
   async function obterEspecies() {
     try {
-      const espResp = await empresaFetch('/pet/especie');
+      const espResp = await empresaFetch("/pet/especie");
 
       if (espResp.status == 200) {
         const jsonBody = await espResp.json();
@@ -141,9 +153,8 @@ const CadastrarPets = () => {
         }
 
         return jsonBody.especiesPet;
-
       } else {
-        throw new Error('requisição não retornou código 200');
+        throw new Error("requisição não retornou código 200");
       }
     } catch (err) {
       err.message = "Falha ao obter espécies cadastradas: " + err.message;
@@ -155,26 +166,51 @@ const CadastrarPets = () => {
   useEffect(() => {
     // Populando clientes
     obterClientes()
-      .then( cliList => {
+      .then((cliList) => {
         setClientes(cliList);
-        console.log('clientes encontrados: ', cliList);
+        console.log("clientes encontrados: ", cliList);
       })
-      .catch( err => {
+      .catch((err) => {
         alert(err.message);
       });
 
     // Populando espécies
     obterEspecies()
-      .then( espList => {
+      .then((espList) => {
         setEspecies(espList);
       })
-      .catch( err => {
+      .catch((err) => {
         alert(err.message);
       });
   }, []);
 
   return (
     <div className={`mt-1 ${styles.containergeral}`}>
+      {mensagemAlerta && (
+        <div
+          style={{
+            position: "fixed",
+            top: 20,
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 9999,
+            width: "fit-content",
+            maxWidth: "90vw",
+          }}
+        >
+          <Alert
+            message={mensagemAlerta.titulo}
+            description={mensagemAlerta.descricao}
+            type={mensagemAlerta.tipo}
+            showIcon
+            style={{
+              fontSize: "12px",
+              padding: "8px 12px",
+              lineHeight: "1.2",
+            }}
+          />
+        </div>
+      )}
       <h1 className={styles.cadastrar_agendamento__title}>Cadastrar Pet</h1>
       <hr />
       <Container className={`mt-4 ${styles.cadatrar_agendamento}`}>
@@ -343,12 +379,19 @@ const CadastrarPets = () => {
             <Col className={`d-flex align-items-end ${styles.campos_espaco}`}>
               <div>
                 <Form.Group className="d-flex align-items-center gap-2 mb-0">
-                  <BigCheckbox
-                    onChange={(e) => setAceito(e.target.checked)}
-                    {...register("eCastrado", { required: false })}
-                  >
-                    Castrado?
-                  </BigCheckbox>
+                  <Controller
+                    name="eCastrado"
+                    control={control}
+                    defaultValue={false}
+                    render={({ field }) => (
+                      <BigCheckbox
+                        checked={field.value}
+                        onChange={(e) => field.onChange(e.target.checked)}
+                      >
+                        Castrado?
+                      </BigCheckbox>
+                    )}
+                  />
                 </Form.Group>
               </div>
             </Col>
