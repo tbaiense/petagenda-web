@@ -4,10 +4,12 @@ import { useAuth } from "../../../contexts/UserContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";
 import NavEmpresa from "../../../components/navegacaoEmpresa/NavEmpresa.jsx";
-
+import { Alert } from "antd";
+import { useState } from "react";
 const EditarEmpresa = () => {
+  const [mensagemAlerta, setMensagemAlerta] = useState(null);
   const { setEmpresa, empresaFetch, getToken, licenca, setLicenca } = useAuth();
-  const {state} = useLocation();
+  const { state } = useLocation();
   const navigate = useNavigate();
   const {
     register,
@@ -51,10 +53,25 @@ const EditarEmpresa = () => {
     if (res.status == 200) {
       setEmpresa(jsonBody.empresa);
       setLicenca(licenca);
-      alert("Empresa atualizada com sucesso!");
+      setMensagemAlerta({
+        tipo: "success",
+        titulo: "Empresa atualizada com sucesso!",
+        descricao: "Redirecionando para informações da empresa...",
+      });
+      setTimeout(() => {
+        setMensagemAlerta(null);
+      }, 2000);
+       await new Promise((resolve) => setTimeout(resolve, 2000));
       navigate("/empresa/informacoes");
     } else {
-      alert("Erro ao atualizar empresa");
+      setMensagemAlerta({
+        tipo: "error",
+        titulo: "Erro ao atualizar empresa",
+        descricao:"Ocorreu um erro ao atualizar a empresa.",
+      });
+      setTimeout(() => {
+        setMensagemAlerta(null);
+      }, 3000);
     }
   };
 
@@ -64,6 +81,31 @@ const EditarEmpresa = () => {
 
   return (
     <div>
+      {mensagemAlerta && (
+        <div
+          style={{
+            position: "fixed",
+            top: 20,
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 9999,
+            width: "fit-content",
+            maxWidth: "90vw",
+          }}
+        >
+          <Alert
+            message={mensagemAlerta.titulo}
+            description={mensagemAlerta.descricao}
+            type={mensagemAlerta.tipo}
+            showIcon
+            style={{
+              fontSize: "12px",
+              padding: "8px 12px",
+              lineHeight: "1.2",
+            }}
+          />
+        </div>
+      )}
       <NavEmpresa />
       <div className="container my-5">
         <h2 className="text-center mb-4">Editar da Empresa</h2>
@@ -180,17 +222,7 @@ const EditarEmpresa = () => {
 
               <div className="d-flex justify-content-center mt-4 gap-3">
                 <button type="submit" className="btn btn-success">
-                  Finalizar
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={() => {
-                    reset();
-                    setImagemURL(null);
-                  }}
-                >
-                  Limpar
+                  Salvar
                 </button>
               </div>
             </form>
