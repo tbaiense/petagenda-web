@@ -2,7 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import Modal_Atualizar_Rapido_Agendamento from "../../pages/Agendamentos/Lista/Modal_Atualizar_Rapido_Agendamento";
 
-const CardAgendamento = ({ agendamento, funcDisponiveis }) => {
+const CardAgendamento = ({
+  agendamento,
+  funcDisponiveis,
+  setMensagemAlerta,
+}) => {
   const [estado, setEstado] = useState({});
   const [funcionario, setFuncionario] = useState({});
 
@@ -42,7 +46,7 @@ const CardAgendamento = ({ agendamento, funcDisponiveis }) => {
         <td>{`R$ ${agendamento.valor.total}`}</td>
         <td>
           <Button
-            className="form-button"
+            className="campos-espaco"
             variant="primary"
             onClick={handleShowEditarModal}
           >
@@ -62,6 +66,7 @@ const CardAgendamento = ({ agendamento, funcDisponiveis }) => {
         setFuncionario={setFuncionario}
         show={show}
         setShow={setShow}
+        setMensagemAlerta={setMensagemAlerta}
       ></Modal_Atualizar_Rapido_Agendamento>
     </>
   );

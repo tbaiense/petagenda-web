@@ -25,9 +25,12 @@ import Modal_Atualizar_Rapido_ServicoRealizado from "./Modal_Atualizar_Rapido_Se
 import CardAgendamento from "../../../components/CardAgendamento/CardAgendamento";
 import CardServicoRealizado from "../../../components/CardServicoRealizado/CardServicoRealizado";
 import "./Lista_Agendamento.css";
+import { Alert } from "antd";
+
 const { Search } = Input;
 
 const Lista_Agendamentos = () => {
+  const [mensagemAlerta, setMensagemAlerta] = useState(null);
   const [pesquisando, setPesquisando] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [ordenacao, setOrdenacao] = useState("");
@@ -94,7 +97,7 @@ const Lista_Agendamentos = () => {
         );
       }
     }
-    console.log('desliquei')
+    console.log("desliquei");
   }
 
   async function popularServicosRealizados() {
@@ -134,7 +137,7 @@ const Lista_Agendamentos = () => {
 
   useEffect(() => {
     setSearchQuery("");
-  }, [ abaAtual ]);
+  }, [abaAtual]);
 
   useEffect(() => {
     console.log([abaAtual, paginaAtual, paginaAtualServ, searchQuery, refresh]);
@@ -147,17 +150,16 @@ const Lista_Agendamentos = () => {
     }
   }, [abaAtual, paginaAtual, paginaAtualServ, refresh]);
 
-
   // Pesquisa
   useEffect(() => {
     if (validar) {
-      if (abaAtual == 'agendamentos') {
+      if (abaAtual == "agendamentos") {
         popularAgendamentos();
-      } else if (abaAtual == 'servicos-executados') {
+      } else if (abaAtual == "servicos-executados") {
         popularServicosRealizados();
       }
     }
-  }, [ searchQuery ])
+  }, [searchQuery]);
 
   useEffect(() => {
     if (validar) {
@@ -167,11 +169,37 @@ const Lista_Agendamentos = () => {
     }
   }, [refresh]);
 
-  useEffect(() => { setPesquisando(false) }, [ agendamentos, servicosRealizados ]);
-
+  useEffect(() => {
+    setPesquisando(false);
+  }, [agendamentos, servicosRealizados]);
 
   return (
     <div className="lista_agendamentos_servicos mt-4">
+      {mensagemAlerta && (
+        <div
+          style={{
+            position: "fixed",
+            top: 20,
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 9999,
+            width: "fit-content",
+            maxWidth: "90vw",
+          }}
+        >
+          <Alert
+            message={mensagemAlerta.titulo}
+            description={mensagemAlerta.descricao}
+            type={mensagemAlerta.tipo}
+            showIcon
+            style={{
+              fontSize: "12px",
+              padding: "8px 12px",
+              lineHeight: "1.2",
+            }}
+          />
+        </div>
+      )}
       <Container>
         {/* Topo */}
         <div>
@@ -215,13 +243,13 @@ const Lista_Agendamentos = () => {
                 loading={pesquisando}
                 allowClear={true}
                 onClear={() => {
-                    setPesquisando(false);
-                    setSearchQuery('');
+                  setPesquisando(false);
+                  setSearchQuery("");
                 }}
                 onPressEnter={(e) => {
-                    if (pesquisando) {
-                        setPesquisando(false);
-                    }
+                  if (pesquisando) {
+                    setPesquisando(false);
+                  }
                 }}
                 onSearch={(value, event, type) => {
                   const str = value.trim();
@@ -308,6 +336,7 @@ const Lista_Agendamentos = () => {
                         funcDisponiveis={funcDisponiveis}
                         key={a.id}
                         agendamento={a}
+                        setMensagemAlerta={setMensagemAlerta}
                       />
                     );
                   })}

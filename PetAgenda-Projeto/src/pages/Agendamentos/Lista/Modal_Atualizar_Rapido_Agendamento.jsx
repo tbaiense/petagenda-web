@@ -15,6 +15,7 @@ const Modal_Atualizar_Rapido_Agendamento = ({
   funcionario,
   setFuncionario,
   funcDisponiveis,
+  setMensagemAlerta,
 }) => {
   const [novoEstado, setNovoEstado] = useState({});
   const [novoFuncionario, setNovoFuncionario] = useState({});
@@ -34,7 +35,13 @@ const Modal_Atualizar_Rapido_Agendamento = ({
           setFuncionario(novoFuncionario);
           setEstado({ id: "preparado" });
 
-          alert(data.message);
+          setMensagemAlerta({
+            tipo: "success",
+            titulo: "Sucesso",
+            descricao: "Agendamento atualizado com sucesso.",
+          });
+
+          setTimeout(() => setMensagemAlerta(null), 2500);
           handleClose();
         } else {
           alert(data.errors.join("\n"));
@@ -54,7 +61,14 @@ const Modal_Atualizar_Rapido_Agendamento = ({
       .then((data) => {
         if (data.success) {
           setEstado(novoEstado);
-          alert(data.message);
+          setMensagemAlerta({
+            tipo: "success",
+            titulo: "Sucesso",
+            descricao: "Agendamento atualizado com sucesso.",
+          });
+
+          setTimeout(() => setMensagemAlerta(null), 2500);
+
           handleClose();
         } else {
           alert(data.errors.join("\n"));
