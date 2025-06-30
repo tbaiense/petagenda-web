@@ -8,26 +8,26 @@ const Modal_Atualizar_Rapido_ServicoRealizado = ({
   servicoRealizado,
   show,
   setShow,
-  handleRefresh
+  handleRefresh,
+  setMensagemAlerta,
 }) => {
-
   const { empresaFetch } = useAuth();
+  const [formTocado, setFormTocado] = useState(false);
   const handleClose = () => setShow(false);
-  const [ funcionarios, setFuncionarios] = useState([]);
-  const [ novoInicio, setNovoInicio ] = useState("");
-  const [ novoFim, setNovoFim ] = useState("");
-  const [ novoFuncionario, setNovoFuncionario ] = useState({});
+  const [funcionarios, setFuncionarios] = useState([]);
+  const [novoInicio, setNovoInicio] = useState("");
+  const [novoFim, setNovoFim] = useState("");
+  const [novoFuncionario, setNovoFuncionario] = useState({});
 
-  
   async function popularFuncionarios() {
     empresaFetch("/funcionario")
-    .then((res) => res.json())
-    .then((data) => {
-      setFuncionarios(data.funcionarios);
-    })
-    .catch((error) => {
-      console.error("Erro ao buscar Funcionarios:", error);
-    });
+      .then((res) => res.json())
+      .then((data) => {
+        setFuncionarios(data.funcionarios);
+      })
+      .catch((error) => {
+        console.error("Erro ao buscar Funcionarios:", error);
+      });
   }
 
   useEffect(() => {
@@ -36,7 +36,7 @@ const Modal_Atualizar_Rapido_ServicoRealizado = ({
     setNovoFim(servicoRealizado.fim);
     setNovoFuncionario(servicoRealizado.funcionario);
   }, []);
-  
+
   async function atualizarServico() {
     const novoServ = {
       inicio: novoInicio,
@@ -52,20 +52,37 @@ const Modal_Atualizar_Rapido_ServicoRealizado = ({
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
-          alert(data.message);
+          setMensagemAlerta({
+            tipo: "success",
+            titulo: "Sucesso",
+            descricao: "Serviço realizado atualizado com sucesso.",
+          });
+          setTimeout(() => setMensagemAlerta(null), 2500);
           handleClose();
           handleRefresh();
         } else {
-          alert(data.errors?.join("\n") || "Erro ao atualizar.");
+          setMensagemAlerta({
+            tipo: "info",
+            titulo: "Prencha todos os campos",
+            descricao: "Por favor, preencha todos os campos obrigatórios.",
+          });
+          setTimeout(() => setMensagemAlerta(null), 2500);
         }
       })
       .catch((error) => {
         console.error("Erro ao atualizar serviço realizado:", error);
-        alert("Erro ao atualizar serviço.");
+        setMensagemAlerta({
+          tipo: "error",
+          titulo: "Erro inesperado",
+          descricao:
+            "Não foi possível atualizar o serviço. Tente novamente mais tarde.",
+        });
+        setTimeout(() => setMensagemAlerta(null), 2500);
       });
   }
 
   function handleSave() {
+    setFormTocado(true);
     atualizarServico();
   }
 
@@ -81,8 +98,13 @@ const Modal_Atualizar_Rapido_ServicoRealizado = ({
             <Form.Control
               type="datetime-local"
               defaultValue={novoInicio}
-              onInput={(e) => setNovoInicio(e.target.value)}
+              onChange={(e) => setNovoInicio(e.target.value)}
+              isInvalid={formTocado && !novoInicio}
+              required
             />
+            <Form.Control.Feedback type="invalid">
+              Por favor, preencha a hora de início.
+            </Form.Control.Feedback>
           </Form.Group>
 
           <Form.Group className="mb-3" controlId="formFimServico">
@@ -90,15 +112,24 @@ const Modal_Atualizar_Rapido_ServicoRealizado = ({
             <Form.Control
               type="datetime-local"
               defaultValue={novoFim}
-              onInput={(e) => setNovoFim(e.target.value)}
+              onChange={(e) => setNovoFim(e.target.value)}
+              isInvalid={formTocado && !novoFim}
+              required
             />
           </Form.Group>
+          <Form.Control.Feedback type="invalid">
+            Por favor, preencha a hora de finalização.
+          </Form.Control.Feedback>
 
           <Form.Group controlId="formFuncionario">
             <Form.Label>Funcionário</Form.Label>
             <Form.Select
               value={novoFuncionario?.id || ""}
-              onInput={(e) => setNovoFuncionario(funcionarios.find( f => f.id == e.target.value )) ?? ""}
+              onInput={(e) =>
+                setNovoFuncionario(
+                  funcionarios.find((f) => f.id == e.target.value)
+                ) ?? ""
+              }
             >
               <option value="">Selecione um funcionário</option>
               {funcionarios &&

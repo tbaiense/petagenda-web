@@ -375,6 +375,7 @@ const Lista_Agendamentos = () => {
                 setShow={setShowModalServ}
                 servicoRealizado={editarServ}
                 handleRefresh={popularServicosRealizados}
+                setMensagemAlerta={setMensagemAlerta}
               />
             )}
             <Table striped>

@@ -39,7 +39,7 @@ const CardServicoRealizado = ({ servicoRealizado, handleEditar }) => {
         <td>{`R$ ${servicoRealizado.valor.total}`}</td>
         <td>
           <Button
-            className="form-button"
+            className="campos-espaco"
             variant="primary"
             onClick={(e) => handleEditar(servicoRealizado)}
           >
