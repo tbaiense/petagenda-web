@@ -71,11 +71,23 @@ const Modal_Atualizar_Rapido_Agendamento = ({
 
           handleClose();
         } else {
-          alert(data.errors.join("\n"));
+          setMensagemAlerta({
+            tipo: "danger",
+            titulo: "Erro",
+            descricao: data.errors.join("\n"),
+          });
+          setTimeout(() => setMensagemAlerta(null), 2500);
+          console.error("Erro ao atualizar estado do agendamento:", data.errors);
         }
       })
       .catch((error) => {
-        console.error("Erro ao atualizar estado:", error);
+        console.error("Erro ao atualizar estado do agendamento:", error);
+        setMensagemAlerta({
+          tipo: "danger",
+          titulo: "Erro",
+          descricao: "Não foi possível atualizar o estado do agendamento.",
+        });
+        setTimeout(() => setMensagemAlerta(null), 2500);
       });
   }
 
