@@ -138,7 +138,6 @@ function Login() {
           />
         </div>
       )}
-
       <Container className="login__container mt-5">
         <Row className="align-items-center login__column">
           <Col md={6} className="d-flex flex-column align-items-center">

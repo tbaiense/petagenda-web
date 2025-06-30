@@ -5,11 +5,13 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import NavEmpresa from "../../../components/navegacaoEmpresa/NavEmpresa.jsx";
 import { LoadingOutlined } from "@ant-design/icons";
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { Button } from "react-bootstrap";
+import { Alert } from "antd";
 const CadastroEmpresa = () => {
+  const [mensagemAlerta, setMensagemAlerta] = useState(null);
   const { setEmpresa, apiFetch, getToken } = useAuth();
-  const [ isLoading, setIsLoading ] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
   const {
@@ -57,10 +59,29 @@ const CadastroEmpresa = () => {
     setIsLoading(false);
     if (res.status == 200) {
       setEmpresa(jsonBody.empresa);
-      alert("cadastrado");
+
+      setMensagemAlerta({
+        tipo: "success",
+        titulo: "Empresa cadastrada com sucesso!",
+        descricao: "Redirecionando para a página de planos...",
+      });
+
+      setTimeout(() => {
+        setMensagemAlerta(null);
+      }, 2500);
+
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       navigate("/empresa/planos");
     } else {
-      alert("erro ao cadastrar empresa");
+      setMensagemAlerta({
+        tipo: "error",
+        titulo: "Erro ao cadastrar empresa",
+        descricao: "Ocorreu um erro ao cadastrar a empresa.",
+      });
+      setTimeout(() => {
+        setMensagemAlerta(null);
+      }, 3000);
     }
   };
 
@@ -70,16 +91,38 @@ const CadastroEmpresa = () => {
 
   return (
     <div>
+      {mensagemAlerta && (
+        <div
+          style={{
+            position: "fixed",
+            top: 20,
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 9999,
+            width: "fit-content",
+            maxWidth: "90vw",
+          }}
+        >
+          <Alert
+            message={mensagemAlerta.titulo}
+            description={mensagemAlerta.descricao}
+            type={mensagemAlerta.tipo}
+            showIcon
+            style={{
+              fontSize: "12px",
+              padding: "8px 12px",
+              lineHeight: "1.2",
+            }}
+          />
+        </div>
+      )}
       <NavEmpresa />
       <div className="container my-5">
         <h2 className="text-center mb-4">Cadastro da Empresa</h2>
 
         <div className="row">
           <div className="col-md-8">
-            <form
-              onSubmit={handleSubmit(onSubmit, onError)}
-              className="p-4"
-            >
+            <form onSubmit={handleSubmit(onSubmit, onError)} className="p-4">
               <div className="mb-3">
                 <label className="form-label">Nome Fantasia</label>
                 <input
@@ -182,15 +225,23 @@ const CadastroEmpresa = () => {
               </div>
 
               <div className="d-flex justify-content-center mt-4 gap-3">
-                <Button 
-                disabled={!!isLoading}
-                className={styles.botao__cadastrar}
-                type="submit" 
+                <Button
+                  disabled={!!isLoading}
+                  className={styles.botao__cadastrar}
+                  type="submit"
                 >
                   Cadastrar Empresa
-                  {isLoading && <span style={{display: 'inline-block', marginLeft: '0.8em', verticalAlign: 'center'}}>
+                  {isLoading && (
+                    <span
+                      style={{
+                        display: "inline-block",
+                        marginLeft: "0.8em",
+                        verticalAlign: "center",
+                      }}
+                    >
                       <LoadingOutlined />
-                  </span>}
+                    </span>
+                  )}
                 </Button>
                 <Button
                   type="button"
