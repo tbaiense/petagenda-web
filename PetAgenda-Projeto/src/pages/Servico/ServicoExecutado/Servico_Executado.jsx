@@ -353,7 +353,7 @@ const ServicoExecutado = () => {
             </Col>
             <Col>
               <Form.Group controlId="formServico">
-                <Form.Label>Serviço</Form.Label>
+                <Form.Label>Serviço<span className="obrigatorio">*</span></Form.Label>
                 <Form.Select
                   value={servicoSel}
                   {...register("servico", {
@@ -383,7 +383,7 @@ const ServicoExecutado = () => {
           <Row className="mt-3">
             <Col className="campos-espaco">
               <Form.Group controlId="dataExecucao">
-                <Form.Label>Data de execução</Form.Label>
+                <Form.Label>Data de execução<span className="obrigatorio">*</span></Form.Label>
                 <Form.Control
                   type="date"
                   {...register("dataExecucao", { required: true })}
@@ -393,7 +393,7 @@ const ServicoExecutado = () => {
             </Col>
             <Col className="campos-espaco">
               <Form.Group controlId="horaInicio">
-                <Form.Label>Hora de início</Form.Label>
+                <Form.Label>Hora de início<span className="obrigatorio">*</span></Form.Label>
                 <Form.Control
                   type="time"
                   {...register("horaInicio", { required: true })}
@@ -403,7 +403,7 @@ const ServicoExecutado = () => {
             </Col>
             <Col>
               <Form.Group controlId="horaFim">
-                <Form.Label>Hora de finalização</Form.Label>
+                <Form.Label>Hora de finalização<span className="obrigatorio">*</span></Form.Label>
                 <Form.Control
                   type="time"
                   {...register("horaFim", { required: true })}
@@ -464,7 +464,7 @@ const ServicoExecutado = () => {
           <Row className="mt-3">
             <Col md={5}>
               <Form.Group controlId="formFuncionario">
-                <Form.Label>Funcionário que realizou</Form.Label>
+                <Form.Label>Funcionário que realizou<span className="obrigatorio">*</span></Form.Label>
                 <Form.Select
                   {...register("funcionario", {
                     required: {
@@ -492,7 +492,7 @@ const ServicoExecutado = () => {
           <Row className="mt-3">
             <Col className="campos-espaco">
               <Form.Group controlId="formServico">
-                <Form.Label>Cliente:</Form.Label>
+                <Form.Label>Cliente:<span className="obrigatorio">*</span></Form.Label>
                 <Form.Select
                   onInput={(e) => {
                     popularPetsCliente(e.target.value);
@@ -512,7 +512,7 @@ const ServicoExecutado = () => {
             </Col>
             <Col className="campos-espaco">
               <Form.Group controlId="formServico">
-                <Form.Label>Pet:</Form.Label>
+                <Form.Label>Pet:<span className="obrigatorio">*</span></Form.Label>
                 <Form.Select id="pet-selecionar" {...register("pet")}>
                   <option value="">Selecione um pet</option>
                   {petsCliente &&

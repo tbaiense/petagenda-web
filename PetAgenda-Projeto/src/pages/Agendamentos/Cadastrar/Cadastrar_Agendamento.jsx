@@ -421,7 +421,7 @@ const Agendamento = () => {
               </Col>
               <Col className="">
                 <Form.Group className="" controlId="formServico">
-                  <Form.Label>Serviço:</Form.Label>
+                  <Form.Label>Serviço:<span className="obrigatorio">*</span></Form.Label>
                   <Form.Select
                     value={servicoSel}
                     {...register("servico", {
@@ -451,7 +451,7 @@ const Agendamento = () => {
             <Row className="mt-3">
               <Col className="campos-espaco">
                 <Form.Group controlId="formData" className="">
-                  <Form.Label>Data do agendamento:</Form.Label>
+                  <Form.Label>Data do agendamento:<span className="obrigatorio">*</span></Form.Label>
                   <Form.Control
                     type="date"
                     {...register("data", { required: true })}
@@ -461,7 +461,7 @@ const Agendamento = () => {
               </Col>
               <Col className="campos-espaco">
                 <Form.Group controlId="formHora">
-                  <Form.Label>Hora do agendamento:</Form.Label>
+                  <Form.Label>Hora do agendamento:<span className="obrigatorio">*</span></Form.Label>
                   <Form.Control
                     type="time"
                     {...register("hora", { required: true })}
@@ -538,7 +538,7 @@ const Agendamento = () => {
             <Row className="mt-3">
               <Col className="campos-espaco">
                 <Form.Group controlId="formServico">
-                  <Form.Label>Cliente:</Form.Label>
+                  <Form.Label>Cliente:<span className="obrigatorio">*</span></Form.Label>
                   <Form.Select
                     onInput={(e) => {
                       popularPetsCliente(e.target.value);
@@ -558,7 +558,7 @@ const Agendamento = () => {
               </Col>
               <Col className="campos-espaco">
                 <Form.Group controlId="formServico">
-                  <Form.Label>Pet:</Form.Label>
+                  <Form.Label>Pet:<span className="obrigatorio">*</span></Form.Label>
                   <Form.Select id="pet-selecionar" {...register("pet")}>
                     <option value="">Selecione um pet</option>
                     {petsCliente &&

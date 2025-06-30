@@ -39,7 +39,7 @@ const CamposEndereco = ({
       <div className={styles.linhaEndereco}>
         {/* <div>{(formConfigs) ? (formConfigs.isRequired ? "true" : "false") : "true"}</div> */}
         <div className={`${styles.labelInput} ${styles.flex5}`}>
-          <label>CEP</label>
+          <label>CEP<span className="obrigatorio">*</span></label>
           <input
             type="text"
             // value={cep ?? ''}
@@ -69,7 +69,7 @@ const CamposEndereco = ({
           {errorsObj?.cep && <p style={{ color: 'red' }}>{errorsObj?.cep.message}</p>}
         </div>
         <div className={`${styles.labelInput} ${styles.flex5}`}>
-          <label>Logradouro</label>
+          <label>Logradouro<span className="obrigatorio">*</span></label>
           <input
             // value={endereco.logradouro ?? ''}
             // onInput={handleChange}
@@ -83,7 +83,7 @@ const CamposEndereco = ({
         </div>
 
         <div className={`${styles.labelInput} ${styles.flex1}`}>
-          <label>Número</label>
+          <label>Número<span className="obrigatorio">*</span></label>
           <input
             type="text"
             defaultValue={endereco?.numero || ""}
@@ -98,7 +98,7 @@ const CamposEndereco = ({
       </div>
       <div className={styles.linhaEndereco}>
         <div className={`${styles.labelInput} ${styles.flex2}`}>
-          <label>Bairro</label>
+          <label>Bairro<span className="obrigatorio">*</span></label>
           <input
             type="text"
             defaultValue={endereco?.bairro || ""}
@@ -111,7 +111,7 @@ const CamposEndereco = ({
           {errorsObj?.bairro && <p style={{ color: 'red' }}>{errorsObj?.bairro.message}</p>}
         </div>
         <div className={`${styles.labelInput} ${styles.flex3}`}>
-          <label>Cidade</label>
+          <label>Cidade<span className="obrigatorio">*</span></label>
           <input
             type="text"
             // value={endereco.cidade ?? ''}
@@ -124,7 +124,7 @@ const CamposEndereco = ({
           {errorsObj?.cidade && <p style={{ color: 'red' }}>{errorsObj?.cidade.message}</p>}
         </div>
         <div className={`${styles.labelInput} ${styles.flex1}`}>
-          <label>UF</label>
+          <label>UF<span className="obrigatorio">*</span></label>
           <select
             // value={endereco.uf ?? ''} 
             // onInput={handleChange}
