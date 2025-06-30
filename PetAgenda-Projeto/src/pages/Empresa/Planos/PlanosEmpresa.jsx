@@ -6,8 +6,10 @@ import { useState } from "react";
 import NavEmpresa from "../../../components/navegacaoEmpresa/NavEmpresa.jsx";
 import { useAuth } from "../../../contexts/UserContext";
 import { useEffect } from "react";
-import { LoadingOutlined } from '@ant-design/icons';
+import { LoadingOutlined } from "@ant-design/icons";
+import { Alert } from "antd";
 function PlanosEmpresa() {
+  const [mensagemAlerta, setMensagemAlerta] = useState(null);
   const {
     getToken,
     getEmpresa,
@@ -29,8 +31,8 @@ function PlanosEmpresa() {
   const [precoBasico, setPrecoBasico] = useState("R$ 29,90");
   const [precoProfissional, setPrecoProfissional] = useState("R$ 29,90");
   const [precoCorporativo, setPrecoCorporativo] = useState("R$ 29,90");
-  const [ isLoading, setIsLoading ] = useState(false);
-  const [ planoSel, setPlanoSel ] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [planoSel, setPlanoSel] = useState("");
 
   const handleChange = (plano) => {
     setSelected(plano);
@@ -63,7 +65,7 @@ function PlanosEmpresa() {
       setIsLoading(true);
       assinarPlano(planoSel);
     }
-  }, [ planoSel ]);
+  }, [planoSel]);
 
   const assinarPlano = async (plano) => {
     const dadoPlano = {
@@ -82,19 +84,58 @@ function PlanosEmpresa() {
       setIsLoading(false);
       if (response.status == 200 && jsonBody?.success) {
         setLicenca(dadoPlano.tipo);
-        alert(jsonBody.message);
+        setMensagemAlerta({
+          tipo: "success",
+          titulo: "Assinatura realizada com sucesso!",
+          descricao: `Você assinou o plano ${dadoPlano.tipo} por ${dadoPlano.periodo}.`,
+        });
+        setTimeout(() => {
+          setMensagemAlerta(null);
+        }, 2500);
         return;
       } else {
         throw new Error(jsonBody.errors.join("\n"));
       }
     } catch (err) {
       setIsLoading(false);
-      alert("Falha ao obter licença:\n" + err.message);
+      setMensagemAlerta({
+        tipo: "error",
+        titulo: "Erro ao assinar plano",
+        descricao: `Ocorreu um erro ao tentar assinar o plano ${plano}.`,
+      });
+      setTimeout(() => {
+        setMensagemAlerta(null);
+      }, 3000);
     }
   };
 
   return (
     <div>
+      {mensagemAlerta && (
+        <div
+          style={{
+            position: "fixed",
+            top: 20,
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 9999,
+            width: "fit-content",
+            maxWidth: "90vw",
+          }}
+        >
+          <Alert
+            message={mensagemAlerta.titulo}
+            description={mensagemAlerta.descricao}
+            type={mensagemAlerta.tipo}
+            showIcon
+            style={{
+              fontSize: "12px",
+              padding: "8px 12px",
+              lineHeight: "1.2",
+            }}
+          />
+        </div>
+      )}
       <NavEmpresa />
       <section className="plano__section">
         <Container className="">
@@ -163,14 +204,22 @@ function PlanosEmpresa() {
                 </ul>
                 <Button
                   variant="primary"
-                  onClick={() => setPlanoSel('basico')}
+                  onClick={() => setPlanoSel("basico")}
                   className="plano__botao"
                   disabled={!!isLoading}
                 >
                   Assinar
-                  {isLoading && planoSel == 'basico' && <span style={{display: 'inline-block', marginLeft: '0.8em', verticalAlign: 'center'}}>
+                  {isLoading && planoSel == "basico" && (
+                    <span
+                      style={{
+                        display: "inline-block",
+                        marginLeft: "0.8em",
+                        verticalAlign: "center",
+                      }}
+                    >
                       <LoadingOutlined />
-                  </span>}
+                    </span>
+                  )}
                 </Button>
               </div>
             </Col>
@@ -199,14 +248,22 @@ function PlanosEmpresa() {
                 </ul>
                 <Button
                   variant="primary"
-                  onClick={() => setPlanoSel('profissional')}
+                  onClick={() => setPlanoSel("profissional")}
                   className="plano__botao"
                   disabled={!!isLoading}
                 >
                   Assinar
-                  {isLoading && planoSel == 'profissional' && <span style={{display: 'inline-block', marginLeft: '0.8em', verticalAlign: 'center'}}>
+                  {isLoading && planoSel == "profissional" && (
+                    <span
+                      style={{
+                        display: "inline-block",
+                        marginLeft: "0.8em",
+                        verticalAlign: "center",
+                      }}
+                    >
                       <LoadingOutlined />
-                  </span>}
+                    </span>
+                  )}
                 </Button>
               </div>
             </Col>
@@ -235,14 +292,22 @@ function PlanosEmpresa() {
                 </ul>
                 <Button
                   variant="primary"
-                  onClick={() => setPlanoSel('corporativo')}
+                  onClick={() => setPlanoSel("corporativo")}
                   className="plano__botao"
                   disabled={!!isLoading}
                 >
                   Assinar
-                  {isLoading && planoSel == 'corporativo' && <span style={{display: 'inline-block', marginLeft: '0.8em', verticalAlign: 'center'}}>
+                  {isLoading && planoSel == "corporativo" && (
+                    <span
+                      style={{
+                        display: "inline-block",
+                        marginLeft: "0.8em",
+                        verticalAlign: "center",
+                      }}
+                    >
                       <LoadingOutlined />
-                  </span>}
+                    </span>
+                  )}
                 </Button>
               </div>
             </Col>
