@@ -6,7 +6,10 @@ import { useAuth } from "../../contexts/UserContext";
 import CamposEndereco from "../../components/Endereco/CamposEndereco";
 import { useNavigate } from "react-router-dom";
 import { Container, Form, Row, Col, Button } from "react-bootstrap";
+import { Alert } from "antd";
+
 const CadastrarClientes = () => {
+  const [mensagemAlerta, setMensagemAlerta] = useState(null);
   const { empresaFetch, validar } = useAuth();
   const [servicos, setServicos] = useState([]);
   const [endereco, setEndereco] = useState({});
@@ -127,7 +130,14 @@ const CadastrarClientes = () => {
 
         return json;
       } else {
-        alert("erro ao cadastrar cliente");
+        setMensagemAlerta({
+          tipo: "error",
+          titulo: "Erro ao cadastrar cliente",
+          descricao: errorText || "Ocorreu um erro ao cadastrar o cliente.",
+        });
+        setTimeout(() => {
+          setMensagemAlerta(null);
+        }, 3000);
       }
     });
   }
@@ -143,7 +153,15 @@ const CadastrarClientes = () => {
     if (validar) {
       const jsonResp = await cadastrarCliente(objCli);
       if (jsonResp.success) {
-        alert(jsonResp.message);
+        setMensagemAlerta({
+          tipo: "success",
+          titulo: "Cliente cadastrado com sucesso!",
+          descricao: "O cliente foi adicionado à lista.",
+        });
+        setTimeout(() => {
+          setMensagemAlerta(null);
+        }, 2500);
+        await new Promise((resolve) => setTimeout(resolve, 2000));
         reset();
         setServicosSelecionados([]);
 
@@ -158,6 +176,31 @@ const CadastrarClientes = () => {
 
   return (
     <div className="containergeral mt-1">
+      {mensagemAlerta && (
+        <div
+          style={{
+            position: "fixed",
+            top: 20,
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 9999,
+            width: "fit-content",
+            maxWidth: "90vw",
+          }}
+        >
+          <Alert
+            message={mensagemAlerta.titulo}
+            description={mensagemAlerta.descricao}
+            type={mensagemAlerta.tipo}
+            showIcon
+            style={{
+              fontSize: "12px",
+              padding: "8px 12px",
+              lineHeight: "1.2",
+            }}
+          />
+        </div>
+      )}
       <h1 className="cadastrar_agendamento__title">Novo Cliente</h1>
       <hr />
       <Container className="cadatrar_agendamento mt-4">

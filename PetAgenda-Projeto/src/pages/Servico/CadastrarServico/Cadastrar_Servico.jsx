@@ -4,15 +4,16 @@ import { Button, Col, Form, InputGroup, Row, Container } from "react-bootstrap";
 import "./Cadastrar_Servico.css";
 import { useAuth } from "../../../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
+import { Alert } from "antd";
 
 function CadastrarServico() {
+  const [mensagemAlerta, setMensagemAlerta] = useState(null);
   const [categorias, setCategorias] = useState([]);
   const navigate = useNavigate();
   const [especies, setEspecies] = useState([]);
   const { getToken, getEmpresa, validar, empresaFetch } = useAuth();
 
   useEffect(() => {
-    // Obtendo categorias de serviços
     async function getServicosOferecidos() {
       let errMsg;
       try {
@@ -43,7 +44,6 @@ function CadastrarServico() {
       }
     }
 
-    // Obter espécies
     async function getEspeciesPet() {
       let errMsg;
       try {
@@ -106,11 +106,26 @@ function CadastrarServico() {
         const json = await res.json();
         const idServ = json.servicoOferecido?.id;
         if (idServ) {
-          alert(json.message);
-          navigate(`/servicos-oferecidos/${idServ}`);
+          setMensagemAlerta({
+            tipo: "success",
+            titulo: "Serviço cadastrado com sucesso!",
+            descricao: "O serviço foi adicionado à lista.",
+          });
+          setTimeout(() => {
+            setMensagemAlerta(null);
+          }, 2500);
+          await new Promise((resolve) => setTimeout(resolve, 2500));
+          navigate(`/empresa/servicos/lista`);
         }
       } else {
-        alert("Erro ao cadastrar Serviço Oferecido");
+        setMensagemAlerta({
+          tipo: "error",
+          titulo: "Erro ao cadastrar serviço",
+          descricao: errorText,
+        });
+        setTimeout(() => {
+          setMensagemAlerta(null);
+        }, 3000);
       }
     });
 
@@ -119,6 +134,31 @@ function CadastrarServico() {
 
   return (
     <div className="containergeral mt-1">
+      {mensagemAlerta && (
+        <div
+          style={{
+            position: "fixed",
+            top: 20,
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 9999,
+            width: "fit-content",
+            maxWidth: "90vw",
+          }}
+        >
+          <Alert
+            message={mensagemAlerta.titulo}
+            description={mensagemAlerta.descricao}
+            type={mensagemAlerta.tipo}
+            showIcon
+            style={{
+              fontSize: "12px",
+              padding: "8px 12px",
+              lineHeight: "1.2",
+            }}
+          />
+        </div>
+      )}
       <h1 className="cadastrar_agendamento__title">Novo Serviço</h1>
       <hr />
       <Container className="cadatrar_agendamento mt-4">
