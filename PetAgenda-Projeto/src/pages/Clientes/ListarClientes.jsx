@@ -1,5 +1,5 @@
 
-import { useEffect,useState } from "react"
+import { useEffect, useState } from "react"
 import { useAuth } from "../../contexts/UserContext";
 import CardCliente from "../../components/CardCliente/CardCliente"
 import styles from "./ListarClientes.module.css"
@@ -9,34 +9,36 @@ import iconEditar from "../../assets/icon_editarAzul.svg"
 import iconDeletar from "../../assets/icon_delete.svg"
 import seta from "../../assets/icon_seta.svg"
 import { Col, Form } from "react-bootstrap";
+import Modal from "react-bootstrap/Modal"
 
 const { Search } = Input;
 
 const ListarClientes = () => {
     const { empresaFetch, validar } = useAuth();
-    const [ clientes, setClientes] = useState([]);
-    const [ clientView, setClientView ] = useState({});
+    const [clientes, setClientes] = useState([]);
+    const [clientView, setClientView] = useState({});
     const navigate = useNavigate();
-    
-    const [ pesquisando, setPesquisando ] = useState(false);
+
+    const [pesquisando, setPesquisando] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
-    const [ ordenacao, setOrdenacao ] = useState('ascending');
-    const [ tipoFiltro, setTipoFiltro ] = useState('nome');
-    
+    const [ordenacao, setOrdenacao] = useState('ascending');
+    const [tipoFiltro, setTipoFiltro] = useState('nome');
+
     const [showInfo, setShowInfo] = useState(false)
 
     async function popularListaClientes() {
         // Pego os Clientes do banco da empresa
         setPesquisando(true);
         empresaFetch(`/cliente?query=${searchQuery}&option=${tipoFiltro}&ordenacao=${ordenacao}`)
-        .then(res => res.json())
-        .then(data => {
-            setClientes(data.clientes);
-        })
-        .catch(error => {
-            console.error("Erro ao buscar Clientes:", error);
-        });
+            .then(res => res.json())
+            .then(data => {
+                setClientes(data.clientes);
+            })
+            .catch(error => {
+                console.error("Erro ao buscar Clientes:", error);
+            });
     }
+    const handleClose = () => { setShowInfo(false) }
 
     async function deletarCliente(id) {
         try {
@@ -58,13 +60,13 @@ const ListarClientes = () => {
     // Função para pegar os pets do dono selecionado
     async function popularPetsCliente(id) {
         empresaFetch(`/pet?idCliente=${id}`)
-        .then(res => res.json())
-        .then(data => {
-            setPetsCliente(data.pets);
-        })
-        .catch(error => {
-            console.error("Erro ao buscar Clientes:", error);
-        });
+            .then(res => res.json())
+            .then(data => {
+                setPetsCliente(data.pets);
+            })
+            .catch(error => {
+                console.error("Erro ao buscar Clientes:", error);
+            });
     }
 
     useEffect(() => {
@@ -75,13 +77,13 @@ const ListarClientes = () => {
 
     useEffect(() => {
         setPesquisando(false);
-    }, [ clientes ]);
+    }, [clientes]);
 
-    const navEditarCliente = ( cliente ) => {
-        navigate(`/empresa/clientes/editar/${cliente.id}`, { state:cliente })
+    const navEditarCliente = (cliente) => {
+        navigate(`/empresa/clientes/editar/${cliente.id}`, { state: cliente })
     }
 
-    return(
+    return (
         <div className={styles.viewConteudo}>
             <div>
                 <h1>Clientes Cadastrados</h1>
@@ -104,7 +106,7 @@ const ListarClientes = () => {
                                 if (pesquisando) {
                                     setPesquisando(false);
                                 }
-                            }}s
+                            }} s
                             onSearch={(value, event, type) => {
                                 const str = value.trim();
                                 setPesquisando(false);
@@ -116,13 +118,13 @@ const ListarClientes = () => {
                     <div className={styles.filtros}>
                         <div>
                             <label htmlFor="">Filtrar por:</label>
-                            <select name="option" id="filtro-cliente" className={styles.slct} onChange={(e) => {setTipoFiltro(e.target.value)}}>
+                            <select name="option" id="filtro-cliente" className={styles.slct} onChange={(e) => { setTipoFiltro(e.target.value) }}>
                                 <option value="nome">Nome</option>
                             </select>
                         </div>
                         <div>
                             <label htmlFor="">Ordenação:</label>
-                            <select value={ordenacao} name="ordenacao" id="ordenacao-cliente" className={styles.slct} onChange={(e) => {setOrdenacao(e.target.value)}}>
+                            <select value={ordenacao} name="ordenacao" id="ordenacao-cliente" className={styles.slct} onChange={(e) => { setOrdenacao(e.target.value) }}>
                                 <option value="ascending">Crescente</option>
                                 <option value="descending">Decrescente</option>
                             </select>
@@ -130,38 +132,38 @@ const ListarClientes = () => {
                     </div>
                     {clientes?.length > 0 ? (
                         clientes?.map((cliente) => (
-                        <div key={cliente.id} className={styles.cardInfo}>
-                            <div>
-                                <span className={styles.nomeCliente}>{cliente.nome}</span>
-                                <div className={styles.layoutInfoPerson}>
-                                    <span>{cliente.telefone}</span>
-                                    <span>|</span>
-                                    <div>
-                                        <span>{cliente.endereco.cidade}, {cliente.endereco.estado}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className={styles.position}>
-                                <div className={styles.position2}>
-                                    <div className={styles.alinhamentoImage}>
-                                        <img src={iconEditar} alt="" onClick={() => navEditarCliente(cliente)}/>
-                                    </div>
-                                    <div className={styles.alinhamentoImage}>
-                                        <img src={iconDeletar} alt="" onClick={() => {
-                                            if (confirm('Deseja realmente deletar este cliente?')) {
-                                                deletarCliente(cliente.id);
-                                            }
-                                        }}/>
-                                    </div>
-                                </div>
+                            <div key={cliente.id} className={styles.cardInfo}>
                                 <div>
-                                    <img src={seta} alt="" onClick={() => {
-                                        setClientView(cliente)
-                                        setShowInfo(true);
-                                    }}/>
+                                    <span className={styles.nomeCliente}>{cliente.nome}</span>
+                                    <div className={styles.layoutInfoPerson}>
+                                        <span>{cliente.telefone}</span>
+                                        <span>|</span>
+                                        <div>
+                                            <span>{cliente.endereco.cidade}, {cliente.endereco.estado}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className={styles.position}>
+                                    <div className={styles.position2}>
+                                        <div className={styles.alinhamentoImage}>
+                                            <img src={iconEditar} alt="" onClick={() => navEditarCliente(cliente)} />
+                                        </div>
+                                        <div className={styles.alinhamentoImage}>
+                                            <img src={iconDeletar} alt="" onClick={() => {
+                                                if (confirm('Deseja realmente deletar este cliente?')) {
+                                                    deletarCliente(cliente.id);
+                                                }
+                                            }} />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <img src={seta} alt="" onClick={() => {
+                                            setClientView(cliente)
+                                            setShowInfo(true);
+                                        }} />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
                         ))
                     ) : (
                         <div>
@@ -169,15 +171,15 @@ const ListarClientes = () => {
                         </div>
                     )}
                 </div>
-            </div> 
+            </div>
 
             {showInfo && (
-                <div className={styles.infoModal}>
-                    <div className={styles.estiloModal}>
-                        <div className={styles.estiloTitulo}>
-                            <h2>{clientView.nome}</h2>
-                        </div>
-                        <div className={styles.quadro}>
+                <Modal show={showInfo} onHide={handleClose}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>{clientView.nome}</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <div className={styles.estiloModal}>
                             <div className={styles.tele}>
                                 <label htmlFor="">Telefone:</label>
                                 <span>{clientView.telefone}</span>
@@ -200,17 +202,52 @@ const ListarClientes = () => {
                                 <label htmlFor="">Endereço:</label>
                                 <span>{
                                     `${clientView.endereco.logradouro},
-                                    ${clientView.endereco.numero}, 
-                                    ${clientView.endereco.bairro}, 
-                                    ${clientView.endereco.cidade}-${clientView.endereco.estado}`}</span>
+                                     ${clientView.endereco.numero}, 
+                                     ${clientView.endereco.bairro}, 
+                                     ${clientView.endereco.cidade}-${clientView.endereco.estado}`}</span>
                             </div>
                         </div>
-                        <div className={styles.spanFechar}>
-                            <button className={styles.spanFechar} onClick={() => {setShowInfo(false)}}>Fechar</button>
-                        </div>
-                    </div>
-                </div>
-            )}  
+                    </Modal.Body>
+                </Modal>
+                // <div className={styles.infoModal}>
+                //     <div className={styles.estiloModal}>
+                //         <div className={styles.estiloTitulo}>
+                //             <h2>{clientView.nome}</h2>
+                //         </div>
+                //         <div className={styles.quadro}>
+                //             <div className={styles.tele}>
+                //                 <label htmlFor="">Telefone:</label>
+                //                 <span>{clientView.telefone}</span>
+                //             </div>
+                //             <div>
+                //                 <label htmlFor="">Serviço(s) Favorito(s):</label>
+                //                 {clientView.servicoRequerido?.length > 0 ? (
+                //                     clientView.servicoRequerido.map((servico) => (
+                //                         <div key={servico.servico} className={styles.servicosFavority}>
+                //                             <span readOnly >{servico.nome}</span>
+                //                         </div>
+                //                     ))
+                //                 ) : (
+                //                     <div>
+                //                         <span>Nenhum serviço favorito cadastrado</span>
+                //                     </div>
+                //                 )}
+                //             </div>
+                //             <div className={styles.estiloEndereco}>
+                //                 <label htmlFor="">Endereço:</label>
+                //                 <span>{
+                //                     `${clientView.endereco.logradouro},
+                //                     ${clientView.endereco.numero}, 
+                //                     ${clientView.endereco.bairro}, 
+                //                     ${clientView.endereco.cidade}-${clientView.endereco.estado}`}</span>
+                //             </div>
+                //         </div>
+                //         <div className={styles.spanFechar}>
+                //             <button className={styles.spanFechar} onClick={() => {setShowInfo(false)}}>Fechar</button>
+                //         </div>
+                //     </div>
+                // </div>
+            )}
 
         </div>
     )

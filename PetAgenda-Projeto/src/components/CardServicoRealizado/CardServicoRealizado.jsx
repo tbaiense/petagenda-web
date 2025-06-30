@@ -16,7 +16,7 @@ const CardServicoRealizado = ({ servicoRealizado, handleEditar }) => {
     <>
     {/*  */}
       <tr>
-        <td><img src={editar} onClick={() => editarServico(servicoRealizado?.id)} alt=""/>{servicoRealizado.id}</td>
+        <td><img src={editar} onClick={() => editarServico(servicoRealizado?.id)} alt=""/></td>
         <td>{servicoRealizado.servico.nome}</td>
         <td>{servicoRealizado.cliente.nome}</td>
         <td>{servicoRealizado.funcionario.nome}</td>

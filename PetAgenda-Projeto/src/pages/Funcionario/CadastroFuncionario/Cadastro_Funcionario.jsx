@@ -7,11 +7,15 @@ import ModalEditarFuncionario from "../../../components/ModalEditarFuncionario/M
 import { Input } from "antd";
 import iconEditar from "../../../assets/icon_editarAzul.svg";
 import iconDeletar from "../../../assets/icon_delete.svg";
-import { Form, Button } from "react-bootstrap";
+import { Button } from "react-bootstrap";
+import Form from "react-bootstrap/Form";
+import Modal from "react-bootstrap/Modal";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const { Search } = Input;
 
 const CadastroFuncionario = () => {
+      const [ isLoading, setIsLoading ] = useState(false);
   const { empresaFetch, validar } = useAuth();
   const [showModal, setShowModal] = useState(false);
   const [showModalEditar, setShowModalEditar] = useState(false);
@@ -19,10 +23,12 @@ const CadastroFuncionario = () => {
   const [funcionarios, setFuncionarios] = useState([]);
   const [servicos, setServicos] = useState([]);
 
-  const [ pesquisando, setPesquisando ] = useState(false);
+  const [pesquisando, setPesquisando] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [ ordenacao, setOrdenacao ] = useState('ascending');
-  const [ tipoFiltro, setTipoFiltro ] = useState('nome');
+  const [ordenacao, setOrdenacao] = useState('ascending');
+  const [tipoFiltro, setTipoFiltro] = useState('nome');
+  const handleClose = () => setShowModal(false);
+
 
   const {
     register,
@@ -81,7 +87,7 @@ const CadastroFuncionario = () => {
     if (validar) {
       popularListaFuncionarios();
     }
-  }, [ searchQuery ]);
+  }, [searchQuery]);
 
   function cadastrarFuncionario(objFun) {
     empresaFetch("/funcionario", {
@@ -137,7 +143,7 @@ const CadastroFuncionario = () => {
 
   useEffect(() => {
     setPesquisando(false);
-  }, [ funcionarios ]);
+  }, [funcionarios]);
 
   const onError = (errors) => {
     console.log("Erro ao Enviar", errors);
@@ -153,41 +159,41 @@ const CadastroFuncionario = () => {
         <div className={styles.orgContent}>
           <div className={styles.pesquisa}>
             <Search
-                placeholder="Digite o que deseja pesquisar..."
-                enterButton="Pesquisar"
-                size="large"
-                loading={pesquisando}
-                allowClear={true}
-                onClear={() => {
-                    setPesquisando(false);
-                    setSearchQuery('');
-                }}
-                onPressEnter={(e) => {
-                    if (pesquisando) {
-                        setPesquisando(false);
-                    }
-                }}s
-                onSearch={(value, event, type) => {
-                    const str = value.trim();
-                    setPesquisando(false);
+              placeholder="Digite o que deseja pesquisar..."
+              enterButton="Pesquisar"
+              size="large"
+              loading={pesquisando}
+              allowClear={true}
+              onClear={() => {
+                setPesquisando(false);
+                setSearchQuery('');
+              }}
+              onPressEnter={(e) => {
+                if (pesquisando) {
+                  setPesquisando(false);
+                }
+              }} s
+              onSearch={(value, event, type) => {
+                const str = value.trim();
+                setPesquisando(false);
 
-                    setSearchQuery(str);
-                }}
+                setSearchQuery(str);
+              }}
             />
           </div>
           <div className={styles.filtros}>
             <div>
-                <label htmlFor="">Filtrar por:</label>
-                <select name="option" id="filtro-cliente" className={styles.slct} onChange={(e) => {setTipoFiltro(e.target.value)}}>
-                    <option value="nome">Nome</option>
-                </select>
+              <label htmlFor="">Filtrar por:</label>
+              <select name="option" id="filtro-cliente" className={styles.slct} onChange={(e) => { setTipoFiltro(e.target.value) }}>
+                <option value="nome">Nome</option>
+              </select>
             </div>
             <div>
-                <label htmlFor="">Ordenação:</label>
-                <select value={ordenacao} name="ordenacao" id="ordenacao-cliente" className={styles.slct} onChange={(e) => {setOrdenacao(e.target.value)}}>
-                    <option value="ascending">Crescente</option>
-                    <option value="descending">Decrescente</option>
-                </select>
+              <label htmlFor="">Ordenação:</label>
+              <select value={ordenacao} name="ordenacao" id="ordenacao-cliente" className={styles.slct} onChange={(e) => { setOrdenacao(e.target.value) }}>
+                <option value="ascending">Crescente</option>
+                <option value="descending">Decrescente</option>
+              </select>
             </div>
           </div>
           <div className={styles.listaDeFuncionario}>
@@ -254,128 +260,132 @@ const CadastroFuncionario = () => {
       </div>
 
       {showModal && (
-        <ModalCadastroFuncionario
-          isOpen={showModal}
-          onClose={() => setShowModal(false)}
-        >
-          <h2 className="mb-4">Cadastro de Funcionario</h2>
+        <Modal show={showModal} onHide={handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Cadastro de Funcionario</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form
+              id="form-func"
+              action=""
+              onSubmit={handleSubmit(onSubmit, onError)}
+            >
+              <Form.Group className="mb-3">
+                <Form.Label htmlFor="">
+                  Nome<span style={{ color: "red" }}>*</span>:
+                </Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Digite o nome"
+                  {...register("nome", {
+                    required: {
+                      value: true,
+                      message: "O nome é obrigatorio",
+                    },
+                    onChange: (e) => {
+                      let value = e.target.value;
 
-          <Form
-            id="form-func"
-            action=""
-            onSubmit={handleSubmit(onSubmit, onError)}
-          >
-            <Form.Group className="mb-3">
-              <Form.Label htmlFor="">
-                Nome<span style={{ color: "red" }}>*</span>:
-              </Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Digite o nome"
-                {...register("nome", {
-                  required: {
-                    value: true,
-                    message: "O nome é obrigatorio",
-                  },
-                  onChange: (e) => {
-                    let value = e.target.value;
+                      if (value && value.length > 0) {
+                        let values = value.split(" ");
+                        values = values.map(
+                          (v) => `${v.charAt(0).toUpperCase()}${v.substring(1)}`
+                        );
+                        value = values.join(" ");
+                      }
+                      setValue(e.target.name, value);
+                    },
+                    minLength: {
+                      value: 3,
+                      message: "O nome deve ter pelo menos 3 caracteres",
+                    },
+                    maxLength: {
+                      value: 64,
+                      message: "O nome dever ter no maximo 64 caracteres",
+                    },
+                  })}
+                />
+                {errors.nome && (
+                  <p style={{ color: "red" }}>{errors.nome.message}</p>
+                )}
+              </Form.Group>
 
-                    if (value && value.length > 0) {
-                      let values = value.split(" ");
-                      values = values.map(
-                        (v) => `${v.charAt(0).toUpperCase()}${v.substring(1)}`
-                      );
-                      value = values.join(" ");
-                    }
-                    setValue(e.target.name, value);
-                  },
-                  minLength: {
-                    value: 3,
-                    message: "O nome deve ter pelo menos 3 caracteres",
-                  },
-                  maxLength: {
-                    value: 64,
-                    message: "O nome dever ter no maximo 64 caracteres",
-                  },
-                })}
-              />
-              {errors.nome && (
-                <p style={{ color: "red" }}>{errors.nome.message}</p>
-              )}
-            </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>
+                  Serviço Exercido<span style={{ color: "red" }}>*</span>:
+                </Form.Label>
+                <Form.Select
+                  {...register("servico", {
+                    required: {
+                      value: true,
+                      message: "Selecione um serviço exercido",
+                    },
+                  })}
+                >
+                  <option value="">Selecione um serviço</option>
 
-            <Form.Group className="mb-3">
-              <Form.Label>
-                Serviço Exercido<span style={{ color: "red" }}>*</span>:
-              </Form.Label>
-              <Form.Select
-                {...register("servico", {
-                  required: {
-                    value: true,
-                    message: "Selecione um serviço exercido",
-                  },
-                })}
-              >
-                <option value="">Selecione um serviço</option>
+                  {servicos.map((servico) => (
+                    <option key={servico.id} value={servico.id}>
+                      {servico.nome}
+                    </option>
+                  ))}
+                </Form.Select>
+                {errors.servico && (
+                  <p style={{ color: "red" }}>{errors.servico.message}</p>
+                )}
+              </Form.Group>
+              <Form.Group className="mb-4">
+                <Form.Label>
+                  Telefone<span style={{ color: "red" }}>*</span>:
+                </Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Digite o telefone"
+                  {...register("telefone", {
+                    required: {
+                      value: true,
+                      message: "O telefone é obrigatorio",
+                    },
+                    pattern: {
+                      value: /^\d{2,2} \d{5,5}-\d{4,4}$/,
+                      message: "Formato esperado: 27 99888-7766",
+                    },
+                    onChange: (e) => {
+                      let value = e.target.value;
 
-                {servicos.map((servico) => (
-                  <option key={servico.id} value={servico.id}>
-                    {servico.nome}
-                  </option>
-                ))}
-              </Form.Select>
-              {errors.servico && (
-                <p style={{ color: "red" }}>{errors.servico.message}</p>
-              )}
-            </Form.Group>
-            <Form.Group className="mb-4">
-              <Form.Label>
-                Telefone<span style={{ color: "red" }}>*</span>:
-              </Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Digite o telefone"
-                {...register("telefone", {
-                  required: {
-                    value: true,
-                    message: "O telefone é obrigatorio",
-                  },
-                  pattern: {
-                    value: /^\d{2,2} \d{5,5}-\d{4,4}$/,
-                    message: "Formato esperado: 27 99888-7766",
-                  },
-                  onChange: (e) => {
-                    let value = e.target.value;
+                      if (value && value.length > 0) {
+                        value = value.replaceAll(/[^0-9]/g, "");
+                        value = `${value.substring(0, 2)}${value.length > 2 ? " " : ""
+                          }${value.substring(2, 7)}${value.length > 7 ? "-" : ""
+                          }${value.substring(7, 11)}`;
+                        console.log("limpei");
+                      }
+                      setValue(e.target.name, value);
+                    },
+                    minLength: {
+                      value: 13,
+                      message: "O telefone deve ter pelo menos 13 caracteres",
+                    },
+                    maxLength: {
+                      value: 14,
+                      message: "O telefone dever ter no maximo 15 caracteres",
+                    },
+                  })}
+                />
+                {errors.telefone && (
+                  <p style={{ color: "red" }}>{errors.telefone.message}</p>
+                )}
+              </Form.Group>
 
-                    if (value && value.length > 0) {
-                      value = value.replaceAll(/[^0-9]/g, "");
-                      value = `${value.substring(0, 2)}${value.length > 2 ? " " : ""
-                        }${value.substring(2, 7)}${value.length > 7 ? "-" : ""
-                        }${value.substring(7, 11)}`;
-                      console.log("limpei");
-                    }
-                    setValue(e.target.name, value);
-                  },
-                  minLength: {
-                    value: 13,
-                    message: "O telefone deve ter pelo menos 13 caracteres",
-                  },
-                  maxLength: {
-                    value: 14,
-                    message: "O telefone dever ter no maximo 15 caracteres",
-                  },
-                })}
-              />
-              {errors.telefone && (
-                <p style={{ color: "red" }}>{errors.telefone.message}</p>
-              )}
-            </Form.Group>
-
-            <div className="d-flex justify-content-center">
-              <Button type="submit">Cadastrar</Button>
-            </div>
-          </Form>
-        </ModalCadastroFuncionario>
+              <div className="d-flex justify-content-center">
+                <Button type="submit" >Cadastrar
+                  {isLoading && <span style={{ display: 'inline-block', marginLeft: '0.8em', verticalAlign: 'center' }}>
+                    <LoadingOutlined />
+                    </span>}
+                  </Button>
+              </div>
+            </Form>
+          </Modal.Body>
+        </Modal>
       )}
       {showModalEditar && funcionarioSelecionado && (
         <ModalEditarFuncionario
@@ -387,42 +397,6 @@ const CadastroFuncionario = () => {
           onClose={() => setShowModalEditar(false)}
         />
       )}
-      <div>
-        {/* <table className={styles.tabelaBonita}>
-          <thead>
-            <tr>
-              <th>Nome</th>
-              <th>Telefone</th>
-              <th>Serviço</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {funcionarios &&
-              funcionarios.map((func) => {
-                const servExerce = servicos.flatMap((serv) => {
-                  if (serv.id == func.exerce[0].servico) {
-                    return serv.nome;
-                  } else {
-                    return [];
-                  }
-                });
-                return (
-                  <tr key={func.id}>
-                    <td>{func.nome}</td>
-                    <td>{func.telefone}</td>
-                    <td>{servExerce.length > 0 && servExerce[0]}</td>
-                    <td>
-                      <button onClick={() => abrirModalEditar(func)}>
-                        Editar
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-          </tbody>
-        </table> */}
-      </div>
 
       {/* Ao clicar em um "botão" abre um modal para cadastrar um novo funcionario */}
       <div className={styles.estiloBotao}>

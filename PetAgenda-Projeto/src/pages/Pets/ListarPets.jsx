@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../contexts/UserContext";
 import PetListaCard from "../../components/CardPet/PetListaCard";
 import { Input } from "antd";
+import Modal from "react-bootstrap/Modal";
+import Form from "react-bootstrap/Form";
 
 const { Search } = Input;
 
@@ -11,14 +13,15 @@ const ListarPets = () => {
   const [pets, setPets] = useState([]);
   const [petView, setPetView] = useState({});
 
-  const [ searchQuery, setSearchQuery] = useState("");
-  const [ pesquisando, setPesquisando ] = useState(false);
-  const [ ordenacao, setOrdenacao ] = useState('ascending');
-  const [ tipoFiltro, setTipoFiltro ] = useState('nome');
-  const [ especie , setEspecie ] = useState('');
-  const [ especiesDisponiveis, setEspeciesDisponiveis ] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [pesquisando, setPesquisando] = useState(false);
+  const [ordenacao, setOrdenacao] = useState('ascending');
+  const [tipoFiltro, setTipoFiltro] = useState('nome');
+  const [especie, setEspecie] = useState('');
+  const [especiesDisponiveis, setEspeciesDisponiveis] = useState([]);
 
   const { empresaFetch, validar } = useAuth();
+  const handleClose = () => setShowInfo(false);
 
   // Obter espécies
   async function getEspeciesPet() {
@@ -78,7 +81,27 @@ const ListarPets = () => {
     if (validar) {
       setPesquisando(false);
     }
-  }, [ pets ]);
+  }, [pets]);
+
+  let content;
+
+  switch (petView.porte) {
+    case "P": {
+      content = "Pequeno";
+      break;
+    }
+    case "M": {
+      content = "Médio";
+      break;
+    }
+    case "G": {
+      content = "Grande";
+      break;
+    }
+    default: {
+      content = "Indefinido";
+    }
+  }
 
   return (
     <div className={styles.viewConteudo}>
@@ -96,45 +119,45 @@ const ListarPets = () => {
               loading={pesquisando}
               allowClear={true}
               onClear={() => {
-                  setPesquisando(false);
-                  setSearchQuery('');
+                setPesquisando(false);
+                setSearchQuery('');
               }}
               onPressEnter={(e) => {
-                  if (pesquisando) {
-                      setPesquisando(false);
-                  }
-              }}s
-              onSearch={(value, event, type) => {
-                  const str = value.trim();
+                if (pesquisando) {
                   setPesquisando(false);
+                }
+              }} s
+              onSearch={(value, event, type) => {
+                const str = value.trim();
+                setPesquisando(false);
 
-                  setSearchQuery(str);
+                setSearchQuery(str);
               }}
             />
           </div>
           <div className={styles.filtros}>
             <div>
-                <label htmlFor="">Filtrar por:</label>
-                <select name="option" id="filtro-cliente" className={styles.slct} onChange={(e) => {setTipoFiltro(e.target.value)}}>
-                    <option value="nome">Nome</option>
-                </select>
+              <label htmlFor="">Filtrar por:</label>
+              <select name="option" id="filtro-cliente" className={styles.slct} onChange={(e) => { setTipoFiltro(e.target.value) }}>
+                <option value="nome">Nome</option>
+              </select>
             </div>
             <div>
-                <label htmlFor="">Ordenação:</label>
-                <select value={ordenacao} name="ordenacao" id="ordenacao-cliente" className={styles.slct} onChange={(e) => {setOrdenacao(e.target.value)}}>
-                    <option value="ascending">Crescente</option>
-                    <option value="descending">Decrescente</option>
-                </select>
+              <label htmlFor="">Ordenação:</label>
+              <select value={ordenacao} name="ordenacao" id="ordenacao-cliente" className={styles.slct} onChange={(e) => { setOrdenacao(e.target.value) }}>
+                <option value="ascending">Crescente</option>
+                <option value="descending">Decrescente</option>
+              </select>
             </div>
 
             <div>
               <label htmlFor="">Espécie:</label>
               <select name="" id="" className={styles.slct} value={especie} onChange={(e) => setEspecie(e.target.value)}>
                 <option value="">Todas</option>
-                { especiesDisponiveis?.length > 0 &&
-                    especiesDisponiveis.map((e) => (
-                      <option key={e.id} value={e.id}>{e.nome}</option>
-                    ))
+                {especiesDisponiveis?.length > 0 &&
+                  especiesDisponiveis.map((e) => (
+                    <option key={e.id} value={e.id}>{e.nome}</option>
+                  ))
                 }
               </select>
             </div>
@@ -167,128 +190,55 @@ const ListarPets = () => {
             )}
 
             {showInfo && (
-              <div className={styles.infoModal}>
-                <div className={styles.spanFechar}>
-                  <span onClick={() => setShowInfo(false)}>X</span>
-                </div>
-                <div className={styles.estiloModal}>
-                  <div>
-                    <h2>Ficha do Pet</h2>
-                  </div>
-
-                  <div className={styles.orgLayoutCampos}>
-                    <div className={styles.estiloCampos}>
-                      <label htmlFor="">Dono:</label>
-                      <input
-                        type="text"
-                        defaultValue={petView.dono.nome}
-                        disabled
-                      />
+              <Modal show={showInfo} onHide={handleClose}>
+                <Modal.Header closeButton>
+                  <Modal.Title>{petView.nome}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <div className={styles.__espaco__}>
+                    <div className={styles.__estilo_pequeno__}>
+                      <label className={styles.__estilo_bold__}>Dono(a): </label>
+                      <label htmlFor="">{petView.dono.nome}</label>
                     </div>
-
-                    <div className={styles.estiloCampos}>
-                      <label htmlFor="">Pet:</label>
-                      <input type="text" defaultValue={petView.nome} disabled />
+                    <div className={styles.espaco_entre_divs}>
+                      <div className={styles.__estilo_pequeno__}>
+                        <label htmlFor="" className={styles.__estilo_bold__}>Espécie:</label>
+                        <label htmlFor="">{petView.especie.nome}</label>
+                      </div>
+                      <div className={styles.__estilo_pequeno__}>
+                        <label htmlFor="" className={styles.__estilo_bold__}>Raça:</label>
+                        <label htmlFor="">{petView.raca}</label>
+                      </div>
+                      <div className={styles.__estilo_pequeno__}>
+                        <label htmlFor="" className={styles.__estilo_bold__}>Porte:</label>
+                        <label >{content}</label>
+                      </div>
                     </div>
-                  </div>
-
-                  <div className={styles.orgLayoutCampos}>
-                    <div className={styles.estiloCampos}>
-                      <label htmlFor="">Espécie:</label>
-                      <input
-                        type="text"
-                        defaultValue={petView.especie.nome}
-                        disabled
-                      />
+                    <div className={styles.espaco_entre_divs}>
+                      <div className={styles.__estilo_pequeno__}>
+                        <label htmlFor="" className={styles.__estilo_bold__}>Cor:</label>
+                        <label >{petView.cor}</label>
+                      </div>
+                      <div className={styles.__estilo_pequeno__}>
+                        <label htmlFor="" className={styles.__estilo_bold__}>Castrado:</label>
+                        <label htmlFor="">{petView.eCastrado ? "Sim" : "Não"}</label>
+                      </div>
+                      <div className={styles.__estilo_pequeno__}>
+                        <label htmlFor="" className={styles.__estilo_bold__}>Sexo:</label>
+                        <label htmlFor="">{petView.sexo == "M" ? "Macho" : "Fêmea"}</label>
+                      </div>
                     </div>
-
-                    <div className={styles.estiloCampos}>
-                      <label htmlFor="">Raça:</label>
-                      <input type="text" defaultValue={petView.raca} disabled />
+                    <div>
+                      <label htmlFor="" className={styles.__estilo_bold__}>Estado da Saúde:</label>
+                      <p>{petView.estadoSaude ? petView.estadoSaude : "Nada Declarado"}</p>
                     </div>
-                  </div>
-
-                  <div className={styles.orgLayoutCampos}>
-                    <div className={styles.estiloCampos}>
-                      <label htmlFor="">Cor:</label>
-                      <input type="text" defaultValue={petView.cor} disabled />
-                    </div>
-
-                    <div className={styles.estiloCampos}>
-                      <label htmlFor="">Porte:</label>
-                      <input
-                        type="text"
-                        defaultValue={(() => {
-                          let content;
-
-                          switch (petView.porte) {
-                            case "P": {
-                              content = "Pequeno";
-                              break;
-                            }
-                            case "M": {
-                              content = "Médio";
-                              break;
-                            }
-                            case "G": {
-                              content = "Grande";
-                              break;
-                            }
-                            default: {
-                              content = "Indefinido";
-                            }
-                          }
-
-                          return content;
-                        })()}
-                        disabled
-                      />
+                    <div>
+                      <label htmlFor="" className={styles.__estilo_bold__}>Comportamento:</label>
+                      <p>{petView.comportamento}</p>
                     </div>
                   </div>
-
-                  <div className={styles.orgLayoutCampos}>
-                    <div className={styles.estiloCampos}>
-                      <label htmlFor="">Sexo:</label>
-                      <input
-                        type="text"
-                        defaultValue={petView.sexo == "M" ? "Macho" : "Fêmea"}
-                        disabled
-                      />
-                    </div>
-
-                    <div className={styles.estiloCampos}>
-                      <label htmlFor="">Castrado:</label>
-                      <input
-                        type="text"
-                        defaultValue={petView.eCastrado ? "Sim" : "Não"}
-                        disabled
-                      />
-                    </div>
-                    {/* 
-                                        <div className={styles.estiloCampos}>
-                                            <label htmlFor="">Nascido:</label>
-                                            <input type="date" defaultValue={petView.} disabled/>
-                                        </div> */}
-                  </div>
-
-                  <div className={styles.estiloCampos}>
-                    <label htmlFor="">Estado de Saúde:</label>
-                    <textarea
-                      htmlFor=""
-                      disabled
-                      defaultValue={petView.estadoSaude}
-                    ></textarea>
-                  </div>
-                  <div className={styles.estiloCampos}>
-                    <label htmlFor="">Comportamento:</label>
-                    <textarea
-                      htmlFor=""
-                      disabled
-                      defaultValue={petView.comportamento}
-                    ></textarea>
-                  </div>
-                </div>
-              </div>
+                </Modal.Body>
+              </Modal>
             )}
           </div>
         </div>
