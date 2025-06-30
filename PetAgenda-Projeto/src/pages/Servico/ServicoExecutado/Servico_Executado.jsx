@@ -18,8 +18,11 @@ import { useAuth } from "../../../contexts/UserContext";
 import PetServicoCardList from "../../../components/CardPet/PetServicoCardList";
 import CamposEndereco from "../../../components/Endereco/CamposEndereco";
 import "../../../components/CardPet/PetServicoCard.css";
-
+import { useNavigate } from "react-router-dom";
+import { Alert } from "antd";
 const ServicoExecutado = () => {
+  const [mensagemAlerta, setMensagemAlerta] = useState(null);
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -313,19 +316,70 @@ const ServicoExecutado = () => {
       const jsonBody = await resp.json();
       if (jsonBody) {
         if (resp.status == 200) {
-          alert("cadastrado!");
+          setMensagemAlerta({
+            titulo: "Serviço realizado com sucesso!",
+            descricao: "O serviço foi agendado corretamente.",
+            tipo: "success",
+          });
+          setTimeout(() => {
+            setMensagemAlerta(null);
+          }, 2500);
+
+          navigate("/empresa/agendamentos/lista");
           reset();
         } else {
-          throw new Error(jsonBody.errors[0]);
+          setMensagemAlerta({
+            titulo: "Erro ao cadastrar serviço realizado",
+            descricao:
+              jsonBody.message ||
+              "Ocorreu um erro ao tentar cadastrar o serviço.",
+            tipo: "error",
+          });
+          setTimeout(() => {
+            setMensagemAlerta(null);
+          }, 2500);
         }
       }
     } catch (err) {
-      alert(err.message);
+      setMensagemAlerta({
+        titulo: "Erro ao cadastrar serviço realizado",
+        descricao:
+          err.message || "Ocorreu um erro ao tentar cadastrar o serviço.",
+        tipo: "error",
+      });
+      setTimeout(() => {
+        setMensagemAlerta(null);
+      }, 2500);
     }
   };
 
   return (
     <div className="containergeral mt-1">
+      {mensagemAlerta && (
+        <div
+          style={{
+            position: "fixed",
+            top: 20,
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 9999,
+            width: "fit-content",
+            maxWidth: "90vw",
+          }}
+        >
+          <Alert
+            message={mensagemAlerta.titulo}
+            description={mensagemAlerta.descricao}
+            type={mensagemAlerta.tipo}
+            showIcon
+            style={{
+              fontSize: "12px",
+              padding: "8px 12px",
+              lineHeight: "1.2",
+            }}
+          />
+        </div>
+      )}
       <h1 className="cadastrar_agendamento__title">Novo Serviço Realizado</h1>
       <hr />
       <Container className="cadatrar_agendamento mt-4">
