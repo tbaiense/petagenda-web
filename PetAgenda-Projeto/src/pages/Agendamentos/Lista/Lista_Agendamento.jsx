@@ -235,7 +235,7 @@ const Lista_Agendamentos = () => {
             </Col>
           </Row>
           <Row className="mb-3">
-            <Col className="campos-espaco">
+            <Col className="campos-espaco" lg={5}>
               <Search
                 placeholder="Digite o que deseja pesquisar..."
                 enterButton="Pesquisar"
