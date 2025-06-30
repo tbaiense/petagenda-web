@@ -324,8 +324,11 @@ const ServicoExecutado = () => {
           setTimeout(() => {
             setMensagemAlerta(null);
           }, 2500);
-
-          navigate("/empresa/agendamentos/lista");
+          navigate("/empresa/agendamentos/lista", {
+            state: {
+              sucessoServicoRealizado: true,
+            },
+          });
           reset();
         } else {
           setMensagemAlerta({

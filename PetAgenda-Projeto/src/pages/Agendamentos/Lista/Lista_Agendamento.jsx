@@ -26,10 +26,11 @@ import CardAgendamento from "../../../components/CardAgendamento/CardAgendamento
 import CardServicoRealizado from "../../../components/CardServicoRealizado/CardServicoRealizado";
 import "./Lista_Agendamento.css";
 import { Alert } from "antd";
-
+import { useLocation } from "react-router-dom";
 const { Search } = Input;
 
 const Lista_Agendamentos = () => {
+  const location = useLocation();
   const [mensagemAlerta, setMensagemAlerta] = useState(null);
   const [pesquisando, setPesquisando] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -173,6 +174,25 @@ const Lista_Agendamentos = () => {
     setPesquisando(false);
   }, [agendamentos, servicosRealizados]);
 
+  useEffect(() => {
+    if (location.state?.sucessoServicoRealizado) {
+      setMensagemAlerta({
+        titulo: "Sucesso!",
+        descricao: "Serviço realizado cadastrado com sucesso.",
+        tipo: "success",
+      });
+
+      setTimeout(() => {
+        setMensagemAlerta(null);
+      }, 2000);
+      
+      window.history.replaceState({}, document.title);
+    }
+
+    if (location.state?.aba) {
+      setAbaAtual(location.state.aba);
+    }
+  }, [location]);
   return (
     <div className="lista_agendamentos_servicos mt-4">
       {mensagemAlerta && (
