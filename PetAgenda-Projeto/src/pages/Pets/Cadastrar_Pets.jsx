@@ -222,7 +222,7 @@ const CadastrarPets = () => {
           <Row>
             <Col className={styles.campos_espaco}>
               <Form.Group>
-                <Form.Label>Dono:</Form.Label>
+                <Form.Label>Dono:<span className="obrigatorio">*</span></Form.Label>
                 <Form.Select
                   {...register("clienteId", {
                     required: {
@@ -245,7 +245,7 @@ const CadastrarPets = () => {
             </Col>
             <Col className={styles.campos_espaco}>
               <Form.Group>
-                <Form.Label>Nome do Pet:</Form.Label>
+                <Form.Label>Nome do Pet:<span className="obrigatorio">*</span></Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Digite o nome do pet"
@@ -267,7 +267,7 @@ const CadastrarPets = () => {
             </Col>
             <Col>
               <Form.Group>
-                <Form.Label>Especie:</Form.Label>
+                <Form.Label>Especie:<span className="obrigatorio">*</span></Form.Label>
                 <Form.Select
                   id="especie-select"
                   {...register("especie", {
@@ -358,7 +358,7 @@ const CadastrarPets = () => {
           <Row className="mt-3">
             <Col md={3} className={styles.campos_espaco}>
               <Form.Group>
-                <Form.Label>Sexo:</Form.Label>
+                <Form.Label>Sexo:<span className="obrigatorio">*</span></Form.Label>
                 <Form.Select
                   {...register("sexo", {
                     required: {

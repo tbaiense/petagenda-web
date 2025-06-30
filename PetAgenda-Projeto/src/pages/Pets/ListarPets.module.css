@@ -11,7 +11,7 @@
 .orgContent {
     display: flex;
     flex-direction: column;
-    width: 42vw;
+    width: 48vw;
 
 }
 .alinhamento{
@@ -44,6 +44,9 @@
 .filtros select{
     padding: 3px;
     border-radius: 5px;
+    background-color: rgb(255, 255, 255);
+    border: none;
+    color: black;
 }
 
 /* ==================================== INFORMAÇÕES ================================= */
@@ -63,42 +66,23 @@
     width: 100%;
 }
 
-/* ==================================== MODAL ================================= */
-
-.infoModal{
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  color: rgb(255, 255, 255);
-  z-index: 5;
-}
-
-.estiloModal{
-    background-color: rgb(166, 83, 38);
-    width: 30vw;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    position: relative;
-    transform: translate(123%, 15%);
-    border-radius: 12px;
-    padding: 1.5rem;
-}
 /* ==================================== MODAL ORGANIZAÇÃO ================================= */
 
-.orgLayoutCampos{
+.espaco_entre_divs{
     display: flex;
     justify-content: space-between;
 }
-
-.spanFechar{
-    cursor: pointer;
-    position: relative;
-    z-index: 10;
-    transform: translate(65%,490%);
-    color: rgb(255, 255, 255);
+.__espaco__{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.__estilo_pequeno__{
+    display: flex;
+    gap: 5px;
+}
+.__estilo_bold__{
+    font-weight: bold;
 }
 /* ==================================== ESTILO DOS CAMPOS ================================= */
 

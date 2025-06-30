@@ -81,3 +81,10 @@
   background-color: #0e811c;
   border: 1px #0e811c;
 }
+.campo-textarea-fixo{
+  height: 310px;
+  resize: none;
+}
+.obrigatorio{
+  color: red;
+}

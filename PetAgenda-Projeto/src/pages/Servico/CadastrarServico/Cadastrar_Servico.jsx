@@ -166,7 +166,7 @@ function CadastrarServico() {
           <Row>
             <Col className="campos-espaco">
               <Form.Group controlId="formNome">
-                <Form.Label>Nome</Form.Label>
+                <Form.Label>Nome<span className="obrigatorio">*</span></Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Digite o nome do serviço"
@@ -176,7 +176,7 @@ function CadastrarServico() {
             </Col>
             <Col className="campos-espaco">
               <Form.Group controlId="formCategoria">
-                <Form.Label>Categoria</Form.Label>
+                <Form.Label>Categoria<span className="obrigatorio">*</span></Form.Label>
                 <Form.Select {...register("categoria")}>
                   <option value="">Selecione...</option>
                   {categorias?.length > 0 &&
@@ -192,7 +192,8 @@ function CadastrarServico() {
             </Col>
             <Col className="campos-espaco">
               <Form.Group controlId="formValor">
-                <Form.Label>Valor</Form.Label>
+                <Form.Label>Valor<span className="obrigatorio">*</span></Form.Label>
+                
                 <InputGroup>
                   <InputGroup.Text>R$</InputGroup.Text>
                   <Form.Control
@@ -216,7 +217,7 @@ function CadastrarServico() {
           <Row className="mt-3">
             <Col className="campos-espaco">
               <Form.Group controlId="formTipo">
-                <Form.Label>Tipo de cobrança</Form.Label>
+                <Form.Label>Tipo de cobrança<span className="obrigatorio">*</span></Form.Label>
                 <Form.Select {...register("tipoPreco")}>
                   <option value="">Selecione...</option>
                   <option value="pet">Por cada pet</option>
@@ -259,13 +260,14 @@ function CadastrarServico() {
                 <Form.Label>Descrição</Form.Label>
                 <Form.Control
                   as="textarea"
+                  className="campo-textarea-fixo"
                   placeholder="Descreva detalhes sobre o serviço"
                   {...register("descricao")}
                 />
               </Form.Group>
             </Col>
           </Row>
-          <div>
+          {/* <div>
             <h4>Foto de Perfil</h4>
             {imagemServURL && (
               <img
@@ -276,7 +278,7 @@ function CadastrarServico() {
               />
             )}
             <input type="file" {...register("pathImgFile")} />
-          </div>
+          </div> */}
 
           {/* Botão de Cadastro */}
 

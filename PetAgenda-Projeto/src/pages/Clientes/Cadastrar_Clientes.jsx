@@ -208,7 +208,7 @@ const CadastrarClientes = () => {
           <Row>
             <Col className="campos-espaco">
               <Form.Group controlId="formNome">
-                <Form.Label>Nome</Form.Label>
+                <Form.Label>Nome<span className="obrigatorio">*</span></Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Digite o nome"
@@ -241,7 +241,7 @@ const CadastrarClientes = () => {
 
             <Col>
               <Form.Group controlId="formTelefone">
-                <Form.Label>Telefone</Form.Label>
+                <Form.Label>Telefone<span className="obrigatorio">*</span></Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="27 99988-7766"
