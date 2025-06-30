@@ -13,7 +13,9 @@ import "../../../components/CardPet/PetServicoCard.css";
 import { useLocation } from "react-router-dom";
 import { set } from "date-fns";
 import { useNavigate } from "react-router-dom";
+import { Alert } from "antd";
 function Editar_Agendamento() {
+  const [mensagemAlerta, setMensagemAlerta] = useState(null);
   const navigate = useNavigate();
   const {
     register,
@@ -265,285 +267,328 @@ function Editar_Agendamento() {
       const jsonBody = await resp.json();
       if (jsonBody) {
         if (resp.status == 200) {
-          alert("cadastrado!");
+          setMensagemAlerta({
+            tipo: "success",
+            titulo: "Agendamento atualizado com sucesso!",
+            descricao: "Redirecionando para a lista de agendamentos...",
+          });
+          setTimeout(() => {
+            setMensagemAlerta(null);
+            navigate("/empresa/agendamentos/lista");
+          }, 2500);
           reset();
         } else {
           throw new Error(jsonBody.errors[0]);
         }
       }
     } catch (err) {
-      alert(err.message);
+      console.error("Erro ao atualizar agendamento:", err);
+      setMensagemAlerta({
+        tipo: "error",
+        titulo: "Erro ao atualizar agendamento",
+        descricao: err.message || "Ocorreu um erro ao atualizar o agendamento.",
+      });
+      setTimeout(() => {
+        setMensagemAlerta(null);
+      }, 2500);
     }
   };
 
   return (
-    <div className="containergeral mt-1">
-      <h1 className="cadastrar_agendamento__title">Novo agendamento</h1>
-      <hr />
-      <Container className="cadatrar_agendamento mt-4">
-        <Form onSubmit={handleSubmit(onSubmit)}>
-          <Row>
-            <Col className="campos-espaco">
-              <Form.Group controlId="formServico" className="form-servico">
-                <Form.Label>Filtrar serviço por:</Form.Label>
-                <Form.Select {...register("filtro")} disabled>
-                  <option value="">Restrição de espécie</option>
-                  <option value="">Todos</option>
-                  <option value="">Restrição de participantes</option>
-                </Form.Select>
-              </Form.Group>
-            </Col>
-            <Col className="campos-espaco">
-              <Form.Group controlId="formServico">
-                <Form.Label>Tipo do filtro:</Form.Label>
-                <Form.Select {...register("tipoFiltro")} disabled>
-                  <option value="">Cães</option>
-                  <option value="">Gatos</option>
-                  <option value="">Pássaros</option>
-                </Form.Select>
-              </Form.Group>
-            </Col>
-            <Col>
-              <Form.Group controlId="formServico">
-                <Form.Label>Serviço</Form.Label>
-                <Form.Select
-                  {...register("servico", {
-                    required: {
-                      value: true,
-                      message: "Selecione o serviço para o agendamento",
-                    },
-                  })}
-                  disabled
-                >
-                  <option value="">Selecione um serviço</option>
-                  {servicos.map((servico) => (
-                    <option key={servico.id} value={servico.id}>
-                      {servico.nome}
-                    </option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
-            </Col>
-          </Row>
-
-          <Row className="mt-3">
-            <Col className="campos-espaco">
-              <Form.Group controlId="formData">
-                <Form.Label>Data do agendamento</Form.Label>
-                <Form.Control
-                  type="date"
-                  {...register("data", { required: true })}
-                  defaultValue={new Date().toISOString().split("T")[0]}
-                />
-              </Form.Group>
-            </Col>
-            <Col className="campos-espaco">
-              <Form.Group controlId="formHora">
-                <Form.Label>Hora do agendamento</Form.Label>
-                <Form.Control
-                  type="time"
-                  {...register("hora", { required: true })}
-                  defaultValue=""
-                />
-              </Form.Group>
-            </Col>
-            <Col>
-              <Form.Group controlId="formFuncionario">
-                <Form.Label>Funcionário</Form.Label>
-                <Form.Select {...register("funcionario")}>
-                  <option value="">Selecione um funcionário</option>
-                  {funcionarios &&
-                    funcionarios.map((funcionario) => (
-                      <option key={funcionario.id} value={funcionario.id}>
-                        {funcionario.nome}
-                      </option>
-                    ))}
-                </Form.Select>
-              </Form.Group>
-            </Col>
-          </Row>
-          <Row>
-            <h2 className="mt-4">Pets participantes</h2>
-            <hr></hr>
-          </Row>
-          <Row className="mt-3">
-            <Col className="campos-espaco">
-              <Form.Group controlId="formServico">
-                <Form.Label>Cliente:</Form.Label>
-                <Form.Select
-                  onInput={(e) => {
-                    popularPetsCliente(e.target.value);
-                    setPetsSel([]);
-                  }}
-                  {...register("cliente", { required: true })}
-                >
-                  <option value="">Selecione um cliente</option>
-                  {clientes &&
-                    clientes.map((cli) => (
-                      <option key={cli.id} value={cli.id}>
-                        {cli.nome}
-                      </option>
-                    ))}
-                </Form.Select>
-              </Form.Group>
-            </Col>
-            <Col className="campos-espaco">
-              <Form.Group controlId="formServico">
-                <Form.Label>Pet:</Form.Label>
-                <Form.Select id="pet-selecionar" {...register("pet")}>
-                  <option value="">Selecione um pet</option>
-                  {petsCliente &&
-                    petsCliente.map((pet) => (
-                      <option key={pet.id} value={pet.id}>
-                        {pet.nome}
-                      </option>
-                    ))}
-                </Form.Select>
-              </Form.Group>
-            </Col>
-            <Col className="justify-content-start d-flex align-items-end ">
-              <Button
-                className="button-adicionar"
-                type="button"
-                onClick={(e) => {
-                  const petSel = petsCliente.find((p) => {
-                    const pelSelecionado =
-                      document.getElementById("pet-selecionar").value;
-                    return p.id == pelSelecionado;
-                  });
-
-                  const jaExiste = petsSel.some((p) => {
-                    return p.id == petSel.id;
-                  });
-
-                  if (!jaExiste) {
-                    setPetsSel(petsSel.concat([petSel]));
-                  }
-                }}
-              >
-                Adicionar
-              </Button>
-            </Col>
-          </Row>
-          {/* Card de pets */}
-          <PetServicoCardList petList={petsSel} setPetList={setPetsSel} />
-          {/* Endereços ======================================================*/}
-          <h5>Endereços</h5>
-          <hr />
-          <Accordion
-            className="mt-3 mb-4"
-            defaultActiveKey="0"
-            flush
-            alwaysOpen
-          >
-            <Accordion.Item eventKey="0" className="pet-servico-card-item">
-              <Accordion.Header>
-                <Stack direction="horizontal" gap={3}>
-                  <Form.Group className="mb-3" controlId="formBasicEmail">
-                    <FormCheck
-                      type="switch"
-                      id="buscarChk"
-                      onChange={(e) => {
-                        setIncluirBuscar(e.target.checked);
-                      }}
-                    ></FormCheck>
-                  </Form.Group>
-                  <span>Buscar</span>
-                </Stack>
-              </Accordion.Header>
-              <Accordion.Body>
-                <CamposEndereco
-                  setValue={setValue}
-                  handleChange={handleEnderecoChange}
-                  formConfigs={{ isRequired: incluirBuscar }}
-                  register={register}
-                  errors={errors}
-                  prefix={"enderecoBuscar"}
-                />
-              </Accordion.Body>
-            </Accordion.Item>
-            <Accordion.Item eventKey="1" className="pet-servico-card-item">
-              <Accordion.Header>
-                <Stack direction="horizontal" gap={3}>
-                  <Form.Group className="mb-3" controlId="formBasicEmail">
-                    <FormCheck
-                      type="switch"
-                      id="devolverChk"
-                      onChange={(e) => {
-                        setIncluirDevolver(e.target.checked);
-                      }}
-                    ></FormCheck>
-                  </Form.Group>
-                  <span>Devolver</span>
-                </Stack>
-              </Accordion.Header>
-              <Accordion.Body>
-                <Form.Group className="mb-3" controlId="formBasicEmail">
-                  <FormCheck
-                    type="switch"
-                    id="devolverMesmo"
-                    label="O mesmo do anterior"
-                    onChange={(e) => {
-                      setDevolverMesmo(e.target.checked);
-                    }}
-                  ></FormCheck>
+    <>
+      {mensagemAlerta && (
+        <div
+          style={{
+            position: "fixed",
+            top: 20,
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 9999,
+            width: "fit-content",
+            maxWidth: "90vw",
+          }}
+        >
+          <Alert
+            message={mensagemAlerta.titulo}
+            description={mensagemAlerta.descricao}
+            type={mensagemAlerta.tipo}
+            showIcon
+            style={{
+              fontSize: "12px",
+              padding: "8px 12px",
+              lineHeight: "1.2",
+            }}
+          />
+        </div>
+      )}
+      <div className="containergeral mt-1">
+        <h1 className="cadastrar_agendamento__title">Novo agendamento</h1>
+        <hr />
+        <Container className="cadatrar_agendamento mt-4">
+          <Form onSubmit={handleSubmit(onSubmit)}>
+            <Row>
+              <Col className="campos-espaco">
+                <Form.Group controlId="formServico" className="form-servico">
+                  <Form.Label>Filtrar serviço por:</Form.Label>
+                  <Form.Select {...register("filtro")} disabled>
+                    <option value="">Restrição de espécie</option>
+                    <option value="">Todos</option>
+                    <option value="">Restrição de participantes</option>
+                  </Form.Select>
                 </Form.Group>
-                <CamposEndereco
-                  setValue={setValue}
-                  handleChange={handleEnderecoChange}
-                  formConfigs={{ isRequired: incluirDevolver }}
-                  register={register}
-                  errors={errors}
-                  prefix={"enderecoDevolver"}
-                />
-              </Accordion.Body>
-            </Accordion.Item>
-          </Accordion>
-          <Row>
-            <FloatingLabel
-              className="mt-4"
-              controlId="floatingTextarea2"
-              label="Observações"
+              </Col>
+              <Col className="campos-espaco">
+                <Form.Group controlId="formServico">
+                  <Form.Label>Tipo do filtro:</Form.Label>
+                  <Form.Select {...register("tipoFiltro")} disabled>
+                    <option value="">Cães</option>
+                    <option value="">Gatos</option>
+                    <option value="">Pássaros</option>
+                  </Form.Select>
+                </Form.Group>
+              </Col>
+              <Col>
+                <Form.Group controlId="formServico">
+                  <Form.Label>Serviço</Form.Label>
+                  <Form.Select
+                    {...register("servico", {
+                      required: {
+                        value: true,
+                        message: "Selecione o serviço para o agendamento",
+                      },
+                    })}
+                    disabled
+                  >
+                    <option value="">Selecione um serviço</option>
+                    {servicos.map((servico) => (
+                      <option key={servico.id} value={servico.id}>
+                        {servico.nome}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+              </Col>
+            </Row>
+
+            <Row className="mt-3">
+              <Col className="campos-espaco">
+                <Form.Group controlId="formData">
+                  <Form.Label>Data do agendamento</Form.Label>
+                  <Form.Control
+                    type="date"
+                    {...register("data", { required: true })}
+                    defaultValue={new Date().toISOString().split("T")[0]}
+                  />
+                </Form.Group>
+              </Col>
+              <Col className="campos-espaco">
+                <Form.Group controlId="formHora">
+                  <Form.Label>Hora do agendamento</Form.Label>
+                  <Form.Control
+                    type="time"
+                    {...register("hora", { required: true })}
+                    defaultValue=""
+                  />
+                </Form.Group>
+              </Col>
+              <Col>
+                <Form.Group controlId="formFuncionario">
+                  <Form.Label>Funcionário</Form.Label>
+                  <Form.Select {...register("funcionario")}>
+                    <option value="">Selecione um funcionário</option>
+                    {funcionarios &&
+                      funcionarios.map((funcionario) => (
+                        <option key={funcionario.id} value={funcionario.id}>
+                          {funcionario.nome}
+                        </option>
+                      ))}
+                  </Form.Select>
+                </Form.Group>
+              </Col>
+            </Row>
+            <Row>
+              <h2 className="mt-4">Pets participantes</h2>
+              <hr></hr>
+            </Row>
+            <Row className="mt-3">
+              <Col className="campos-espaco">
+                <Form.Group controlId="formServico">
+                  <Form.Label>Cliente:</Form.Label>
+                  <Form.Select
+                    onInput={(e) => {
+                      popularPetsCliente(e.target.value);
+                      setPetsSel([]);
+                    }}
+                    {...register("cliente", { required: true })}
+                  >
+                    <option value="">Selecione um cliente</option>
+                    {clientes &&
+                      clientes.map((cli) => (
+                        <option key={cli.id} value={cli.id}>
+                          {cli.nome}
+                        </option>
+                      ))}
+                  </Form.Select>
+                </Form.Group>
+              </Col>
+              <Col className="campos-espaco">
+                <Form.Group controlId="formServico">
+                  <Form.Label>Pet:</Form.Label>
+                  <Form.Select id="pet-selecionar" {...register("pet")}>
+                    <option value="">Selecione um pet</option>
+                    {petsCliente &&
+                      petsCliente.map((pet) => (
+                        <option key={pet.id} value={pet.id}>
+                          {pet.nome}
+                        </option>
+                      ))}
+                  </Form.Select>
+                </Form.Group>
+              </Col>
+              <Col className="justify-content-start d-flex align-items-end ">
+                <Button
+                  className="button-adicionar"
+                  type="button"
+                  onClick={(e) => {
+                    const petSel = petsCliente.find((p) => {
+                      const pelSelecionado =
+                        document.getElementById("pet-selecionar").value;
+                      return p.id == pelSelecionado;
+                    });
+
+                    const jaExiste = petsSel.some((p) => {
+                      return p.id == petSel.id;
+                    });
+
+                    if (!jaExiste) {
+                      setPetsSel(petsSel.concat([petSel]));
+                    }
+                  }}
+                >
+                  Adicionar
+                </Button>
+              </Col>
+            </Row>
+            {/* Card de pets */}
+            <PetServicoCardList petList={petsSel} setPetList={setPetsSel} />
+            {/* Endereços ======================================================*/}
+            <h5>Endereços</h5>
+            <hr />
+            <Accordion
+              className="mt-3 mb-4"
+              defaultActiveKey="0"
+              flush
+              alwaysOpen
             >
-              <Form.Control
-                as="textarea"
-                placeholder="Deixe aqui uma observação"
-                style={{ height: "150px" }}
-                {...register("observacoes")}
-              />
-            </FloatingLabel>
-          </Row>
-          <Row className="d-flex justify-content-center">
-            {/* Voltar */}
-            <Col md="auto" className="campos-espaco">
-              <Button
-                variant="secondary"
-                onClick={() => {
-                  navigate("/empresa/agendamentos/lista");
-                  console.log("Voltar para agendamentos");
-                }}
-                className="mt-4 mb-4 botao__cancelar"
-                type="button"
+              <Accordion.Item eventKey="0" className="pet-servico-card-item">
+                <Accordion.Header>
+                  <Stack direction="horizontal" gap={3}>
+                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                      <FormCheck
+                        type="switch"
+                        id="buscarChk"
+                        onChange={(e) => {
+                          setIncluirBuscar(e.target.checked);
+                        }}
+                      ></FormCheck>
+                    </Form.Group>
+                    <span>Buscar</span>
+                  </Stack>
+                </Accordion.Header>
+                <Accordion.Body>
+                  <CamposEndereco
+                    setValue={setValue}
+                    handleChange={handleEnderecoChange}
+                    formConfigs={{ isRequired: incluirBuscar }}
+                    register={register}
+                    errors={errors}
+                    prefix={"enderecoBuscar"}
+                  />
+                </Accordion.Body>
+              </Accordion.Item>
+              <Accordion.Item eventKey="1" className="pet-servico-card-item">
+                <Accordion.Header>
+                  <Stack direction="horizontal" gap={3}>
+                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                      <FormCheck
+                        type="switch"
+                        id="devolverChk"
+                        onChange={(e) => {
+                          setIncluirDevolver(e.target.checked);
+                        }}
+                      ></FormCheck>
+                    </Form.Group>
+                    <span>Devolver</span>
+                  </Stack>
+                </Accordion.Header>
+                <Accordion.Body>
+                  <Form.Group className="mb-3" controlId="formBasicEmail">
+                    <FormCheck
+                      type="switch"
+                      id="devolverMesmo"
+                      label="O mesmo do anterior"
+                      onChange={(e) => {
+                        setDevolverMesmo(e.target.checked);
+                      }}
+                    ></FormCheck>
+                  </Form.Group>
+                  <CamposEndereco
+                    setValue={setValue}
+                    handleChange={handleEnderecoChange}
+                    formConfigs={{ isRequired: incluirDevolver }}
+                    register={register}
+                    errors={errors}
+                    prefix={"enderecoDevolver"}
+                  />
+                </Accordion.Body>
+              </Accordion.Item>
+            </Accordion>
+            <Row>
+              <FloatingLabel
+                className="mt-4"
+                controlId="floatingTextarea2"
+                label="Observações"
               >
-                Cancelar
-              </Button>
-            </Col>
-            <Col md="auto">
-              <Button
-                variant="primary"
-                onClick={(e) => {
-                  getData();
-                }}
-                type="submit"
-                className="mt-4 mb-4 botao__cadastrar"
-              >
-                Salvar
-              </Button>
-            </Col>
-          </Row>
-        </Form>
-      </Container>
-    </div>
+                <Form.Control
+                  as="textarea"
+                  placeholder="Deixe aqui uma observação"
+                  style={{ height: "150px" }}
+                  {...register("observacoes")}
+                />
+              </FloatingLabel>
+            </Row>
+            <Row className="d-flex justify-content-center">
+              {/* Voltar */}
+              <Col md="auto" className="campos-espaco">
+                <Button
+                  variant="secondary"
+                  onClick={() => {
+                    navigate("/empresa/agendamentos/lista");
+                    console.log("Voltar para agendamentos");
+                  }}
+                  className="mt-4 mb-4 botao__cancelar"
+                  type="button"
+                >
+                  Cancelar
+                </Button>
+              </Col>
+              <Col md="auto">
+                <Button
+                  variant="primary"
+                  onClick={(e) => {
+                    getData();
+                  }}
+                  type="submit"
+                  className="mt-4 mb-4 botao__cadastrar"
+                >
+                  Salvar
+                </Button>
+              </Col>
+            </Row>
+          </Form>
+        </Container>
+      </div>
+    </>
   );
 }
 
