@@ -31,9 +31,9 @@ function PlanosEmpresa() {
   }, []);
 
   const [selected, setSelected] = useState("mensal");
-  const [precoBasico, setPrecoBasico] = useState("R$ 29,90");
-  const [precoProfissional, setPrecoProfissional] = useState("R$ 29,90");
-  const [precoCorporativo, setPrecoCorporativo] = useState("R$ 29,90");
+  const [precoBasico, setPrecoBasico] = useState("89,99");
+  const [precoProfissional, setPrecoProfissional] = useState("264,99");
+  const [precoCorporativo, setPrecoCorporativo] = useState("379,99");
   const [isLoading, setIsLoading] = useState(false);
   const [planoSel, setPlanoSel] = useState("");
 
@@ -42,19 +42,19 @@ function PlanosEmpresa() {
 
     switch (plano) {
       case "mensal":
-        setPrecoBasico("29,90");
-        setPrecoProfissional("60,90");
-        setPrecoCorporativo("100,90");
+        setPrecoBasico("89,99");
+        setPrecoProfissional(" 264,99");
+        setPrecoCorporativo("379,99");
         break;
       case "trimestral":
-        setPrecoBasico("79,90");
-        setPrecoProfissional("159,90");
-        setPrecoCorporativo("249,90");
+        setPrecoBasico("249,99");
+        setPrecoProfissional("739,99");
+        setPrecoCorporativo("1.059,99");
         break;
       case "anual":
-        setPrecoBasico("299,90");
-        setPrecoProfissional("599,90");
-        setPrecoCorporativo("999,90");
+        setPrecoBasico("864,99");
+        setPrecoProfissional("2.544,99");
+        setPrecoCorporativo("3.644,99");
         break;
       default:
         setPrecoBasico("");
