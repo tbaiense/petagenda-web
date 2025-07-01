@@ -35,7 +35,7 @@ body {
 .plano__preco {
   margin-bottom: 1rem;
   font-size: 2.19rem;
-  color: rgba(0, 0, 0, 0.2);
+  color: hsl(127, 71%, 41%);
 }
 .plano__lista {
   padding: 1rem 2rem 0.2em;
