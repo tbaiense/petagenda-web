@@ -8,6 +8,9 @@ import { useAuth } from "../../../contexts/UserContext";
 import { useEffect } from "react";
 import { LoadingOutlined } from "@ant-design/icons";
 import { Alert } from "antd";
+import image1 from "../../../assets/ImagensProjeto/pet5.jpg";
+import image2 from "../../../assets/ImagensProjeto/pet6.jpg";
+import image3 from "../../../assets/ImagensProjeto/pet7.jpg";
 function PlanosEmpresa() {
   const [mensagemAlerta, setMensagemAlerta] = useState(null);
   const {
@@ -28,9 +31,9 @@ function PlanosEmpresa() {
   }, []);
 
   const [selected, setSelected] = useState("mensal");
-  const [precoBasico, setPrecoBasico] = useState("R$ 29,90");
-  const [precoProfissional, setPrecoProfissional] = useState("R$ 29,90");
-  const [precoCorporativo, setPrecoCorporativo] = useState("R$ 29,90");
+  const [precoBasico, setPrecoBasico] = useState("89,99");
+  const [precoProfissional, setPrecoProfissional] = useState("264,99");
+  const [precoCorporativo, setPrecoCorporativo] = useState("379,99");
   const [isLoading, setIsLoading] = useState(false);
   const [planoSel, setPlanoSel] = useState("");
 
@@ -39,19 +42,19 @@ function PlanosEmpresa() {
 
     switch (plano) {
       case "mensal":
-        setPrecoBasico("29,90");
-        setPrecoProfissional("60,90");
-        setPrecoCorporativo("100,90");
+        setPrecoBasico("89,99");
+        setPrecoProfissional(" 264,99");
+        setPrecoCorporativo("379,99");
         break;
       case "trimestral":
-        setPrecoBasico("79,90");
-        setPrecoProfissional("159,90");
-        setPrecoCorporativo("249,90");
+        setPrecoBasico("249,99");
+        setPrecoProfissional("739,99");
+        setPrecoCorporativo("1.059,99");
         break;
       case "anual":
-        setPrecoBasico("299,90");
-        setPrecoProfissional("599,90");
-        setPrecoCorporativo("999,90");
+        setPrecoBasico("864,99");
+        setPrecoProfissional("2.544,99");
+        setPrecoCorporativo("3.644,99");
         break;
       default:
         setPrecoBasico("");
@@ -186,7 +189,7 @@ function PlanosEmpresa() {
             <Col md={3} className="plano__coluna text-center">
               <div className="plano__item">
                 <img
-                  src="https://placehold.co/250"
+                  src={image3}
                   alt="Plano Básico"
                   className="plano__imagem"
                 />
@@ -226,7 +229,7 @@ function PlanosEmpresa() {
             <Col md={3} className="plano__coluna text-center">
               <div className="plano__item">
                 <img
-                  src="https://placehold.co/250"
+                  src={image2}
                   alt="Plano Básico"
                   className="plano__imagem"
                 />
@@ -270,7 +273,7 @@ function PlanosEmpresa() {
             <Col md={3} className="plano__coluna text-center">
               <div className="plano__item">
                 <img
-                  src="https://placehold.co/250"
+                  src={image1}
                   alt="Plano Básico"
                   className="plano__imagem"
                 />

@@ -13,6 +13,7 @@ import {
 } from "react-bootstrap";
 import { Alert } from "antd";
 import "./Login.css";
+import image1 from "../../assets/ImagensProjeto/pet4.png";
 function Login() {
   const navigate = useNavigate();
   const [mensagemAlerta, setMensagemAlerta] = useState(null);
@@ -73,7 +74,7 @@ function Login() {
             }, 2500);
 
             await new Promise((resolve) => setTimeout(resolve, 2500));
-            
+
             navigate("/empresa/dashboard");
             break;
           }
@@ -193,7 +194,7 @@ function Login() {
           </Col>
           <Col md={6} className="d-none d-md-flex">
             <img
-              src="https://placehold.co/660x800"
+              src={image1}
               alt="Visual login"
               className="img-fluid login__img"
             />

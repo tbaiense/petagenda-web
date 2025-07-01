@@ -6,12 +6,13 @@ import "./Registrar.css";
 import { useAuth } from "../../contexts/UserContext";
 import NavBarPetAgenda from "../../components/NavBar/NavBarPetAgenda";
 import { LoadingOutlined } from "@ant-design/icons";
-
+import { Alert } from "antd";
 
 function Registrar() {
+  const [mensagemAlerta, setMensagemAlerta] = useState(null);
   const navigate = useNavigate();
   const { apiFetch } = useAuth();
-  const [ isLoading, setIsLoading ] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [etapaAtual, setEtapaAtual] = useState(1);
   const etapas = [
     { id: 1, label: "Insira endereço de e-mail" },
@@ -25,7 +26,7 @@ function Registrar() {
     watch,
     trigger,
     formState: { errors },
-    getValues
+    getValues,
   } = useForm();
 
   const senha = watch("senha");
@@ -35,7 +36,6 @@ function Registrar() {
   }, [etapaAtual]);
 
   const cadastrarUsuario = async () => {
-
     const data = getValues();
 
     if (etapaAtual < 3) {
@@ -61,13 +61,26 @@ function Registrar() {
 
       if (body?.success) {
         setIsLoading(false);
-        alert("Cadastro realizado com sucesso!");
+        setMensagemAlerta({
+          titulo: "Cadastro realizado com sucesso!",
+          descricao: "Você já pode fazer login na sua conta.",
+          tipo: "success",
+        });
+        setTimeout(() => {
+          setMensagemAlerta(null);
+        }, 2500);
+        await new Promise((resolve) => setTimeout(resolve, 2500));
         navigate("/login");
       } else {
-        alert(
-          "Erro no cadastro: " +
-            (body?.errors?.[0]?.message || "Erro desconhecido")
-        );
+        setMensagemAlerta({
+          titulo: "Erro ao cadastrar usuário",
+          descricao:
+            "Ocorreu um erro ao tentar cadastrar o usuário. Tente novamente.",
+          tipo: "error",
+        });
+        setTimeout(() => {
+          setMensagemAlerta(null);
+        }, 2500);
         setEtapaAtual(1);
       }
     } catch (error) {
@@ -79,11 +92,11 @@ function Registrar() {
   const onNext = async () => {
     if (etapaAtual < 3) {
       let camposValidar = [];
-  
+
       if (etapaAtual === 1) camposValidar = ["email"];
       else if (etapaAtual === 2) camposValidar = ["senha", "confirmarSenha"];
       else if (etapaAtual === 3) camposValidar = ["pergunta", "resposta"];
-  
+
       const valido = await trigger(camposValidar);
       if (valido) setEtapaAtual(etapaAtual + 1);
     }
@@ -200,6 +213,31 @@ function Registrar() {
   return (
     <div>
       <NavBarPetAgenda />
+      {mensagemAlerta && (
+        <div
+          style={{
+            position: "fixed",
+            top: 20,
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 9999,
+            width: "fit-content",
+            maxWidth: "90vw",
+          }}
+        >
+          <Alert
+            message={mensagemAlerta.titulo}
+            description={mensagemAlerta.descricao}
+            type={mensagemAlerta.tipo}
+            showIcon
+            style={{
+              fontSize: "12px",
+              padding: "8px 12px",
+              lineHeight: "1.2",
+            }}
+          />
+        </div>
+      )}
       <div className="tela-cadastro">
         <Container className="cadastro-container">
           <Row className="justify-content-center">
@@ -234,24 +272,47 @@ function Registrar() {
                   ))}
                 </div>
 
-                <Form onSubmit={ (e) => {e.preventDefault(); onNext(); console.log('submit')}}>
+                <Form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    onNext();
+                    console.log("submit");
+                  }}
+                >
                   {renderConteudo()}
 
                   <div className="botoes-navegacao mt-4 d-flex">
-
                     {etapaAtual < etapas.length ? (
-                      <Button variant="primary" type="button" onClick={onNext} className="botao">
+                      <Button
+                        variant="primary"
+                        type="button"
+                        onClick={onNext}
+                        className="botao"
+                      >
                         Próximo
                       </Button>
                     ) : (
-                      <Button variant="primary" type="submit" className="botao"
+                      <Button
+                        variant="primary"
+                        type="submit"
+                        className="botao"
                         disabled={!!isLoading}
-                        onClick={(e) => { if (etapaAtual == 3) cadastrarUsuario() }}
+                        onClick={(e) => {
+                          if (etapaAtual == 3) cadastrarUsuario();
+                        }}
                       >
                         Cadastrar-se
-                        {isLoading && <span style={{display: 'inline-block', marginLeft: '0.8em', verticalAlign: 'center'}}>
-                          <LoadingOutlined />
-                        </span>}
+                        {isLoading && (
+                          <span
+                            style={{
+                              display: "inline-block",
+                              marginLeft: "0.8em",
+                              verticalAlign: "center",
+                            }}
+                          >
+                            <LoadingOutlined />
+                          </span>
+                        )}
                       </Button>
                     )}
                   </div>
