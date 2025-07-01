@@ -8,6 +8,9 @@ import { useAuth } from "../../../contexts/UserContext";
 import { useEffect } from "react";
 import { LoadingOutlined } from "@ant-design/icons";
 import { Alert } from "antd";
+import image1 from "../../../assets/ImagensProjeto/pet5.jpg";
+import image2 from "../../../assets/ImagensProjeto/pet6.jpg";
+import image3 from "../../../assets/ImagensProjeto/pet7.jpg";
 function PlanosEmpresa() {
   const [mensagemAlerta, setMensagemAlerta] = useState(null);
   const {
@@ -186,7 +189,7 @@ function PlanosEmpresa() {
             <Col md={3} className="plano__coluna text-center">
               <div className="plano__item">
                 <img
-                  src="https://placehold.co/250"
+                  src={image3}
                   alt="Plano Básico"
                   className="plano__imagem"
                 />
@@ -226,7 +229,7 @@ function PlanosEmpresa() {
             <Col md={3} className="plano__coluna text-center">
               <div className="plano__item">
                 <img
-                  src="https://placehold.co/250"
+                  src={image2}
                   alt="Plano Básico"
                   className="plano__imagem"
                 />
@@ -270,7 +273,7 @@ function PlanosEmpresa() {
             <Col md={3} className="plano__coluna text-center">
               <div className="plano__item">
                 <img
-                  src="https://placehold.co/250"
+                  src={image1}
                   alt="Plano Básico"
                   className="plano__imagem"
                 />

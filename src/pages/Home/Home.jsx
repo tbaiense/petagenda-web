@@ -6,7 +6,10 @@ import "./Home.css";
 import imgNote from "../../assets/ImagensHome/Note.png";
 import imgTimer from "../../assets/ImagensHome/Timer.png";
 import imgLayout from "../../assets/ImagensHome/Layout.png";
-
+import image1 from "../../assets/ImagensProjeto/pet1.png";
+import image2 from "../../assets/ImagensProjeto/pet2.png";
+import image3 from"../../assets/ImagensProjeto/pet3.png";
+import image4 from "../../assets/ImagensProjeto/pet4.png";
 function Home() {
   return (
     <div>
@@ -29,7 +32,7 @@ function Home() {
             </Col>
             <Col md={6} className="text-center">
               <img
-                src="https://placehold.co/800x640"
+                src={image1}
                 alt="Ilustração de pet"
                 className="img-fluid home__imagem"
               />
@@ -104,7 +107,7 @@ function Home() {
             </Col>
             <Col md={6} className="text-center">
               <img
-                src="https://placehold.co/800x640"
+                src={image3}
                 alt="Gerenciamento profissional"
                 className="img-fluid"
               />
