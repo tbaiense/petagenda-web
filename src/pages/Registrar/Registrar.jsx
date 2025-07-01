@@ -212,6 +212,7 @@ function Registrar() {
 
   return (
     <div>
+      <NavBarPetAgenda />
       {mensagemAlerta && (
         <div
           style={{
@@ -237,7 +238,6 @@ function Registrar() {
           />
         </div>
       )}
-      <NavBarPetAgenda />
       <div className="tela-cadastro">
         <Container className="cadastro-container">
           <Row className="justify-content-center">
