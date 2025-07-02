@@ -106,7 +106,7 @@ const ListarClientes = () => {
                                 if (pesquisando) {
                                     setPesquisando(false);
                                 }
-                            }} s
+                            }}
                             onSearch={(value, event, type) => {
                                 const str = value.trim();
                                 setPesquisando(false);

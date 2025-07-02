@@ -172,7 +172,7 @@ const CadastroFuncionario = () => {
                 if (pesquisando) {
                   setPesquisando(false);
                 }
-              }} s
+              }}
               onSearch={(value, event, type) => {
                 const str = value.trim();
                 setPesquisando(false);
@@ -208,8 +208,8 @@ const CadastroFuncionario = () => {
                 });
 
                 return (
-                  <div className={styles.listFuncionarioLimit}>
-                    <div key={funcionario.id} className={styles.cardInfo}>
+                  <div key={funcionario.id} className={styles.listFuncionarioLimit}>
+                    <div className={styles.cardInfo}>
                       <div>
                         <span className={styles.nomeFuncionario}>
                           {funcionario.nome}

@@ -86,7 +86,7 @@ const TabelaRelatorioSimplesFinanceiro = ({
         <Table.Summary fixed>
           <Table.Summary.Row>
             <Table.Summary.Cell index={0} colSpan={4} align="right">Total Líquido:</Table.Summary.Cell>
-            <Table.Summary.Cell index={1}>R$ {linhas[0].liquido_total}</Table.Summary.Cell>
+            <Table.Summary.Cell index={1}>R$ {linhas[0]?.liquido_total}</Table.Summary.Cell>
           </Table.Summary.Row>
         </Table.Summary>
       )}
