@@ -1,6 +1,7 @@
 import styles from "./SideBar.module.css";
 import iconPerfil from "../../assets/icon_perfil.svg";
 import { useAuth } from "../../contexts/UserContext";
+import Modal from "react-bootstrap/Modal";
 import {
   FaHome,
   FaUserFriends,
@@ -17,15 +18,23 @@ import {
 import { PiBuildingOfficeBold } from "react-icons/pi";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Button } from "antd";
 
 const SideBar = () => {
-  const { removeEmpresa, removeToken} = useAuth();
+  const { removeEmpresa, removeToken } = useAuth();
+    const [mostrarModalSaida, setmostrarModalSaida] = useState(false);
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
   const toggleSidebar = () => setIsOpen(!isOpen);
   const toggleDropdown = (name) => {
     setOpenDropdown(openDropdown === name ? null : name);
+  };
+  const handleClose = () => setmostrarModalSaida(false);
+  const handleConfirm = () => {
+    removeEmpresa();
+    removeToken();
+    navigate("/login");
   };
 
   return (
@@ -82,7 +91,9 @@ const SideBar = () => {
                   </Link>
                 </li>
                 <li className={styles.dropdownItem}>
-                  <Link to="/empresa/servicos/realizados/cadastrar">Realizado</Link>
+                  <Link to="/empresa/servicos/realizados/cadastrar">
+                    Realizado
+                  </Link>
                 </li>
               </ul>
             )}
@@ -96,7 +107,9 @@ const SideBar = () => {
                   <Link to="/empresa/agendamentos/lista">Lista</Link>
                 </li>
                 <li>
-                  <Link to="/empresa/servicos/realizados/cadastrar">Realizado</Link>
+                  <Link to="/empresa/servicos/realizados/cadastrar">
+                    Realizado
+                  </Link>
                 </li>
               </ul>
             )}
@@ -208,9 +221,7 @@ const SideBar = () => {
             {isOpen && openDropdown === "funcionarios" && (
               <ul className={styles.dropdownMenu}>
                 <li className={styles.dropdownItem}>
-                  <Link to="/empresa/funcionarios">
-                    Novo Funcionario
-                  </Link>
+                  <Link to="/empresa/funcionarios">Novo Funcionario</Link>
                 </li>
               </ul>
             )}
@@ -361,16 +372,28 @@ const SideBar = () => {
           />
         </button>
       </div>
+      <Modal show={mostrarModalSaida} onHide={handleClose}>
+        <Modal.Header>
+          <Modal.Title>Tem certeza?</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Ao air você vai estar se desconectando da plataforma!</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="danger"
+
+            onClick={handleConfirm}
+          >
+            Sair
+          </Button>
+          <Button variant="secondary" onClick={handleClose}>Cancelar</Button>
+        </Modal.Footer>
+      </Modal>
 
       <div className={styles.logout}>
         <button
-          onClick={ e => {
-            if (confirm("Deseja realmente sair da conta atual?")) {
-              navigate("/login");
-              removeEmpresa();
-              removeToken();
-            }
-          }}
+          onClick={() => setmostrarModalSaida(true)}
           className={`${styles.sideItem} ${
             isOpen ? styles.logout_btn : styles.logout_btn_close
           }`}
