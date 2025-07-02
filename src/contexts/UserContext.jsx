@@ -4,8 +4,8 @@ export const AuthContext = createContext()
 
 export const AuthProvider = ({ children }) => {
   // URL da API
-  // const apiURL = 'http://petagenda.live/api/v1';
-  const apiURL = 'http://localhost:80/api/v1';
+  const apiURL = 'http://petagenda.live/api/v1';
+  // const apiURL = 'http://localhost:80/api/v1';
   // const apiURL = 'http://192.168.15.2:3000';
 
 
