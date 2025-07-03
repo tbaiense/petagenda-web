@@ -117,10 +117,10 @@ const CadastroEmpresa = () => {
         </div>
       )}
       <NavEmpresa />
-      <div className="container my-5">
-        <h2 className="text-center mb-4">Cadastro da Empresa</h2>
+      <div className="container my-1">
+        <h2 className="text-center mb-1">Cadastro da Empresa</h2>
 
-        <div className="row">
+        <div className="row justify-content-center">
           <div className="col-md-8">
             <form onSubmit={handleSubmit(onSubmit, onError)} className="p-4">
               <div className="mb-3">
@@ -198,6 +198,7 @@ const CadastroEmpresa = () => {
                 <textarea
                   className={`form-control ${errors.Lema ? "is-invalid" : ""}`}
                   rows={3}
+                  style={{resize:"none"}}
                   placeholder="Nosso lema é..."
                   {...register("Lema", {
                     minLength: {
@@ -215,14 +216,14 @@ const CadastroEmpresa = () => {
                 )}
               </div>
 
-              <div className="mb-3">
+              {/* <div className="mb-3">
                 <label className="form-label">Imagem de Perfil</label>
                 <input
                   type="file"
                   className="form-control"
                   {...register("pathImgFile")}
                 />
-              </div>
+              </div> */}
 
               <div className="d-flex justify-content-center mt-4 gap-3">
                 <Button
@@ -256,7 +257,7 @@ const CadastroEmpresa = () => {
               </div>
             </form>
           </div>
-
+{/* 
           <div className="col-md-4 d-flex flex-column align-items-center justify-content-start mt-4 mt-md-0">
             {imagemURL && (
               <img
@@ -268,7 +269,7 @@ const CadastroEmpresa = () => {
               />
             )}
             <h5>Foto de Perfil</h5>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

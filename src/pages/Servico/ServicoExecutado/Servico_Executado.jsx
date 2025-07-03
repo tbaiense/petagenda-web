@@ -703,7 +703,7 @@ const ServicoExecutado = () => {
                 type="submit"
                 className="mt-4 mb-4 botao__cadastrar"
               >
-                Agendar
+                Cadastrar
               </Button>
             </Col>
           </Row>

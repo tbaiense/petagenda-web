@@ -8,6 +8,21 @@ import petAgenda from "./assets/LogoNav.png"
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import styles from "./styles/MenuDashBoard.module.css"
 import BreadCrumb from './components/Breadcrumb/BreadCrumb'
+import iconPerfil from "./assets/icon_perfil.svg";
+import {
+    FaHome,
+    FaUserFriends,
+    FaClipboardList,
+    FaDog,
+    FaCalendar,
+    FaHistory,
+    FaUsers,
+    FaChartBar,
+    FaChevronRight,
+    FaChevronDown,
+    FaSignOutAlt,
+} from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const MenuDashBoard = () => {
     const { removeToken, setUsuario, setEmpresa, validar } = useAuth();
@@ -70,11 +85,19 @@ const MenuDashBoard = () => {
     const menuItems = [
         {
             key: "dashboard",
-            label: "Início",
+            label: (
+                <>
+                    {collapsed ? <Link><FaHome /></Link> : "Inicio"}
+                </>
+            ),
         },
         {
             key: "agendamentos",
-            label: "Agendamentos",
+            label: (
+                <>
+                    {collapsed ? <Link to={"/empresa/agendamentos/lista"} style={{color:'inherit'}}><FaCalendar /></Link> : "Agendamentos"}
+                </>
+            ),
             children: [
                 { key: "ag-novo", label: "Novo" },
                 { key: "ag-lista", label: "Listar" },
@@ -83,7 +106,11 @@ const MenuDashBoard = () => {
         },
         {
             key: "pets",
-            label: "Pets",
+            label: (
+                <>
+                    {collapsed ? <Link to={"/empresa/pets/lista"} style={{color:"inherit"}}><FaDog /></Link> : "Pets"}
+                </>
+            ),
             children: [
                 { key: "pets-novo", label: "Novo" },
                 { key: "pets-lista", label: "Listar" },
@@ -91,7 +118,11 @@ const MenuDashBoard = () => {
         },
         {
             key: "clientes",
-            label: "Clientes",
+            label: (
+                <>
+                    {collapsed ? <Link to={"/empresa/clientes/lista"} style={{color:"inherit"}}><  FaUserFriends /></Link> : "Clientes"}
+                </>
+            ),
             children: [
                 { key: "clientes-novo", label: "Novo" },
                 { key: "clientes-lista", label: "Listar" },
@@ -99,11 +130,19 @@ const MenuDashBoard = () => {
         },
         {
             key: "funcionarios",
-            label: "Funcionários",
+            label: (
+                <>
+                    {collapsed ? <Link to={"/empresa/funcionarios"} style={{color:"inherit"}}>< FaUsers /></Link> : "Funcionários"}
+                </>
+            ),
         },
         {
             key: "servicos",
-            label: "Serviços Oferecidos",
+            label: (
+                <>
+                    {collapsed ? <Link to={"/empresa/servicos/lista"} style={{color:"inherit"}}><FaClipboardList /></Link> : "Serviços"}
+                </>
+            ),
             children: [
                 { key: "servicos-novo", label: "Novo" },
                 { key: "servicos-lista", label: "Lista" },
@@ -111,7 +150,11 @@ const MenuDashBoard = () => {
         },
         {
             key: "relatorios",
-            label: "Relatórios",
+            label: (
+                <>
+                    {collapsed ? <FaChartBar /> : "Relatórios"}
+                </>
+            ),
             children: [
                 { key: "relatorios-simples", label: "Simples" },
                 { key: "relatorios-detalhado", label: "Detalhado" },
@@ -169,13 +212,25 @@ const MenuDashBoard = () => {
                     onCollapse={setCollapsed}
                     trigger={collapsed ? <RightOutlined style={{ color: 'white', fontSize: '18px' }} /> : <LeftOutlined style={{ color: 'white', fontSize: '18px' }} />}
                     style={{ background: '#9d4005', position: 'relative' }}>
-                    <div
-                        style={{
-                            height: 32,
-                            margin: 16,
-                            background: "rgba(255,255,255,0.2)",
-                        }}
-                    />
+                    <div style={{ margin: "10px" }}>
+                        {collapsed ? (
+                            <img src={iconPerfil} className={styles.user_avatar} alt="" />
+                        ) : (
+                            <Link to={"/empresa/informacoes"}>
+                                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                                    <img src={iconPerfil} className={styles.user_avatar} alt="avatar" />
+                                    <div className={styles.user_infos}>
+                                        <span className={`${styles.itemDescription} ${collapsed ? styles.hidden : styles.visible}`}>
+                                            Fulano de Tal
+                                        </span>
+                                        <span className={`${styles.itemDescription} ${collapsed ? styles.hidden : styles.visible}`}>
+                                            Administrador
+                                        </span>
+                                    </div>
+                                </div>
+                            </Link>
+                        )}
+                    </div>
                     <div
                         style={{
                             position: 'absolute',
@@ -218,9 +273,9 @@ const MenuDashBoard = () => {
                         <img src={petAgenda} alt="" />
                     </Header>
                 )}
-                <Content style={{ marginLeft: "16px", marginRight:'16px', marginTop: "0px" }}>
+                <Content style={{ marginLeft: "16px", marginRight: '16px', marginTop: "0px" }}>
                     {isMobile ? "" : <BreadCrumb />}
-                    
+
                     <div style={{
                         padding: isMobile ? "0" : "24",
                         minHeight: "87vh",

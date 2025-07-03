@@ -1,3 +1,60 @@
 .vaiSeFerrar{
     overflow-y: auto;
 }
+.user_avatar {
+  width: 60px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 20px;
+  padding-left: 13px;
+}
+.user_infos{
+    display: block;
+}
+.itemDescription {
+  white-space: nowrap;
+  font-size: 14px;
+  text-align: left;
+  color: #fff;
+  transition: opacity 0.3s ease, max-width 0.3s ease;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.visible {
+  opacity: 1;
+  max-width: 200px; /* ou o valor que quiser */
+}
+
+.hidden {
+  opacity: 0;
+  max-width: 0;
+}
+/* Itens de primeiro nível e subitens: cor do texto e fundo
+:global(.ant-menu-item),
+:global(.ant-menu-submenu .ant-menu-item) {
+  color: #fff !important;
+  background-color: #7a2f02 !important; /* fundo padrão */
+  /* border-radius: 4px;
+}  */
+
+/* Fundo do container dos submenus */
+:global(.ant-menu-submenu .ant-menu-sub) {
+  background-color: #7a2f02 !important;
+  border-radius: 0 0 8px 8px;
+  padding: 4px 0;
+}
+
+/* Hover nos itens (primeiro nível e subníveis) */
+:global(.ant-menu-item:hover),
+:global(.ant-menu-submenu .ant-menu-sub .ant-menu-item:hover),
+:global(.ant-menu-submenu .ant-menu-item:hover) {
+  background-color: #b64b08 !important;
+  color: #fff !important;
+}
+
+/* Item selecionado */
+:global(.ant-menu-item-selected) {
+  background-color: transparent!important;
+  color: #fff !important;
+}
