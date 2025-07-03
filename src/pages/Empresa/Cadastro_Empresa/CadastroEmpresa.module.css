@@ -60,6 +60,11 @@
   color: white;
 }
 
+input.hidden, label.hidden {
+  visibility: hidden !important;
+  display: none;
+}
+
 @media (max-width: 768px) {
   .formCadastro,
   .viewImg {

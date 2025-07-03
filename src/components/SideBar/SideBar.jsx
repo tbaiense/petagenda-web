@@ -359,7 +359,7 @@ const SideBar = () => {
           <Modal.Title>Tem certeza?</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>Ao air você vai estar se desconectando da plataforma!</p>
+          <p>Ao sair você vai estar se desconectando da plataforma!</p>
         </Modal.Body>
         <Modal.Footer>
           <Button

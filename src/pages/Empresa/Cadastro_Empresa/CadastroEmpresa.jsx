@@ -117,7 +117,7 @@ const CadastroEmpresa = () => {
         </div>
       )}
       <NavEmpresa />
-      <div className="container my-5">
+      <div className="container my-5"  style={{maxWidth: '45em'}}>
         <h2 className="text-center mb-4">Cadastro da Empresa</h2>
 
         <div className="row">
@@ -216,10 +216,11 @@ const CadastroEmpresa = () => {
               </div>
 
               <div className="mb-3">
-                <label className="form-label">Imagem de Perfil</label>
+                <label>Imagem de Perfil</label>
                 <input
                   type="file"
                   className="form-control"
+                  disabled={true}
                   {...register("pathImgFile")}
                 />
               </div>

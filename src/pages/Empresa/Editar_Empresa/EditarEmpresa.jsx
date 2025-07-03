@@ -107,7 +107,7 @@ const EditarEmpresa = () => {
         </div>
       )}
       <NavEmpresa />
-      <div className="container my-5">
+      <div className="container my-5" style={{maxWidth: '45em'}}>
         <h2 className="text-center mb-4">Editar da Empresa</h2>
 
         <div className="row">
@@ -215,6 +215,7 @@ const EditarEmpresa = () => {
                 <input
                   type="file"
                   defaultValue={state.foto}
+                  disabled={true}
                   className="form-control"
                   {...register("pathImgFile")}
                 />

@@ -20,7 +20,9 @@ import CamposEndereco from "../../../components/Endereco/CamposEndereco";
 import "../../../components/CardPet/PetServicoCard.css";
 import { useNavigate } from "react-router-dom";
 import { Alert } from "antd";
+
 const ServicoExecutado = () => {
+
   const [mensagemAlerta, setMensagemAlerta] = useState(null);
   const navigate = useNavigate();
   const {
@@ -34,6 +36,7 @@ const ServicoExecutado = () => {
     getValues,
   } = useForm();
 
+  const [ petSel, setPetSel ] = useState('');
   const [clientes, setClientes] = useState([]);
   const [petsCliente, setPetsCliente] = useState([]);
   const [petsSel, setPetsSel] = useState([]);
@@ -391,9 +394,9 @@ const ServicoExecutado = () => {
             <Col className="campos-espaco">
               <Form.Group controlId="formFiltro" className="form-servico">
                 <Form.Label>Filtrar serviço por:</Form.Label>
-                <Form.Select {...register("filtro")}>
+                <Form.Select disabled={true} {...register("filtro")}>
+                  <option value="">Sem filtro</option>
                   <option value="">Restrição de espécie</option>
-                  <option value="">Todos</option>
                   <option value="">Restrição de participantes</option>
                 </Form.Select>
               </Form.Group>
@@ -401,7 +404,8 @@ const ServicoExecutado = () => {
             <Col className="campos-espaco">
               <Form.Group controlId="formServico">
                 <Form.Label>Tipo do filtro:</Form.Label>
-                <Form.Select {...register("tipoFiltro")}>
+                <Form.Select disabled={true} {...register("tipoFiltro")}>
+                  <option value="">N/A</option>
                   <option value="">Cães</option>
                   <option value="">Gatos</option>
                   <option value="">Pássaros</option>
@@ -423,7 +427,6 @@ const ServicoExecutado = () => {
                     // const novoServ = getValues('servico')
                     const novoServ = e.target.value;
                     setServicoSel(+novoServ);
-                    console.log("rodei: ", novoServ);
                   }}
                 >
                   <option value="">Selecione um serviço</option>
@@ -454,7 +457,7 @@ const ServicoExecutado = () => {
                 <Form.Control
                   type="time"
                   {...register("horaInicio", { required: true })}
-                  defaultValue={new Date().toTimeString().slice(0, 5)}
+                  // defaultValue={new Date().toTimeString().slice(0, 5)}
                 />
               </Form.Group>
             </Col>
@@ -482,6 +485,7 @@ const ServicoExecutado = () => {
                     placeholder="Valor por pet"
                     value={preco.precoPet}
                     readOnly={true}
+                    disabled={true}
                   />
                 </InputGroup>
               </Form.Group>
@@ -497,6 +501,7 @@ const ServicoExecutado = () => {
                     placeholder="Valor do Serviço"
                     value={preco.precoServico}
                     readOnly={true}
+                    disabled={true}
                   />
                 </InputGroup>
               </Form.Group>
@@ -512,6 +517,7 @@ const ServicoExecutado = () => {
                     placeholder="Valor total"
                     value={preco.precoTotal}
                     readOnly={true}
+                    disabled={true}
                   />
                 </InputGroup>
               </Form.Group>
@@ -570,7 +576,12 @@ const ServicoExecutado = () => {
             <Col className="campos-espaco">
               <Form.Group controlId="formServico">
                 <Form.Label>Pet:<span className="obrigatorio">*</span></Form.Label>
-                <Form.Select id="pet-selecionar" {...register("pet")}>
+                <Form.Select id="pet-selecionar" {...register("pet")}
+                  disabled={!getValues('cliente')}
+                  onInput={(e) => {
+                    setPetSel(e.target.value);
+                  }}
+                >
                   <option value="">Selecione um pet</option>
                   {petsCliente &&
                     petsCliente.map((pet) => (
@@ -585,20 +596,24 @@ const ServicoExecutado = () => {
               <Button
                 className="button-adicionar"
                 type="button"
+                disabled={!petSel}
                 onClick={(e) => {
-                  const petSel = petsCliente.find((p) => {
-                    const pelSelecionado =
-                      document.getElementById("pet-selecionar").value;
-                    return p.id == pelSelecionado;
-                  });
+                  if (petSel) {
+                    const petSel = petsCliente.find((p) => {
+                      const pelSelecionado =
+                        document.getElementById("pet-selecionar").value;
+                      return p.id == pelSelecionado;
+                    });
 
-                  const jaExiste = petsSel.some((p) => {
-                    return p.id == petSel.id;
-                  });
-
-                  if (!jaExiste) {
-                    setPetsSel(petsSel.concat([petSel]));
+                    const jaExiste = petsSel.some((p) => {
+                      return p.id == petSel.id;
+                    });
+  
+                    if (!jaExiste) {
+                      setPetsSel(petsSel.concat([petSel]));
+                    }
                   }
+
                 }}
               >
                 Adicionar
@@ -612,9 +627,9 @@ const ServicoExecutado = () => {
           <hr />
           <Accordion
             className="mt-3 mb-4"
-            defaultActiveKey="0"
+            // defaultActiveKey="0"
             flush
-            alwaysOpen
+            // alwaysOpen
           >
             <Accordion.Item eventKey="0" className="pet-servico-card-item">
               <Accordion.Header>
@@ -703,7 +718,7 @@ const ServicoExecutado = () => {
                 type="submit"
                 className="mt-4 mb-4 botao__cadastrar"
               >
-                Agendar
+                Cadastrar
               </Button>
             </Col>
           </Row>

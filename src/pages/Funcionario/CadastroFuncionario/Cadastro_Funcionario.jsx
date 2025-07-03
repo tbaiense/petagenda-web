@@ -152,7 +152,7 @@ const CadastroFuncionario = () => {
   return (
     <div className={styles.viewConteudo}>
       <div>
-        <h1>Funcionarios Cadastrados</h1>
+        <h1>Funcionários Cadastrados</h1>
         <hr />
       </div>
       <div className={styles.alinhamento}>
