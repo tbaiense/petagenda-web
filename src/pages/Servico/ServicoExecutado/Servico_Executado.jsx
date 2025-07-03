@@ -694,7 +694,7 @@ const ServicoExecutado = () => {
             </FloatingLabel>
           </Row>
           <Row className="d-flex justify-content-center">
-            <Col md="auto">
+            <Col md="auto d-flex justify-content-center">
               <Button
                 variant="primary"
                 onClick={(e) => {

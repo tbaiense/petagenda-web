@@ -50,6 +50,7 @@ const Lista_Agendamentos = () => {
   const [showModalServ, setShowModalServ] = useState(false);
   const [editarServ, setEditarServ] = useState({});
   const [tipoFiltro, setTipoFiltro] = useState("cliente");
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   async function popularFuncionarios() {
     empresaFetch("/funcionario")
@@ -61,6 +62,13 @@ const Lista_Agendamentos = () => {
         console.error("Erro ao buscar Funcionarios:", error);
       });
   }
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     if (validar) {
@@ -183,7 +191,7 @@ const Lista_Agendamentos = () => {
       setTimeout(() => {
         setMensagemAlerta(null);
       }, 2000);
-      
+
       window.history.replaceState({}, document.title);
     }
 
@@ -192,7 +200,7 @@ const Lista_Agendamentos = () => {
     }
   }, [location]);
   return (
-    <div className="lista_agendamentos_servicos mt-4">
+    <div className="lista_agendamentos_servicos ">
       {mensagemAlerta && (
         <div
           style={{
@@ -218,14 +226,14 @@ const Lista_Agendamentos = () => {
           />
         </div>
       )}
-      <Container>
+      <Container className="merda">
         {/* Topo */}
         <div>
           <Row>
             <Col className="mb-3">
               <h2>Agendamentos e serviços executados</h2>
             </Col>
-            <Col>
+            <Col style={{ display: isMobile ? "none" : "" }}>
               <Dropdown>
                 <Dropdown.Toggle
                   className="botao_cadastrar"
@@ -252,7 +260,7 @@ const Lista_Agendamentos = () => {
               </Dropdown>
             </Col>
           </Row>
-          <Row className="mb-3">
+          <Row className="mb-3 controleResponsividade">
             <Col className="campos-espaco" lg={5}>
               <Search
                 placeholder="Digite o que deseja pesquisar..."
@@ -278,7 +286,7 @@ const Lista_Agendamentos = () => {
                 }}
               />
             </Col>
-            <Col className="campos-espaco">
+            <Col className="campos-espaco mt-3">
               <Form.Select
                 className="form-button"
                 aria-label="Default select example"
@@ -288,7 +296,7 @@ const Lista_Agendamentos = () => {
                 <option value="cliente">Nome do cliente</option>
               </Form.Select>
             </Col>
-            <Col className="campos-espaco">
+            <Col className="campos-espaco mt-3">
               <Form.Select
                 className="form-button"
                 aria-label="Default select example"
@@ -303,7 +311,7 @@ const Lista_Agendamentos = () => {
               </Form.Select>
             </Col>
             {abaAtual == "agendamentos" && (
-              <Col className="campos-espaco">
+              <Col className="campos-espaco mt-3">
                 <Form.Select
                   className="form-button"
                   aria-label="Default select example"
@@ -330,36 +338,69 @@ const Lista_Agendamentos = () => {
             setAbaAtual(k);
             console.log("aba mudada! ", k);
           }}
-          className="mb-3"
+          className="mb-3 AbaDoCaralho"
         >
           <Tab eventKey="agendamentos" title="Agendamentos">
-            <Table striped>
-              <thead>
-                <tr>
-                  <th>Serviço</th>
-                  <th>Nome do cliente</th>
-                  <th>Funcionário atribuído</th>
-                  <th>Data</th>
-                  <th>Hora</th>
-                  <th>Estado</th>
-                  <th>Valor</th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-                {agendamentos &&
-                  agendamentos.map((a) => {
-                    return (
-                      <CardAgendamento
-                        funcDisponiveis={funcDisponiveis}
-                        key={a.id}
-                        agendamento={a}
-                        setMensagemAlerta={setMensagemAlerta}
-                      />
-                    );
-                  })}
-              </tbody>
-            </Table>
+            {isMobile ?
+
+              <Table striped>
+                <thead className="theadDoCaralho">
+                  <tr style={{ borderBottom: "1px solid black" }}>
+                    <th >Serviço</th>
+                    <th>Nome do cliente</th>
+                    <th>Funcionário atribuído</th>
+                    <th>Data</th>
+                    <th>Hora</th>
+                    <th>Estado</th>
+                    <th>Valor</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {agendamentos &&
+                    agendamentos.map((a) => {
+                      return (
+                        <CardAgendamento
+                          funcDisponiveis={funcDisponiveis}
+                          key={a.id}
+                          agendamento={a}
+                          setMensagemAlerta={setMensagemAlerta}
+                        />
+                      );
+                    })}
+                </tbody>
+              </Table>
+
+              :
+
+              <Table striped>
+                <thead>
+                  <tr>
+                    <th >Serviço</th>
+                    <th>Nome do cliente</th>
+                    <th>Funcionário atribuído</th>
+                    <th>Data</th>
+                    <th>Hora</th>
+                    <th>Estado</th>
+                    <th>Valor</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {agendamentos &&
+                    agendamentos.map((a) => {
+                      return (
+                        <CardAgendamento
+                          funcDisponiveis={funcDisponiveis}
+                          key={a.id}
+                          agendamento={a}
+                          setMensagemAlerta={setMensagemAlerta}
+                        />
+                      );
+                    })}
+                </tbody>
+              </Table>
+            }
             {paginas.length > 1 && (
               <Pagination>
                 <Pagination.First
@@ -396,32 +437,61 @@ const Lista_Agendamentos = () => {
                 setMensagemAlerta={setMensagemAlerta}
               />
             )}
-            <Table striped>
-              <thead>
-                <tr>
-                  <th>Serviço</th>
-                  <th>Nome do cliente</th>
-                  <th>Funcionário atribuído</th>
-                  <th>Data</th>
-                  <th>Início</th>
-                  <th>Fim</th>
-                  <th>Valor</th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-                {servicosRealizados &&
-                  servicosRealizados.map((s) => {
-                    return (
-                      <CardServicoRealizado
-                        key={s.id}
-                        servicoRealizado={s}
-                        handleEditar={handleEditarServ}
-                      />
-                    );
-                  })}
-              </tbody>
-            </Table>
+            {isMobile ?
+              <Table striped>
+                <thead className="theadDoCaralho">
+                  <tr>
+                    <th>Serviço</th>
+                    <th>Nome do cliente</th>
+                    <th>Funcionário atribuído</th>
+                    <th>Data</th>
+                    <th>Início</th>
+                    <th>Fim</th>
+                    <th>Valor</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {servicosRealizados &&
+                    servicosRealizados.map((s) => {
+                      return (
+                        <CardServicoRealizado
+                          key={s.id}
+                          servicoRealizado={s}
+                          handleEditar={handleEditarServ}
+                        />
+                      );
+                    })}
+                </tbody>
+              </Table>
+              :
+              <Table striped>
+                <thead>
+                  <tr>
+                    <th>Serviço</th>
+                    <th>Nome do cliente</th>
+                    <th>Funcionário atribuído</th>
+                    <th>Data</th>
+                    <th>Início</th>
+                    <th>Fim</th>
+                    <th>Valor</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {servicosRealizados &&
+                    servicosRealizados.map((s) => {
+                      return (
+                        <CardServicoRealizado
+                          key={s.id}
+                          servicoRealizado={s}
+                          handleEditar={handleEditarServ}
+                        />
+                      );
+                    })}
+                </tbody>
+              </Table>
+            }
             {paginasServ.length > 1 && (
               <Pagination>
                 <Pagination.First

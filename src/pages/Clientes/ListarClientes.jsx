@@ -82,18 +82,25 @@ const ListarClientes = () => {
     const navEditarCliente = (cliente) => {
         navigate(`/empresa/clientes/editar/${cliente.id}`, { state: cliente })
     }
-
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
     return (
         <div className={styles.viewConteudo}>
             <div>
                 <h1>Clientes Cadastrados</h1>
-                <hr />
+                <hr className="linha" />
             </div>
             <div className={styles.alinhamento}>
                 <div className={styles.orgContent}>
                     <div className={styles.pesquisa}>
                         <Search
-                            placeholder="Digite o que deseja pesquisar..."
+                            placeholder={isMobile ? "Pesquise por...": "Digite o que deseja pesquisar..."}
                             enterButton="Pesquisar"
                             size="large"
                             loading={pesquisando}

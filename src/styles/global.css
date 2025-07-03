@@ -3,3 +3,8 @@
   padding: 0;
   box-sizing: border-box;
 }
+@media(max-width: "767px"){
+  h1{
+    padding-top: 1rem;
+  }
+}

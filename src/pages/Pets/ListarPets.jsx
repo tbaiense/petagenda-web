@@ -22,6 +22,14 @@ const ListarPets = () => {
 
   const { empresaFetch, validar } = useAuth();
   const handleClose = () => setShowInfo(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Obter espécies
   async function getEspeciesPet() {
@@ -107,13 +115,13 @@ const ListarPets = () => {
     <div className={styles.viewConteudo}>
       <div className={styles.layoutLista}>
         <h1>Lista de Pets</h1>
-        <hr />
+        <hr className="linha" />
       </div>
       <div className={styles.alinhamento}>
         <div className={styles.orgContent}>
           <div className={styles.pesquisa}>
             <Search
-              placeholder="Digite o que deseja pesquisar..."
+              placeholder={isMobile ? "Pesquise por..." : "Digite o que deseja pesquisar..."}
               enterButton="Pesquisar"
               size="large"
               loading={pesquisando}
@@ -137,7 +145,7 @@ const ListarPets = () => {
           </div>
           <div className={styles.filtros}>
             <div className={styles.estiloGap}>
-              <label htmlFor="">Filtrar por:</label>
+              <label htmlFor="">Filtrar:</label>
               <select name="option" id="filtro-cliente" className={styles.slct} onChange={(e) => { setTipoFiltro(e.target.value) }}>
                 <option value="nome">Nome</option>
               </select>

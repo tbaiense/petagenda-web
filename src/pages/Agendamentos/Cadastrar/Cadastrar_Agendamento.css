@@ -22,6 +22,7 @@ form .form-label {
   .cadastrar_agendamento__title{
     font-size:x-large;
     margin: 0;
+    
   }
   .linha{
     display: none;
@@ -35,8 +36,12 @@ form .form-label {
   .VaiSeFoder2{
     padding: 0;
   }
+  h1{
+    padding-top: 1rem;
+  }
 
 }
+
 
 .cadatrar_agendamento {
   max-width: 900px;
@@ -47,7 +52,7 @@ form .form-label {
 .cadastrar_agendamento__title {
   text-align: center;
   margin-top: -15px;
-  padding-top: 0.5rem;
+  padding-top: 1.5rem;
 }
 
 .datepicker-grande {

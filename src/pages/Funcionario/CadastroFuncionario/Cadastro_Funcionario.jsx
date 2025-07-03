@@ -15,7 +15,7 @@ import { LoadingOutlined } from "@ant-design/icons";
 const { Search } = Input;
 
 const CadastroFuncionario = () => {
-      const [ isLoading, setIsLoading ] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { empresaFetch, validar } = useAuth();
   const [showModal, setShowModal] = useState(false);
   const [showModalEditar, setShowModalEditar] = useState(false);
@@ -28,7 +28,14 @@ const CadastroFuncionario = () => {
   const [ordenacao, setOrdenacao] = useState('ascending');
   const [tipoFiltro, setTipoFiltro] = useState('nome');
   const handleClose = () => setShowModal(false);
-
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const {
     register,
@@ -151,15 +158,15 @@ const CadastroFuncionario = () => {
 
   return (
     <div className={styles.viewConteudo}>
-      <div>
-        <h1>Funcionarios Cadastrados</h1>
-        <hr />
+      <div style={{paddingTop:'1.5rem'}}>
+        <h1 className="cadastrar_agendamento__title">Funcionarios Cadastrados</h1>
+        <hr className="linha"/>
       </div>
       <div className={styles.alinhamento}>
         <div className={styles.orgContent}>
           <div className={styles.pesquisa}>
             <Search
-              placeholder="Digite o que deseja pesquisar..."
+              placeholder={isMobile ? "Pesquise por..." : "Digite o que deseja pesquisar..."}
               enterButton="Pesquisar"
               size="large"
               loading={pesquisando}
@@ -380,8 +387,8 @@ const CadastroFuncionario = () => {
                 <Button type="submit" >Cadastrar
                   {isLoading && <span style={{ display: 'inline-block', marginLeft: '0.8em', verticalAlign: 'center' }}>
                     <LoadingOutlined />
-                    </span>}
-                  </Button>
+                  </span>}
+                </Button>
               </div>
             </Form>
           </Modal.Body>

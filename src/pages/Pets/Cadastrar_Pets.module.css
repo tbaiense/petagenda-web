@@ -16,7 +16,7 @@ form .form-label {
 .cadastrar_agendamento__title {
   text-align: center;
   margin-top: -15px;
-  padding-top: 0.5rem;
+  padding-top: 1.5rem;
 }
 
 .custom_datepicker {
@@ -32,7 +32,8 @@ form .form-label {
   border-radius: 0.375rem;
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
-.inputTextArea{
+
+.inputTextArea {
   resize: none;
 }
 
@@ -50,7 +51,12 @@ form .form-label {
   .raca_input {
     width: 100%;
   }
-.castrado{
-  margin-top: 1rem;
+
+  .castrado {
+    margin-top: 1rem;
+  }
+  .cadastrar_agendamento__title {
+      font-size:x-large;
+    margin: 0;
 }
 }

@@ -30,6 +30,7 @@ const Lista_ServicosOferecidos = () => {
   const [refresh, setRefresh] = useState(0);
   const [paginas, setPaginas] = useState([]);
   const [servicosOferecidos, setServicosOferecidos] = useState([
+
     /*}
         {
             "id": 3,
@@ -52,6 +53,14 @@ const Lista_ServicosOferecidos = () => {
         }
     */
   ]);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   async function popularServicosOferecidos() {
     const limit = 6;
@@ -102,14 +111,14 @@ const Lista_ServicosOferecidos = () => {
 
   return (
     <div className="lista_servicos_oferecidos_servicos mt-4">
-      <Container>
+      <Container className="merda">
         {/* Topo */}
         <div>
-          <Row>
+          <Row className="controleResponsividade">
             <Col>
               <h2>Serviços oferecidos</h2>
             </Col>
-            <Col>
+            <Col style={{ display: isMobile ? "none" : "" }}>
               <Button
                 variant="success"
                 id="dropdown-basic"
@@ -121,11 +130,11 @@ const Lista_ServicosOferecidos = () => {
               </Button>
             </Col>
           </Row>
-          <Row>
-            <Col className="campos-espaco">
+          <Row className="controleResponsividade" >
+            <Col className="campos-espaco mt-3">
               <Form.Control type="text" placeholder="Pesquisar..." />
             </Col>
-            <Col className="campos-espaco">
+            <Col className="campos-espaco mt-3">
               <Form.Select
                 className="form-button"
                 aria-label="Default select example"
@@ -136,7 +145,7 @@ const Lista_ServicosOferecidos = () => {
                 <option value="3">Three</option>
               </Form.Select>
             </Col>
-            <Col>
+            <Col className="mt-3">
               <Form.Select
                 className="form-button"
                 aria-label="Default select example"
@@ -149,7 +158,53 @@ const Lista_ServicosOferecidos = () => {
             </Col>
           </Row>
         </div>
-        <Table striped>
+        {isMobile ?
+
+          <Table striped>
+            <thead className="theadDoCaralho">
+              <tr style={{ borderBottom: "1px solid black" }}>
+                <th >Serviço</th>
+                <th>Nome do cliente</th>
+                <th>Funcionário atribuído</th>
+                <th>Data</th>
+                <th>Hora</th>
+                <th>Estado</th>
+                <th>Valor</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              {servicosOferecidos &&
+              servicosOferecidos.map((s) => {
+                return <CardServicoOferecido key={s.id} servicoOferecido={s} />;
+              })}
+            </tbody>
+          </Table>
+
+          :
+
+          <Table striped>
+            <thead>
+              <tr>
+                <th >Serviço</th>
+                <th>Nome do cliente</th>
+                <th>Funcionário atribuído</th>
+                <th>Data</th>
+                <th>Hora</th>
+                <th>Estado</th>
+                <th>Valor</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              {servicosOferecidos &&
+              servicosOferecidos.map((s) => {
+                return <CardServicoOferecido key={s.id} servicoOferecido={s} />;
+              })}
+            </tbody>
+          </Table>
+        }
+        {/* <Table striped>
           <thead>
             <tr>
               <th>Serviço</th>
@@ -181,12 +236,12 @@ const Lista_ServicosOferecidos = () => {
                                 }
                             ]
                         }}/> */}
-            {servicosOferecidos &&
+            {/* {servicosOferecidos &&
               servicosOferecidos.map((s) => {
                 return <CardServicoOferecido key={s.id} servicoOferecido={s} />;
               })}
           </tbody>
-        </Table>
+        </Table>  */}
         {paginas.length > 1 && (
           <Pagination>
             <Pagination.First

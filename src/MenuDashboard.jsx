@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import petAgenda from "./assets/LogoNav.png"
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import styles from "./styles/MenuDashBoard.module.css"
+import BreadCrumb from './components/Breadcrumb/BreadCrumb'
 
 const MenuDashBoard = () => {
     const { removeToken, setUsuario, setEmpresa, validar } = useAuth();
@@ -27,7 +28,7 @@ const MenuDashBoard = () => {
         removeToken();
         setUsuario({ id: 0, admin: false });
         setEmpresa({ id: 0, licenca: "corporativo" });
-        navigate("/login"); // ou onde for sua rota de logout
+        navigate("/");
     };
 
     useEffect(() => {
@@ -163,7 +164,7 @@ const MenuDashBoard = () => {
                     </div>
                 </Header>
             ) : (
-                <Sider 
+                <Sider
                     collapsed={collapsed}
                     onCollapse={setCollapsed}
                     trigger={collapsed ? <RightOutlined style={{ color: 'white', fontSize: '18px' }} /> : <LeftOutlined style={{ color: 'white', fontSize: '18px' }} />}
@@ -203,7 +204,7 @@ const MenuDashBoard = () => {
                         items={menuItems}
                         onClick={handleMenuClick}
                     />
-                    <div style={{ padding: 16}}>
+                    <div style={{ padding: 16 }}>
                         <Button danger block onClick={handleLogout}>
                             Sair
                         </Button>
@@ -217,8 +218,16 @@ const MenuDashBoard = () => {
                         <img src={petAgenda} alt="" />
                     </Header>
                 )}
-                <Content style={{ margin: "16px" }}>
-                    <div style={{ padding: isMobile ? "0" : "24", minHeight: "90vh", background: isMobile ? "transparent" : "#fff" }} className={styles.vaiSeFerrar}>
+                <Content style={{ marginLeft: "16px", marginRight:'16px', marginTop: "0px" }}>
+                    {isMobile ? "" : <BreadCrumb />}
+                    
+                    <div style={{
+                        padding: isMobile ? "0" : "24",
+                        minHeight: "87vh",
+                        background: isMobile ? "transparent" : "#fff",
+                        overflowY: "auto",
+                        maxHeight: "87vh"
+                    }} className={styles.vaiSeFerrar}>
                         <Outlet />
                     </div>
                 </Content>

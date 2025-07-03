@@ -5,3 +5,21 @@
 .form-pesquisa {
     width: 35rem;
 }
+
+@media (max-width: 767px) {
+    .theadDoCaralho {
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+        text-align: left;
+        padding: 1rem;
+        white-space: nowrap;
+        vertical-align: bottom;
+        height: 200px;
+    }
+    .merda{
+        padding: 0;
+    }
+    .AbaDoCaralho{
+        display: flex ;
+    }
+}
