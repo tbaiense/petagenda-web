@@ -15,6 +15,9 @@ import {
   FaChevronDown,
   FaSignOutAlt,
 } from "react-icons/fa";
+
+import { FaPeopleGroup } from "react-icons/fa6";
+
 import { PiBuildingOfficeBold } from "react-icons/pi";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -58,7 +61,13 @@ const SideBar = () => {
 
           <li
             className={`${styles.sideItem} ${styles.dropdownWrapper} ${styles.branco}`}
-            onClick={isOpen ? () => toggleDropdown("agendamentos") : undefined}
+            onClick={() => {
+              if(isOpen){
+                toggleDropdown("agendamentos");
+              }else{
+                navigate("/empresa/agendamentos/lista")
+              }
+            }}
           >
             <div
               className={
@@ -101,13 +110,13 @@ const SideBar = () => {
               <ul className={styles.floatingDropdown}>
                 <p className={styles.tituloDropdow}>Agendamentos</p>
                 <li>
-                  <Link to="/empresa/agendamentos/cadastrar">Novo</Link>
+                  <Link to="/empresa/agendamentos/cadastrar" onClick={e => e.stopPropagation()}>Novo</Link>
                 </li>
                 <li>
                   <Link to="/empresa/agendamentos/lista">Lista</Link>
                 </li>
                 <li>
-                  <Link to="/empresa/servicos/realizados/cadastrar">
+                  <Link to="/empresa/servicos/realizados/cadastrar" onClick={e => e.stopPropagation()}>
                     Realizado
                   </Link>
                 </li>
@@ -117,7 +126,7 @@ const SideBar = () => {
 
           <li
             className={`${styles.sideItem} ${styles.dropdownWrapper} ${styles.branco}`}
-            onClick={isOpen ? () => toggleDropdown("pets") : undefined}
+            onClick={isOpen ? () => toggleDropdown("pets") : () => navigate("/empresa/pets/lista")}
           >
             <div
               className={
@@ -148,10 +157,10 @@ const SideBar = () => {
               <ul className={styles.floatingDropdown}>
                 <p className={styles.tituloDropdow}>Pet</p>
                 <li>
-                  <Link to="/empresa/pets/cadastrar">Cadastrar</Link>
+                  <Link to="/empresa/pets/cadastrar" onClick={e => e.stopPropagation()}>Cadastrar</Link>
                 </li>
                 <li>
-                  <Link to="/empresa/pets/lista">Lista</Link>
+                  <Link to="/empresa/pets/lista" onClick={e => e.stopPropagation()}>Lista</Link>
                 </li>
               </ul>
             )}
@@ -159,7 +168,7 @@ const SideBar = () => {
 
           <li
             className={`${styles.sideItem} ${styles.dropdownWrapper} ${styles.branco}`}
-            onClick={isOpen ? () => toggleDropdown("clients") : undefined}
+            onClick={isOpen ? () => toggleDropdown("clients") : () => navigate("/empresa/clientes/lista")}
           >
             <div
               className={
@@ -190,54 +199,27 @@ const SideBar = () => {
               <ul className={styles.floatingDropdown}>
                 <p className={styles.tituloDropdow}>Cliente</p>
                 <li>
-                  <Link to="/empresa/clientes/cadastrar">Novo</Link>
+                  <Link to="/empresa/clientes/cadastrar" onClick={e => e.stopPropagation()}>Novo</Link>
                 </li>
                 <li>
-                  <Link to="/empresa/clientes/lista">Lista</Link>
+                  <Link to="/empresa/clientes/lista" onClick={e => e.stopPropagation()}>Lista</Link>
                 </li>
               </ul>
             )}
           </li>
 
           <li
-            className={`${styles.sideItem} ${styles.dropdownWrapper} ${styles.branco}`}
-            onClick={isOpen ? () => toggleDropdown("funcionarios") : undefined}
+            className={`${styles.sideItem}`}
           >
-            <div
-              className={
-                isOpen ? styles.dropdownTrigger : styles.dropdownTrigge
-              }
-            >
-              <PiBuildingOfficeBold />
+            <Link to="/empresa/funcionarios">
+              <FaPeopleGroup  className={styles.branco} />
               <span className={styles.itemDescription}>Funcionários</span>
-              {isOpen && (
-                <FaChevronDown
-                  className={
-                    openDropdown === "funcionarios" ? styles.rotateIconDown : ""
-                  }
-                />
-              )}
-            </div>
-            {isOpen && openDropdown === "funcionarios" && (
-              <ul className={styles.dropdownMenu}>
-                <li className={styles.dropdownItem}>
-                  <Link to="/empresa/funcionarios">Novo Funcionario</Link>
-                </li>
-              </ul>
-            )}
-            {!isOpen && (
-              <ul className={styles.floatingDropdown}>
-                <p className={styles.tituloDropdow}>Funcionário</p>
-                <li>
-                  <Link to="/empresa/funcionarios">Novo</Link>
-                </li>
-              </ul>
-            )}
+            </Link>
           </li>
 
           <li
             className={`${styles.sideItem} ${styles.dropdownWrapper} ${styles.branco}`}
-            onClick={isOpen ? () => toggleDropdown("servicos") : undefined}
+            onClick={isOpen ? () => toggleDropdown("servicos") : () => navigate("/empresa/servicos/lista")}
           >
             <div
               className={
@@ -268,7 +250,7 @@ const SideBar = () => {
               <ul className={styles.floatingDropdown}>
                 <p className={styles.tituloDropdow}>Serviço oferecido</p>
                 <li>
-                  <Link to="/empresa/servicos/cadastrar">Novo</Link>
+                  <Link to="/empresa/servicos/cadastrar" onClick={e => e.stopPropagation()}>Novo</Link>
                 </li>
                 <li>
                   <Link to="/empresa/servicos/lista">Lista</Link>
@@ -277,7 +259,7 @@ const SideBar = () => {
             )}
           </li>
 
-          <li
+          {/* <li
             className={`${styles.sideItem} ${styles.dropdownWrapper} ${styles.branco}`}
             onClick={isOpen ? () => toggleDropdown("historico") : undefined}
           >
@@ -317,7 +299,7 @@ const SideBar = () => {
                 </li>
               </ul>
             )}
-          </li>
+          </li> */}
           <li
             className={`${styles.sideItem} ${styles.dropdownWrapper} ${styles.branco}`}
             onClick={isOpen ? () => toggleDropdown("relatorio") : undefined}
@@ -328,7 +310,7 @@ const SideBar = () => {
               }
             >
               <FaChartBar />
-              <span className={styles.itemDescription}>Relatorio</span>
+              <span className={styles.itemDescription}>Relatório</span>
               {isOpen && (
                 <FaChevronDown
                   className={

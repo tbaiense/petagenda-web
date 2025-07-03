@@ -172,7 +172,7 @@ const CadastroFuncionario = () => {
                 if (pesquisando) {
                   setPesquisando(false);
                 }
-              }} s
+              }}
               onSearch={(value, event, type) => {
                 const str = value.trim();
                 setPesquisando(false);
@@ -182,13 +182,13 @@ const CadastroFuncionario = () => {
             />
           </div>
           <div className={styles.filtros}>
-            <div>
+            <div className={styles.estiloGap}>
               <label htmlFor="">Filtrar por:</label>
               <select name="option" id="filtro-cliente" className={styles.slct} onChange={(e) => { setTipoFiltro(e.target.value) }}>
                 <option value="nome">Nome</option>
               </select>
             </div>
-            <div>
+            <div className={styles.estiloGap}>
               <label htmlFor="">Ordenação:</label>
               <select value={ordenacao} name="ordenacao" id="ordenacao-cliente" className={styles.slct} onChange={(e) => { setOrdenacao(e.target.value) }}>
                 <option value="ascending">Crescente</option>
@@ -208,8 +208,8 @@ const CadastroFuncionario = () => {
                 });
 
                 return (
-                  <div className={styles.listFuncionarioLimit}>
-                    <div key={funcionario.id} className={styles.cardInfo}>
+                  <div key={funcionario.id} className={styles.listFuncionarioLimit}>
+                    <div className={styles.cardInfo}>
                       <div>
                         <span className={styles.nomeFuncionario}>
                           {funcionario.nome}

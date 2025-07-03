@@ -70,8 +70,6 @@ const Lista_Agendamentos = () => {
 
   async function popularAgendamentos() {
     const limit = 6;
-    setPesquisando(true);
-
     const resp = await empresaFetch(
       `/agendamento?query=${searchQuery}&option=${tipoFiltro}&estado=${filtroEstado}&ordenacao=${ordenacao}&limit=${limit}&page=${paginaAtual}`
     );
@@ -103,7 +101,6 @@ const Lista_Agendamentos = () => {
 
   async function popularServicosRealizados() {
     const limit = 6;
-    setPesquisando(true);
 
     const resp = await empresaFetch(
       `/servico-realizado?query=${searchQuery}&option=${tipoFiltro}&ordenacao=${ordenacao}&limit=${limit}&page=${paginaAtualServ}`
@@ -154,6 +151,7 @@ const Lista_Agendamentos = () => {
   // Pesquisa
   useEffect(() => {
     if (validar) {
+      setPesquisando(true);
       if (abaAtual == "agendamentos") {
         popularAgendamentos();
       } else if (abaAtual == "servicos-executados") {
@@ -166,7 +164,7 @@ const Lista_Agendamentos = () => {
     if (validar) {
       setTimeout(() => {
         setRefresh(refresh + 1);
-      }, 10000);
+      }, 3000);
     }
   }, [refresh]);
 
@@ -401,7 +399,6 @@ const Lista_Agendamentos = () => {
             <Table striped>
               <thead>
                 <tr>
-                  <th>Editar</th>
                   <th>Serviço</th>
                   <th>Nome do cliente</th>
                   <th>Funcionário atribuído</th>
@@ -450,9 +447,6 @@ const Lista_Agendamentos = () => {
                 />
               </Pagination>
             )}
-          </Tab>
-          <Tab eventKey="todos" title="Todos">
-            Tab content for Contact
           </Tab>
         </Tabs>
       </Container>

@@ -49,9 +49,9 @@ const CardServicoOferecido = ({ servicoOferecido }) => {
             }</td>
             <td>{servicoOferecido.tipoPreco}</td>
             <td>{`R$ ${servicoOferecido.preco}`}</td>
-            <td>
+            {/* <td>
                 <Button className="form-button" variant="primary" onClick={ (e) => {navigate(`/empresa/servicos/${servicoOferecido.id}/editar`)}}>Editar</Button>
-            </td>
+            </td> */}
             <td>
             <Dropdown>
                     <Dropdown.Toggle variant="success" id="dropdown-basic">

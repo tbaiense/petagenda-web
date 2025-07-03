@@ -16,7 +16,6 @@ const CardServicoRealizado = ({ servicoRealizado, handleEditar }) => {
     <>
     {/*  */}
       <tr>
-        <td><img src={editar} onClick={() => editarServico(servicoRealizado?.id)} alt=""/></td>
         <td>{servicoRealizado.servico.nome}</td>
         <td>{servicoRealizado.cliente.nome}</td>
         <td>{servicoRealizado.funcionario.nome}</td>
@@ -26,7 +25,7 @@ const CardServicoRealizado = ({ servicoRealizado, handleEditar }) => {
               servicoRealizado.inicio.replace(/ \d\d:\d\d:\d\d/, "")}
           </div>
           <br />
-          ~2 meses
+          {/* ~2 meses */}
         </td>
         <td>
           {servicoRealizado.inicio &&
@@ -48,6 +47,12 @@ const CardServicoRealizado = ({ servicoRealizado, handleEditar }) => {
           <Button className="form-button" variant="success">
             Visualizar
           </Button>
+          <img 
+            style={{
+              marginInline: '1em'
+              
+            }}
+            src={editar} onClick={() => editarServico(servicoRealizado?.id)} alt=""/>
         </td>
       </tr>
     </>
