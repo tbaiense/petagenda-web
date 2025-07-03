@@ -22,7 +22,7 @@ import { Button } from "antd";
 
 const SideBar = () => {
   const { removeEmpresa, removeToken } = useAuth();
-    const [mostrarModalSaida, setmostrarModalSaida] = useState(false);
+  const [mostrarModalSaida, setmostrarModalSaida] = useState(false);
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
@@ -377,17 +377,15 @@ const SideBar = () => {
           <Modal.Title>Tem certeza?</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>Ao air você vai estar se desconectando da plataforma!</p>
+          <p>Ao sair você vai estar se desconectando da plataforma!</p>
         </Modal.Body>
         <Modal.Footer>
-          <Button
-            variant="danger"
-
-            onClick={handleConfirm}
-          >
+          <Button variant="danger" onClick={handleConfirm}>
             Sair
           </Button>
-          <Button variant="secondary" onClick={handleClose}>Cancelar</Button>
+          <Button variant="secondary" onClick={handleClose}>
+            Cancelar
+          </Button>
         </Modal.Footer>
       </Modal>
 
