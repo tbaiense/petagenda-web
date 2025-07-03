@@ -120,7 +120,7 @@ const CadastroEmpresa = () => {
       <div className="container my-5"  style={{maxWidth: '45em'}}>
         <h2 className="text-center mb-4">Cadastro da Empresa</h2>
 
-        <div className="row">
+        <div className="row justify-content-center">
           <div className="col-md-8">
             <form onSubmit={handleSubmit(onSubmit, onError)} className="p-4">
               <div className="mb-3">
@@ -215,16 +215,6 @@ const CadastroEmpresa = () => {
                 )}
               </div>
 
-              <div className="mb-3">
-                <label>Imagem de Perfil</label>
-                <input
-                  type="file"
-                  className="form-control"
-                  disabled={true}
-                  {...register("pathImgFile")}
-                />
-              </div>
-
               <div className="d-flex justify-content-center mt-4 gap-3">
                 <Button
                   disabled={!!isLoading}
@@ -256,19 +246,6 @@ const CadastroEmpresa = () => {
                 </Button>
               </div>
             </form>
-          </div>
-
-          <div className="col-md-4 d-flex flex-column align-items-center justify-content-start mt-4 mt-md-0">
-            {imagemURL && (
-              <img
-                src={imagemURL}
-                alt="Pré-visualização"
-                className="img-thumbnail mb-3"
-                width={200}
-                height={210}
-              />
-            )}
-            <h5>Foto de Perfil</h5>
           </div>
         </div>
       </div>
