@@ -15,7 +15,7 @@ import { LoadingOutlined } from "@ant-design/icons";
 const { Search } = Input;
 
 const CadastroFuncionario = () => {
-      const [ isLoading, setIsLoading ] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { empresaFetch, validar } = useAuth();
   const [showModal, setShowModal] = useState(false);
   const [showModalEditar, setShowModalEditar] = useState(false);
@@ -25,10 +25,19 @@ const CadastroFuncionario = () => {
 
   const [pesquisando, setPesquisando] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [ordenacao, setOrdenacao] = useState('ascending');
-  const [tipoFiltro, setTipoFiltro] = useState('nome');
+  const [ordenacao, setOrdenacao] = useState("ascending");
+  const [tipoFiltro, setTipoFiltro] = useState("nome");
   const handleClose = () => setShowModal(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const {
     register,
@@ -64,7 +73,9 @@ const CadastroFuncionario = () => {
 
   function popularListaFuncionarios() {
     setPesquisando(true);
-    empresaFetch(`/funcionario?query=${searchQuery}&option=${tipoFiltro}&ordenacao=${ordenacao}`)
+    empresaFetch(
+      `/funcionario?query=${searchQuery}&option=${tipoFiltro}&ordenacao=${ordenacao}`
+    )
       .then((res) => res.json())
       .then((data) => {
         setFuncionarios(data.funcionarios);
@@ -166,13 +177,14 @@ const CadastroFuncionario = () => {
               allowClear={true}
               onClear={() => {
                 setPesquisando(false);
-                setSearchQuery('');
+                setSearchQuery("");
               }}
               onPressEnter={(e) => {
                 if (pesquisando) {
                   setPesquisando(false);
                 }
-              }} s
+              }}
+              s
               onSearch={(value, event, type) => {
                 const str = value.trim();
                 setPesquisando(false);
@@ -184,13 +196,28 @@ const CadastroFuncionario = () => {
           <div className={styles.filtros}>
             <div>
               <label htmlFor="">Filtrar por:</label>
-              <select name="option" id="filtro-cliente" className={styles.slct} onChange={(e) => { setTipoFiltro(e.target.value) }}>
+              <select
+                name="option"
+                id="filtro-cliente"
+                className={styles.slct}
+                onChange={(e) => {
+                  setTipoFiltro(e.target.value);
+                }}
+              >
                 <option value="nome">Nome</option>
               </select>
             </div>
             <div>
               <label htmlFor="">Ordenação:</label>
-              <select value={ordenacao} name="ordenacao" id="ordenacao-cliente" className={styles.slct} onChange={(e) => { setOrdenacao(e.target.value) }}>
+              <select
+                value={ordenacao}
+                name="ordenacao"
+                id="ordenacao-cliente"
+                className={styles.slct}
+                onChange={(e) => {
+                  setOrdenacao(e.target.value);
+                }}
+              >
                 <option value="ascending">Crescente</option>
                 <option value="descending">Decrescente</option>
               </select>
@@ -201,7 +228,7 @@ const CadastroFuncionario = () => {
               funcionarios?.map((funcionario) => {
                 const servExerce = servicos.flatMap((serv) => {
                   if (serv.id == funcionario.exerce[0].servico) {
-                    return serv.nome
+                    return serv.nome;
                   } else {
                     return [];
                   }
@@ -214,11 +241,25 @@ const CadastroFuncionario = () => {
                         <span className={styles.nomeFuncionario}>
                           {funcionario.nome}
                         </span>
-                        <div className={styles.layoutInfoPerson}>
-                          <span>{funcionario.telefone}</span>
-                          <span>|</span>
-                          <span>{servExerce.length > 0 && servExerce[0]}</span>
-                        </div>
+
+                        {isMobile ? (
+                          <>
+                            <div className={styles.mobile}>
+                              <span>{funcionario.telefone}</span>
+                              <span>
+                                {servExerce.length > 0 && servExerce[0]}
+                              </span>
+                            </div>
+                          </>
+                        ) : (
+                          <div className={styles.layoutInfoPerson}>
+                            <span>{funcionario.telefone}</span>
+                            <span>|</span>
+                            <span>
+                              {servExerce.length > 0 && servExerce[0]}
+                            </span>
+                          </div>
+                        )}
                       </div>
                       <div className={styles.position}>
                         <div className={styles.position2}>
@@ -354,9 +395,11 @@ const CadastroFuncionario = () => {
 
                       if (value && value.length > 0) {
                         value = value.replaceAll(/[^0-9]/g, "");
-                        value = `${value.substring(0, 2)}${value.length > 2 ? " " : ""
-                          }${value.substring(2, 7)}${value.length > 7 ? "-" : ""
-                          }${value.substring(7, 11)}`;
+                        value = `${value.substring(0, 2)}${
+                          value.length > 2 ? " " : ""
+                        }${value.substring(2, 7)}${
+                          value.length > 7 ? "-" : ""
+                        }${value.substring(7, 11)}`;
                         console.log("limpei");
                       }
                       setValue(e.target.name, value);
@@ -377,11 +420,20 @@ const CadastroFuncionario = () => {
               </Form.Group>
 
               <div className="d-flex justify-content-center">
-                <Button type="submit" >Cadastrar
-                  {isLoading && <span style={{ display: 'inline-block', marginLeft: '0.8em', verticalAlign: 'center' }}>
-                    <LoadingOutlined />
-                    </span>}
-                  </Button>
+                <Button type="submit">
+                  Cadastrar
+                  {isLoading && (
+                    <span
+                      style={{
+                        display: "inline-block",
+                        marginLeft: "0.8em",
+                        verticalAlign: "center",
+                      }}
+                    >
+                      <LoadingOutlined />
+                    </span>
+                  )}
+                </Button>
               </div>
             </Form>
           </Modal.Body>

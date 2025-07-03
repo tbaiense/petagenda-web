@@ -19,3 +19,15 @@
   border: 1px solid rgb(0, 0, 0, 0.3);
   overflow: auto;
 }
+
+.porfavorDeus{
+    background-color: #9d4005 !important;
+}
+.dropdown-menu {
+  background-color: #9d4005 !important;
+}
+
+.dropdown-item {
+  color: #9d4005 !important;
+}
+

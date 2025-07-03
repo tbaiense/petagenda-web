@@ -114,6 +114,16 @@ const Agendamento = () => {
         console.error("Erro ao buscar Clientes:", error);
       });
   }
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   async function popularPetsCliente(id) {
     empresaFetch(`/pet?idCliente=${id}`)
@@ -394,11 +404,11 @@ const Agendamento = () => {
         </div>
       )}
       <div className="containergeral mt-1">
-        <h1 className="cadastrar_agendamento__title">Novo agendamento</h1>
+        <h1 className="cadastrar_agendamento__title">Novo Agendamento</h1>
         <hr />
         <Container className="cadatrar_agendamento mt-4">
           <Form onSubmit={handleSubmit(onSubmit)}>
-            <Row>
+            <Row style={{display: isMobile ? "flex" : "", flexDirection: isMobile ? "column" : ""}}>
               <Col className="campos-espaco">
                 <Form.Group controlId="formServico" className="form-servico">
                   <Form.Label>Filtrar serviço por:</Form.Label>
@@ -448,7 +458,7 @@ const Agendamento = () => {
               </Col>
             </Row>
 
-            <Row className="mt-3">
+            <Row className="mt-3" style={{display: isMobile ? "flex" : "", flexDirection: isMobile ? "column" : ""}}>
               <Col className="campos-espaco">
                 <Form.Group controlId="formData" className="">
                   <Form.Label>Data do agendamento:<span className="obrigatorio">*</span></Form.Label>
@@ -484,7 +494,7 @@ const Agendamento = () => {
                 </Form.Group>
               </Col>
             </Row>
-            <Row className="mt-3">
+            <Row className="mt-3" style={{display: isMobile ? "flex" : "", flexDirection: isMobile ? "column" : ""}}>
               <Col className="campos-espaco">
                 <Form.Group>
                   <Form.Label>Preço por pets:</Form.Label>
@@ -535,7 +545,7 @@ const Agendamento = () => {
               <h2 className="mt-4">Pets participantes</h2>
               <hr></hr>
             </Row>
-            <Row className="mt-3">
+            <Row className="mt-3" style={{display: isMobile ? "flex" : "", flexDirection: isMobile ? "column" : ""}}>
               <Col className="campos-espaco">
                 <Form.Group controlId="formServico">
                   <Form.Label>Cliente:<span className="obrigatorio">*</span></Form.Label>
@@ -627,7 +637,7 @@ const Agendamento = () => {
                     <span>Buscar</span>
                   </Stack>
                 </Accordion.Header>
-                <Accordion.Body>
+                <Accordion.Body style={{padding: isMobile ? "0" : ""}}>
                   <CamposEndereco
                     setValue={setValue}
                     cep={cepBuscar}
@@ -663,7 +673,7 @@ const Agendamento = () => {
                     <span>Devolver</span>
                   </Stack>
                 </Accordion.Header>
-                <Accordion.Body>
+                <Accordion.Body style={{padding: isMobile ? "0" : ""}}>
                   <Form.Group className="mb-3" controlId="formBasicEmail">
                     <FormCheck
                       type="switch"

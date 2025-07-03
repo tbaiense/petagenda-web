@@ -13,7 +13,24 @@
   width: 42vw;
 }
 /* --------------------------------------- Pesquisa e filtros --------------------------------------------- */
-
+@media (max-width:767px){
+  .orgContent{
+    width: 100vw;
+  }
+  .alinhamento{
+    margin: 0;
+    padding: 5px;
+    justify-content:unset;
+  }
+  .pesquisa{
+    padding-bottom: 0.2rem;
+    padding-top: 0.2rem;
+  }
+}
+.mobile{
+  display: flex;
+  flex-direction: column;
+}
 .filtros{
   display: flex;
   gap: 20px;
