@@ -202,11 +202,11 @@ const CadastrarClientes = () => {
         </div>
       )}
       <h1 className="cadastrar_agendamento__title">Novo Cliente</h1>
-      <hr />
+      <hr className="linha"/>
       <Container className="cadatrar_agendamento mt-4">
         <Form onSubmit={handleSubmit(onSubmit, onError)}>
-          <Row>
-            <Col className="campos-espaco">
+          <Row className="controleResponsividade">
+            <Col className="campos-espaco ">
               <Form.Group controlId="formNome">
                 <Form.Label>Nome<span className="obrigatorio">*</span></Form.Label>
                 <Form.Control
@@ -326,7 +326,7 @@ const CadastrarClientes = () => {
           </Row>
 
           <Row className="d-flex justify-content-center mt-4">
-            <Col md="auto">
+            <Col md="auto" className="d-flex justify-content-center">
               <Button
                 variant="primary"
                 type="submit"

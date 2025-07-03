@@ -212,14 +212,14 @@ const CadastrarPets = () => {
         </div>
       )}
       <h1 className={styles.cadastrar_agendamento__title}>Cadastrar Pet</h1>
-      <hr />
+      <hr className="linha" />
       <Container className={`mt-4 ${styles.cadatrar_agendamento}`}>
         <Form
           action=""
           onSubmit={handleSubmit(onSubmit, onErrors)}
           className={styles.previnindoVazamento}
         >
-          <Row>
+          <Row className="controleResponsividade">
             <Col className={styles.campos_espaco}>
               <Form.Group>
                 <Form.Label>Dono:<span className="obrigatorio">*</span></Form.Label>
@@ -293,7 +293,7 @@ const CadastrarPets = () => {
               </Form.Group>
             </Col>
           </Row>
-          <Row className="mt-3">
+          <Row className="mt-3 controleResponsividade">
             <Col className={styles.campos_espaco}>
               <Form.Group className={styles.raca_input}>
                 <Form.Label>Raça:</Form.Label>
@@ -331,7 +331,7 @@ const CadastrarPets = () => {
                 )}
               </Form.Group>
             </Col>
-            <Col>
+            <Col >
               <Form.Group>
                 <Form.Label>Porte:</Form.Label>
                 <Form.Select
@@ -356,7 +356,7 @@ const CadastrarPets = () => {
             </Col>
           </Row>
           <Row className="mt-3">
-            <Col md={3} className={styles.campos_espaco}>
+            <Col md={3} className={`${styles.campos_espaco}`}>
               <Form.Group>
                 <Form.Label>Sexo:<span className="obrigatorio">*</span></Form.Label>
                 <Form.Select
@@ -376,7 +376,7 @@ const CadastrarPets = () => {
                 )}
               </Form.Group>
             </Col>
-            <Col className={`d-flex align-items-end ${styles.campos_espaco}`}>
+            <Col className={`d-flex align-items-end ${styles.castrado}`}>
               <div>
                 <Form.Group className="d-flex align-items-center gap-2 mb-0">
                   <Controller
@@ -454,8 +454,8 @@ const CadastrarPets = () => {
             </Col>
           </Row>
 
-          <Row className="d-flex justify-content-center">
-            <Col md="auto">
+          <Row className="d-flex justify-content-center botaoDoCaralho">
+            <Col md="auto" className="d-flex justify-content-center">
               <Button type="submit" className="mt-4 mb-4 botao__cadastrar">
                 Cadastrar
               </Button>

@@ -384,11 +384,11 @@ const ServicoExecutado = () => {
         </div>
       )}
       <h1 className="cadastrar_agendamento__title">Novo Serviço Realizado</h1>
-      <hr />
-      <Container className="cadatrar_agendamento mt-4">
+      <hr className="linha" />
+      <Container className="cadatrar_agendamento mt-1">
         <Form onSubmit={handleSubmit(onSubmit)}>
-          <Row>
-            <Col className="campos-espaco">
+          {/* <Row> */}
+            {/* <Col className="campos-espaco">
               <Form.Group controlId="formFiltro" className="form-servico">
                 <Form.Label>Filtrar serviço por:</Form.Label>
                 <Form.Select {...register("filtro")}>
@@ -407,8 +407,11 @@ const ServicoExecutado = () => {
                   <option value="">Pássaros</option>
                 </Form.Select>
               </Form.Group>
-            </Col>
-            <Col>
+            </Col> */}
+          {/* </Row> */}
+
+          <Row className="mt-3 controleResponsividade">
+            <Col className="campos-espaco">
               <Form.Group controlId="formServico">
                 <Form.Label>Serviço<span className="obrigatorio">*</span></Form.Label>
                 <Form.Select
@@ -435,9 +438,6 @@ const ServicoExecutado = () => {
                 </Form.Select>
               </Form.Group>
             </Col>
-          </Row>
-
-          <Row className="mt-3">
             <Col className="campos-espaco">
               <Form.Group controlId="dataExecucao">
                 <Form.Label>Data de execução<span className="obrigatorio">*</span></Form.Label>
@@ -470,7 +470,7 @@ const ServicoExecutado = () => {
             </Col>
           </Row>
           {/* Preços */}
-          <Row className="mt-3">
+          <Row className="mt-3 controleResponsividade">
             <Col className="campos-espaco">
               <Form.Group>
                 <Form.Label>Preço por pets:</Form.Label>
@@ -546,7 +546,7 @@ const ServicoExecutado = () => {
             <h2 className="mt-4">Pets participantes</h2>
             <hr></hr>
           </Row>
-          <Row className="mt-3">
+          <Row className="mt-3 controleResponsividade">
             <Col className="campos-espaco">
               <Form.Group controlId="formServico">
                 <Form.Label>Cliente:<span className="obrigatorio">*</span></Form.Label>
@@ -581,7 +581,7 @@ const ServicoExecutado = () => {
                 </Form.Select>
               </Form.Group>
             </Col>
-            <Col className="justify-content-start d-flex align-items-end ">
+            <Col className="justify-content-start d-flex align-items-end alinhaBotao">
               <Button
                 className="button-adicionar"
                 type="button"
@@ -611,7 +611,7 @@ const ServicoExecutado = () => {
           <h5 className="mt-4">Endereços</h5>
           <hr />
           <Accordion
-            className="mt-3 mb-4"
+            className="mt-3 mb-4 formataEssaMerda"
             defaultActiveKey="0"
             flush
             alwaysOpen
@@ -631,7 +631,7 @@ const ServicoExecutado = () => {
                   <span>Buscar</span>
                 </Stack>
               </Accordion.Header>
-              <Accordion.Body>
+              <Accordion.Body className="VaiSeFoder2">
                 <CamposEndereco
                   setValue={setValue}
                   handleChange={handleEnderecoChange}
@@ -657,7 +657,7 @@ const ServicoExecutado = () => {
                   <span>Devolver</span>
                 </Stack>
               </Accordion.Header>
-              <Accordion.Body>
+              <Accordion.Body className="VaiSeFoder2">
                 <Form.Group className="mb-3" controlId="formBasicEmail">
                   <FormCheck
                     type="switch"
@@ -688,7 +688,7 @@ const ServicoExecutado = () => {
               <Form.Control
                 as="textarea"
                 placeholder="Deixe aqui uma observação"
-                style={{ height: "150px" }}
+                style={{ height: "150px", resize:"none" }}
                 {...register("observacoes")}
               />
             </FloatingLabel>

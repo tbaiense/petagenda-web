@@ -121,14 +121,6 @@ const Relatorios = () => {
             </div>
 
             <div className={styles.estiloCampos}>
-              <label>Incluir Despesas:</label>
-              <input
-                type="checkbox"
-                {...register("incluirDespesas", { required: false })}
-              />
-            </div>
-
-            <div className={styles.estiloCampos}>
               <label>Início:</label>
               <input type="date" {...register("inicio", { required: true })} />
             </div>

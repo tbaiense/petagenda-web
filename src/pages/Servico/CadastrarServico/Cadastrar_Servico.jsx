@@ -160,10 +160,10 @@ function CadastrarServico() {
         </div>
       )}
       <h1 className="cadastrar_agendamento__title">Novo Serviço</h1>
-      <hr />
+      <hr className="linha" />
       <Container className="cadatrar_agendamento mt-4">
         <Form onSubmit={handleSubmit(onSubmit)}>
-          <Row>
+          <Row className="controleResponsividade">
             <Col className="campos-espaco">
               <Form.Group controlId="formNome">
                 <Form.Label>Nome<span className="obrigatorio">*</span></Form.Label>
@@ -214,7 +214,7 @@ function CadastrarServico() {
               </Form.Group>
             </Col>
           </Row>
-          <Row className="mt-3">
+          <Row className="mt-3 controleResponsividade">
             <Col className="campos-espaco">
               <Form.Group controlId="formTipo">
                 <Form.Label>Tipo de cobrança<span className="obrigatorio">*</span></Form.Label>
@@ -236,7 +236,7 @@ function CadastrarServico() {
               </Form.Group>
             </Col>
           </Row>
-          <Row className="mt-3 mb-3">
+          <Row className="mt-3 mb-3 controleResponsividade">
             <Col className="campos-espaco">
               <Form.Group controlId="formRestricaoEspecies">
                 <Form.Label>Restrição de espécies</Form.Label>

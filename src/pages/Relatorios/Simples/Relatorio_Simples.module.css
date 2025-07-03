@@ -13,9 +13,14 @@
     gap: 10px;
     border-radius: 12px;
     border: 1px solid rgb(0, 0, 0);
-    width: 40%;    
+    width: 30vw;    
     padding-top: 1rem;
     padding-bottom: 1rem;
+}
+@media (max-width:767px){
+    .estiloFormulario{
+        width: 90vw;
+    }
 }
 /* ------------------------------- Estilo dos campos -------------------------- */
 .estiloCampos{
