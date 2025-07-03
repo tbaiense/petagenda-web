@@ -393,13 +393,13 @@ const Agendamento = () => {
           />
         </div>
       )}
-      <div className="containergeral mt-1">
-        <h1 className="cadastrar_agendamento__title">Novo agendamento</h1>
-        <hr />
-        <Container className="cadatrar_agendamento mt-4">
+      <div className="containergeral mt-1 " >
+        <h1 className="cadastrar_agendamento__title">Novo Agendamento</h1>
+        <hr className="linha"/>
+        <Container className="cadatrar_agendamento mt-1">
           <Form onSubmit={handleSubmit(onSubmit)}>
-            <Row>
-              <Col className="campos-espaco">
+            {/* <Row> */}
+              {/* <Col className="campos-espaco">
                 <Form.Group controlId="formServico" className="form-servico">
                   <Form.Label>Filtrar serviço por:</Form.Label>
                   <Form.Select {...register("filtro")}>
@@ -418,8 +418,8 @@ const Agendamento = () => {
                     <option value="">Pássaros</option>
                   </Form.Select>
                 </Form.Group>
-              </Col>
-              <Col className="">
+              </Col> */}
+              {/* <Col className="">
                 <Form.Group className="" controlId="formServico">
                   <Form.Label>Serviço:<span className="obrigatorio">*</span></Form.Label>
                   <Form.Select
@@ -446,9 +446,36 @@ const Agendamento = () => {
                   </Form.Select>
                 </Form.Group>
               </Col>
-            </Row>
+            </Row> */}
 
-            <Row className="mt-3">
+            <Row className="mt-3 controleResponsividade">
+              <Col className="campos-espaco">
+                <Form.Group className="" controlId="formServico">
+                  <Form.Label>Serviço:<span className="obrigatorio">*</span></Form.Label>
+                  <Form.Select
+                    value={servicoSel}
+                    {...register("servico", {
+                      required: {
+                        value: true,
+                        message: "Selecione o serviço para o agendamento",
+                      },
+                    })}
+                    onInput={(e) => {
+                      // const novoServ = getValues('servico')
+                      const novoServ = e.target.value;
+                      setServicoSel(+novoServ);
+                      console.log("rodei: ", novoServ);
+                    }}
+                  >
+                    <option value="">Selecione um serviço</option>
+                    {servicos.map((servico) => (
+                      <option key={servico.id} value={servico.id}>
+                        {servico.nome}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+              </Col>
               <Col className="campos-espaco">
                 <Form.Group controlId="formData" className="">
                   <Form.Label>Data do agendamento:<span className="obrigatorio">*</span></Form.Label>
@@ -473,7 +500,7 @@ const Agendamento = () => {
                 <Form.Group controlId="formFuncionario">
                   <Form.Label>Funcionário:</Form.Label>
                   <Form.Select {...register("funcionario")}>
-                    <option value="">Selecione um funcionário</option>
+                    <option value="">Selecione funcionário</option>
                     {funcionarios &&
                       funcionarios.map((funcionario) => (
                         <option key={funcionario.id} value={funcionario.id}>
@@ -484,7 +511,7 @@ const Agendamento = () => {
                 </Form.Group>
               </Col>
             </Row>
-            <Row className="mt-3">
+            <Row className="mt-3 controleResponsividade">
               <Col className="campos-espaco">
                 <Form.Group>
                   <Form.Label>Preço por pets:</Form.Label>
@@ -535,7 +562,7 @@ const Agendamento = () => {
               <h2 className="mt-4">Pets participantes</h2>
               <hr></hr>
             </Row>
-            <Row className="mt-3">
+            <Row className="mt-3 controleResponsividade">
               <Col className="campos-espaco">
                 <Form.Group controlId="formServico">
                   <Form.Label>Cliente:<span className="obrigatorio">*</span></Form.Label>
@@ -571,7 +598,7 @@ const Agendamento = () => {
                 </Form.Group>
               </Col>
 
-              <Col className="justify-content-start d-flex align-items-end ">
+              <Col className="justify-content-start d-flex align-items-end alinhaBotao">
                 <Button
                   className="button-adicionar"
                   type="button"
@@ -603,10 +630,11 @@ const Agendamento = () => {
             <h5>Endereços</h5>
             <hr />
             <Accordion
-              className="mt-3 mb-4"
+              className="mt-3 mb-4 formataEssaMerda"
               defaultActiveKey="0"
               flush
               alwaysOpen
+
             >
               <Accordion.Item eventKey="0" className="pet-servico-card-item">
                 <Accordion.Header>
@@ -627,7 +655,7 @@ const Agendamento = () => {
                     <span>Buscar</span>
                   </Stack>
                 </Accordion.Header>
-                <Accordion.Body>
+                <Accordion.Body className="VaiSeFoder2">
                   <CamposEndereco
                     setValue={setValue}
                     cep={cepBuscar}
@@ -663,7 +691,7 @@ const Agendamento = () => {
                     <span>Devolver</span>
                   </Stack>
                 </Accordion.Header>
-                <Accordion.Body>
+                <Accordion.Body className="VaiSeFoder2">
                   <Form.Group className="mb-3" controlId="formBasicEmail">
                     <FormCheck
                       type="switch"
@@ -707,13 +735,13 @@ const Agendamento = () => {
                 <Form.Control
                   as="textarea"
                   placeholder="Deixe aqui uma observação"
-                  style={{ height: "150px" }}
+                  style={{ height: "150px", resize:"none" }}
                   {...register("observacoes")}
                 />
               </FloatingLabel>
             </Row>
-            <Row className="d-flex justify-content-center">
-              <Col md="auto">
+            <Row className="d-flex justify-content-center botaoDoCaralho">
+              <Col md="auto" className="d-flex justify-content-center">
                 <Button
                   variant="primary"
                   onClick={(e) => {

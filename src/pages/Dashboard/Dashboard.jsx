@@ -72,7 +72,7 @@ function Dashboard() {
 
   return (
     <div>
-      <Container fluid className="mt-2 container-dashboard">
+      <Container fluid className="mt-1 container-dashboard">
         <Row className="mb-1 row-dashboard justify-content-center">
           <Col xs={12} sm={6} md={2}>
             <Card className="card-dashboard">

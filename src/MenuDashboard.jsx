@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import petAgenda from "./assets/LogoNav.png"
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
+import styles from "./styles/MenuDashBoard.module.css"
 
 const MenuDashBoard = () => {
     const { removeToken, setUsuario, setEmpresa, validar } = useAuth();
@@ -210,14 +211,14 @@ const MenuDashBoard = () => {
                 </Sider>
             )}
 
-            <Layout style={{ background: '#fff8f0' }}>
+            <Layout style={{ background: isMobile ? "white" : '#fff8f0' }}>
                 {!isMobile && (
                     <Header style={{ background: "#fff8f0", paddingLeft: '1rem', textAlign: "left" }}>
                         <img src={petAgenda} alt="" />
                     </Header>
                 )}
                 <Content style={{ margin: "16px" }}>
-                    <div style={{ padding: 24, minHeight: "90vh", background: "#fff" }}>
+                    <div style={{ padding: isMobile ? "0" : "24", minHeight: "90vh", background: isMobile ? "transparent" : "#fff" }} className={styles.vaiSeFerrar}>
                         <Outlet />
                     </div>
                 </Content>

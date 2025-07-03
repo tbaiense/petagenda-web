@@ -11,17 +11,41 @@
   flex-wrap: wrap;
 }
 
+@media (max-width: 767px) {
+  .linhaEndereco {
+    display: flex;
+    flex-direction: column;
+  }
+  .labelInput input{
+    width: 100%;
+  }
+}
+
 .labelInput {
   display: flex;
   flex-direction: column;
   gap: 5px;
 }
 
-.flex1 { flex: 1; }
-.flex2 { flex: 2; }
-.flex3 { flex: 3; }
-.flex4 { flex: 4; }
-.flex5 { flex: 5; }
+.flex1 {
+  flex: 1;
+}
+
+.flex2 {
+  flex: 2;
+}
+
+.flex3 {
+  flex: 3;
+}
+
+.flex4 {
+  flex: 4;
+}
+
+.flex5 {
+  flex: 5;
+}
 
 
 .labelInput input,
@@ -37,5 +61,5 @@
 .labelInput select:focus {
   outline: none;
   border-color: #1FAF30;
-    box-shadow: 0 0 10px rgba(31, 175, 48, 0.6); 
+  box-shadow: 0 0 10px rgba(31, 175, 48, 0.6);
 }
