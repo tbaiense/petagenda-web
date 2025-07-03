@@ -1,195 +1,229 @@
-import SideBar from "./components/SideBar/SideBar";
-import LogoPetAgenda from "./components/LogoPet/LogoPetAgenda";
 import { Outlet } from "react-router-dom";
-import styles from "./styles/MenuDashboard.module.css";
 import { useAuth } from "./contexts/UserContext";
-import { Layout, Menu } from "antd";
+import { Layout, Menu, Drawer, Button } from "antd";
+import { MenuOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import petAgenda from "./assets/LogoNav.png"
+import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 
 const MenuDashBoard = () => {
-  const { removeToken, setUsuario, setEmpresa, validar } = useAuth();
-  if (!validar) {
-    console.log("EM MODO DE DESENVOLVIMENTO: SEM VALIDAÇÃO DE CREDENCIAIS!");
-    removeToken();
-    setUsuario({ id: 0, admin: false });
-    setEmpresa({ id: 0, licenca: "corporativo" });
-  }
+    const { removeToken, setUsuario, setEmpresa, validar } = useAuth();
+    if (!validar) {
+        console.log("EM MODO DE DESENVOLVIMENTO: SEM VALIDAÇÃO DE CREDENCIAIS!");
+        removeToken();
+        setUsuario({ id: 0, admin: false });
+        setEmpresa({ id: 0, licenca: "corporativo" });
+    }
 
-  const { Header, Content, Sider } = Layout;
+    const { Header, Content, Sider } = Layout;
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+    const [drawerVisible, setDrawerVisible] = useState(false);
+    const navigate = useNavigate();
+    const [collapsed, setCollapsed] = useState(false);
 
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
+    const handleLogout = () => {
+        removeToken();
+        setUsuario({ id: 0, admin: false });
+        setEmpresa({ id: 0, licenca: "corporativo" });
+        navigate("/login"); // ou onde for sua rota de logout
     };
 
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
-  const [openKeys, setOpenKeys] = useState([]);
+    const [openKeys, setOpenKeys] = useState([]);
+    const handleOpenChange = (keys) => {
+        const latestKey = keys.find((key) => !openKeys.includes(key));
+        setOpenKeys(latestKey ? [latestKey] : []);
+    };
 
-  const handleOpenChange = (keys) => {
-    const latestKey = keys.find((key) => !openKeys.includes(key));
-    setOpenKeys(latestKey ? [latestKey] : []);
-  };
+    const handleMenuClick = ({ key }) => {
+        const routes = {
+            dashboard: "/empresa/dashboard",
+            "ag-novo": "/empresa/agendamentos/cadastrar",
+            "ag-lista": "/empresa/agendamentos/lista",
+            "ag-realizado": "/empresa/servicos/realizados/cadastrar",
+            "pets-novo": "/empresa/pets/cadastrar",
+            "pets-lista": "/empresa/pets/lista",
+            "clientes-novo": "/empresa/clientes/cadastrar",
+            "clientes-lista": "/empresa/clientes/lista",
+            funcionarios: "/empresa/funcionarios",
+            "servicos-novo": "/empresa/servicos/cadastrar",
+            "servicos-lista": "/empresa/servicos/lista",
+            "relatorios-simples": "/empresa/relatorios/simples",
+            "relatorios-detalhado": "/empresa/relatorios/detalhado",
+        };
+        if (routes[key]) {
+            navigate(routes[key]);
+            if (isMobile) setDrawerVisible(false);
+        }
+    };
 
-  const menuItems = [
-    {
-      key: "dashboard",
-      label: "Início",
-      onClick: () => navigate("/empresa/dashboard"),
-    },
-    {
-      key: "agendamentos",
-      label: "Agendamentos",
-      children: [
+    const menuItems = [
         {
-          key: "ag-novo",
-          label: "Novo",
-          onClick: () => navigate("/empresa/agendamentos/cadastrar"),
+            key: "dashboard",
+            label: "Início",
         },
         {
-          key: "ag-lista",
-          label: "Listar",
-          onClick: () => navigate("/empresa/agendamentos/lista"),
+            key: "agendamentos",
+            label: "Agendamentos",
+            children: [
+                { key: "ag-novo", label: "Novo" },
+                { key: "ag-lista", label: "Listar" },
+                { key: "ag-realizado", label: "Realizado" },
+            ],
         },
         {
-          key: "ag-realizado",
-          label: "Realizado",
-          onClick: () => navigate("/empresa/servicos/realizados/cadastrar"),
-        },
-      ],
-    },
-    {
-      key: "pets",
-      label: "Pets",
-      children: [
-        {
-          key: "pets-novo",
-          label: "Novo",
-          onClick: () => navigate("/empresa/pets/cadastrar"),
+            key: "pets",
+            label: "Pets",
+            children: [
+                { key: "pets-novo", label: "Novo" },
+                { key: "pets-lista", label: "Listar" },
+            ],
         },
         {
-          key: "pets-lista",
-          label: "Listar",
-          onClick: () => navigate("/empresa/pets/lista"),
-        },
-      ],
-    },
-    {
-      key: "clientes",
-      label: "Clientes",
-      children: [
-        {
-          key: "clientes-novo",
-          label: "Novo",
-          onClick: () => navigate("/empresa/clientes/cadastrar"),
+            key: "clientes",
+            label: "Clientes",
+            children: [
+                { key: "clientes-novo", label: "Novo" },
+                { key: "clientes-lista", label: "Listar" },
+            ],
         },
         {
-          key: "clientes-lista",
-          label: "Listar",
-          onClick: () => navigate("/empresa/clientes/lista"),
-        },
-      ],
-    },
-    {
-      key: "funcionarios",
-      label: "Funcionários",
-      onClick: () => navigate("/empresa/funcionarios"),
-    },
-    {
-      key: "servicos",
-      label: "Serviços Oferecidos",
-      children: [
-        {
-          key: "servicos-novo",
-          label: "Novo",
-          onClick: () => navigate("/empresa/servicos/cadastrar"),
+            key: "funcionarios",
+            label: "Funcionários",
         },
         {
-          key: "servicos-lista",
-          label: "Lista",
-          onClick: () => navigate("/empresa/servicos/lista"),
-        },
-      ],
-    },
-    {
-      key: "relatorios",
-      label: "Relatórios",
-      children: [
-        {
-          key: "relatorios-simples",
-          label: "Simples",
-          onClick: () => navigate("/empresa/relatorios/simples"),
+            key: "servicos",
+            label: "Serviços Oferecidos",
+            children: [
+                { key: "servicos-novo", label: "Novo" },
+                { key: "servicos-lista", label: "Lista" },
+            ],
         },
         {
-          key: "relatorios-detalhado",
-          label: "Detalhado",
-          onClick: () => navigate("/empresa/relatorios/detalhado"),
+            key: "relatorios",
+            label: "Relatórios",
+            children: [
+                { key: "relatorios-simples", label: "Simples" },
+                { key: "relatorios-detalhado", label: "Detalhado" },
+            ],
         },
-      ],
-    },
-  ];
+    ];
 
-  return (
-    <>
-      <Layout style={{ minHeight: "100vh" }}>
-        {isMobile ? (
-          <Header style={{ background: "#9d4005", padding: 0 }}>
-            <Menu
-              mode="horizontal"
-              theme="dark"
-              style={{ background: "#9d4005" }}
-              defaultSelectedKeys={["1"]}
-              items={menuItems}
-              openKeys={openKeys}
-              onOpenChange={handleOpenChange}
-            />
-          </Header>
-        ) : (
-          <Sider collapsible style={{ background: "#9d4005" }}>
-            <div
-              style={{
-                height: 32,
-                margin: 16,
-                background: "rgba(255,255,255,0.2)",
-              }}
-            />
-            <Menu
-              theme="dark"
-              mode="inline"
-              openKeys={openKeys}
-              onOpenChange={handleOpenChange}
-              defaultSelectedKeys={["1"]}
-              style={{ background: "#9d4005" }}
-              items={menuItems}
-            />
-          </Sider>
-        )}
+    return (
+        <Layout style={{ minHeight: "100vh" }}>
+            {isMobile ? (
+                <Header
+                    style={{
+                        background: "#9d4005",
+                        padding: "0 16px",
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                    }}
+                >
+                    <Button
+                        type="text"
+                        icon={<MenuOutlined style={{ fontSize: 24, color: "#fff" }} />}
+                        onClick={() => setDrawerVisible(true)}
+                    />
 
-        <Layout>
-          {!isMobile && (
-            <Header
-              style={{ background: "#fff", padding: 0, textAlign: "center" }}
-            >
-              <h1 style={{ margin: 0 }}>PetAgenda</h1>
-            </Header>
-          )}
+                    <Drawer
+                        title="Menu"
+                        placement="left"
+                        onClose={() => setDrawerVisible(false)}
+                        open={drawerVisible}
+                        bodyStyle={{ padding: 0 }}
+                    >
+                        <Menu
+                            mode="inline"
+                            items={menuItems}
+                            onClick={handleMenuClick}
+                            openKeys={openKeys}
+                            onOpenChange={handleOpenChange}
+                        />
+                        <div style={{ padding: 16, borderTop: "1px solid #f0f0f0" }}>
+                            <Button danger block onClick={handleLogout}>
+                                Sair
+                            </Button>
+                        </div>
+                    </Drawer>
 
-          <Content style={{ margin: "16px" }}>
-            <div style={{ padding: 24, minHeight: "90vh", background: "#fff" }}>
-              <Outlet />
-            </div>
-          </Content>
+                    <div style={{ color: "#fff", fontSize: 20, fontWeight: "bold" }}>
+                        <span style={{ color: "#fff" }}>Pet</span>
+                        <span style={{ color: "#ffc107", marginLeft: 4 }}>Agenda</span>
+                    </div>
+                </Header>
+            ) : (
+                <Sider 
+                    collapsed={collapsed}
+                    onCollapse={setCollapsed}
+                    trigger={collapsed ? <RightOutlined style={{ color: 'white', fontSize: '18px' }} /> : <LeftOutlined style={{ color: 'white', fontSize: '18px' }} />}
+                    style={{ background: '#9d4005', position: 'relative' }}>
+                    <div
+                        style={{
+                            height: 32,
+                            margin: 16,
+                            background: "rgba(255,255,255,0.2)",
+                        }}
+                    />
+                    <div
+                        style={{
+                            position: 'absolute',
+                            top: 150,
+                            right: -20,
+                            width: 20,
+                            height: 60,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            cursor: 'pointer',
+                            backgroundColor: '#7a2f02',
+                            borderRadius: '0 4px 4px 0',
+                            zIndex: 10,
+                        }}
+                        onClick={() => setCollapsed(!collapsed)}
+                    >
+                        {collapsed ? <RightOutlined style={{ color: 'white' }} /> : <LeftOutlined style={{ color: 'white' }} />}
+                    </div>
+                    <Menu
+                        theme="dark"
+                        mode="inline"
+                        openKeys={openKeys}
+                        onOpenChange={handleOpenChange}
+                        style={{ background: "#9d4005" }}
+                        items={menuItems}
+                        onClick={handleMenuClick}
+                    />
+                    <div style={{ padding: 16}}>
+                        <Button danger block onClick={handleLogout}>
+                            Sair
+                        </Button>
+                    </div>
+                </Sider>
+            )}
+
+            <Layout style={{ background: '#fff8f0' }}>
+                {!isMobile && (
+                    <Header style={{ background: "#fff8f0", paddingLeft: '1rem', textAlign: "left" }}>
+                        <img src={petAgenda} alt="" />
+                    </Header>
+                )}
+                <Content style={{ margin: "16px" }}>
+                    <div style={{ padding: 24, minHeight: "90vh", background: "#fff" }}>
+                        <Outlet />
+                    </div>
+                </Content>
+            </Layout>
         </Layout>
-      </Layout>
-    </>
-  );
+    );
 };
 
 export default MenuDashBoard;
