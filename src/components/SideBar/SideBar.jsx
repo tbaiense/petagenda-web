@@ -61,7 +61,13 @@ const SideBar = () => {
 
           <li
             className={`${styles.sideItem} ${styles.dropdownWrapper} ${styles.branco}`}
-            onClick={isOpen ? () => toggleDropdown("agendamentos") : () => navigate("/empresa/agendamentos/lista")}
+            onClick={() => {
+              if(isOpen){
+                toggleDropdown("agendamentos");
+              }else{
+                navigate("/empresa/agendamentos/lista")
+              }
+            }}
           >
             <div
               className={
@@ -104,13 +110,13 @@ const SideBar = () => {
               <ul className={styles.floatingDropdown}>
                 <p className={styles.tituloDropdow}>Agendamentos</p>
                 <li>
-                  <Link to="/empresa/agendamentos/cadastrar">Novo</Link>
+                  <Link to="/empresa/agendamentos/cadastrar" onClick={e => e.stopPropagation()}>Novo</Link>
                 </li>
                 <li>
                   <Link to="/empresa/agendamentos/lista">Lista</Link>
                 </li>
                 <li>
-                  <Link to="/empresa/servicos/realizados/cadastrar">
+                  <Link to="/empresa/servicos/realizados/cadastrar" onClick={e => e.stopPropagation()}>
                     Realizado
                   </Link>
                 </li>
@@ -151,10 +157,10 @@ const SideBar = () => {
               <ul className={styles.floatingDropdown}>
                 <p className={styles.tituloDropdow}>Pet</p>
                 <li>
-                  <Link to="/empresa/pets/cadastrar">Cadastrar</Link>
+                  <Link to="/empresa/pets/cadastrar" onClick={e => e.stopPropagation()}>Cadastrar</Link>
                 </li>
                 <li>
-                  <Link to="/empresa/pets/lista">Lista</Link>
+                  <Link to="/empresa/pets/lista" onClick={e => e.stopPropagation()}>Lista</Link>
                 </li>
               </ul>
             )}
@@ -193,10 +199,10 @@ const SideBar = () => {
               <ul className={styles.floatingDropdown}>
                 <p className={styles.tituloDropdow}>Cliente</p>
                 <li>
-                  <Link to="/empresa/clientes/cadastrar">Novo</Link>
+                  <Link to="/empresa/clientes/cadastrar" onClick={e => e.stopPropagation()}>Novo</Link>
                 </li>
                 <li>
-                  <Link to="/empresa/clientes/lista">Lista</Link>
+                  <Link to="/empresa/clientes/lista" onClick={e => e.stopPropagation()}>Lista</Link>
                 </li>
               </ul>
             )}
@@ -244,7 +250,7 @@ const SideBar = () => {
               <ul className={styles.floatingDropdown}>
                 <p className={styles.tituloDropdow}>Serviço oferecido</p>
                 <li>
-                  <Link to="/empresa/servicos/cadastrar">Novo</Link>
+                  <Link to="/empresa/servicos/cadastrar" onClick={e => e.stopPropagation()}>Novo</Link>
                 </li>
                 <li>
                   <Link to="/empresa/servicos/lista">Lista</Link>

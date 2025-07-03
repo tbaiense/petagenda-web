@@ -116,13 +116,13 @@ const ListarClientes = () => {
                         />
                     </div>
                     <div className={styles.filtros}>
-                        <div>
+                        <div className={styles.estiloGap}>
                             <label htmlFor="">Filtrar por:</label>
                             <select name="option" id="filtro-cliente" className={styles.slct} onChange={(e) => { setTipoFiltro(e.target.value) }}>
                                 <option value="nome">Nome</option>
                             </select>
                         </div>
-                        <div>
+                        <div className={styles.estiloGap}>
                             <label htmlFor="">Ordenação:</label>
                             <select value={ordenacao} name="ordenacao" id="ordenacao-cliente" className={styles.slct} onChange={(e) => { setOrdenacao(e.target.value) }}>
                                 <option value="ascending">Crescente</option>

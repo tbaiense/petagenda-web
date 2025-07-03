@@ -34,12 +34,15 @@
 
 .filtros{
     display: flex;
-    gap: 20px;
+    gap: 2px;
     padding: 1rem 1.5rem 1rem 1.5rem ;
     background-color: #bf6a04;
     color: white;
     border-radius: 8px 8px 0px 0px;
     justify-content: space-between;
+}
+.estiloGap select{
+    margin-left: 1px;
 }
 .filtros select{
     padding: 3px;
