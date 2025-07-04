@@ -47,6 +47,17 @@ const CadastrarPets = () => {
     control,
   } = useForm();
 
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const cadastrarPet = async (pet) => {
     const jsonPet = JSON.stringify(pet);
     console.log("novo: ", jsonPet);
@@ -219,10 +230,18 @@ const CadastrarPets = () => {
           onSubmit={handleSubmit(onSubmit, onErrors)}
           className={styles.previnindoVazamento}
         >
-          <Row>
+          <Row
+            style={{
+              display: isMobile ? "flex" : "",
+              flexDirection: isMobile ? "column" : "",
+              gap: isMobile ? "1rem" : "",
+            }}
+          >
             <Col className={styles.campos_espaco}>
               <Form.Group>
-                <Form.Label>Dono:<span className="obrigatorio">*</span></Form.Label>
+                <Form.Label>
+                  Dono:<span className="obrigatorio">*</span>
+                </Form.Label>
                 <Form.Select
                   {...register("clienteId", {
                     required: {
@@ -245,7 +264,9 @@ const CadastrarPets = () => {
             </Col>
             <Col className={styles.campos_espaco}>
               <Form.Group>
-                <Form.Label>Nome do Pet:<span className="obrigatorio">*</span></Form.Label>
+                <Form.Label>
+                  Nome do Pet:<span className="obrigatorio">*</span>
+                </Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Digite o nome do pet"
@@ -267,7 +288,9 @@ const CadastrarPets = () => {
             </Col>
             <Col>
               <Form.Group>
-                <Form.Label>Especie:<span className="obrigatorio">*</span></Form.Label>
+                <Form.Label>
+                  Especie:<span className="obrigatorio">*</span>
+                </Form.Label>
                 <Form.Select
                   id="especie-select"
                   {...register("especie", {
@@ -293,9 +316,16 @@ const CadastrarPets = () => {
               </Form.Group>
             </Col>
           </Row>
-          <Row className="mt-3">
+          <Row
+            style={{
+              display: isMobile ? "flex" : "",
+              flexDirection: isMobile ? "column" : "",
+              gap: isMobile ? "1rem" : "",
+            }}
+            className="mt-3"
+          >
             <Col className={styles.campos_espaco}>
-              <Form.Group className={styles.raca_input}>
+              <Form.Group>
                 <Form.Label>Raça:</Form.Label>
                 <Form.Control
                   type="text"
@@ -355,10 +385,19 @@ const CadastrarPets = () => {
               </Form.Group>
             </Col>
           </Row>
-          <Row className="mt-3">
+          <Row
+            style={{
+              display: isMobile ? "flex" : "",
+              flexDirection: isMobile ? "column" : "",
+              gap: isMobile ? "1rem" : "",
+            }}
+            className="mt-3"
+          >
             <Col md={3} className={styles.campos_espaco}>
               <Form.Group>
-                <Form.Label>Sexo:<span className="obrigatorio">*</span></Form.Label>
+                <Form.Label>
+                  Sexo:<span className="obrigatorio">*</span>
+                </Form.Label>
                 <Form.Select
                   {...register("sexo", {
                     required: {
@@ -455,7 +494,7 @@ const CadastrarPets = () => {
           </Row>
 
           <Row className="d-flex justify-content-center">
-            <Col md="auto">
+            <Col className="text-center">
               <Button type="submit" className="mt-4 mb-4 botao__cadastrar">
                 Cadastrar
               </Button>

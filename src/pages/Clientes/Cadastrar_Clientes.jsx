@@ -28,6 +28,17 @@ const CadastrarClientes = () => {
     reset,
     watch,
   } = useForm();
+  
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   async function preencherEnderecosCEP(cep) {
     try {
@@ -205,10 +216,18 @@ const CadastrarClientes = () => {
       <hr />
       <Container className="cadatrar_agendamento mt-4">
         <Form onSubmit={handleSubmit(onSubmit, onError)}>
-          <Row>
+          <Row
+            style={{
+              display: isMobile ? "flex" : "",
+              flexDirection: isMobile ? "column" : "",
+              gap: isMobile ? "1rem" : "",
+            }}
+          >
             <Col className="campos-espaco">
               <Form.Group controlId="formNome">
-                <Form.Label>Nome<span className="obrigatorio">*</span></Form.Label>
+                <Form.Label>
+                  Nome<span className="obrigatorio">*</span>
+                </Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Digite o nome"
@@ -241,7 +260,9 @@ const CadastrarClientes = () => {
 
             <Col>
               <Form.Group controlId="formTelefone">
-                <Form.Label>Telefone<span className="obrigatorio">*</span></Form.Label>
+                <Form.Label>
+                  Telefone<span className="obrigatorio">*</span>
+                </Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="27 99988-7766"
@@ -326,7 +347,7 @@ const CadastrarClientes = () => {
           </Row>
 
           <Row className="d-flex justify-content-center mt-4">
-            <Col md="auto">
+            <Col className="text-center">
               <Button
                 variant="primary"
                 type="submit"
