@@ -27,6 +27,16 @@ function Editar_Agendamento() {
     setValue,
     getValues,
   } = useForm();
+      const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  
+    useEffect(() => {
+      const handleResize = () => {
+        setIsMobile(window.innerWidth < 768);
+      };
+  
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
   const [clientes, setClientes] = useState([]);
   const [incluirBuscar, setIncluirBuscar] = useState(false);
@@ -326,7 +336,7 @@ function Editar_Agendamento() {
         <hr />
         <Container className="cadatrar_agendamento mt-4">
           <Form onSubmit={handleSubmit(onSubmit)}>
-            <Row>
+            <Row style={{display: isMobile ? "flex" : "", flexDirection: isMobile ? "column" : ""}}>
               <Col className="campos-espaco">
                 <Form.Group controlId="formServico" className="form-servico">
                   <Form.Label>Filtrar serviço por:</Form.Label>
@@ -370,7 +380,7 @@ function Editar_Agendamento() {
               </Col>
             </Row>
 
-            <Row className="mt-3">
+            <Row className="mt-3" style={{display: isMobile ? "flex" : "", flexDirection: isMobile ? "column" : ""}}>
               <Col className="campos-espaco">
                 <Form.Group controlId="formData">
                   <Form.Label>Data do agendamento</Form.Label>
@@ -410,7 +420,7 @@ function Editar_Agendamento() {
               <h2 className="mt-4">Pets participantes</h2>
               <hr></hr>
             </Row>
-            <Row className="mt-3">
+            <Row className="mt-3" style={{display: isMobile ? "flex" : "", flexDirection: isMobile ? "column" : ""}}>
               <Col className="campos-espaco">
                 <Form.Group controlId="formServico">
                   <Form.Label>Cliente:</Form.Label>
@@ -495,7 +505,7 @@ function Editar_Agendamento() {
                     <span>Buscar</span>
                   </Stack>
                 </Accordion.Header>
-                <Accordion.Body>
+                <Accordion.Body style={{padding: isMobile ? "0" : ""}}>
                   <CamposEndereco
                     setValue={setValue}
                     handleChange={handleEnderecoChange}
@@ -521,7 +531,7 @@ function Editar_Agendamento() {
                     <span>Devolver</span>
                   </Stack>
                 </Accordion.Header>
-                <Accordion.Body>
+                <Accordion.Body style={{padding: isMobile ? "0" : ""}}>
                   <Form.Group className="mb-3" controlId="formBasicEmail">
                     <FormCheck
                       type="switch"

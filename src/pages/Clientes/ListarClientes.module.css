@@ -20,6 +20,20 @@
     justify-content: space-between;
     width: 100%;
 }
+@media (max-width:767px){
+  .orgContent{
+    width: 100vw;
+  }
+  .alinhamento{
+    margin: 0;
+    padding: 5px;
+    justify-content:unset;
+  }
+  .pesquisa{
+    padding-bottom: 0.2rem;
+    padding-top: 0.2rem;
+  }
+}
 .nomeCliente{
   font-size: large;
   font-weight: bold;

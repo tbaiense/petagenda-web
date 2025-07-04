@@ -76,6 +76,16 @@ function CadastrarServico() {
       getEspeciesPet();
     }
   }, []);
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  
+    useEffect(() => {
+      const handleResize = () => {
+        setIsMobile(window.innerWidth < 768);
+      };
+  
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
   const { register, handleSubmit, reset, watch, getValues, setValue } =
     useForm();
@@ -163,7 +173,7 @@ function CadastrarServico() {
       <hr />
       <Container className="cadatrar_agendamento mt-4">
         <Form onSubmit={handleSubmit(onSubmit)}>
-          <Row>
+          <Row style={{display: isMobile ? "flex" : "", flexDirection: isMobile ? "column" : ""}}>
             <Col className="campos-espaco">
               <Form.Group controlId="formNome">
                 <Form.Label>Nome<span className="obrigatorio">*</span></Form.Label>
@@ -214,7 +224,7 @@ function CadastrarServico() {
               </Form.Group>
             </Col>
           </Row>
-          <Row className="mt-3">
+          <Row className="mt-3" style={{display: isMobile ? "flex" : "", flexDirection: isMobile ? "column" : ""}}>
             <Col className="campos-espaco">
               <Form.Group controlId="formTipo">
                 <Form.Label>Tipo de cobrança<span className="obrigatorio">*</span></Form.Label>
@@ -236,7 +246,7 @@ function CadastrarServico() {
               </Form.Group>
             </Col>
           </Row>
-          <Row className="mt-3 mb-3">
+          <Row className="mt-3 mb-3" style={{display: isMobile ? "flex" : "", flexDirection: isMobile ? "column" : ""}}>
             <Col className="campos-espaco">
               <Form.Group controlId="formRestricaoEspecies">
                 <Form.Label>Restrição de espécies</Form.Label>

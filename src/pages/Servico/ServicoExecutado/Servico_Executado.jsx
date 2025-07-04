@@ -129,6 +129,16 @@ const ServicoExecutado = () => {
         console.error("Erro ao buscar Funcionarios:", error);
       });
   }
+      const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  
+    useEffect(() => {
+      const handleResize = () => {
+        setIsMobile(window.innerWidth < 768);
+      };
+  
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
+    }, []);
   function getData() {
     const formData = { ...getValues() };
     const pets = petsSel;
@@ -387,7 +397,7 @@ const ServicoExecutado = () => {
       <hr />
       <Container className="cadatrar_agendamento mt-4">
         <Form onSubmit={handleSubmit(onSubmit)}>
-          <Row>
+          <Row style={{display: isMobile ? "flex" : "", flexDirection: isMobile ? "column" : ""}}>
             <Col className="campos-espaco">
               <Form.Group controlId="formFiltro" className="form-servico">
                 <Form.Label>Filtrar serviço por:</Form.Label>
@@ -437,7 +447,7 @@ const ServicoExecutado = () => {
             </Col>
           </Row>
 
-          <Row className="mt-3">
+          <Row className="mt-3" style={{display: isMobile ? "flex" : "", flexDirection: isMobile ? "column" : ""}}>
             <Col className="campos-espaco">
               <Form.Group controlId="dataExecucao">
                 <Form.Label>Data de execução<span className="obrigatorio">*</span></Form.Label>
@@ -470,7 +480,7 @@ const ServicoExecutado = () => {
             </Col>
           </Row>
           {/* Preços */}
-          <Row className="mt-3">
+          <Row className="mt-3" style={{display: isMobile ? "flex" : "", flexDirection: isMobile ? "column" : ""}}>
             <Col className="campos-espaco">
               <Form.Group>
                 <Form.Label>Preço por pets:</Form.Label>
@@ -546,7 +556,7 @@ const ServicoExecutado = () => {
             <h2 className="mt-4">Pets participantes</h2>
             <hr></hr>
           </Row>
-          <Row className="mt-3">
+          <Row className="mt-3" style={{display: isMobile ? "flex" : "", flexDirection: isMobile ? "column" : ""}}>
             <Col className="campos-espaco">
               <Form.Group controlId="formServico">
                 <Form.Label>Cliente:<span className="obrigatorio">*</span></Form.Label>
@@ -631,7 +641,7 @@ const ServicoExecutado = () => {
                   <span>Buscar</span>
                 </Stack>
               </Accordion.Header>
-              <Accordion.Body>
+              <Accordion.Body style={{padding: isMobile ? "0" : ""}}>
                 <CamposEndereco
                   setValue={setValue}
                   handleChange={handleEnderecoChange}
@@ -657,7 +667,7 @@ const ServicoExecutado = () => {
                   <span>Devolver</span>
                 </Stack>
               </Accordion.Header>
-              <Accordion.Body>
+              <Accordion.Body style={{padding: isMobile ? "0" : ""}}>
                 <Form.Group className="mb-3" controlId="formBasicEmail">
                   <FormCheck
                     type="switch"

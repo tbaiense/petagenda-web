@@ -15,13 +15,23 @@ const ListarPets = () => {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [pesquisando, setPesquisando] = useState(false);
-  const [ordenacao, setOrdenacao] = useState('ascending');
-  const [tipoFiltro, setTipoFiltro] = useState('nome');
-  const [especie, setEspecie] = useState('');
+  const [ordenacao, setOrdenacao] = useState("ascending");
+  const [tipoFiltro, setTipoFiltro] = useState("nome");
+  const [especie, setEspecie] = useState("");
   const [especiesDisponiveis, setEspeciesDisponiveis] = useState([]);
 
   const { empresaFetch, validar } = useAuth();
   const handleClose = () => setShowInfo(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Obter espécies
   async function getEspeciesPet() {
@@ -54,7 +64,9 @@ const ListarPets = () => {
   async function obterPets() {
     try {
       setPesquisando(true);
-      const resPets = await empresaFetch(`/pet?query=${searchQuery}&option=${tipoFiltro}&ordenacao=${ordenacao}&especie=${especie}`);
+      const resPets = await empresaFetch(
+        `/pet?query=${searchQuery}&option=${tipoFiltro}&ordenacao=${ordenacao}&especie=${especie}`
+      );
 
       const jsonBody = await resPets.json();
       return jsonBody.pets;
@@ -120,13 +132,14 @@ const ListarPets = () => {
               allowClear={true}
               onClear={() => {
                 setPesquisando(false);
-                setSearchQuery('');
+                setSearchQuery("");
               }}
               onPressEnter={(e) => {
                 if (pesquisando) {
                   setPesquisando(false);
                 }
-              }} s
+              }}
+              s
               onSearch={(value, event, type) => {
                 const str = value.trim();
                 setPesquisando(false);
@@ -135,37 +148,113 @@ const ListarPets = () => {
               }}
             />
           </div>
-          <div className={styles.filtros}>
-            <div>
-              <label htmlFor="">Filtrar por:</label>
-              <select name="option" id="filtro-cliente" className={styles.slct} onChange={(e) => { setTipoFiltro(e.target.value) }}>
-                <option value="nome">Nome</option>
-              </select>
-            </div>
-            <div>
-              <label htmlFor="">Ordenação:</label>
-              <select value={ordenacao} name="ordenacao" id="ordenacao-cliente" className={styles.slct} onChange={(e) => { setOrdenacao(e.target.value) }}>
-                <option value="ascending">Crescente</option>
-                <option value="descending">Decrescente</option>
-              </select>
-            </div>
 
-            <div>
-              <label htmlFor="">Espécie:</label>
-              <select name="" id="" className={styles.slct} value={especie} onChange={(e) => setEspecie(e.target.value)}>
-                <option value="">Todas</option>
-                {especiesDisponiveis?.length > 0 &&
-                  especiesDisponiveis.map((e) => (
-                    <option key={e.id} value={e.id}>{e.nome}</option>
-                  ))
-                }
-              </select>
-            </div>
-          </div>
+          {isMobile ? (
+            <div className={styles.filtros}>
+              <div>
+                <label htmlFor="">Filtrar:</label>
+                <select
+                  name="option"
+                  id="filtro-cliente"
+                  className={styles.slct}
+                  onChange={(e) => {
+                    setTipoFiltro(e.target.value);
+                  }}
+                >
+                  <option value="nome">Nome</option>
+                </select>
+              </div>
+              {/* <div>
+                <label htmlFor="">Ordenação:</label>
+                <select
+                  value={ordenacao}
+                  name="ordenacao"
+                  id="ordenacao-cliente"
+                  className={styles.slct}
+                  onChange={(e) => {
+                    setOrdenacao(e.target.value);
+                  }}
+                >
+                  <option value="ascending">Crescente</option>
+                  <option value="descending">Decrescente</option>
+                </select>
+              </div> */}
 
+              <div>
+                <label htmlFor="">Espécie:</label>
+                <select
+                  name=""
+                  id=""
+                  className={styles.slct}
+                  value={especie}
+                  onChange={(e) => setEspecie(e.target.value)}
+                >
+                  <option value="">Todas</option>
+                  {especiesDisponiveis?.length > 0 &&
+                    especiesDisponiveis.map((e) => (
+                      <option key={e.id} value={e.id}>
+                        {e.nome}
+                      </option>
+                    ))}
+                </select>
+              </div>
+            </div>
+          ) : (
+            <div className={styles.filtros}>
+              <div>
+                <label htmlFor="">Filtrar por:</label>
+                <select
+                  name="option"
+                  id="filtro-cliente"
+                  className={styles.slct}
+                  onChange={(e) => {
+                    setTipoFiltro(e.target.value);
+                  }}
+                >
+                  <option value="nome">Nome</option>
+                </select>
+              </div>
+              <div>
+                <label htmlFor="">Ordenação:</label>
+                <select
+                  value={ordenacao}
+                  name="ordenacao"
+                  id="ordenacao-cliente"
+                  className={styles.slct}
+                  onChange={(e) => {
+                    setOrdenacao(e.target.value);
+                  }}
+                >
+                  <option value="ascending">Crescente</option>
+                  <option value="descending">Decrescente</option>
+                </select>
+              </div>
+
+              <div>
+                <label htmlFor="">Espécie:</label>
+                <select
+                  name=""
+                  id=""
+                  className={styles.slct}
+                  value={especie}
+                  onChange={(e) => setEspecie(e.target.value)}
+                >
+                  <option value="">Todas</option>
+                  {especiesDisponiveis?.length > 0 &&
+                    especiesDisponiveis.map((e) => (
+                      <option key={e.id} value={e.id}>
+                        {e.nome}
+                      </option>
+                    ))}
+                </select>
+              </div>
+            </div>
+          )}
+          
           <div>
             {pets?.length > 0 ? (
-              pets && pets.map((p) => {
+              pets &&
+              pets.map((p) => {
                 return (
                   <PetListaCard
                     key={p.id}
@@ -197,43 +286,69 @@ const ListarPets = () => {
                 <Modal.Body>
                   <div className={styles.__espaco__}>
                     <div className={styles.__estilo_pequeno__}>
-                      <label className={styles.__estilo_bold__}>Dono(a): </label>
+                      <label className={styles.__estilo_bold__}>
+                        Dono(a):{" "}
+                      </label>
                       <label htmlFor="">{petView.dono.nome}</label>
                     </div>
                     <div className={styles.espaco_entre_divs}>
                       <div className={styles.__estilo_pequeno__}>
-                        <label htmlFor="" className={styles.__estilo_bold__}>Espécie:</label>
+                        <label htmlFor="" className={styles.__estilo_bold__}>
+                          Espécie:
+                        </label>
                         <label htmlFor="">{petView.especie.nome}</label>
                       </div>
                       <div className={styles.__estilo_pequeno__}>
-                        <label htmlFor="" className={styles.__estilo_bold__}>Raça:</label>
+                        <label htmlFor="" className={styles.__estilo_bold__}>
+                          Raça:
+                        </label>
                         <label htmlFor="">{petView.raca}</label>
                       </div>
                       <div className={styles.__estilo_pequeno__}>
-                        <label htmlFor="" className={styles.__estilo_bold__}>Porte:</label>
-                        <label >{content}</label>
+                        <label htmlFor="" className={styles.__estilo_bold__}>
+                          Porte:
+                        </label>
+                        <label>{content}</label>
                       </div>
                     </div>
                     <div className={styles.espaco_entre_divs}>
                       <div className={styles.__estilo_pequeno__}>
-                        <label htmlFor="" className={styles.__estilo_bold__}>Cor:</label>
-                        <label >{petView.cor}</label>
+                        <label htmlFor="" className={styles.__estilo_bold__}>
+                          Cor:
+                        </label>
+                        <label>{petView.cor}</label>
                       </div>
                       <div className={styles.__estilo_pequeno__}>
-                        <label htmlFor="" className={styles.__estilo_bold__}>Castrado:</label>
-                        <label htmlFor="">{petView.eCastrado ? "Sim" : "Não"}</label>
+                        <label htmlFor="" className={styles.__estilo_bold__}>
+                          Castrado:
+                        </label>
+                        <label htmlFor="">
+                          {petView.eCastrado ? "Sim" : "Não"}
+                        </label>
                       </div>
                       <div className={styles.__estilo_pequeno__}>
-                        <label htmlFor="" className={styles.__estilo_bold__}>Sexo:</label>
-                        <label htmlFor="">{petView.sexo == "M" ? "Macho" : "Fêmea"}</label>
+                        <label htmlFor="" className={styles.__estilo_bold__}>
+                          Sexo:
+                        </label>
+                        <label htmlFor="">
+                          {petView.sexo == "M" ? "Macho" : "Fêmea"}
+                        </label>
                       </div>
                     </div>
                     <div>
-                      <label htmlFor="" className={styles.__estilo_bold__}>Estado da Saúde:</label>
-                      <p>{petView.estadoSaude ? petView.estadoSaude : "Nada Declarado"}</p>
+                      <label htmlFor="" className={styles.__estilo_bold__}>
+                        Estado da Saúde:
+                      </label>
+                      <p>
+                        {petView.estadoSaude
+                          ? petView.estadoSaude
+                          : "Nada Declarado"}
+                      </p>
                     </div>
                     <div>
-                      <label htmlFor="" className={styles.__estilo_bold__}>Comportamento:</label>
+                      <label htmlFor="" className={styles.__estilo_bold__}>
+                        Comportamento:
+                      </label>
                       <p>{petView.comportamento}</p>
                     </div>
                   </div>
