@@ -50,6 +50,16 @@ const Lista_Agendamentos = () => {
   const [showModalServ, setShowModalServ] = useState(false);
   const [editarServ, setEditarServ] = useState({});
   const [tipoFiltro, setTipoFiltro] = useState("cliente");
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   async function popularFuncionarios() {
     empresaFetch("/funcionario")
@@ -185,7 +195,7 @@ const Lista_Agendamentos = () => {
       setTimeout(() => {
         setMensagemAlerta(null);
       }, 2000);
-      
+
       window.history.replaceState({}, document.title);
     }
 
@@ -220,15 +230,22 @@ const Lista_Agendamentos = () => {
           />
         </div>
       )}
-      <Container>
+      <Container             style={{
+              display: isMobile ? "flex" : "",
+              flexDirection: isMobile ? "column" : "",
+              gap: isMobile ? "5px" : undefined
+            }}>
         {/* Topo */}
         <div>
-          <Row>
+          <Row
+          >
             <Col className="mb-3">
               <h2>Agendamentos e serviços executados</h2>
             </Col>
             <Col>
-              <Dropdown>
+              <Dropdown
+
+              >
                 <Dropdown.Toggle
                   className="botao_cadastrar"
                   id="dropdown-basic"
@@ -254,7 +271,14 @@ const Lista_Agendamentos = () => {
               </Dropdown>
             </Col>
           </Row>
-          <Row className="mb-3">
+          <Row
+            className="mb-3"
+            style={{
+              display: isMobile ? "flex" : "",
+              flexDirection: isMobile ? "column" : "",
+              gap: isMobile ? "5px" : undefined,
+            }}
+          >
             <Col className="campos-espaco" lg={5}>
               <Search
                 placeholder="Digite o que deseja pesquisar..."
@@ -335,33 +359,35 @@ const Lista_Agendamentos = () => {
           className="mb-3"
         >
           <Tab eventKey="agendamentos" title="Agendamentos">
-            <Table striped>
-              <thead>
-                <tr>
-                  <th>Serviço</th>
-                  <th>Nome do cliente</th>
-                  <th>Funcionário atribuído</th>
-                  <th>Data</th>
-                  <th>Hora</th>
-                  <th>Estado</th>
-                  <th>Valor</th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-                {agendamentos &&
-                  agendamentos.map((a) => {
-                    return (
-                      <CardAgendamento
-                        funcDisponiveis={funcDisponiveis}
-                        key={a.id}
-                        agendamento={a}
-                        setMensagemAlerta={setMensagemAlerta}
-                      />
-                    );
-                  })}
-              </tbody>
-            </Table>
+            <Container style={{ overflowX: isMobile ? "auto" : "" }}>
+              <Table striped>
+                <thead>
+                  <tr>
+                    <th>Serviço</th>
+                    <th>Nome do cliente</th>
+                    <th>Funcionário atribuído</th>
+                    <th>Data</th>
+                    <th>Hora</th>
+                    <th>Estado</th>
+                    <th>Valor</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {agendamentos &&
+                    agendamentos.map((a) => {
+                      return (
+                        <CardAgendamento
+                          funcDisponiveis={funcDisponiveis}
+                          key={a.id}
+                          agendamento={a}
+                          setMensagemAlerta={setMensagemAlerta}
+                        />
+                      );
+                    })}
+                </tbody>
+              </Table>
+            </Container>
             {paginas.length > 1 && (
               <Pagination>
                 <Pagination.First
@@ -398,33 +424,35 @@ const Lista_Agendamentos = () => {
                 setMensagemAlerta={setMensagemAlerta}
               />
             )}
-            <Table striped>
-              <thead>
-                <tr>
-                  <th>Editar</th>
-                  <th>Serviço</th>
-                  <th>Nome do cliente</th>
-                  <th>Funcionário atribuído</th>
-                  <th>Data</th>
-                  <th>Início</th>
-                  <th>Fim</th>
-                  <th>Valor</th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-                {servicosRealizados &&
-                  servicosRealizados.map((s) => {
-                    return (
-                      <CardServicoRealizado
-                        key={s.id}
-                        servicoRealizado={s}
-                        handleEditar={handleEditarServ}
-                      />
-                    );
-                  })}
-              </tbody>
-            </Table>
+            <Container style={{ overflowX: isMobile ? "auto" : "" }}>
+              <Table striped>
+                <thead>
+                  <tr>
+                    <th>Editar</th>
+                    <th>Serviço</th>
+                    <th>Nome do cliente</th>
+                    <th>Funcionário atribuído</th>
+                    <th>Data</th>
+                    <th>Início</th>
+                    <th>Fim</th>
+                    <th>Valor</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {servicosRealizados &&
+                    servicosRealizados.map((s) => {
+                      return (
+                        <CardServicoRealizado
+                          key={s.id}
+                          servicoRealizado={s}
+                          handleEditar={handleEditarServ}
+                        />
+                      );
+                    })}
+                </tbody>
+              </Table>
+            </Container>
             {paginasServ.length > 1 && (
               <Pagination>
                 <Pagination.First

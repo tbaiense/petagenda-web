@@ -29,6 +29,16 @@ const Lista_ServicosOferecidos = () => {
   const [paginaAtual, setPaginaAtual] = useState(0);
   const [refresh, setRefresh] = useState(0);
   const [paginas, setPaginas] = useState([]);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   const [servicosOferecidos, setServicosOferecidos] = useState([
     /*}
         {
@@ -104,7 +114,7 @@ const Lista_ServicosOferecidos = () => {
     <div className="lista_servicos_oferecidos_servicos mt-4">
       <Container>
         {/* Topo */}
-        <div>
+        <div style={{top: isMobile ? "0" : undefined}}>
           <Row>
             <Col>
               <h2>Serviços oferecidos</h2>
@@ -121,7 +131,13 @@ const Lista_ServicosOferecidos = () => {
               </Button>
             </Col>
           </Row>
-          <Row>
+          <Row
+            style={{
+              display: isMobile ? "flex" : undefined,
+              flexDirection: isMobile ? "column" : undefined,
+              gap: isMobile ? "5px" : undefined,
+            }}
+          >
             <Col className="campos-espaco">
               <Form.Control type="text" placeholder="Pesquisar..." />
             </Col>
@@ -149,20 +165,21 @@ const Lista_ServicosOferecidos = () => {
             </Col>
           </Row>
         </div>
-        <Table striped>
-          <thead>
-            <tr>
-              <th>Serviço</th>
-              <th>Categoria</th>
-              <th>Participantes</th>
-              <th>Espécies</th>
-              <th>Cobrança</th>
-              <th>Valor</th>
-              <th colSpan="2">Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {/* <CardServicoOferecido key={0} servicoOferecido={{
+        <Container style={{ overflowX: isMobile ? "auto" : "" }}>
+          <Table striped>
+            <thead>
+              <tr>
+                <th>Serviço</th>
+                <th>Categoria</th>
+                <th>Participantes</th>
+                <th>Espécies</th>
+                <th>Cobrança</th>
+                <th>Valor</th>
+                <th colSpan="2">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              {/* <CardServicoOferecido key={0} servicoOferecido={{
                             "id": 3,
                             "nome": "Capivara e Gato",
                             "categoria": 6,
@@ -181,12 +198,16 @@ const Lista_ServicosOferecidos = () => {
                                 }
                             ]
                         }}/> */}
-            {servicosOferecidos &&
-              servicosOferecidos.map((s) => {
-                return <CardServicoOferecido key={s.id} servicoOferecido={s} />;
-              })}
-          </tbody>
-        </Table>
+              {servicosOferecidos &&
+                servicosOferecidos.map((s) => {
+                  return (
+                    <CardServicoOferecido key={s.id} servicoOferecido={s} />
+                  );
+                })}
+            </tbody>
+          </Table>
+        </Container>
+
         {paginas.length > 1 && (
           <Pagination>
             <Pagination.First

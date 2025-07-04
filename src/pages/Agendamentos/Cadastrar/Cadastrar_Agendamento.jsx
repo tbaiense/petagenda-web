@@ -114,7 +114,7 @@ const Agendamento = () => {
         console.error("Erro ao buscar Clientes:", error);
       });
   }
-    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   useEffect(() => {
     const handleResize = () => {
@@ -408,7 +408,12 @@ const Agendamento = () => {
         <hr />
         <Container className="cadatrar_agendamento mt-4">
           <Form onSubmit={handleSubmit(onSubmit)}>
-            <Row style={{display: isMobile ? "flex" : "", flexDirection: isMobile ? "column" : ""}}>
+            <Row
+              style={{
+                display: isMobile ? "flex" : "",
+                flexDirection: isMobile ? "column" : "",
+              }}
+            >
               <Col className="campos-espaco">
                 <Form.Group controlId="formServico" className="form-servico">
                   <Form.Label>Filtrar serviço por:</Form.Label>
@@ -431,7 +436,9 @@ const Agendamento = () => {
               </Col>
               <Col className="">
                 <Form.Group className="" controlId="formServico">
-                  <Form.Label>Serviço:<span className="obrigatorio">*</span></Form.Label>
+                  <Form.Label>
+                    Serviço:<span className="obrigatorio">*</span>
+                  </Form.Label>
                   <Form.Select
                     value={servicoSel}
                     {...register("servico", {
@@ -458,10 +465,18 @@ const Agendamento = () => {
               </Col>
             </Row>
 
-            <Row className="mt-3" style={{display: isMobile ? "flex" : "", flexDirection: isMobile ? "column" : ""}}>
+            <Row
+              className="mt-3"
+              style={{
+                display: isMobile ? "flex" : "",
+                flexDirection: isMobile ? "column" : "",
+              }}
+            >
               <Col className="campos-espaco">
                 <Form.Group controlId="formData" className="">
-                  <Form.Label>Data do agendamento:<span className="obrigatorio">*</span></Form.Label>
+                  <Form.Label>
+                    Data do agendamento:<span className="obrigatorio">*</span>
+                  </Form.Label>
                   <Form.Control
                     type="date"
                     {...register("data", { required: true })}
@@ -471,7 +486,9 @@ const Agendamento = () => {
               </Col>
               <Col className="campos-espaco">
                 <Form.Group controlId="formHora">
-                  <Form.Label>Hora do agendamento:<span className="obrigatorio">*</span></Form.Label>
+                  <Form.Label>
+                    Hora do agendamento:<span className="obrigatorio">*</span>
+                  </Form.Label>
                   <Form.Control
                     type="time"
                     {...register("hora", { required: true })}
@@ -494,7 +511,13 @@ const Agendamento = () => {
                 </Form.Group>
               </Col>
             </Row>
-            <Row className="mt-3" style={{display: isMobile ? "flex" : "", flexDirection: isMobile ? "column" : ""}}>
+            <Row
+              className="mt-3"
+              style={{
+                display: isMobile ? "flex" : "",
+                flexDirection: isMobile ? "column" : "",
+              }}
+            >
               <Col className="campos-espaco">
                 <Form.Group>
                   <Form.Label>Preço por pets:</Form.Label>
@@ -545,10 +568,18 @@ const Agendamento = () => {
               <h2 className="mt-4">Pets participantes</h2>
               <hr></hr>
             </Row>
-            <Row className="mt-3" style={{display: isMobile ? "flex" : "", flexDirection: isMobile ? "column" : ""}}>
+            <Row
+              className="mt-3"
+              style={{
+                display: isMobile ? "flex" : "",
+                flexDirection: isMobile ? "column" : "",
+              }}
+            >
               <Col className="campos-espaco">
                 <Form.Group controlId="formServico">
-                  <Form.Label>Cliente:<span className="obrigatorio">*</span></Form.Label>
+                  <Form.Label>
+                    Cliente:<span className="obrigatorio">*</span>
+                  </Form.Label>
                   <Form.Select
                     onInput={(e) => {
                       popularPetsCliente(e.target.value);
@@ -568,7 +599,9 @@ const Agendamento = () => {
               </Col>
               <Col className="campos-espaco">
                 <Form.Group controlId="formServico">
-                  <Form.Label>Pet:<span className="obrigatorio">*</span></Form.Label>
+                  <Form.Label>
+                    Pet:<span className="obrigatorio">*</span>
+                  </Form.Label>
                   <Form.Select id="pet-selecionar" {...register("pet")}>
                     <option value="">Selecione um pet</option>
                     {petsCliente &&
@@ -637,7 +670,7 @@ const Agendamento = () => {
                     <span>Buscar</span>
                   </Stack>
                 </Accordion.Header>
-                <Accordion.Body style={{padding: isMobile ? "0" : ""}}>
+                <Accordion.Body style={{ padding: isMobile ? "0" : "" }}>
                   <CamposEndereco
                     setValue={setValue}
                     cep={cepBuscar}
@@ -673,7 +706,7 @@ const Agendamento = () => {
                     <span>Devolver</span>
                   </Stack>
                 </Accordion.Header>
-                <Accordion.Body style={{padding: isMobile ? "0" : ""}}>
+                <Accordion.Body style={{ padding: isMobile ? "0" : "" }}>
                   <Form.Group className="mb-3" controlId="formBasicEmail">
                     <FormCheck
                       type="switch"
