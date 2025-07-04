@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import petAgenda from "./assets/LogoNav.png"
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
-import styles from "./styles/MenuDashBoard.module.css"
+import styles from "./styles/MenuDashboard.module.css"
 import BreadCrumb from './components/Breadcrumb/BreadCrumb'
 import iconPerfil from "./assets/icon_perfil.svg";
 import {
