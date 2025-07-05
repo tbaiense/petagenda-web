@@ -32,17 +32,20 @@ O PetAgenda é um projeto de TCC desenvolvido após um ano e meio de estudos no 
 
 
 # 📝 Passo a passo para inicializar o projeto
-Frontend<br>
-● cd frontend/ <br>
-● npm install (para instalar todas as depêndencias) <br>
-● npm start (para inicializar a aplicação) <br>
+Debian 12 Bookworm
+- ```sudo apt install -y git```
+- ```git clone https://github.com/tbaiense/petagenda-setup```
+- ```cd petagenda-setup```
+- ```sudo ./deploy.sh```
 
-Backend<br>
-● cd backend/ <br>
-● npm install (para instalar todas as depêndencias) <br>
-● npx prisma generate (para gerar a tipagem do banco de dados no código fonte por meio do PrismaORM) <br>
-● npm run dev (para inicializar a aplicação) <br>
-
+Windows 10 e 11 (WSL2)
+- Abrir o Powershell ou Terminal
+- ```wsl --install -d Debian```
+- Definir usuário e senha
+- ```sudo apt install -y git```
+- ```git clone https://github.com/tbaiense/petagenda-setup```
+- ```cd petagenda-setup```
+- ```sudo ./deploy.sh```
 
 # </> Desenvolvedores
 <table> 
