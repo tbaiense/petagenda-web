@@ -271,7 +271,7 @@ const EditarServicoExecutavel = () => {
       setHoraFim(hFim)
       setValue("horaFim", hFim)
 
-      const hInicio = servicoRealizado?.inicio.split(" ")[1]
+      const hInicio = servicoRealizado?.inicio?.split(" ")[1]
       setHoraInicio(hInicio)
       setValue("horaInicio", hInicio)
 

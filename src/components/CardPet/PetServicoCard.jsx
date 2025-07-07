@@ -6,6 +6,8 @@ import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import { useState } from "react";
 
 const PetServicoCard = ({...props}) => {
+    console.log("props pet: ", props.pet);
+
     function CustomToggle({ children, eventKey}) {
         const decoratedOnClick = useAccordionButton(eventKey, () => {
             const btn = document.querySelector(`[id='accordion-item-${props.pet.id}-${props.pet.nome}']`);
@@ -37,9 +39,12 @@ const PetServicoCard = ({...props}) => {
                     <span style={{ fontSize: '1.0em',border: '1px solid grey', borderRadius: '2em', paddingInline: '1em', paddingBlock: '0.3em'}}>
                         { props.pet.especie.nome}
                     </span>
-                    <Button onClick={ e => {
-                        props.setPetList(props.petList.filter( p => p.id != props.pet.id ));
-                    }}>✕</Button>
+                    {
+                        props.allowEdit && 
+                        <Button onClick={ e => {
+                            props.setPetList(props.petList.filter( p => p.id != props.pet.id ));
+                        }}>✕</Button>
+                    }
                     <CustomToggle></CustomToggle>
                 </Stack>
             </Card.Header>
@@ -53,6 +58,7 @@ const PetServicoCard = ({...props}) => {
                             value={props.pet.alimentacao}
                             placeholder="Deixe aqui uma instrução para a alimentação do pet"
                             style={{ height: '70px' }}
+                            disabled={!props.allowEdit}
                             onChange={ e=> {
                                 props.pet.alimentacao = e.target.value;
                                 props.setPetList( props.petList.map( p => {
@@ -68,24 +74,27 @@ const PetServicoCard = ({...props}) => {
                         </div>
                         <div>
                         <h4>Remédios</h4>
-                        <hr></hr>
+                        <hr hidden={!props.allowEdit}></hr>
                         </div>
                         <Col>
-                        <Form.Group className="mb-3">
+                        <Form.Group className="mb-3" hidden={!props.allowEdit}>
                             <Form.Label>Nome do remédio:</Form.Label>
-                            <Form.Control type="text" placeholder="Dipirona monohidratada..." id="nome-remedio"/>
+                            <Form.Control disabled={!props.allowEdit} type="text" placeholder="Dipirona monohidratada..." id="nome-remedio"/>
                         </Form.Group>
                         </Col>
                         <Col>
-                        <Form.Group className="mb-3">
+                        <Form.Group className="mb-3" hidden={!props.allowEdit}>
                             <Form.Label>Instruções de administração:</Form.Label>
-                            <Form.Control type="text" placeholder="Administrar duas vezes ao dia..." id="instrucoes-remedio"/>
+                            <Form.Control 
+                            disabled={!props.allowEdit}
+                            type="text" placeholder="Administrar duas vezes ao dia..." id="instrucoes-remedio"/>
                         </Form.Group>
                         </Col>
                         <Col>
                         <Button 
                             variant="primary" 
                             type="button" 
+                            hidden={!props.allowEdit}
                             onClick={ e => {
                                 const rem = {
                                     nome: document.getElementById("nome-remedio").value,
@@ -118,7 +127,9 @@ const PetServicoCard = ({...props}) => {
                             <Row style={{ borderTop: "1px solid grey"}} className="pt-3 mt-4">
                                 <Stack direction="horizontal" gap={3}>
                                 <h4 className="me-auto">{ r.nome}</h4>
-                                <Button onClick={ e=> {
+                                <Button 
+                                hidden={!props.allowEdit}
+                                onClick={ e=> {
                                     if (props.pet.remedios.length != 0) {
                                         props.pet.remedios = props.pet.remedios.flatMap( rem => (rem.id == r.id) ? [] : rem );
                                         
