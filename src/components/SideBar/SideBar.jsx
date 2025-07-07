@@ -334,7 +334,7 @@ const SideBar = () => {
             )}
             {!isOpen && (
               <ul className={styles.floatingDropdown}>
-                <p className={styles.tituloDropdow}>Relatorio</p>
+                <p className={styles.tituloDropdow}>Relatório</p>
                 <li>
                   <Link to="/empresa/relatorios/simples">Simples</Link>
                 </li>
