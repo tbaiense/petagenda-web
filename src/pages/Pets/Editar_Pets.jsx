@@ -59,9 +59,6 @@ const EditarPet = () => {
     try {
       const res = await empresaFetch(`/pet/${id}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify(petAtualizado),
       });
 

@@ -121,7 +121,7 @@ const Lista_ServicosOferecidos = () => {
               </Button>
             </Col>
           </Row>
-          <Row>
+          {/* <Row>
             <Col className="campos-espaco">
               <Form.Control type="text" placeholder="Pesquisar..." />
             </Col>
@@ -129,6 +129,7 @@ const Lista_ServicosOferecidos = () => {
               <Form.Select
                 className="form-button"
                 aria-label="Default select example"
+                disabled={true}
               >
                 <option>Filtrar por</option>
                 <option value="1">One</option>
@@ -140,6 +141,7 @@ const Lista_ServicosOferecidos = () => {
               <Form.Select
                 className="form-button"
                 aria-label="Default select example"
+                                disabled={true}
               >
                 <option>Ordenar</option>
                 <option value="1">One</option>
@@ -147,7 +149,7 @@ const Lista_ServicosOferecidos = () => {
                 <option value="3">Three</option>
               </Form.Select>
             </Col>
-          </Row>
+          </Row> */}
         </div>
         <Table striped>
           <thead>
