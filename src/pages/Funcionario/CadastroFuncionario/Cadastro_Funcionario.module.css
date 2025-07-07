@@ -34,6 +34,10 @@
     padding-bottom: 1rem;
     padding-top: 1rem;
 }
+.estiloGap{
+    display: flex;
+    gap: 10px;
+}
 /* --------------------------------------- Estilo Cards Funcionario ---------------------------------------- */
 .nomeFuncionario{
   font-size: large;
@@ -118,7 +122,6 @@
   transition: all 0.3s ease-in-out;
   outline: none;
   margin-bottom: 0.5em;
-
 }
 .controlaCampos select:focus{
   border-color: #1FAF30;
@@ -130,7 +133,7 @@
 }
 /* ----------------------------------- Tamanho da lista de Funcionario ------------------------------------- */
 .listFuncionarioLimit{
-  max-height: 300px; 
+  max-height: 30vh; 
   overflow-y: auto;  
   overflow-x: hidden;
 }

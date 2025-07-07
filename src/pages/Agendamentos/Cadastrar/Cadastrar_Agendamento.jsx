@@ -20,7 +20,9 @@ import CamposEndereco from "../../../components/Endereco/CamposEndereco";
 import "../../../components/CardPet/PetServicoCard.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Alert } from "antd";
+
 const Agendamento = () => {
+
   const [mensagemAlerta, setMensagemAlerta] = useState(null);
   const {
     register,
@@ -32,6 +34,8 @@ const Agendamento = () => {
     setValue,
     getValues,
   } = useForm();
+
+  const [ petSel, setPetSel ] = useState('');
   const [clientes, setClientes] = useState([]);
   const [incluirBuscar, setIncluirBuscar] = useState(false);
   const [devolverMesmo, setDevolverMesmo] = useState(false);
@@ -400,11 +404,11 @@ const Agendamento = () => {
           <Form onSubmit={handleSubmit(onSubmit)}>
             <Row>
               <Col className="campos-espaco">
-                <Form.Group controlId="formServico" className="form-servico">
+                <Form.Group controlId="formFiltro" className="form-servico">
                   <Form.Label>Filtrar serviço por:</Form.Label>
-                  <Form.Select {...register("filtro")}>
+                  <Form.Select disabled={true} {...register("filtro")}>
+                    <option value="">Sem filtro</option>
                     <option value="">Restrição de espécie</option>
-                    <option value="">Todos</option>
                     <option value="">Restrição de participantes</option>
                   </Form.Select>
                 </Form.Group>
@@ -412,7 +416,8 @@ const Agendamento = () => {
               <Col className="campos-espaco">
                 <Form.Group controlId="formServico">
                   <Form.Label>Tipo do filtro:</Form.Label>
-                  <Form.Select {...register("tipoFiltro")}>
+                  <Form.Select disabled={true} {...register("tipoFiltro")}>
+                    <option value="">N/A</option>
                     <option value="">Cães</option>
                     <option value="">Gatos</option>
                     <option value="">Pássaros</option>
@@ -434,7 +439,6 @@ const Agendamento = () => {
                       // const novoServ = getValues('servico')
                       const novoServ = e.target.value;
                       setServicoSel(+novoServ);
-                      console.log("rodei: ", novoServ);
                     }}
                   >
                     <option value="">Selecione um serviço</option>
@@ -496,6 +500,7 @@ const Agendamento = () => {
                       placeholder="Valor por pet"
                       value={preco.precoPet}
                       readOnly={true}
+                      disabled={true}
                     />
                   </InputGroup>
                 </Form.Group>
@@ -511,6 +516,7 @@ const Agendamento = () => {
                       placeholder="Valor do Serviço"
                       value={preco.precoServico}
                       readOnly={true}
+                      disabled={true}
                     />
                   </InputGroup>
                 </Form.Group>
@@ -526,6 +532,7 @@ const Agendamento = () => {
                       placeholder="Valor total"
                       value={preco.precoTotal}
                       readOnly={true}
+                      disabled={true}
                     />
                   </InputGroup>
                 </Form.Group>
@@ -559,7 +566,12 @@ const Agendamento = () => {
               <Col className="campos-espaco">
                 <Form.Group controlId="formServico">
                   <Form.Label>Pet:<span className="obrigatorio">*</span></Form.Label>
-                  <Form.Select id="pet-selecionar" {...register("pet")}>
+                  <Form.Select id="pet-selecionar" {...register("pet")}
+                    disabled={!getValues('cliente')}
+                    onInput={(e) => {
+                      setPetSel(e.target.value);
+                    }}
+                  >
                     <option value="">Selecione um pet</option>
                     {petsCliente &&
                       petsCliente.map((pet) => (
@@ -575,22 +587,24 @@ const Agendamento = () => {
                 <Button
                   className="button-adicionar"
                   type="button"
+                  disabled={!petSel}
                   onClick={(e) => {
-                    let petSelect, petSelecionado;
+                    if (petSel) {
+                      const petSel = petsCliente.find((p) => {
+                        const pelSelecionado =
+                          document.getElementById("pet-selecionar").value;
+                        return p.id == pelSelecionado;
+                      });
 
-                    const petSel = petsCliente.find((p) => {
-                      petSelect = document.getElementById("pet-selecionar");
-                      petSelecionado = petSelect.value;
-                      return p.id == petSelecionado;
-                    });
-
-                    const jaExiste = petsSel.some((p) => {
-                      return p.id == petSel.id;
-                    });
-
-                    if (!jaExiste) {
-                      setPetsSel(petsSel.concat([petSel]));
+                      const jaExiste = petsSel.some((p) => {
+                        return p.id == petSel.id;
+                      });
+    
+                      if (!jaExiste) {
+                        setPetsSel(petsSel.concat([petSel]));
+                      }
                     }
+
                   }}
                 >
                   Adicionar
@@ -604,9 +618,9 @@ const Agendamento = () => {
             <hr />
             <Accordion
               className="mt-3 mb-4"
-              defaultActiveKey="0"
+              // defaultActiveKey="0"
               flush
-              alwaysOpen
+              // alwaysOpen
             >
               <Accordion.Item eventKey="0" className="pet-servico-card-item">
                 <Accordion.Header>
