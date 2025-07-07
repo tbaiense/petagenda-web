@@ -34,6 +34,7 @@ import CadastrarAgendamento from "../pages/Agendamentos/Cadastrar/Cadastrar_Agen
 import Lista_Agendamento from "../pages/Agendamentos/Lista/Lista_Agendamento.jsx";
 import EditarAgendamento from "../pages/Agendamentos/Editar/Editar_Agendamento.jsx";
 import EditarServicoExecutavel from "../pages/Servico/EditarServicoExecutavel/EditarServicoExecutavel.jsx";
+import VisualizarAgendamento from "../pages/Agendamentos/Visualizar/Visualizar_Agendamento.jsx"
 
 // Relatórios
 import Relatorio_Simples from "../pages/Relatorios/Simples/Relatorio_Simples";
@@ -163,6 +164,10 @@ const router = createBrowserRouter([
       {
         path: "agendamentos/editar/servicoexecutado",
         element: <EditarServicoExecutavel/>,
+      },
+      {
+        path: "agendamentos/visualizar",
+        element: <VisualizarAgendamento/>,
       },
       
       // Relatórios

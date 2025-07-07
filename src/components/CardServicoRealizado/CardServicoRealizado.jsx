@@ -44,9 +44,9 @@ const CardServicoRealizado = ({ servicoRealizado, handleEditar }) => {
           >
             Atualizar
           </Button>
-          <Button className="form-button" variant="success">
+{/*           <Button className="form-button" variant="success">
             Visualizar
-          </Button>
+          </Button> */}
           <img 
             style={{
               marginInline: '1em'

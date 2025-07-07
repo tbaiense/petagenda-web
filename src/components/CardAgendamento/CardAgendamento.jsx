@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import Modal_Atualizar_Rapido_Agendamento from "../../pages/Agendamentos/Lista/Modal_Atualizar_Rapido_Agendamento";
+import { useNavigate } from "react-router-dom";
 
 const CardAgendamento = ({
   agendamento,
@@ -16,16 +17,8 @@ const CardAgendamento = ({
     setShow(true);
   };
 
-  // useEffect(() => {
-  //     console.log('rodei func');
-  //     if (agendamento.funcionario?.nome)
-  //     setEstado(agendamento.funcionario);
-  // }, [agendamento.funcionario.id]);
+  const navigate = useNavigate();
 
-  // useEffect(() => {
-  //     console.log('rodei est');
-  //     setEstado(agendamento.estado);
-  // }, [agendamento.estado.id]);
 
   useEffect(() => {
     setEstado(agendamento.estado);
@@ -52,7 +45,9 @@ const CardAgendamento = ({
           >
             Atualizar
           </Button>
-          <Button className="form-button" variant="success">
+          <Button className="form-button" variant="success"
+            onClick={() => navigate("/empresa/agendamentos/visualizar", { state: { agendamento }})}
+          >
             Visualizar
           </Button>
         </td>
