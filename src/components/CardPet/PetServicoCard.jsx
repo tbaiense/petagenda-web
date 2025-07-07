@@ -6,6 +6,8 @@ import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import { useState } from "react";
 
 const PetServicoCard = ({...props}) => {
+    console.log("props pet: ", props.pet);
+
     function CustomToggle({ children, eventKey}) {
         const decoratedOnClick = useAccordionButton(eventKey, () => {
             const btn = document.querySelector(`[id='accordion-item-${props.pet.id}-${props.pet.nome}']`);
@@ -72,16 +74,16 @@ const PetServicoCard = ({...props}) => {
                         </div>
                         <div>
                         <h4>Remédios</h4>
-                        <hr></hr>
+                        <hr hidden={!props.allowEdit}></hr>
                         </div>
                         <Col>
-                        <Form.Group className="mb-3">
+                        <Form.Group className="mb-3" hidden={!props.allowEdit}>
                             <Form.Label>Nome do remédio:</Form.Label>
                             <Form.Control disabled={!props.allowEdit} type="text" placeholder="Dipirona monohidratada..." id="nome-remedio"/>
                         </Form.Group>
                         </Col>
                         <Col>
-                        <Form.Group className="mb-3">
+                        <Form.Group className="mb-3" hidden={!props.allowEdit}>
                             <Form.Label>Instruções de administração:</Form.Label>
                             <Form.Control 
                             disabled={!props.allowEdit}
@@ -92,7 +94,7 @@ const PetServicoCard = ({...props}) => {
                         <Button 
                             variant="primary" 
                             type="button" 
-                            disabled={!props.allowEdit}
+                            hidden={!props.allowEdit}
                             onClick={ e => {
                                 const rem = {
                                     nome: document.getElementById("nome-remedio").value,
@@ -126,7 +128,7 @@ const PetServicoCard = ({...props}) => {
                                 <Stack direction="horizontal" gap={3}>
                                 <h4 className="me-auto">{ r.nome}</h4>
                                 <Button 
-                                disabled={!props.allowEdit}
+                                hidden={!props.allowEdit}
                                 onClick={ e=> {
                                     if (props.pet.remedios.length != 0) {
                                         props.pet.remedios = props.pet.remedios.flatMap( rem => (rem.id == r.id) ? [] : rem );

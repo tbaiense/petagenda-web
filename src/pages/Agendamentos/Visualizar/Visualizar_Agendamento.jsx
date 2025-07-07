@@ -216,7 +216,7 @@ const VisualizarAgendamento = () => {
       const encontrado = petsCliente.find(pc => pc.id == p.id); 
 
       if (encontrado) {
-        return encontrado;
+        return {alimentacao: p.instrucaoAlim, remedios: p.remedios, ...encontrado};
       } else {
         return [];
       }
@@ -313,7 +313,7 @@ const VisualizarAgendamento = () => {
                   <Form.Select 
                     disabled={true}
                     {...register("funcionario")}>
-                    <option value="">Selecione um funcionário</option>
+                    <option value="">Sem funcionário atribuído</option>
                     {funcionarios &&
                       funcionarios.map((funcionario) => (
                         <option key={funcionario.id} value={funcionario.id}>
@@ -379,7 +379,7 @@ const VisualizarAgendamento = () => {
               <hr></hr>
             </Row>
             <Row className="mt-3">
-              <Col className="campos-espaco">
+              <Col className="campos-espaco" style={{ maxWidth: "20em"}}>
                 <Form.Group controlId="formServico">
                   <Form.Label>Cliente:<span className="obrigatorio">*</span></Form.Label>
                   <Form.Select
@@ -400,11 +400,10 @@ const VisualizarAgendamento = () => {
                   </Form.Select>
                 </Form.Group>
               </Col>
-              <Col className="campos-espaco">
+              <Col className="campos-espaco" hidden={true}>
                 <Form.Group controlId="formServico">
                   <Form.Label>Pet:<span className="obrigatorio">*</span></Form.Label>
                   <Form.Select id="pet-selecionar" {...register("pet")}
-                    disabled={true}
                     onInput={(e) => {
                       setPetSel(e.target.value);
                     }}
@@ -424,7 +423,7 @@ const VisualizarAgendamento = () => {
                 <Button
                   className="button-adicionar"
                   type="button"
-                  disabled={!petSel}
+                  hidden={!petSel}
                   onClick={(e) => {
                     if (petSel) {
                       const petSel = petsCliente.find((p) => {
@@ -509,6 +508,7 @@ const VisualizarAgendamento = () => {
                       label="O mesmo do anterior"
                       checked={devolverMesmo}
                       isDisabled={true}
+                      disabled={true}
                       onChange={(e) => {
                         setDevolverMesmo(e.target.checked);
                         if (e.target.checked) {
