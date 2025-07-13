@@ -34,8 +34,6 @@ O PetAgenda é um projeto de TCC desenvolvido após um ano e meio de estudos no 
 # 📝 Passo a passo para inicializar o projeto
 Debian 12 Bookworm
 - ```sudo apt install -y git```
-- ```git clone https://github.com/tbaiense/petagenda-setup```
-- ```cd petagenda-setup```
 - ```sudo ./deploy.sh```
 
 Windows 10 e 11 (WSL2)
@@ -43,8 +41,6 @@ Windows 10 e 11 (WSL2)
 - ```wsl --install -d Debian```
 - Definir usuário e senha
 - ```sudo apt install -y git```
-- ```git clone https://github.com/tbaiense/petagenda-setup```
-- ```cd petagenda-setup```
 - ```sudo ./deploy.sh```
 
 # </> Desenvolvedores
