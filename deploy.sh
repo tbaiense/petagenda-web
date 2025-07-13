@@ -4,7 +4,6 @@ cd $PWD/scripts
 
 echo '[PetAgenda Deploy Script] Iniciando de deploy' \
 && ./setup_docker.sh \
-&& ./build_all.sh \
 && cd .. \
 && docker compose up -d \
 && echo '[PetAgenda Deploy Script] PetAgenda implantado com sucesso!' \
