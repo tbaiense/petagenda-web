@@ -33,14 +33,12 @@ O PetAgenda é um projeto de TCC desenvolvido após um ano e meio de estudos no 
 
 # 📝 Passo a passo para inicializar o projeto
 Debian 12 Bookworm
-- ```sudo apt install -y git```
 - ```sudo ./deploy.sh```
 
 Windows 10 e 11 (WSL2)
 - Abrir o Powershell ou Terminal
 - ```wsl --install -d Debian```
 - Definir usuário e senha
-- ```sudo apt install -y git```
 - ```sudo ./deploy.sh```
 
 # </> Desenvolvedores
