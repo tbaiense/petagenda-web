@@ -1,0 +1,65 @@
+name: petagenda
+
+services:
+    bd:
+        container_name: petagenda-bd
+        image: tbaiense/petagenda-bd
+        build:
+            context: bd/.
+        networks:
+            - petagenda-net
+        volumes:
+            - petagenda-data:/var/lib/mysql
+        secrets:
+            - source: bd-root-password
+              target: root-password.txt
+
+            - source: bd-user
+              target: user.txt
+
+            - source: bd-password
+              target: password.txt
+        restart: always
+
+    backend:
+        container_name: petagenda-backend
+        image: tbaiense/petagenda-backend
+        build:
+            context: backend/.
+        networks:
+            - petagenda-net
+        depends_on:
+            - bd
+        restart: always
+
+    frontend:
+        container_name: petagenda-frontend
+        image: tbaiense/petagenda-frontend
+        build:
+            context: frontend/.
+        networks:
+            - petagenda-net
+        ports:
+            - 8080:80
+        restart: always
+        depends_on:
+            - backend
+
+networks:
+    petagenda-net:
+        name: petagenda-net
+        driver: bridge
+        labels:
+            com.docker.networks.bridge.description: "Rede interna de comunicação entre frontend, backend e banco de dados."
+
+volumes:
+    petagenda-data:
+        name: petagenda-data
+
+secrets:
+    bd-root-password:
+        file: bd/secrets/root-password.txt
+    bd-user:
+        file: bd/secrets/user.txt
+    bd-password:
+        file: bd/secrets/password.txt

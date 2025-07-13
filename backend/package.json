@@ -1,0 +1,21 @@
+{
+  "name": "back-end",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "dev": "export $(cat .env) && nodemon src/app.js",
+    "prod": "node src/app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "express": "~4.21.2",
+    "express-async-handler": "^1.2.0",
+    "mysql2": "^3.14.1",
+    "nodemon": "^3.1.10",
+    "serve-static": "^2.2.0"
+  }
+}

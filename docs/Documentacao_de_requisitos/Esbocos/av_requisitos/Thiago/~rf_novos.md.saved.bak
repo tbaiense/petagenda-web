@@ -1,0 +1,126 @@
+ 
+# Especificação de Requisitos do Sistema
+Versão: 0.2  
+Data: 21 de março de 2025  
+<hr>
+
+## <center>Requisitos Funcionais (novos)</center>
+
+
+### [RF nn] Console de gestão de instâncias
+**Completar**: Gerenciamento de acesso dos empreendedores pelo Administrador, aprovar licenças, revogar licenças, remover contas de utilizadores e gerenciamento de cotas.
+
+(Vamos realmente dar acesso aos funcionarios do empreendedor para usar o sistema? - Castro)
+
+Prioridade:  ( )Essencial  ( )Importante  (X)Desejável
+
+### [RF nn] Gestão do perfil do Administrador
+**Completar**: Funcionalidade para gestão de dados do Administrador e troca de senha de acesso.
+
+Prioridade:  ( )Essencial  (X)Importante  ( )Desejável
+
+### [RF nn] Cotas de utilização
+**Completar**: Contabilização de cotas de agendamento, serviço executado e relatórios. Acúmulo de cotas não utilizadas.
+
+Prioridade:  (X)Essencial  ( )Importante  ( )Desejável
+
+### [RF nn] Cotas de cadastro de agendamento e cadastro de serviço executado
+**Completar**: funcionamento e contabilização (não contabilizar registros de serviços executados caso sejam originários de agendamento.
+
+(Não vai contabilizar os serviços caso tenha vindo de agendamento? 
+Nosso sistema não serve para justamente o oposto? - Castro)
+
+Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
+
+### [RF nn] Cotas de geração de relatórios
+**Completar**: funcionamento, contabilização e solicitação.
+
+Prioridade:  (X)Essencial  ( )Importante  ( )Desejável
+
+### [RF nn] Gerenciamento de cotas pelo Administrador
+**Completar**: Verificar, adicionar, remover e alterar cotas de agendamento e execução de serviços das empresas cadastradas.
+
+(?)
+
+Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
+
+### [RF nn] Gerenciamento de cotas pelo Empreendedor
+**Completar**: Verificar e solicitar mais.
+
+(Empreendedor e Administrador?)
+
+Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
+
+### [RF nn] Cadastro de dados adicionais da empresa do Empreendedor
+**Completar**: Descrição dos dados inseridos durante o cadastro opcional das informações da empresa, usados na emissão de nota fiscal. Razão social, nome fantasia, cnpj, local, cnae, etc.
+
+Prioridade:  (X)Essencial  ( )Importante  ( )Desejável
+
+
+### [RF nn] Cadastro de funcionários
+A solução permitirá ao operador realizar o cadastro dos funcionários, informando nome completo, telefone de contato e opcionalmente os tipos de serviços exercidos.
+
+Prioridade:  ( )Essencial  (X)Importante  ( )Desejável
+ 
+
+### [RF nn] Categorias de serviço
+**Completar**: Descrição do uso na filtragem por serviços. Significado de PS, DW, Saúde, Transporte, Hospedagem, Creche, PetCare, etc.
+
+Prioridade:  ( )Essencial  (X)Importante  ( )Desejável
+
+
+### [RF nn] Serviços executados
+**Completar**: Descrição de um registro de um serviço realizado, seja ele agendado ou não. Data, hora, funcionário, pets participantes, etc. Poderá ser gerado manualmente pelo Utilizador por meio de cadastro ou automaticamente, ao atribuir o estado de "concluído" ao agendamento.
+
+(Explicar melhor esse)
+
+Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
+
+
+### [RF nn] Cadastro manual de serviços executados
+**Completar**: Descrição de um registro de um serviço realizado, seja ele agendado ou não. Informar dados comuns a todos os serviços e específicos de categorias de serviços, se aplicável. Descrição do processo, serviço executado, se foi agendado, data e hora de finalização, data e hora de início, incidentes, observações, pets envolvidos, tutor responsável)
+
+Prioridade:  ( )Essencial  ( )Importante  ( )Desejável
+
+
+### [RF nn] Cadastro automático de serviços executados
+**Completar**: Gerado pelo sistema ao alterar o estado de um agendamento para "concluído". **?Gerar um registro para um pet, se serviço do agendento tiver restrição "individual" de participantes. Gerar um resgistro contendo todos os pets participantes, se serviço do agendamento for "coletivo"?**
+
+Prioridade:  ( )Essencial  (X)Importante  ( )Desejável
+
+
+### [RF nn] Cadastro de agendamento de serviços
+**Completar**: A solução deverá permitir o cadastro de agendamentos de serviços, requerindo as informações comuns a todos as categorias de agendamentos e dados específicos à categoria atribuída ao serviço selecionado, se aplicável.
+
+Os dados que deverão ser informados em quaisquer cadastramento de agendamento serão:
+- os pets participantes do agendamento;
+- o serviço agendado;
+- a data e hora marcadas para início do serviço;
+- o endereço onde o Pet deverá ser buscado, se aplicável;
+- o endereço de devolução do pet, se aplicável;
+- o funcionário atribuído, opcionalmente informado após o cadastramento;
+- observações do agendamento, opcionalmente;
+- os remédios que deverão ser administrados, se aplicável;
+- o horário de administração, nome do remédio e instrução de administração de cada remédio, se aplicável;
+- os horários de alimentação, se aplicável;
+- as instruções de alimentação, se aplicável;
+
+Prioridade:  (X)Essencial  ( )Importante  ( )Desejável
+
+
+### [RF nn] Visualização de agendamentos recorrentes.
+Descrição do requisito.
+
+Prioridade:  ( )Essencial  ( )Importante  ( )Desejável (X)Remover
+
+
+### [RF nn] Cancelamento de agendamentos recorrentes
+Descrição do requisito.
+
+Prioridade:  ( )Essencial  ( )Importante  ( )Desejável (X)Remover
+
+
+### [RF nn] Atribuição de estado de disponibilidade de funcionário
+A solução deverá permitir a atribuição manual do estado de disponibilidade "reservado" a um funcionário para determinada faixa de horário, em um dia específico. O Utilizador deverá informar o funcionário, o dia respectivo e o horário de início e fim de validade do estado. A Solução deverá permitir ao Usuário remover o estado de "reservado" de determinado dia e faixa de horário. O estado de disponibilidade do funcionário deverá ser interpretado pela Solução como "disponível" nos dias e nas faixas de horário onde não estiver atribuído como "reservado".
+
+Prioridade:  ( )Essencial  (x)Importante  ( )Desejável

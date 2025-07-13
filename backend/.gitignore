@@ -1,0 +1,5 @@
+.env
+.sql
+**/node_modules/*
+**/resources/**/*.png
+**/resources/**/*.jpg

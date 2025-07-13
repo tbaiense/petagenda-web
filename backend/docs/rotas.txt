@@ -1,0 +1,50 @@
+host: api.petagenda.tbaiense.me
+
+/usuario => POST, GET
+
+/usuario/:id => GET, PUT, DELETE
+
+/usuario/login => POST
+
+/empresa => POST, GET
+
+/empresa/:id => GET, PUT, DELETE
+
+/empresa/:id/licenca/ => GET, PUT
+/empresa/:id/licenca/:id/contratar => POST
+
+/empresa/:id/funcionario => GET, POST
+/empresa/:id/funcionario/:id => GET, PUT, DELETE
+
+
+/empresa/:id/servico-oferecido => GET, POST
+/empresa/:id/servico-oferecido/:idServicoOferecido => GET, PUT, DELETE
+
+/empresa/:id/cliente => GET, POST
+/empresa/:id/cliente/:id => GET, PUT, DELETE
+
+
+/empresa/:id/pet => GET, POST
+/empresa/:id/pet/:id => GET, PUT, DELETE
+
+
+/empresa/:id/agendamento => GET, POST
+/empresa/:id/agendamento/:id => GET, PUT, DELETE
+
+
+/empresa/:id/servico-executado => GET, POST
+/empresa/:id/servico-executado/:id => GET, PUT, DELETE
+
+
+/empresa/:id/incidente => GET, POST
+/empresa/:id/incidente/:id => GET, PUT, DELETE
+
+
+/empresa/:id/pacote-agendamento => GET, POST
+/empresa/:id/pacote-agendamento/:id => GET, PUT, DELETE
+
+
+/empresa/:id/despesa => GET, POST
+/empresa/:id/despesa/:id => GET, DELETE
+
+

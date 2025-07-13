@@ -1,0 +1,343 @@
+# USUARIO
+JSON: 
+{
+	"id": <INT>,
+	"email": <VARCHAR(128)>,
+	"senha": <VARCHAR(32)>,
+	"perguntaSeguranca": ?{
+		"pergunta": <VARCHAR(64)>,
+		"resposta": <VARCHAR(32)>
+	}
+}
+
+## CADASTRAR 
+curl --json '{"email": "email@email.com","senha": "senha","perguntaSeguranca": {"pergunta": "nome do gato","resposta": "josefino"}}' http://localhost:3000/usuario
+
+## LOGAR (OBTER TOKEN JWT)
+curl --json '{"email": "email@email.com","senha": "senha"}' http://localhost:3000/usuario/login
+
+
+# EMPRESA
+JSON:
+{
+	"id": <INT>,  <--- id do empresa
+	"razaoSocial": ?<VARCHAR(128)>,
+	"nomeFantasia": <VARCHAR(128)>,
+	"cnpj": <CHAR(14)>,
+	"foto": ?<TEXT>,
+	"lema": ?<VARCHAR(180)>,
+	"endereco": ?{  <--- omitir para remover
+		"logradouro": <VARCHAR(128)>,
+		"numero": <VARCHAR(16)> ,
+		"bairro": <VARCHAR(64)>,
+		"cidade": <VARCHAR(64)>,
+		"estado": <CHAR(2)>     <-- Sigla da unidade federativa (ex: "DF", "ES")
+	}
+}
+
+## CADASTRAR
+curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJwZXRhZ2VuZGEtYmFja2VuZCIsImV4cCI6MTc0ODExNDAxOSwidXNlciI6MSwiYWRtaW4iOmZhbHNlfQ.FKNkk0pYel0oTZg3ptwkKT6fJ1mkmunSIRSDJE-U0n0" --json '{
+    "cnpj": "1234567890",
+    "razaoSocial": "Empresa LTDA",
+    "nomeFantasia": "Empresa legal",
+    "lema": "Trabalha e confia",
+    "endereco": {
+        "logradouro": "Avenida Brasil",
+        "numero": "123",
+        "bairro": "Bairro Legal",
+        "cidade": "Cidade Legal",
+        "estado": "ES"
+    }
+}' http://localhost:3000/empresa
+
+
+# LICENÇA
+JSON:
+{
+	idEmpresa: Number, <-- SERÁ INFERIDO PELO PARÂMETRO :idEmpresa na URL
+	tipo: Enum("basico", "profissional", "corporativo"),
+	inicio: DateTimeString,
+	fim: DateTimeString
+}
+
+curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJwZXRhZ2VuZGEtYmFja2VuZCIsImV4cCI6MTc0ODM5MDA4MiwidXNlciI6MywiYWRtaW4iOmZhbHNlfQ.IUZq2bSOM3aJIPiwAnBO1RURlQEck11MEdSVbtsPyZU" --json '{
+    "tipo": "profissional",
+    "periodo": "mensal"
+}' http://localhost:3000/empresa/3/licenca
+
+
+# SERVIÇO OFERECIDO
+JSON: 
+{
+	"id": <INT>,
+    "idEmpresa": <INT>,
+    "nome": <VARCHAR(64)>,
+    "categoria": <INT>,
+    "nomeCategoria": <VARCHAR>
+    "preco": <DECIMAL(8,2)>,
+    "tipoPreco": <ENUM("pet", "servico")>,  <-- forma de cobrança do preço
+    "descricao": ?<TEXT>,
+    "foto": ?<TEXT>,   <-- caminho de arquivo "/caminho/image.png"
+    "restricaoParticipante": <ENUM("coletivo", "individual")>,
+    "restricaoEspecie": ?[
+        +{
+            "especie": <INT>  <-- PK da tabela "especie",
+            "nomeEspecie": <varchar>
+        }
+    ]
+}
+
+## CADASTRAR 
+curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJwZXRhZ2VuZGEtYmFja2VuZCIsImV4cCI6MTc0ODExNDAxOSwidXNlciI6MSwiYWRtaW4iOmZhbHNlfQ.FKNkk0pYel0oTZg3ptwkKT6fJ1mkmunSIRSDJE-U0n0" --json '{
+    "nome": "Creche",
+    "categoria": 6,
+    "preco": 45.99,
+    "tipoPreco": "pet",
+    "restricaoParticipante": "coletivo",
+    "restricaoEspecie": [
+        {
+            "especie": 1
+        },
+        {
+            "especie": 2
+        }
+    ]
+}' http://localhost:3000/empresa/1/servico-oferecido
+
+
+# FUNCIONÁRIO
+JSON:
+{
+	"id": <INT>,   <--- PK de tabela "funcionario",
+    "idEmpresa": <INT>
+    "nome": <VARCHAR(64)>,   <--- Nome do funcionário
+    "telefone": <CHAR(15)>,  <--- Telefone do funcionário no formato "(27) 99900-8181"
+    "exerce": ?[ <-- servico-oferecido
+        +{
+            "id": <INT>, <-- id de servico oferecido
+            "nome": <VARCHAR(64)>
+        }
+    ]
+}
+
+## CADASTRAR
+curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJwZXRhZ2VuZGEtYmFja2VuZCIsImV4cCI6MTc0ODExNDAxOSwidXNlciI6MSwiYWRtaW4iOmZhbHNlfQ.FKNkk0pYel0oTZg3ptwkKT6fJ1mkmunSIRSDJE-U0n0" --json '{
+    "nome": "João Bobão",
+    "telefone": "(27) 99888-7766",
+    "exerce": [
+        {
+            "id": 1
+        },
+        {
+            "id": 2
+        },
+        {
+            "id": 3
+        }
+    ]
+}' http://localhost:3000/empresa/1/funcionario
+
+
+# CLIENTE
+JSON:
+{
+	"id": <INT>,
+    "idEmpresa": <INT>,
+    "nome": <VARCHAR(64)>,
+    "telefone": <CHAR(15)>,
+    "servicoRequerido": ?[
+        +{ "servico": <INT>, "nome": <VARCHAR(64)> }
+    ],
+    "endereco": {
+        "logradouro": <VARCHAR(128)>,
+        "numero": <VARCHAR(16)> ,
+        "bairro": <VARCHAR(64)>,
+        "cidade": <VARCHAR(64)>,
+        "estado": <CHAR(2)>     <-- Sigla da unidade federativa (ex: "DF", "ES")
+    }
+}
+
+## CADASTRAR
+curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJwZXRhZ2VuZGEtYmFja2VuZCIsImV4cCI6MTc0ODExNDAxOSwidXNlciI6MSwiYWRtaW4iOmZhbHNlfQ.FKNkk0pYel0oTZg3ptwkKT6fJ1mkmunSIRSDJE-U0n0" --json '{
+    "nome": "Maria Molenga",
+    "telefone": "(27) 99888-7766",
+    "servicoRequerido": [
+        {
+            "servico": 3
+        },
+        {
+            "servico": 5
+        }
+    ],
+    "endereco": {
+        "logradouro": "Av. Feliz",
+        "numero": "123",
+        "bairro": "Bairro Alegre",
+        "cidade": "Cidade genial",
+        "estado": "ES"
+    }
+}' http://localhost:3000/empresa/1/cliente
+
+
+# PET
+JSON:
+{
+	"id": <INT>, <--- id do pet
+        "idEmpresa": <INT>,
+        "dono": {
+            "id": <INT>,   <--- id do dono do pet (PK da tabela "pet")
+            "nome": <VARCHAR>
+        },
+        "especie": {
+            "id": <INT>, <--- id da espécie do pet (PK da tabela "especie")
+            "nome": <VARCHAR>
+        },
+        "nome": <VARCHAR(64)>,
+        "sexo": <ENUM("M", "F")>,
+        "porte": <ENUM("P", "M", "G")>,
+        "eCastrado": boolean,   <-- situação de castração do pet
+        "estadoSaude": <VARCHAR(32)>,
+        "raca": ?<VARCHAR(64)>,
+        "cor": ?<VARCHAR(32)>,
+        "comportamento": ?<VARCHAR(64)>,    <-- descrição do comportamento
+        "cartaoVacina": ?<TEXT>,   <--- caminho para o cartão de vacina no sistema de arquivos ("/caminho/cartao_vacina.pdf")
+}
+
+## CADASTRAR
+curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJwZXRhZ2VuZGEtYmFja2VuZCIsImV4cCI6MTc0ODExNDAxOSwidXNlciI6MSwiYWRtaW4iOmZhbHNlfQ.FKNkk0pYel0oTZg3ptwkKT6fJ1mkmunSIRSDJE-U0n0" --json '{
+    "dono": {
+        "id": 1
+    },
+    "especie": {
+        "id": 2
+    },
+    "nome": "Mia",
+    "sexo": "F",
+    "porte": "P",
+    "eCastrado": false,
+    "estadoSaude": "saudável",
+    "raca": "Ciamês",
+    "cor": "Branco e cinza",
+    "comportamento": "Calma",
+    "cartaoVacina": "/caminho/cartao_vacina.pdf"
+}' http://localhost:3000/empresa/2/pet
+
+
+# AGENDAMENTO
+JSON:
+{
+	"id": <INT>,
+    "idEmpresa": <INT>,
+    "dtHrMarcada": <DATETIME>,
+    "servico": { "id": <INT> },
+    "funcionario": { "id": <INT> },
+    "estado": {
+        "id": <ENUM('criado','preparado','pendente','concluido','cancelado')>,
+        "nome": ?<VARCHAR(32)>
+    }
+    "observacoes": ?<VARCHAR(250)>,
+    "pets" : ?[
+        +{
+            "id": <INT>,
+            "alimentacao": ?<TEXT>,
+            "remedios": ?[
+                +{ "id": <INT>, "nome": ?<VARCHAR(128)>, "instrucoes": ?<TEXT> }
+            ]
+        }
+    ],
+    "enderecos": [
+        0,2{
+            "tipo": <ENUM("buscar", "devolver", "buscar-devolver")>,
+            "logradouro": <VARCHAR(128)>,
+            "numero": <VARCHAR(16)>,
+            "bairro": <VARCHAR(64)>,
+            "cidade": <VARCHAR(64)>,
+            "estado": <CHAR(2)>
+        }
+    ]
+}
+
+## CADASTRAR
+curl -H "Authorization: Bearer <JWT>" --json '{
+{
+    "dtHrMarcada": "2030-10-12T12:40:00",
+    "servico": {
+        "id": 1
+    },
+    "funcionario": {
+        "id": 1
+    },
+    "pets": [
+        {
+            "id": 1,
+            "alimentacao": "Whiskas",
+            "remedios": [
+                {"nome": "dipirona", "instrucoes": "apos a primeira refeicao" },
+                {"nome": "dipirona2", "instrucoes": "apos a primeira refeicao2" }
+            ]
+        }
+    ],
+    "enderecos": [
+        {
+            "tipo": "buscar",
+            "logradouro": "Av. Aqui",
+            "numero": "1234",
+            "bairro": "Bairro legal",
+            "cidade": "Cidade Legal",
+            "estado": "ES"
+        },
+        {
+            "tipo": "devolver",
+            "logradouro": "Av. Lá",
+            "numero": "1234",
+            "bairro": "Bairro Top",
+            "cidade": "Cidade Top",
+            "estado": "ES"
+        }
+    ]
+}
+}' http://localhost:3000/empresa/2/agendamento
+
+
+# SERVICO REALIZADO
+JSON:
+{
+	
+}
+
+## CADASTRAR
+curl -H "Authorization: Bearer <JWT>" --json '{
+    "inicio": "2025-01-01T10:00:00",
+    "fim": "2025-01-01T11:00:00",
+    "servico": {
+        "id": 1
+    },
+    "funcionario": {
+        "id": 1
+    },
+    "observacoes": "Observações do serviço realizado",
+    "pets": [
+        {
+            "id": 1,
+            "alimentacao": "Dar 100g de ração após 10hr",
+            "remedios": [
+                {
+                    "nome": "Dipirona",
+                    "instrucoes": "Se ficar acuado e pálido"
+                }
+            ]
+        }
+    ],
+    "enderecos": [
+        {
+            "tipo": "buscar",
+            "logradouro": "Av. Legal",
+            "numero": "123",
+            "bairro": "Bairro Brasil",
+            "cidade": "Cidade Nova",
+            "estado": "ES"
+        }
+    ]
+}' http://localhost:3000/empresa/1/servico-realizado
+
+
