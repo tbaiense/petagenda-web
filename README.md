@@ -32,14 +32,18 @@ O PetAgenda é um projeto de TCC desenvolvido após um ano e meio de estudos no 
 
 
 # 📝 Passo a passo para inicializar o projeto
-Debian 12 Bookworm
+### Debian 12 Bookworm
 - ```sudo ./deploy.sh```
+- Acessar ```http://localhost:8080``` no navegador
 
-Windows 10 e 11 (WSL2)
+### Windows 10 e 11 (WSL2)
 - Abrir o Powershell ou Terminal
 - ```wsl --install -d Debian```
 - Definir usuário e senha
 - ```sudo ./deploy.sh```
+- Acessar ```http://localhost:8080``` no navegador
+ 
+Obs.: é necessário configurar ```networkingMode=mirrored``` no ```.wslconfig``` quando utilizar o WSL2. Para mais detalhes, consultar a [página  da documentação](https://learn.microsoft.com/en-us/windows/wsl/networking#mirrored-mode-networking) no site da Microsoft.
 
 # </> Desenvolvedores
 <table> 
