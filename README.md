@@ -1,11 +1,14 @@
-# 🐾PetAgenda🐾
+<h1 style="text-align: center">🐾PetAgenda🐾</h1>
+
+![Landing Page](./.github/landing.png)
+
 O PetAgenda é uma plataforma digital para agendamento e gestão no setor Petcare, voltada a profissionais autônomos e empresas. Ela oferece recursos como cadastro de clientes, agendamentos, controle de funcionários e relatórios, ajudando a organizar o trabalho e facilitar decisões, diante da falta de ferramentas específicas na área.
 
 # 📄Descrição
 O PetAgenda é um projeto de TCC desenvolvido após um ano e meio de estudos no SENAI de Vitória–ES, no curso de Desenvolvimento de Sistemas. A plataforma surgiu da análise do crescimento do mercado pet e da falta de ferramentas específicas para serviços como Dog Walking e Pet Sitting, sendo uma oportunidade para aplicar todas as habilidades adquiridas ao longo do curso.
 
 # 🛠Tecnologias utilizadas
-<p align="left">
+<p align="center">
   <!-- Frontend -->
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" width="40" alt="HTML" />
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" width="40" alt="CSS" />
@@ -44,6 +47,20 @@ O PetAgenda é um projeto de TCC desenvolvido após um ano e meio de estudos no 
 - Acessar ```http://localhost:8080``` no navegador
  
 Obs.: é necessário configurar ```networkingMode=mirrored``` no ```.wslconfig``` quando utilizar o WSL2. Para mais detalhes, consultar a [página  da documentação](https://learn.microsoft.com/en-us/windows/wsl/networking#mirrored-mode-networking) no site da Microsoft.
+
+# Imagens
+
+## Listagem de agendamentos
+![Agendamentos](./.github/agendamento-listagem.png)
+
+## Listagem de pets
+![Pets](./.github/pets-listagem.png)
+
+## Listagem de serviços oferecidos
+![Serviços](./.github/servico-listagem.png)
+
+## Cadastro de serviço oferecido
+![Cadastro de serviço](./.github/servico-cadastro.png)
 
 # </> Desenvolvedores
 <table> 
