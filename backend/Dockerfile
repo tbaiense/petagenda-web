@@ -25,12 +25,12 @@ RUN apt install -y wget npm
 
 WORKDIR /tmp
 
-RUN wget https://dev.mysql.com/get/mysql-apt-config_0.8.34-1_all.deb
-RUN apt install -y ./mysql-apt-config_0.8.34-1_all.deb
+RUN wget https://dev.mysql.com/get/mysql-apt-config_0.8.36-1_all.deb
+RUN apt install -y ./mysql-apt-config*
 RUN apt update
 RUN apt install -y mysql-client
 
-RUN rm mysql-apt-config_0.8.34-1_all.deb
+RUN rm mysql-apt-config*
 
 WORKDIR /petagenda
 

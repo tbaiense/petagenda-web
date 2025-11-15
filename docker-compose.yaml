@@ -10,6 +10,8 @@ services:
             - petagenda-net
         volumes:
             - petagenda-data:/var/lib/mysql
+        ports:
+            - 3306:3306
         secrets:
             - source: bd-root-password
               target: root-password.txt
