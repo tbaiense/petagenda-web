@@ -35,20 +35,51 @@ O PetAgenda é um projeto de TCC desenvolvido após um ano e meio de estudos no 
 
 
 # 📝 Passo a passo para inicializar o projeto
-### Debian 12 Bookworm
-- ```sudo ./deploy.sh```
-- Acessar ```http://localhost:8080``` no navegador
 
-### Windows 10 e 11 (WSL2)
-- Abrir o Powershell ou Terminal
-- ```wsl --install -d Debian```
-- Definir usuário e senha
-- ```sudo ./deploy.sh```
-- Acessar ```http://localhost:8080``` no navegador
- 
-Obs.: é necessário configurar ```networkingMode=mirrored``` no ```.wslconfig``` quando utilizar o WSL2. Para mais detalhes, consultar a [página  da documentação](https://learn.microsoft.com/en-us/windows/wsl/networking#mirrored-mode-networking) no site da Microsoft.
+### 1. Instalar o Docker Engine e o Docker Compose
 
-# Imagens
+No Windows e macOS é recomendável usar o Docker Desktop.
+
+Links do Docker Desktop:
+- [Windows](https://docs.docker.com/desktop/setup/install/windows-install/)
+- [macOS](https://docs.docker.com/desktop/setup/install/mac-install)
+- [Distribuições Linux](https://docs.docker.com/desktop/setup/install/linux/)
+
+### 2. Clonar o repositório
+
+> Para clonar o repositório é necessário ter o [git](https://git-scm.com/) instalado.
+
+Com o git instalado, abra um terminal (no Windows é o 'cmd' ou PowerShell) e digite:
+
+```
+git clone https://github.com/tbaiense/petagenda-web.git petagenda
+```
+
+depois:
+
+```
+cd petagenda
+```
+
+### 3. Gerenciando os serviços usando o docker compose
+
+Para colocar os serviços em execução:
+
+```
+docker compose -f docker-compose.yaml up -d
+```
+
+Parando todos os serviços e removendo dados gerados:
+
+```
+docker compose -f docker-compose.yaml down --rmi local --volumes
+```
+
+### 4. Acessando 
+
+No navegador de internet, acesse o link: http://localhost:8080/
+
+# Imagens e demonstração
 
 ## Listagem de agendamentos
 ![Agendamentos](./.github/agendamento-listagem.png)
